@@ -78,11 +78,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     app.$.paperDrawerPanel.closeDrawer();
   };
 
-  var editor = ace.edit("editor");
-  editor.setTheme("ace/theme/chrome");
-  editor.session.setMode("ace/mode/gobstones");
-  editor.getSession().setTabSize(4);
-  editor.setHighlightActiveLine(false);
+  // var editor = ace.edit("editor");
+  // editor.setTheme("ace/theme/chrome");
+  // editor.session.setMode("ace/mode/gobstones");
+  // editor.getSession().setTabSize(4);
+  // editor.setHighlightActiveLine(false);
 
 
 })(document);

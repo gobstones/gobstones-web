@@ -1,0 +1,122 @@
+<!--
+@license
+Copyright (c) 2015 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/iron-icons/av-icons.html">
+<link rel="import" href="../../bower_components/paper-fab/paper-fab.html">
+<link rel="import" href="../../bower_components/paper-styles/typography.html">
+<link rel="import" href="../../bower_components/ace-widget/ace-widget.html">
+
+<dom-module id="gobstones-editor">
+  <template>
+    <style>
+      :host {
+        display: block;
+        height: 100%;
+      }
+
+      ace-widget {
+        height: 100%;
+        --ace-widget-editor:{
+          height: 100% !important;
+          @apply(--gobstones-editor);
+        }
+      }
+
+    </style>
+
+      <ace-widget
+        id="ace"
+        mode="ace/mode/gobstones"
+        theme="ace/theme/chrome"
+        tab-size="4"
+      >
+      </ace-widget>
+    <paper-fab icon="av:play-arrow"
+               style="position:absolute; bottom: 30px; right:24px"
+               on-click="onRunCode"
+    ></paper-fab>
+  </template>
+  <script src="https://npmcdn.com/gs-weblang-core@0.1.4/umd/index.umd.min.js"
+          type="text/javascript"
+          charset="utf-8"></script>
+  <script>
+    (function() {
+      'use strict';
+
+      Polymer({
+        is: 'gobstones-editor',
+        listeners:{
+          "ace.editor-ready":"onAceReady",
+          "ace.editor-content":"onContentChange"
+        },
+        properties: {
+
+        },
+
+        ready: function() {
+
+        },
+
+        onAceReady: function(){
+          var editor = this.$.ace.editor;
+          editor.$blockScrolling = Infinity;
+
+        },
+
+        onContentChange: function(content){
+          var value = content.detail.value;
+        },
+
+        onRunCode:function(){
+          var gsWeblangCore = window.gsWeblangCore;
+          var editor = this.$.ace.editor;
+          var sourceCode = this.$.ace.editor.getValue();
+          var tokens = gsWeblangCore.tokens;
+          var interpreter = gsWeblangCore.interpreter;
+          var Lexer = gsWeblangCore.lexer;
+          var Parser = gsWeblangCore.parser;
+          var Grammar = gsWeblangCore.grammar;
+          var Context = gsWeblangCore.context;
+
+          var grammar = Grammar(Parser, new Lexer(), tokens, interpreter);
+          editor.getSession().clearAnnotations();
+
+          var context = new Context();
+          context.init();
+          try {
+            var ast = grammar.parseProgram(sourceCode);
+            console.log(ast);
+            try {
+              grammar.interpret(ast, context);
+            } catch (e) {
+              console.log("INTERPRETER ERROR: ", e);
+            }
+
+            var string = context.board().printAscii();
+            this.fire("execution-result", {board:string});
+            console.log(string);
+          } catch (e) {
+            if (e) {
+              console.log("CATCHED PARSER ERROR: ", e);
+              editor.getSession().setAnnotations([{
+                row: e.on.row,
+                column: 0,
+                text: e.error,
+                type: "error" // also warning and information
+              }]);
+            }
+          }
+        }
+
+      });
+    })();
+  </script>
+</dom-module>

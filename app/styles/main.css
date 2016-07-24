@@ -16,3 +16,7 @@ body {
 .page-title {
   outline: none;
 }
+
+#drawer {
+  border-left: 1px solid rgba(0, 0, 0, 0.22);
+}
