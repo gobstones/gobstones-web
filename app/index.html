@@ -87,7 +87,16 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       <paper-menu class="app-menu" attr-for-selected="data-route" selected="[[route]]">
       </paper-menu>
 
-      <gs-board board="[ [{}, {}, {}, {}], [{}, {}, {}, {}], [{}, {}, {}, {}], [{}, {}, {}, {}] ]"></gs-board>
+      <div>
+        Tablero inicial (editable)
+      </div>
+      <gs-board size='{ "x": 2, "y": 2 }' options='{ "editable": true }'></gs-board>
+
+      <div>
+        Tablero final (resultado)
+      </div>
+      <gs-board board='[ [{ "red": 5 }, {}, {}, {}], [{}, {}, {}, {}], [{}, {}, {}, {}], [{}, {}, {}, {}] ]'></gs-board>
+
     </paper-header-panel>
 
     <!-- Main Area -->
