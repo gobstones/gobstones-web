@@ -100,8 +100,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
               console.log("INTERPRETER ERROR: ", e);
             }
 
+            this.fire("execution-result", {context:context});
             var string = context.board().printAscii();
-            this.fire("execution-result", {board:string});
             console.log(string);
           } catch (e) {
             if (e) {
