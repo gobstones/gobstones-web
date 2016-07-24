@@ -4,3 +4,4 @@ bower_components
 .tmp
 .publish/
 .idea
+*.sublime-workspace
