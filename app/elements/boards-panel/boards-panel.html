@@ -59,13 +59,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
         _adaptTableFromCompilerToBoard: function(table) {
           // TODO: Mover a algún adapter
-          table = table.map(function(colorRows) {
-            return colorRows.reverse();
-          });
-
           var mapColor = function(index, color) {
-            return table[index].map(function(row) {
-              return row.map(function(amount) {
+            return table[index].map(function(rows) {
+              return rows.map(function(amount) {
                 var cell = {};
                 cell[color] = amount;
                 return cell;
@@ -73,14 +69,16 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             });
           }
 
-          var blueRows = mapColor(0, "blue");
-          var redRows = mapColor(1, "red");
-          var blackRows = mapColor(2, "black");
-          var greenRows = mapColor(3, "green");
+          var blueColumns = mapColor(0, "blue");
+          var redColumns = mapColor(1, "red");
+          var blackColumns = mapColor(2, "black");
+          var greenColumns = mapColor(3, "green");
 
-          return _.zipWith(blueRows, redRows, blackRows, greenRows, function(blue, red, black, green) {
-            return _.merge(blue, red, black, green);
-          });
+          return _(blueColumns)
+            .zipWith(redColumns, blackColumns, greenColumns, _.merge)
+            .unzip()
+            .reverse()
+            .value()
         },
 
         _setFinalState: function(finalState) {
