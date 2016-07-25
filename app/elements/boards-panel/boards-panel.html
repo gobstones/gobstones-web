@@ -24,21 +24,34 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     <div>
       Tablero final (resultado)
     </div>
-    <gs-board board='[ [{ "red": 5 }, {}, {}, {}], [{ "black": 4 }, {}, {}, {}], [{}, {}, {}, {}], [{}, {}, {}, {}] ]'></gs-board>
+    <gs-board board='{{finalBoard}}'></gs-board>
   </template>
   <script>
     (function() {
       'use strict';
 
+      var empty = [[]]
+
       Polymer({
         is: 'boards-panel',
+        properties: {
+          finalBoard: Object
+        },
         ready: function() {
+          var self = this;
           this.async(function() {
-            document.querySelector("#ide").addEventListener("execution-result", function(asd) {
-              console.log("PASÓ", asd)
+            document.querySelector("#ide").addEventListener("execution-result", function(eventInfo) {
+              self.onExecute(eventInfo.detail);
             })
           })
         },
+
+        onExecute: function(event) {
+          var table = event.context.board().table;
+          var adaptedTable = this._adaptTableFromCompilerToBoard(table);
+          this._forceRender(adaptedTable);
+        },
+
         _adaptTableFromCompilerToBoard: function(table) {
           // TODO: Mover a algún adapter
           table = table.map(function(colorRows) {
@@ -62,6 +75,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
           return _.zipWith(blueRows, redRows, blackRows, greenRows, function(blue, red, black, green) {
             return _.merge(blue, red, black, green);
+          });
+        },
+
+        _forceRender: function(board) {
+          console.log(board);
+          this.finalBoard = empty;
+          this.async(function() {
+            this.finalBoard = board
           });
         }
       });
