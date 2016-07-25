@@ -16,17 +16,19 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
 <dom-module id="boards-panel">
   <template>
-    <div>
-      Tablero inicial
-    </div>
-    <gs-board size='{ "x": 4, "y": 4 }' options='{ "editable": true }'></gs-board>
-
-    <template is="dom-if" if="{{finalState}}">
+    <div style="text-align: center;">
       <div>
-        Tablero final (resultado)
+        Tablero inicial
       </div>
-      <gs-board header="{{finalState.header}}" board='{{finalState.board}}'></gs-board>
-    </template>
+      <gs-board size='{ "x": 2, "y": 2 }' options='{ "editable": true }'></gs-board>
+
+      <template is="dom-if" if="{{finalState}}">
+        <div style="margin-top: 20px;">
+          Tablero final (resultado)
+        </div>
+        <gs-board header="{{finalState.header}}" board='{{finalState.board}}'></gs-board>
+      </template>
+    </div>
   </template>
   <script>
     (function() {
