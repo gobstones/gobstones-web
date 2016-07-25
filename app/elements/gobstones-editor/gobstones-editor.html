@@ -93,7 +93,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           context.init();
           try {
             var ast = grammar.parseProgram(sourceCode);
-            console.log(ast);
             try {
               grammar.interpret(ast, context);
             } catch (e) {
@@ -101,8 +100,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             }
 
             this.fire("execution-result", {context:context});
-            var string = context.board().printAscii();
-            console.log(string);
           } catch (e) {
             if (e) {
               console.log("CATCHED PARSER ERROR: ", e);
