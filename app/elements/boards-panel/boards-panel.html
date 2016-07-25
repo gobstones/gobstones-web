@@ -16,10 +16,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
 <dom-module id="boards-panel">
   <template>
-    <style>
-
-    </style>
-
     <div>
       Tablero inicial
     </div>
@@ -36,20 +32,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
       Polymer({
         is: 'boards-panel',
-        listeners: {
-          "execution-result": "prueba"
-        },
-        properties: {
-
-        },
-
-        ready: function() {
-        },
-
-        prueba: function(a) {
-          console.log("a", a);
-        }
-
         _adaptTableFromCompilerToBoard: function(table) {
           // TODO: Mover a algún adapter
           table = table.map(function(colorRows) {
