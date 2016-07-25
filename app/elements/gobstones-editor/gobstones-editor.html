@@ -90,6 +90,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           editor.getSession().clearAnnotations();
 
           var context = new Context();
+          context.board().sizeX = 4; // TODO: Unharcode here and in weblang-core
+          context.board().sizeY = 4;
           context.init();
           try {
             var ast = grammar.parseProgram(sourceCode);
