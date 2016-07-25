@@ -32,6 +32,13 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
       Polymer({
         is: 'boards-panel',
+        ready: function() {
+          this.async(function() {
+            document.querySelector("#ide").addEventListener("execution-result", function(asd) {
+              console.log("PASÓ", asd)
+            })
+          })
+        },
         _adaptTableFromCompilerToBoard: function(table) {
           // TODO: Mover a algún adapter
           table = table.map(function(colorRows) {
