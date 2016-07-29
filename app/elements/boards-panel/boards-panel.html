@@ -1,19 +1,9 @@
-<!--
-@license
-Copyright (c) 2015 The Polymer Project Authors. All rights reserved.
-This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
-The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
-The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
-Code distributed by Google as part of the polymer project is also
-subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
--->
-
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 <link rel="import" href="../../bower_components/iron-icons/av-icons.html">
 <link rel="import" href="../../bower_components/paper-fab/paper-fab.html">
 <link rel="import" href="../../bower_components/paper-styles/typography.html">
 <link rel="import" href="../../bower_components/gs-board/dist/components/gs-board.html">
-<script src="../../bower_components/lodash/lodash.min.js"></script>
+
 <dom-module id="boards-panel">
   <template>
     <div style="text-align: center;">
@@ -31,66 +21,61 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     </div>
   </template>
   <script>
-    (function() {
-      'use strict';
-
-      Polymer({
-        is: 'boards-panel',
-        properties: {
-          finalState: Object
-        },
-        ready: function() {
-          var self = this;
-          this.async(function() {
-            document.querySelector("#ide").addEventListener("execution-result", function(eventInfo) {
-              self.onExecute(eventInfo.detail);
-            })
+    Polymer({
+      is: 'boards-panel',
+      properties: {
+        finalState: Object
+      },
+      ready: function() {
+        var self = this;
+        this.async(function() {
+          document.querySelector("#ide").addEventListener("execution-result", function(eventInfo) {
+            self.onExecute(eventInfo.detail);
           })
-        },
+        })
+      },
 
-        onExecute: function(event) {
-          var board = event.context.board();
-          var header = _.pick(board, "x", "y");
-          var adaptedTable = this._adaptTableFromCompilerToBoard(board.table);
+      onExecute: function(event) {
+        var board = event.context.board();
+        var header = _.pick(board, "x", "y");
+        var adaptedTable = this._adaptTableFromCompilerToBoard(board.table);
 
-          this._setFinalState({
-            header: header,
-            board: adaptedTable
-          });
-        },
+        this._setFinalState({
+          header: header,
+          board: adaptedTable
+        });
+      },
 
-        _adaptTableFromCompilerToBoard: function(table) {
-          // TODO: Mover a algún adapter
-          var mapColor = function(index, color) {
-            return table[index].map(function(rows) {
-              return rows.map(function(amount) {
-                var cell = {};
-                cell[color] = amount;
-                return cell;
-              });
+      _adaptTableFromCompilerToBoard: function(table) {
+        // TODO: Mover a algún adapter
+        var mapColor = function(index, color) {
+          return table[index].map(function(rows) {
+            return rows.map(function(amount) {
+              var cell = {};
+              cell[color] = amount;
+              return cell;
             });
-          }
-
-          var blueColumns = mapColor(0, "blue");
-          var redColumns = mapColor(1, "red");
-          var blackColumns = mapColor(2, "black");
-          var greenColumns = mapColor(3, "green");
-
-          return _(blueColumns)
-            .zipWith(redColumns, blackColumns, greenColumns, _.merge)
-            .unzip()
-            .reverse()
-            .value()
-        },
-
-        _setFinalState: function(finalState) {
-          this.finalState = null;
-          this.async(function() {
-            this.finalState = finalState;
           });
-        }
-      });
+        };
 
-    })();
+        var blueColumns = mapColor(0, "blue");
+        var redColumns = mapColor(1, "red");
+        var blackColumns = mapColor(2, "black");
+        var greenColumns = mapColor(3, "green");
+
+        return _(blueColumns)
+          .zipWith(redColumns, blackColumns, greenColumns, _.merge)
+          .unzip()
+          .reverse()
+          .value()
+      },
+
+      _setFinalState: function(finalState) {
+        this.finalState = null;
+        this.async(function() {
+          this.finalState = finalState;
+        });
+      }
+    });
   </script>
 </dom-module>
