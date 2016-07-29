@@ -11,9 +11,9 @@ then
   sed -i.tmp1 "s/This is another card./This is another card. PSK Deployed on: $date_value/" app/index.html
 
   deploy_ghpages () {
-    # Deploying to GitHub Pages! (http://polymerelements.github.io/polymer-starter-kit)
+    # Deploying to GitHub Pages! (http://gobstones.github.io/gobstones-web)
     echo Deploying to GitHub Pages
-    sed -i.tmp "s/\/\/ app.baseUrl = '\/polymer-starter-kit/app.baseUrl = '\/polymer-starter-kit/" app/scripts/app.js
+    sed -i.tmp "s/\/\/ app.baseUrl = '\/polymer-starter-kit/app.baseUrl = '\/gobstones-web/" app/scripts/app.js
     sed -i.tmp2 "s/<\/head>/\  \<script>'https:'!==window.location.protocol\&\&(window.location.protocol='https')<\/script>&/g" app/index.html
     gulp build-deploy-gh-pages
     # Undoing Changes to PSK for GitHub Pages
@@ -43,7 +43,7 @@ then
   }
 
   deploy_ghpages
-  deploy_firebase
+  # deploy_firebase
 
   # Revert to orginal index.html and delete temp file
   cp app/index.html.tmp1 app/index.html
@@ -52,5 +52,5 @@ elif [ "$TRAVIS_BRANCH" = "master" ] && [ "$TRAVIS_PULL_REQUEST" = "false" ]  &&
 then
   echo "Do Nothing, only deploy with Node 5.1"
 else
-  npm test
+  # npm test
 fi
