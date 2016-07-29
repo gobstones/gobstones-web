@@ -14,7 +14,7 @@ npm start
 ```
 
 ## deploy
-The code in `#master` is automatically deployed to: http://gobstones.github.io/gobstones-web
+This is hosted at Github Pages in http://gobstones.github.io/gobstones-web
 
 ## more docs
 
