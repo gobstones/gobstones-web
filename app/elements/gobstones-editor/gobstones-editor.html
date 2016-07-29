@@ -19,7 +19,6 @@
           @apply(--gobstones-editor);
         }
       }
-
     </style>
 
       <ace-widget
@@ -40,68 +39,67 @@
   <script>
     Polymer({
       is: 'gobstones-editor',
-      listeners:{
-        "ace.editor-ready":"onAceReady",
-        "ace.editor-content":"onContentChange"
-      },
-      properties: {
-
+      listeners: {
+        "ace.editor-ready": "onAceReady",
+        "ace.editor-content": "onContentChange"
       },
 
-      ready: function() {
-
-      },
-
-      onAceReady: function(){
-        var editor = this.$.ace.editor;
+      onAceReady: function() {
+        const editor = this.$.ace.editor;
         editor.$blockScrolling = Infinity;
-
       },
 
-      onContentChange: function(content){
-        var value = content.detail.value;
+      onContentChange: function(content) {
+        const value = content.detail.value;
       },
 
-      onRunCode: function(){
-        var gsWeblangCore = window.gsWeblangCore;
-        var editor = this.$.ace.editor;
-        var sourceCode = this.$.ace.editor.getValue();
-        var tokens = gsWeblangCore.tokens;
-        var interpreter = gsWeblangCore.interpreter;
-        var Lexer = gsWeblangCore.lexer;
-        var Parser = gsWeblangCore.parser;
-        var Grammar = gsWeblangCore.grammar;
-        var Context = gsWeblangCore.context;
+      onRunCode: function() {
+        const editor = this.$.ace.editor;
+        const sourceCode = this.$.ace.editor.getValue();
 
-        var grammar = Grammar(Parser, new Lexer(), tokens, interpreter);
         editor.getSession().clearAnnotations();
 
-        var context = new Context();
+        try {
+          const context = this._parse(sourceCode);
+          this.fire("execution-result", { context: context });
+        } catch (e) {
+          console.log("CATCHED PARSER ERROR: ", e);
+          editor.getSession().setAnnotations([{
+            row: e.on.row,
+            column: 0,
+            text: e.error,
+            type: "error" // also warning and information
+          }]);
+        }
+      },
+
+      _parse: function(sourceCode) {
+        const {
+          tokens, interpreter, lexer: Lexer,
+          parser: Parser, grammar: Grammar,
+          context: Context
+        } = window.gsWeblangCore;
+
+        const context = this._createContext(Context);
+        const grammar = Grammar(Parser, new Lexer(), tokens, interpreter);
+        const ast = grammar.parseProgram(sourceCode);
+
+        try {
+          grammar.interpret(ast, context);
+        } catch (e) {
+          console.log("INTERPRETER ERROR: ", e);
+        }
+
+        return context;
+      },
+
+      _createContext: function(Context) {
+        const context = new Context();
         context.board().sizeX = 2; // TODO: Unharcode here and in weblang-core
         context.board().sizeY = 2;
         context.init();
-        try {
-          var ast = grammar.parseProgram(sourceCode);
-          try {
-            grammar.interpret(ast, context);
-          } catch (e) {
-            console.log("INTERPRETER ERROR: ", e);
-          }
-
-          this.fire("execution-result", {context:context});
-        } catch (e) {
-          if (e) {
-            console.log("CATCHED PARSER ERROR: ", e);
-            editor.getSession().setAnnotations([{
-              row: e.on.row,
-              column: 0,
-              text: e.error,
-              type: "error" // also warning and information
-            }]);
-          }
-        }
+        return context;
       }
-
     });
   </script>
 </dom-module>
