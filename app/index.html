@@ -52,11 +52,16 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   <!-- endbuild -->
 
   <!-- Polymer -->
-  <link rel="import" href="../../bower_components/polymer/polymer.html">
+  <link rel="import" href="bower_components/polymer/polymer.html">
 
-  <!-- Gobstones -->
-  <script src="https://npmcdn.com/gs-weblang-core@0.1.3/umd/index.umd.min.js" type="text/javascript"
-          charset="utf-8"></script>
+  <!-- Global libraries -->
+  <script src="bower_components/lodash/dist/lodash.min.js"></script>
+
+  <!-- Importer -->
+  <script src="bower_components/es6-module-loader/dist/es6-module-loader-dev.js" type="text/javascript" charset="utf-8"></script>
+  <script>
+    System.transpiler = 'babel';
+  </script>
 
   <!-- Because this project uses vulcanize this should be your only html import
        in this file. All other imports should go in elements.html -->

@@ -1,13 +1,3 @@
-<!--
-@license
-Copyright (c) 2015 The Polymer Project Authors. All rights reserved.
-This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
-The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
-The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
-Code distributed by Google as part of the polymer project is also
-subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
--->
-
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 <link rel="import" href="../../bower_components/iron-icons/av-icons.html">
 <link rel="import" href="../../bower_components/paper-fab/paper-fab.html">
@@ -16,6 +6,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
 <dom-module id="gobstones-editor">
   <template>
+
     <style>
       :host {
         display: block;
@@ -30,92 +21,96 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         }
       }
 
+      .run-button {
+        position: absolute;
+        bottom: 30px;
+        right: 24px;
+      }
     </style>
 
-      <ace-widget
-        id="ace"
-        mode="ace/mode/gobstones"
-        theme="ace/theme/chrome"
-        tab-size="4"
-      >
-      </ace-widget>
+    <ace-widget
+      id="ace"
+      mode="ace/mode/gobstones"
+      theme="ace/theme/chrome"
+      tab-size="4"
+    >
+    </ace-widget>
     <paper-fab icon="av:play-arrow"
-               style="position:absolute; bottom: 30px; right:24px"
+               class="run-button"
                on-click="onRunCode"
     ></paper-fab>
   </template>
+
   <script src="https://npmcdn.com/gs-weblang-core@0.1.4/umd/index.umd.min.js"
           type="text/javascript"
-          charset="utf-8"></script>
+          charset="utf-8"></script> <!-- // TODO: Mover -->
+
   <script>
-    (function() {
-      'use strict';
 
-      Polymer({
-        is: 'gobstones-editor',
-        listeners:{
-          "ace.editor-ready":"onAceReady",
-          "ace.editor-content":"onContentChange"
-        },
-        properties: {
+    Polymer({
+      is: 'gobstones-editor',
+      listeners: {
+        "ace.editor-ready": "onAceReady",
+        "ace.editor-content": "onContentChange"
+      },
 
-        },
+      onAceReady: function() {
+        const editor = this.$.ace.editor;
+        editor.$blockScrolling = Infinity;
+      },
 
-        ready: function() {
+      onContentChange: function(content) {
+        const value = content.detail.value;
+      },
 
-        },
+      onRunCode: function() {
+        const editor = this.$.ace.editor;
+        const sourceCode = this.$.ace.editor.getValue();
 
-        onAceReady: function(){
-          var editor = this.$.ace.editor;
-          editor.$blockScrolling = Infinity;
+        editor.getSession().clearAnnotations();
 
-        },
+        try {
+          const context = this._parse(sourceCode);
+          this.fire("execution-result", { context: context });
+        } catch (e) {
+          console.log("CATCHED PARSER ERROR: ", e);
+          editor.getSession().setAnnotations([{
+            row: e.on.row,
+            column: 0,
+            text: e.error,
+            type: "error" // also warning and information
+          }]);
+        }
+      },
 
-        onContentChange: function(content){
-          var value = content.detail.value;
-        },
+      _parse: function(sourceCode) {
+        const {
+          tokens, interpreter, lexer: Lexer,
+          parser: Parser, grammar: Grammar,
+          context: Context
+        } = window.gsWeblangCore;
 
-        onRunCode: function(){
-          var gsWeblangCore = window.gsWeblangCore;
-          var editor = this.$.ace.editor;
-          var sourceCode = this.$.ace.editor.getValue();
-          var tokens = gsWeblangCore.tokens;
-          var interpreter = gsWeblangCore.interpreter;
-          var Lexer = gsWeblangCore.lexer;
-          var Parser = gsWeblangCore.parser;
-          var Grammar = gsWeblangCore.grammar;
-          var Context = gsWeblangCore.context;
+        const context = this._createContext(Context);
+        const grammar = Grammar(Parser, new Lexer(), tokens, interpreter);
+        const ast = grammar.parseProgram(sourceCode);
 
-          var grammar = Grammar(Parser, new Lexer(), tokens, interpreter);
-          editor.getSession().clearAnnotations();
-
-          var context = new Context();
-          context.board().sizeX = 2; // TODO: Unharcode here and in weblang-core
-          context.board().sizeY = 2;
-          context.init();
-          try {
-            var ast = grammar.parseProgram(sourceCode);
-            try {
-              grammar.interpret(ast, context);
-            } catch (e) {
-              console.log("INTERPRETER ERROR: ", e);
-            }
-
-            this.fire("execution-result", {context:context});
-          } catch (e) {
-            if (e) {
-              console.log("CATCHED PARSER ERROR: ", e);
-              editor.getSession().setAnnotations([{
-                row: e.on.row,
-                column: 0,
-                text: e.error,
-                type: "error" // also warning and information
-              }]);
-            }
-          }
+        try {
+          grammar.interpret(ast, context);
+        } catch (e) {
+          console.log("INTERPRETER ERROR: ", e);
         }
 
-      });
-    })();
+        return context;
+      },
+
+      _createContext: function(Context) {
+        const context = new Context();
+        context.board().sizeX = 2; // TODO: Unharcode here and in weblang-core
+        context.board().sizeY = 2;
+        context.init();
+        return context;
+      }
+    });
+
   </script>
 </dom-module>
