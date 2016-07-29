@@ -1,7 +1,7 @@
 #!/bin/bash -e
 set -o pipefail
 
-if [ "$TRAVIS_BRANCH" = "master" ] && [ "$TRAVIS_PULL_REQUEST" = "false" ]  && [ "$TRAVIS_NODE_VERSION" = "5.1" ]
+if [ "$TRAVIS_BRANCH" = "master" ] && [ "$TRAVIS_PULL_REQUEST" = "false" ]
 then
   git config --global user.email "samccone@gmail.com"
   git config --global user.name "auto deployer"
@@ -48,9 +48,6 @@ then
   # Revert to orginal index.html and delete temp file
   cp app/index.html.tmp1 app/index.html
   rm app/index.html.tmp1
-elif [ "$TRAVIS_BRANCH" = "master" ] && [ "$TRAVIS_PULL_REQUEST" = "false" ]  && [ "$TRAVIS_NODE_VERSION" != "5.1" ]
-then
-  echo "Do Nothing, only deploy with Node 5.1"
 else
   echo "Disabled for now"
   # npm test
