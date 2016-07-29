@@ -52,5 +52,6 @@ elif [ "$TRAVIS_BRANCH" = "master" ] && [ "$TRAVIS_PULL_REQUEST" = "false" ]  &&
 then
   echo "Do Nothing, only deploy with Node 5.1"
 else
+  echo "Disabled for now"
   # npm test
 fi
