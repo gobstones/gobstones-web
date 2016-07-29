@@ -6,6 +6,7 @@
 
 <dom-module id="gobstones-editor">
   <template>
+
     <style>
       :host {
         display: block;
@@ -19,24 +20,33 @@
           @apply(--gobstones-editor);
         }
       }
+
+      .run-button {
+        position: absolute;
+        bottom: 30px;
+        right: 24px;
+      }
     </style>
 
-      <ace-widget
-        id="ace"
-        mode="ace/mode/gobstones"
-        theme="ace/theme/chrome"
-        tab-size="4"
-      >
-      </ace-widget>
+    <ace-widget
+      id="ace"
+      mode="ace/mode/gobstones"
+      theme="ace/theme/chrome"
+      tab-size="4"
+    >
+    </ace-widget>
     <paper-fab icon="av:play-arrow"
-               style="position:absolute; bottom: 30px; right:24px"
+               class="run-button"
                on-click="onRunCode"
     ></paper-fab>
   </template>
+
   <script src="https://npmcdn.com/gs-weblang-core@0.1.4/umd/index.umd.min.js"
           type="text/javascript"
           charset="utf-8"></script> <!-- // TODO: Mover -->
+
   <script>
+
     Polymer({
       is: 'gobstones-editor',
       listeners: {
@@ -101,5 +111,6 @@
         return context;
       }
     });
+
   </script>
 </dom-module>

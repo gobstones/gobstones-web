@@ -1,26 +1,38 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
-<link rel="import" href="../../bower_components/iron-icons/av-icons.html">
-<link rel="import" href="../../bower_components/paper-fab/paper-fab.html">
-<link rel="import" href="../../bower_components/paper-styles/typography.html">
 <link rel="import" href="../../bower_components/gs-board/dist/components/gs-board.html">
+<link rel="import" href="../../scripts/parserToBoardAdapter.html">
 
 <dom-module id="boards-panel">
   <template>
-    <div style="text-align: center;">
+
+    <style>
+      .boards-panel {
+        text-align: center;
+      }
+
+      .final-board {
+        margin-top: 20px;
+      }
+    </style>
+
+    <div class="boards-panel">
       <div>
         Tablero inicial
       </div>
       <gs-board size='{ "x": 2, "y": 2 }' options='{ "editable": true }'></gs-board>
 
       <template is="dom-if" if="{{finalState}}">
-        <div style="margin-top: 20px;">
+        <div class="final-board">
           Tablero final (resultado)
         </div>
         <gs-board header="{{finalState.header}}" board='{{finalState.board}}'></gs-board>
       </template>
     </div>
+
   </template>
+
   <script>
+
     Polymer({
       is: 'boards-panel',
       properties: {
@@ -40,32 +52,8 @@
 
         this._setFinalState({
           header: _.pick(board, "x", "y"),
-          board: this._adaptTableFromCompilerToBoard(board.table)
+          board: new ParserToBoardAdapter().adapt(board.table)
         });
-      },
-
-      _adaptTableFromCompilerToBoard: function(table) {
-        // TODO: Mover a algún adapter
-        let mapColor = (index, color) => {
-          return table[index].map((rows) => {
-            return rows.map((amount) => {
-              var cell = {};
-              cell[color] = amount;
-              return cell;
-            });
-          });
-        };
-
-        const blueColumns = mapColor(0, "blue");
-        const redColumns = mapColor(1, "red");
-        const blackColumns = mapColor(2, "black");
-        const greenColumns = mapColor(3, "green");
-
-        return _(blueColumns)
-          .zipWith(redColumns, blackColumns, greenColumns, _.merge)
-          .unzip()
-          .reverse()
-          .value()
       },
 
       _setFinalState: function(finalState) {
@@ -75,5 +63,6 @@
         });
       }
     });
+
   </script>
 </dom-module>
