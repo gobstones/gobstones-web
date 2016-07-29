@@ -26,31 +26,29 @@
       properties: {
         finalState: Object
       },
+
       ready: function() {
-        var self = this;
-        this.async(function() {
-          document.querySelector("#ide").addEventListener("execution-result", function(eventInfo) {
-            self.onExecute(eventInfo.detail);
-          })
+        this.async(() => {
+          document.querySelector("#ide").addEventListener("execution-result", (eventInfo) => {
+            this.onExecute(eventInfo.detail);
+          });
         })
       },
 
       onExecute: function(event) {
-        var board = event.context.board();
-        var header = _.pick(board, "x", "y");
-        var adaptedTable = this._adaptTableFromCompilerToBoard(board.table);
+        const board = event.context.board();
 
         this._setFinalState({
-          header: header,
-          board: adaptedTable
+          header: _.pick(board, "x", "y"),
+          board: this._adaptTableFromCompilerToBoard(board.table)
         });
       },
 
       _adaptTableFromCompilerToBoard: function(table) {
         // TODO: Mover a algún adapter
-        var mapColor = function(index, color) {
-          return table[index].map(function(rows) {
-            return rows.map(function(amount) {
+        let mapColor = (index, color) => {
+          return table[index].map((rows) => {
+            return rows.map((amount) => {
               var cell = {};
               cell[color] = amount;
               return cell;
@@ -58,10 +56,10 @@
           });
         };
 
-        var blueColumns = mapColor(0, "blue");
-        var redColumns = mapColor(1, "red");
-        var blackColumns = mapColor(2, "black");
-        var greenColumns = mapColor(3, "green");
+        const blueColumns = mapColor(0, "blue");
+        const redColumns = mapColor(1, "red");
+        const blackColumns = mapColor(2, "black");
+        const greenColumns = mapColor(3, "green");
 
         return _(blueColumns)
           .zipWith(redColumns, blackColumns, greenColumns, _.merge)
