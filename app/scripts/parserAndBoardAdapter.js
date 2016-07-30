@@ -21,4 +21,26 @@ class ParserAndBoardAdapter {
       .reverse()
       .value()
   }
+
+  adaptToParser(table) {
+    const transposeOfTable = _(table)
+      .reverse()
+      .unzip()
+      .value();
+
+    const unmapColor = (color) => {
+      return transposeOfTable.map((rows) => {
+        return rows.map((cell) => {
+          return cell[color];
+        });
+      });
+    }
+
+    return [
+      unmapColor("blue"),
+      unmapColor("red"),
+      unmapColor("black"),
+      unmapColor("green")
+    ]
+  }
 }

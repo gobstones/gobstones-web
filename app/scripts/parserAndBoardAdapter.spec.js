@@ -1,25 +1,37 @@
 describe('ParserAndBoardAdapter', function() {
 
-  describe("adaptToBoard", function() {
+  var adapter;
 
-    it("can adapt to the board's model", function() {
-      parserModel = [
-        [[0, 3], [0, 0]], // blue - 1st row - 2nd row
-        [[0, 0], [0, 4]], // red
-        [[1, 0], [0, 0]], // black
-        [[0, 0], [5, 0]] //green
-      ];
+  beforeEach(function() {
+    adapter = new ParserAndBoardAdapter();
+  })
 
-      boardModel = [
-        [ c(3, 0, 0, 0), c(0, 4, 0, 0) ], // last row  - 1st col - 2nd col
-        [ c(0, 0, 1, 0), c(0, 0, 0, 5) ]  // first row - 1st col - 2nd col
-      ]
+  parserModel = function() {
+    return [
+      [[0, 3], [0, 0]], // blue  - columns - rows
+      [[0, 0], [0, 4]], // red   - columns - rows
+      [[1, 0], [0, 0]], // black - columns - rows
+      [[0, 0], [5, 0]] //  green - columns - rows
+    ];
+  };
 
-      expect(
-        new ParserAndBoardAdapter().adaptToBoard(parserModel)
-      ).toEqual(boardModel);
-    });
+  boardModel = function() {
+    return [
+      [ c(3, 0, 0, 0), c(0, 4, 0, 0) ], // 2nd row - columns - colors
+      [ c(0, 0, 1, 0), c(0, 0, 0, 5) ]  // 1st row - columns - colors
+    ];
+  };
 
+  it("can adapt to the board model", function() {
+    expect(
+      adapter.adaptToBoard(parserModel())
+    ).toEqual(boardModel());
+  });
+
+  it("can adapt to the parser model", function() {
+    expect(
+      adapter.adaptToParser(boardModel())
+    ).toEqual(parserModel());
   });
 
   c = function(blue, red, black, green) {
