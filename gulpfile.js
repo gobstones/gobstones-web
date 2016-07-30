@@ -324,4 +324,15 @@ gulp.task('js', function() {
 gulp.task('bowertotmp', function () {
   return gulp.src(['app/bower_components/**/*'])
     .pipe(gulp.dest('.tmp/bower_components/'));
-  });
+});
+
+// Run Jasmine tests
+gulp.task('jasmine', function() {
+  return gulp.src([
+    'app/bower_components/lodash/dist/lodash.min.js',
+    'app/scripts/**/*.js',
+    'app/scripts/**/*.spec.js'
+  ])
+    .pipe($.jasmineBrowser.specRunner())
+    .pipe($.jasmineBrowser.server());
+});
