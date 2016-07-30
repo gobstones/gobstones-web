@@ -49,6 +49,6 @@ then
   cp app/index.html.tmp1 app/index.html
   rm app/index.html.tmp1
 else
-  echo Disabled for now
+  echo "Disabled for now"
   # npm test
 fi

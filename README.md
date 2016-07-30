@@ -13,6 +13,11 @@ npm install && bower install
 npm start
 ```
 
+## run tests
+```bash
+gulp jasmine
+```
+
 ## deploy
 This is hosted at Github Pages in http://gobstones.github.io/gobstones-web
 
