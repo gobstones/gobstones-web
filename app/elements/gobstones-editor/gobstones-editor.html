@@ -54,6 +54,12 @@
         "ace.editor-content": "onContentChange"
       },
 
+      ready: function() {
+        this._subscribeToBoards("initial-state", (eventInfo) => {
+          this._runCode(eventInfo.detail);
+        });
+      },
+
       onAceReady: function() {
         const editor = this.$.ace.editor;
         editor.$blockScrolling = Infinity;
@@ -64,13 +70,17 @@
       },
 
       onRunCode: function() {
+        this.fire("execution-request");
+      },
+
+      _runCode: function(initialState) {
         const editor = this.$.ace.editor;
         const sourceCode = this.$.ace.editor.getValue();
 
         editor.getSession().clearAnnotations();
 
         try {
-          const context = this._parse(sourceCode);
+          const context = this._parse(sourceCode, initialState);
           this.fire("execution-result", { context: context });
         } catch (e) {
           console.log("CATCHED PARSER ERROR: ", e);
@@ -83,14 +93,14 @@
         }
       },
 
-      _parse: function(sourceCode) {
+      _parse: function(sourceCode, initialState) {
         const {
           tokens, interpreter, lexer: Lexer,
           parser: Parser, grammar: Grammar,
           context: Context
         } = window.gsWeblangCore;
 
-        const context = this._createContext(Context);
+        const context = this._createContext(Context, initialState);
         const grammar = Grammar(Parser, new Lexer(), tokens, interpreter);
         const ast = grammar.parseProgram(sourceCode);
 
@@ -103,12 +113,22 @@
         return context;
       },
 
-      _createContext: function(Context) {
+      _createContext: function(Context, initialState) {
         const context = new Context();
         context.board().sizeX = 2; // TODO: Unharcode here and in weblang-core
         context.board().sizeY = 2;
         context.init();
+
+        context.board().table = initialState;
+        // TODO: Esto en realidad es la table. Hacer que incluya el cabezal.
+
         return context;
+      },
+
+      _subscribeToBoards: function(eventName, eventHandler) {
+        this.async(() => {
+          document.querySelector("#boards").addEventListener(eventName, eventHandler);
+        });
       }
     });
 

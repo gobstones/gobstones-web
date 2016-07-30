@@ -20,7 +20,7 @@
       <div>
         Tablero inicial
       </div>
-      <gs-board size='{ "x": 2, "y": 2 }' options='{ "editable": true }'></gs-board>
+      <gs-board size='{ "x": 2, "y": 2 }' id="initialStateEditor" options='{ "editable": true }'></gs-board>
 
       <template is="dom-if" if="{{finalState}}">
         <div class="final-board">
@@ -41,19 +41,28 @@
       },
 
       ready: function() {
-        this.async(() => {
-          document.querySelector("#ide").addEventListener("execution-result", (eventInfo) => {
-            this.onExecute(eventInfo.detail);
-          });
-        })
+        this._adapter = new ParserAndBoardAdapter();
+
+        this._subscribeToEditor("execution-request", () => {
+          this._exposeInitialState();
+        });
+
+        this._subscribeToEditor("execution-result", (eventInfo) => {
+          this._onExecute(eventInfo.detail);
+        });
       },
 
-      onExecute: function(event) {
+      _exposeInitialState: function() {
+        const table = this.$.initialStateEditor.board;
+        this.fire("initial-state", this._adapter.adaptToParser(table));
+      },
+
+      _onExecute: function(event) {
         const board = event.context.board();
 
         this._setFinalState({
           header: _.pick(board, "x", "y"),
-          board: new ParserAndBoardAdapter().adaptToBoard(board.table)
+          board: this._adapter.adaptToBoard(board.table)
         });
       },
 
@@ -61,6 +70,12 @@
         this.finalState = null;
         this.async(function() {
           this.finalState = finalState;
+        });
+      },
+
+      _subscribeToEditor: function(eventName, eventHandler) {
+        this.async(() => {
+          document.querySelector("#editor").addEventListener(eventName, eventHandler);
         });
       }
     });
