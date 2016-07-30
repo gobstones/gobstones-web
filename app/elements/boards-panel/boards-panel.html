@@ -1,7 +1,7 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 <link rel="import" href="../../bower_components/gs-board/dist/components/gs-board.html">
 <link rel="import" href="../../scripts/lodash.html">
-<link rel="import" href="../../scripts/parserToBoardAdapter.html">
+<link rel="import" href="../../scripts/parserAndBoardAdapter.html">
 
 <dom-module id="boards-panel">
   <template>
@@ -53,7 +53,7 @@
 
         this._setFinalState({
           header: _.pick(board, "x", "y"),
-          board: new ParserToBoardAdapter().adapt(board.table)
+          board: new ParserAndBoardAdapter().adaptToBoard(board.table)
         });
       },
 

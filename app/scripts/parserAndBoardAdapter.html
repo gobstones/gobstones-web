@@ -1,8 +1,8 @@
 <link rel="import" href="lodash.html">
 <script>
 
-  class ParserToBoardAdapter {
-    adapt(table) {
+  class ParserAndBoardAdapter {
+    adaptToBoard(table) {
       const mapColor = (index, color) => {
         return table[index].map((rows) => {
           return rows.map((amount) => {
