@@ -23,7 +23,7 @@ class ParserAndBoardAdapter {
   }
 
   adaptToParser(table) {
-    const transposeOfTable = _(table)
+    const transposeOfTable = _(_.cloneDeep(table))
       .reverse()
       .unzip()
       .value();
