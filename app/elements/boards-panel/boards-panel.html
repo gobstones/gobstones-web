@@ -19,13 +19,13 @@
       <div>
         Tablero inicial
       </div>
-      <gs-board size='{ "x": 2, "y": 2 }' id="initialStateEditor" options='{ "editable": true }'></gs-board>
+      <gs-board size='{ "x": 4, "y": 4 }' id="initialStateEditor" options='{ "editable": true }'></gs-board>
 
       <template is="dom-if" if="{{finalState}}">
         <div class="final-board">
           Tablero final (resultado)
         </div>
-        <gs-board header="{{finalState.header}}" board='{{finalState.board}}'></gs-board>
+        <gs-board size='{ "x": 4, "y": 4 }' header="{{finalState.header}}" board='{{finalState.board}}'></gs-board>
       </template>
     </div>
 
