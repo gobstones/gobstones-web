@@ -10,7 +10,8 @@
     "polymer": "Polymer/polymer#^1.2.0",
     "ace-widget": "LostInBrittany/ace-widget#^1.0.13",
     "gs-board": "gobstones/gs-board#^0.1.0",
-    "lodash": "^4.14.0"
+    "lodash": "^4.14.0",
+    "webcomponentsjs": "^0.7.22"
   },
   "devDependencies": {
     "web-component-tester": "^4.0.0"
