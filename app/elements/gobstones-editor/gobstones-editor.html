@@ -41,7 +41,7 @@
     ></paper-fab>
   </template>
 
-  <script src="https://npmcdn.com/gs-weblang-core@0.1.5/umd/index.umd.js"
+  <script src="https://npmcdn.com/gs-weblang-core@0.1.7/umd/index.umd.js"
           type="text/javascript"
           charset="utf-8"></script> <!-- // TODO: Mover -->
 
@@ -85,11 +85,13 @@
         } catch (e) {
           console.log("CATCHED PARSER ERROR: ", e);
           editor.getSession().setAnnotations([{
-            row: e.on.row,
+            row: e.on.range.start.row,
             column: 0,
             text: e.error,
-            type: "error" // also warning and information
+            type: "error"
           }]);
+//          var AceRange = ace.require('ace/range').Range;
+//          editor.getSession().addMarker(new AceRange(e.on.range.start.row, e.on.range.start.column, e.on.range.end.row, e.on.range.end.column), "error-line", "fullLine", true);
         }
       },
 
@@ -107,7 +109,14 @@
         try {
           grammar.interpret(ast, context);
         } catch (e) {
-          console.log("INTERPRETER ERROR: ", e);
+          if (e.error) {
+            editor.getSession().setAnnotations([{
+              row: e.on.start.row,
+              column: 0,
+              text: e.error,
+              type: "error"
+            }]);
+          }
         }
 
         return context;
@@ -115,8 +124,8 @@
 
       _createContext: function(Context, initialState) {
         const context = new Context();
-        context.board().sizeX = 2; // TODO: Unharcode here and in weblang-core
-        context.board().sizeY = 2;
+        context.board().sizeX = 4; // TODO: Unharcode here and in weblang-core
+        context.board().sizeY = 4;
         context.init();
 
         context.board().table = initialState;
