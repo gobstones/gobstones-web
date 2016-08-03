@@ -25,7 +25,7 @@
         <div class="final-board">
           Tablero final (resultado)
         </div>
-        <gs-board size='{ "x": 4, "y": 4 }' header="{{finalState.header}}" board='{{finalState.board}}'></gs-board>
+        <gs-board size='{ "x": 4, "y": 4 }' header="{{finalState.header}}" table='{{finalState.table}}'></gs-board>
       </template>
     </div>
 
@@ -55,7 +55,7 @@
         const initialStateEditor = this.$.initialStateEditor
         const initialState = {
           header: initialStateEditor.header,
-          board: this._adapter.adaptToParser(initialStateEditor.board)
+          table: this._adapter.adaptToParser(initialStateEditor.table)
         }
         this.fire("initial-state", initialState);
       },
@@ -65,7 +65,7 @@
 
         this._setFinalState({
           header: _.pick(board, "x", "y"),
-          board: this._adapter.adaptToBoard(board.table)
+          table: this._adapter.adaptToBoard(board.table)
         });
       },
 
