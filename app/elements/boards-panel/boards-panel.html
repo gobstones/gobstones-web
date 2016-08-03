@@ -52,8 +52,12 @@
       },
 
       _exposeInitialState: function() {
-        const table = this.$.initialStateEditor.board;
-        this.fire("initial-state", this._adapter.adaptToParser(table));
+        const initialStateEditor = this.$.initialStateEditor
+        const initialState = {
+          header: initialStateEditor.header,
+          board: this._adapter.adaptToParser(initialStateEditor.board)
+        }
+        this.fire("initial-state", initialState);
       },
 
       _onExecute: function(event) {

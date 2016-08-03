@@ -128,8 +128,11 @@
         context.board().sizeY = 4;
         context.init();
 
-        context.board().table = initialState;
-        // TODO: Esto en realidad es la table. Hacer que incluya el cabezal.
+        _.assign(context.board(), {
+          x: initialState.header.x,
+          y: initialState.header.y,
+          table: initialState.board
+        });
 
         return context;
       },
