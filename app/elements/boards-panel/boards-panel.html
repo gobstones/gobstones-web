@@ -13,6 +13,14 @@
       .final-board {
         margin-top: 20px;
       }
+
+      .alert {
+        padding: 20px;
+        background-color: #f44336; /* red */
+        color: white;
+        margin: 20px;
+        border-radius: 5px;
+      }
     </style>
 
     <div class="boards-panel">
@@ -21,11 +29,17 @@
       </div>
       <gs-board size='{ "x": 4, "y": 4 }' id="initialStateEditor" options='{ "editable": true }'></gs-board>
 
-      <template is="dom-if" if="{{finalState}}">
-        <div class="final-board">
-          Tablero final (resultado)
-        </div>
-        <gs-board size='{ "x": 4, "y": 4 }' header="{{finalState.header}}" board='{{finalState.board}}'></gs-board>
+      <template is="dom-if" if="{{error}}">
+        <div class="alert">{{error}}</div>
+      </template>
+
+      <template is="dom-if" if="{{!error}}">
+        <template is="dom-if" if="{{finalState}}">
+          <div class="final-board">
+            Tablero final (resultado)
+          </div>
+          <gs-board size='{ "x": 4, "y": 4 }' header="{{finalState.header}}" table='{{finalState.table}}'></gs-board>
+        </template>
       </template>
     </div>
 
@@ -36,33 +50,48 @@
     Polymer({
       is: 'boards-panel',
       properties: {
-        finalState: Object
+        finalState: Object,
+        error: Object
       },
 
       ready: function() {
         this._adapter = new ParserAndBoardAdapter();
 
         this._subscribeToEditor("execution-request", () => {
-          this._exposeInitialState();
+          this._onRunRequest();
         });
 
         this._subscribeToEditor("execution-result", (eventInfo) => {
-          this._onExecute(eventInfo.detail);
+          this._onResult(eventInfo.detail);
+        });
+
+        this._subscribeToEditor("execution-error", (eventInfo) => {
+          this._onError(eventInfo.detail);
         });
       },
 
-      _exposeInitialState: function() {
-        const table = this.$.initialStateEditor.board;
-        this.fire("initial-state", this._adapter.adaptToParser(table));
+      _onRunRequest: function() {
+        this._clean();
+
+        const initialStateEditor = this.$.initialStateEditor
+        const initialState = {
+          header: initialStateEditor.header,
+          table: this._adapter.adaptToParser(initialStateEditor.table)
+        }
+        this.fire("initial-state", initialState);
       },
 
-      _onExecute: function(event) {
-        const board = event.context.board();
+      _onResult: function(result) {
+        const board = result.context.board();
 
         this._setFinalState({
           header: _.pick(board, "x", "y"),
-          board: this._adapter.adaptToBoard(board.table)
+          table: this._adapter.adaptToBoard(board.table)
         });
+      },
+
+      _onError: function(error) {
+        this.error = error;
       },
 
       _setFinalState: function(finalState) {
@@ -70,6 +99,11 @@
         this.async(function() {
           this.finalState = finalState;
         });
+      },
+
+      _clean: function() {
+        this.finalState = null;
+        this.error = null;
       },
 
       _subscribeToEditor: function(eventName, eventHandler) {

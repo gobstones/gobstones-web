@@ -41,7 +41,7 @@
     ></paper-fab>
   </template>
 
-  <script src="https://npmcdn.com/gs-weblang-core@0.1.7/umd/index.umd.js"
+  <script src="https://npmcdn.com/gs-weblang-core@0.1.9/umd/index.umd.js"
           type="text/javascript"
           charset="utf-8"></script> <!-- // TODO: Mover -->
 
@@ -117,6 +117,9 @@
               type: "error"
             }]);
           }
+
+          console.log(e);
+          this.fire("execution-error", e.message);
         }
 
         return context;
@@ -128,8 +131,11 @@
         context.board().sizeY = 4;
         context.init();
 
-        context.board().table = initialState;
-        // TODO: Esto en realidad es la table. Hacer que incluya el cabezal.
+        _.assign(context.board(), {
+          x: initialState.header.x,
+          y: initialState.header.y,
+          table: initialState.table
+        });
 
         return context;
       },
