@@ -59,7 +59,15 @@
           this._runCode(eventInfo.detail);
         });
 
+        const ace = this.$.ace;
+        ace.focus();
+        ace.editor.commands.addCommand({
+          name: "run-code",
+          bindKey: { win: "ctrl+enter", mac: "command+enter" },
+          exec: () => { this.onRunCode() }
+        });
         this.$.ace.focus()
+
       },
 
       onAceReady: function() {
