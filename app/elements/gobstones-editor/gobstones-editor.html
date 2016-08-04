@@ -58,6 +58,8 @@
         this._subscribeToBoards("initial-state", (eventInfo) => {
           this._runCode(eventInfo.detail);
         });
+
+        this.$.ace.focus()
       },
 
       onAceReady: function() {
