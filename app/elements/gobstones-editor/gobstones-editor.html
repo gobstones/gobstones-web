@@ -41,7 +41,7 @@
     ></paper-fab>
   </template>
 
-  <script src="https://npmcdn.com/gs-weblang-core@0.1.9/umd/index.umd.js"
+  <script src="https://npmcdn.com/gs-weblang-core@0.2.0/umd/index.umd.js"
           type="text/javascript"
           charset="utf-8"></script> <!-- // TODO: Mover -->
 
@@ -59,6 +59,8 @@
           this._runCode(eventInfo.detail);
         });
 
+        this.editor = this.$.ace.editor;
+
         const ace = this.$.ace;
         ace.focus();
         ace.editor.commands.addCommand({
@@ -66,13 +68,11 @@
           bindKey: { win: "ctrl+enter", mac: "command+enter" },
           exec: () => { this.onRunCode() }
         });
-        this.$.ace.focus()
-
+        this.$.ace.focus() // TODO: Mover
       },
 
       onAceReady: function() {
-        const editor = this.$.ace.editor;
-        editor.$blockScrolling = Infinity;
+        this.$.ace.editor.$blockScrolling = Infinity;
       },
 
       onContentChange: function(content) {
@@ -84,58 +84,73 @@
       },
 
       _runCode: function(initialState) {
-        const editor = this.$.ace.editor;
-        const sourceCode = this.$.ace.editor.getValue();
+        this.editor.getSession().clearAnnotations();
 
-        editor.getSession().clearAnnotations();
+        const sourceCode = this.editor.getValue();
 
-        try {
-          const context = this._parse(sourceCode, initialState);
-          this.fire("execution-result", { context: context });
-        } catch (e) {
-          console.log("CATCHED PARSER ERROR: ", e);
-          editor.getSession().setAnnotations([{
-            row: e.on.range.start.row,
-            column: 0,
-            text: e.error,
-            type: "error"
-          }]);
-//          var AceRange = ace.require('ace/range').Range;
-//          editor.getSession().addMarker(new AceRange(e.on.range.start.row, e.on.range.start.column, e.on.range.end.row, e.on.range.end.column), "error-line", "fullLine", true);
-        }
-      },
-
-      _parse: function(sourceCode, initialState) {
         const {
           tokens, interpreter, lexer: Lexer,
           parser: Parser, grammar: Grammar,
           context: Context
         } = window.gsWeblangCore;
 
-        const context = this._createContext(Context, initialState);
         const grammar = Grammar(Parser, new Lexer(), tokens, interpreter);
-        const ast = grammar.parseProgram(sourceCode);
+
+        const ast = this._parse(sourceCode, grammar);
+        if (ast.error) return;
+        const context = this._interpret(ast, initialState, grammar, Context);
+        if (context.error || context.on) return;
+
+        this.fire("execution-result", { context: context });
+      },
+
+      _parse: function(sourceCode, grammar) {
+        try {
+          return grammar.parseProgram(sourceCode);
+        } catch (e) {
+          // Parser errors
+          this.editor.getSession().setAnnotations([{
+            row: e.on.range.start.row,
+            column: 0,
+            text: e.error,
+            type: "error"
+          }]);
+
+          // var AceRange = ace.require('ace/range').Range;
+          // this.editor.getSession().addMarker(new AceRange(e.on.range.start.row, e.on.range.start.column, e.on.range.end.row, e.on.range.end.column), "error-line", "fullLine", true)
+
+          return e;
+        }
+      },
+
+      _interpret: function(ast, initialState, grammar, Context) {
+        const context = this._createContext(initialState, Context);
 
         try {
           grammar.interpret(ast, context);
+          return context;
         } catch (e) {
-          if (e.error) {
-            editor.getSession().setAnnotations([{
-              row: e.on.start.row,
-              column: 0,
-              text: e.error,
-              type: "error"
-            }]);
-          }
+          // Runtime errors
+          if (e.error) this._reportError(e, e.error);
 
-          console.log(e);
+          // Business errors
+          if (e.on) this._reportError(e, e.message); // TODO: Poner icono de BOOM
+
           this.fire("execution-error", e.message);
+          return e;
         }
-
-        return context;
       },
 
-      _createContext: function(Context, initialState) {
+      _reportError: function(e, message) {
+        this.editor.getSession().setAnnotations([{
+          row: e.on.range.start.row,
+          column: 0,
+          text: message,
+          type: "error"
+        }]);
+      },
+
+      _createContext: function(initialState, Context) {
         const context = new Context();
         context.board().sizeX = 4; // TODO: Unharcode here and in weblang-core
         context.board().sizeY = 4;
