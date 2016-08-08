@@ -48,7 +48,7 @@
   <script>
 
     Polymer({
-      is: 'gobstones-editor',
+      is: "gobstones-editor",
       listeners: {
         "ace.editor-ready": "onAceReady",
         "ace.editor-content": "onContentChange"
@@ -60,15 +60,6 @@
         });
 
         this.editor = this.$.ace.editor;
-
-        const ace = this.$.ace;
-        ace.focus();
-        ace.editor.commands.addCommand({
-          name: "run-code",
-          bindKey: { win: "ctrl+enter", mac: "command+enter" },
-          exec: () => { this.onRunCode() }
-        });
-        this.$.ace.focus() // TODO: Mover
       },
 
       onAceReady: function() {
@@ -85,7 +76,6 @@
 
       _runCode: function(initialState) {
         this.editor.getSession().clearAnnotations();
-
         const sourceCode = this.editor.getValue();
 
         const {
@@ -109,12 +99,7 @@
           return grammar.parseProgram(sourceCode);
         } catch (e) {
           // Parser errors
-          this.editor.getSession().setAnnotations([{
-            row: e.on.range.start.row,
-            column: 0,
-            text: e.error,
-            type: "error"
-          }]);
+          this._reportError(e, e.error);
 
           // var AceRange = ace.require('ace/range').Range;
           // this.editor.getSession().addMarker(new AceRange(e.on.range.start.row, e.on.range.start.column, e.on.range.end.row, e.on.range.end.column), "error-line", "fullLine", true)
@@ -134,7 +119,7 @@
           if (e.error) this._reportError(e, e.error);
 
           // Business errors
-          if (e.on) this._reportError(e, e.message); // TODO: Poner icono de BOOM
+          if (e.on) this._reportError(e, e.message); // TODO: BOOM icon
 
           this.fire("execution-error", e.message);
           return e;
@@ -152,8 +137,8 @@
 
       _createContext: function(initialState, Context) {
         const context = new Context();
-        context.board().sizeX = 4; // TODO: Unharcode here and in weblang-core
-        context.board().sizeY = 4;
+        context.board().sizeX = initialState.size.x;
+        context.board().sizeY = initialState.size.y;
         context.init();
 
         _.assign(context.board(), {
@@ -169,6 +154,17 @@
         this.async(() => {
           document.querySelector("#boards").addEventListener(eventName, eventHandler);
         });
+      },
+
+      _setFatalities: function() {
+        const ace = this.$.ace;
+        ace.focus();
+        ace.editor.commands.addCommand({
+          name: "run-code",
+          bindKey: { win: "ctrl+enter", mac: "command+enter" },
+          exec: () => { this.onRunCode() }
+        });
+        this.$.ace.focus()
       }
     });
 

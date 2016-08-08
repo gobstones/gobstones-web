@@ -39,7 +39,7 @@
           <div class="final-board">
             Tablero final (resultado)
           </div>
-          <gs-board size='{ "x": 4, "y": 4 }' header="{{finalState.header}}" table='{{finalState.table}}'></gs-board>
+          <gs-board table='{{finalState.table}}' header="{{finalState.header}}"></gs-board>
         </template>
       </template>
     </div>
@@ -74,10 +74,11 @@
       _onRunRequest: function() {
         this._clean();
 
-        const initialStateEditor = this.$.initialStateEditor
+        const initialStateEditor = this.$.initialStateEditor;
         const initialState = {
           header: initialStateEditor.header,
-          table: this._adapter.adaptToParser(initialStateEditor.table)
+          table: this._adapter.adaptToParser(initialStateEditor.table),
+          size: initialStateEditor.size
         }
         this.fire("initial-state", initialState);
       },
