@@ -11,6 +11,15 @@
         text-align: center;
       }
 
+      .wind-rose {
+        position: absolute;
+        z-index: 99;
+        opacity: 0.5;
+        top: 0;
+        right: 0;
+        margin: 5px;
+      }
+
       .final-board {
         margin-top: 20px;
       }
@@ -24,9 +33,10 @@
       }
     </style>
 
+    <img class="wind-rose" src="../../images/wind-rose.png" />
     <div class="boards-panel">
       <div>
-        Tablero inicial
+        Tablero inicial:
       </div>
       <gs-board id="initialStateEditor" size='{ "x": 4, "y": 4 }' options='{ "editable": true }' cell-size="60" min-width="147" min-height="146"></gs-board>
 
@@ -37,7 +47,7 @@
       <template is="dom-if" if="{{!error}}">
         <template is="dom-if" if="{{finalState}}">
           <div class="final-board">
-            Tablero final (resultado)
+            Tablero final (resultado):
           </div>
           <gs-board table='{{finalState.table}}' header="{{finalState.header}}"></gs-board>
         </template>
