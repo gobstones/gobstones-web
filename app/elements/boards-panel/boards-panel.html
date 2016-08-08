@@ -28,7 +28,7 @@
       <div>
         Tablero inicial
       </div>
-      <gs-board size='{ "x": 4, "y": 4 }' id="initialStateEditor" options='{ "editable": true }'></gs-board>
+      <gs-board id="initialStateEditor" size='{ "x": 4, "y": 4 }' options='{ "editable": true }' cell-size="60" min-width="147" min-height="146"></gs-board>
 
       <template is="dom-if" if="{{error}}">
         <div class="alert">{{error}}</div>
