@@ -21,6 +21,14 @@ gulp jasmine
 ## deploy
 This is hosted at Github Pages in http://gobstones.github.io/gobstones-web
 
+To deploy manually:
+```bash
+rm -rf .tmp .publish dist
+export TRAVIS_BRANCH=master
+export TRAVIS_PULL_REQUEST=false
+bash travis-runner.sh
+```
+
 ## more docs
 
 Generated from **Polymer Starter Kit** -> [Read the docs!](https://github.com/gobstones/gobstones-web/blob/b3364b3afb34496da61dd129f27dd2ed4a915abb/README.md)
