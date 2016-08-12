@@ -27,7 +27,13 @@
       .alert {
         color: red;
       }
+
+      .toast {
+        --paper-toast-background-color: #607d8b;
+      }
     </style>
+
+    <paper-toast class="toast" id="toast" horizontal-align="left"></paper-toast>
 
     <img class="wind-rose" src="../../images/wind-rose.png" />
     <div class="boards-panel">
@@ -74,11 +80,13 @@
         });
 
         this._subscribeToEditor("execution-result", (eventInfo) => {
-          this._onResult(eventInfo.detail);
-        });
-
-        this._subscribeToEditor("execution-error", (eventInfo) => {
-          this._onError(eventInfo.detail);
+          this._onResult(eventInfo);
+        })._subscribeToEditor("compilation-error", (eventInfo) => {
+          this._onCompilationError(eventInfo);
+        })._subscribeToEditor("execution-error", (eventInfo) => {
+          this._onExecutionError(eventInfo);
+        })._subscribeToEditor("editor-dirty", () => {
+          this._clean();
         });
       },
 
@@ -103,7 +111,11 @@
         });
       },
 
-      _onError: function(error) {
+      _onCompilationError: function(error) {
+        this._showToast("El programa tiene errores");
+      },
+
+      _onExecutionError: function(error) {
         this.error = error;
       },
 
@@ -119,10 +131,17 @@
         this.error = null;
       },
 
+      _showToast: function(message) {
+        this.$.toast.text = message;
+        this.$.toast.opened = true;
+      },
+
       _subscribeToEditor: function(eventName, eventHandler) {
+        const handler = (event) => eventHandler(event.detail);
         this.async(() => {
-          document.querySelector("#editor").addEventListener(eventName, eventHandler);
+          document.querySelector("#editor").addEventListener(eventName, handler);
         });
+        return this;
       }
     });
 

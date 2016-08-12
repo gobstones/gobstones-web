@@ -60,7 +60,8 @@
         });
 
         this.editor = this.$.ace.editor;
-        this._setFatalities()
+        this._setFatalities();
+        this._subscribeToChangeEvents();
       },
 
       onAceReady: function() {
@@ -105,6 +106,7 @@
           // var AceRange = ace.require('ace/range').Range;
           // this.editor.getSession().addMarker(new AceRange(e.on.range.start.row, e.on.range.start.column, e.on.range.end.row, e.on.range.end.column), "error-line", "fullLine", true)
 
+          this.fire("compilation-error", e.error);
           return e;
         }
       },
@@ -120,7 +122,7 @@
           if (e.error) this._reportError(e, e.error);
 
           // Business errors
-          if (e.on) this._reportError(e, e.message); // TODO: BOOM icon
+          if (e.on) this._reportError(e, e.message);
 
           this.fire("execution-error", e.message);
           return e;
@@ -166,6 +168,13 @@
           exec: () => { this.onRunCode() }
         });
         this.$.ace.focus()
+      },
+
+      _subscribeToChangeEvents: function() {
+        this.editor.getSession().on("change", () => {
+          this.editor.getSession().setAnnotations([]);
+          this.fire("editor-dirty");
+        });
       }
     });
 
