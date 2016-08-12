@@ -32,11 +32,12 @@
       id="ace"
       mode="ace/mode/gobstones"
       theme="ace/theme/chrome"
-      font-size="80"
+      font-size="5"
       tab-size="4"
+      maxlines="30"
       initial-focus
-    >
-    </ace-widget>
+    >program { Poner(Rojo) }</ace-widget>
+    <!-- // TODO: Ese maxlines está causando el bug de las 30 líneas (30 es el default) -->
     <paper-fab icon="av:play-arrow"
                class="run-button"
                on-click="onRunCode"
