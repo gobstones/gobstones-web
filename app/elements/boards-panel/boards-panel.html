@@ -85,6 +85,8 @@
           this._onCompilationError(eventInfo);
         })._subscribeToEditor("execution-error", (eventInfo) => {
           this._onExecutionError(eventInfo);
+        })._subscribeToEditor("editor-dirty", () => {
+          this._clean();
         });
       },
 
@@ -141,7 +143,6 @@
         });
         return this;
       }
-
     });
 
   </script>

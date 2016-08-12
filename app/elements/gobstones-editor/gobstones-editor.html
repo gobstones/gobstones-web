@@ -60,7 +60,8 @@
         });
 
         this.editor = this.$.ace.editor;
-        this._setFatalities()
+        this._setFatalities();
+        this._subscribeToChangeEvents();
       },
 
       onAceReady: function() {
@@ -167,6 +168,13 @@
           exec: () => { this.onRunCode() }
         });
         this.$.ace.focus()
+      },
+
+      _subscribeToChangeEvents: function() {
+        this.editor.getSession().on("change", () => {
+          this.editor.getSession().setAnnotations([]);
+          this.fire("editor-dirty");
+        });
       }
     });
 
