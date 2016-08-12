@@ -32,7 +32,9 @@
       id="ace"
       mode="ace/mode/gobstones"
       theme="ace/theme/chrome"
+      font-size="80"
       tab-size="4"
+      initial-focus
     >
     </ace-widget>
     <paper-fab icon="av:play-arrow"
@@ -161,13 +163,11 @@
 
       _setFatalities: function() {
         const ace = this.$.ace;
-        ace.focus();
         ace.editor.commands.addCommand({
           name: "run-code",
           bindKey: { win: "ctrl+enter", mac: "command+enter" },
           exec: () => { this.onRunCode() }
         });
-        this.$.ace.focus()
       },
 
       _subscribeToChangeEvents: function() {
