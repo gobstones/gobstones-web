@@ -29,11 +29,12 @@
       }
 
       .toast {
-        --paper-toast-background-color: #607d8b;
+        --paper-toast-background-color: rgba(255, 0, 0, 0.8);
+        margin-left: 40% !important;
       }
     </style>
 
-    <paper-toast class="toast" id="toast" horizontal-align="left"></paper-toast>
+    <paper-toast class="toast" id="toast"></paper-toast>
 
     <img class="wind-rose" src="../../images/wind-rose.png" />
     <div class="boards-panel">
@@ -134,6 +135,7 @@
       _showToast: function(message) {
         this.$.toast.text = message;
         this.$.toast.opened = true;
+        this.$.toast.center()
       },
 
       _subscribeToEditor: function(eventName, eventHandler) {
