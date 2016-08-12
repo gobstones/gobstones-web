@@ -20,38 +20,39 @@
         margin: 5px;
       }
 
-      .final-board {
-        margin-top: 20px;
+      .initial-board {
+        margin-bottom: 20px;
       }
 
       .alert {
-        background-color: #f44336; /* red */
-        color: white;
-        margin: 20px;
-        padding: 20px;
-        border-radius: 5px;
+        color: red;
       }
     </style>
 
     <img class="wind-rose" src="../../images/wind-rose.png" />
     <div class="boards-panel">
-      <div>
-        Tablero inicial:
+      <div class="initial-board">
+        <div>Tablero inicial:</div>
+        <gs-board id="initialStateEditor" size='{ "x": 4, "y": 4 }' options='{ "editable": true }' cell-size="60" min-width="147" min-height="146"></gs-board>
       </div>
-      <gs-board id="initialStateEditor" size='{ "x": 4, "y": 4 }' options='{ "editable": true }' cell-size="60" min-width="147" min-height="146"></gs-board>
 
       <template is="dom-if" if="{{error}}">
-        <div class="alert">{{error}}</div>
+        <div>
+          <img src="../../images/boom.png" />
+          <h2>BOOM</h1>
+          <div class="alert">{{error}}</div>
+        </div>
       </template>
 
       <template is="dom-if" if="{{!error}}">
         <template is="dom-if" if="{{finalState}}" restamp="true">
-          <div class="final-board">
-            Tablero final (resultado):
+          <div>
+            <div>Tablero final (resultado):</div>
+            <gs-board table='{{finalState.table}}' header="{{finalState.header}}"></gs-board>
           </div>
-          <gs-board table='{{finalState.table}}' header="{{finalState.header}}"></gs-board>
         </template>
       </template>
+
     </div>
 
   </template>
