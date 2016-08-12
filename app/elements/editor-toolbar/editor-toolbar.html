@@ -36,13 +36,17 @@
         }
       },
 
+      ready: function() {
+        this.HOP_SIZE = 3;
+      },
+
       moreSize: function() {
-        this.editorSize++;
+        this.editorSize += this.HOP_SIZE;
         this._updateSize();
       },
 
       lessSize: function() {
-        this.editorSize--;
+        this.editorSize -= this.HOP_SIZE;
         this._updateSize();
       },
 
