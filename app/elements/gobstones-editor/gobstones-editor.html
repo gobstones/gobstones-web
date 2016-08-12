@@ -17,6 +17,7 @@
         height: 100%;
         --ace-widget-editor:{
           height: 100% !important;
+          font: var(--editor-size)/normal 'Monaco', 'Menlo', 'Ubuntu Mono', 'Consolas', 'source-code-pro', monospace !important;
           @apply(--gobstones-editor);
         }
       }
@@ -52,6 +53,15 @@
 
     Polymer({
       is: "gobstones-editor",
+
+      properties: {
+        editorSize: {
+          type: Number,
+          value: 12,
+          observer: "_updateEditorSize"
+        }
+      },
+
       listeners: {
         "ace.editor-ready": "onAceReady",
         "ace.editor-content": "onContentChange"
@@ -162,6 +172,13 @@
         });
       },
 
+      _subscribeToChangeEvents: function() {
+        this.editor.getSession().on("change", () => {
+          this.editor.getSession().setAnnotations([]);
+          this.fire("editor-dirty");
+        });
+      },
+
       _setFatalities: function() {
         const ace = this.$.ace;
         ace.editor.commands.addCommand({
@@ -171,11 +188,8 @@
         });
       },
 
-      _subscribeToChangeEvents: function() {
-        this.editor.getSession().on("change", () => {
-          this.editor.getSession().setAnnotations([]);
-          this.fire("editor-dirty");
-        });
+      _updateEditorSize: function() {
+        this.customStyle["--editor-size"] = `${this.editorSize}px`;
       }
     });
 
