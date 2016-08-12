@@ -52,14 +52,6 @@
     Polymer({
       is: "gobstones-editor",
 
-      properties: {
-        editorSize: {
-          type: Number,
-          value: 12,
-          observer: "_updateEditorSize"
-        }
-      },
-
       listeners: {
         "ace.editor-ready": "onAceReady",
         "ace.editor-content": "onContentChange"
@@ -87,6 +79,11 @@
 
       onRunCode: function() {
         this.fire("execution-request");
+      },
+
+      setSize: function(newSize) {
+        this.customStyle["--editor-size"] = `${newSize}px`;
+        this.updateStyles();
       },
 
       _runCode: function(initialState) {
@@ -160,10 +157,6 @@
           bindKey: { win: "ctrl+enter", mac: "command+enter" },
           exec: () => { this.onRunCode() }
         });
-      },
-
-      _updateEditorSize: function() {
-        this.customStyle["--editor-size"] = `${this.editorSize}px`;
       }
     });
 

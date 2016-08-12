@@ -1,0 +1,56 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<dom-module id="editor-toolbar">
+  <template>
+
+    <style>
+      .size-button {
+        cursor: pointer;
+        color: white;
+        -webkit-touch-callout: none;
+        -webkit-user-select: none;
+        -khtml-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+      }
+
+      .size-button:hover {
+        color: red;
+      }
+    </style>
+
+    <paper-button on-click="moreSize"><span class="size-button" on-click>▲</span></paper-button>
+    <paper-button on-click="lessSize"><span class="size-button" on-click>▼</span></paper-button>
+
+  </template>
+
+  <script>
+
+    Polymer({
+      is: 'editor-toolbar',
+      properties: {
+        editorSize: {
+          type: Number,
+          value: 12
+        }
+      },
+
+      moreSize: function() {
+        this.editorSize++;
+        this._updateSize();
+      },
+
+      lessSize: function() {
+        this.editorSize--;
+        this._updateSize();
+      },
+
+      _updateSize: function() {
+        if (this.editorSize <= 8) return;
+        document.querySelector("#editor").setSize(this.editorSize);
+      }
+    });
+
+  </script>
+</dom-module>
