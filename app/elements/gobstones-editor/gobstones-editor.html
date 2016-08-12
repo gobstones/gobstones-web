@@ -3,6 +3,7 @@
 <link rel="import" href="../../bower_components/paper-fab/paper-fab.html">
 <link rel="import" href="../../bower_components/paper-styles/typography.html">
 <link rel="import" href="../../bower_components/ace-widget/ace-widget.html">
+<link rel="import" href="../../scripts/parser.html">
 
 <dom-module id="gobstones-editor">
   <template>
@@ -17,6 +18,7 @@
         height: 100%;
         --ace-widget-editor:{
           height: 100% !important;
+          font: var(--editor-size)/normal 'Monaco', 'Menlo', 'Ubuntu Mono', 'Consolas', 'source-code-pro', monospace !important;
           @apply(--gobstones-editor);
         }
       }
@@ -38,20 +40,18 @@
       initial-focus
     >program { Poner(Rojo) }</ace-widget>
     <!-- // TODO: Ese maxlines está causando el bug de las 30 líneas (30 es el default) -->
+
     <paper-fab icon="av:play-arrow"
                class="run-button"
                on-click="onRunCode"
     ></paper-fab>
   </template>
 
-  <script src="https://npmcdn.com/gs-weblang-core@0.2.0/umd/index.umd.js"
-          type="text/javascript"
-          charset="utf-8"></script> <!-- // TODO: Mover -->
-
   <script>
 
     Polymer({
       is: "gobstones-editor",
+
       listeners: {
         "ace.editor-ready": "onAceReady",
         "ace.editor-content": "onContentChange"
@@ -63,6 +63,8 @@
         });
 
         this.editor = this.$.ace.editor;
+        this.parser = new Parser();
+
         this._setFatalities();
         this._subscribeToChangeEvents();
       },
@@ -79,29 +81,26 @@
         this.fire("execution-request");
       },
 
+      setSize: function(newSize) {
+        this.customStyle["--editor-size"] = `${newSize}px`;
+        this.updateStyles();
+      },
+
       _runCode: function(initialState) {
         this.editor.getSession().clearAnnotations();
         const sourceCode = this.editor.getValue();
 
-        const {
-          tokens, interpreter, lexer: Lexer,
-          parser: Parser, grammar: Grammar,
-          context: Context
-        } = window.gsWeblangCore;
-
-        const grammar = Grammar(Parser, new Lexer(), tokens, interpreter);
-
-        const ast = this._parse(sourceCode, grammar);
+        const ast = this._parse(sourceCode);
         if (ast.error) return;
-        const context = this._interpret(ast, initialState, grammar, Context);
+        const context = this._interpret(ast, initialState);
         if (context.error || context.on) return;
 
         this.fire("execution-result", { context: context });
       },
 
-      _parse: function(sourceCode, grammar) {
+      _parse: function(sourceCode) {
         try {
-          return grammar.parseProgram(sourceCode);
+          return this.parser.parse(sourceCode);
         } catch (e) {
           // Parser errors
           this._reportError(e, e.error);
@@ -114,12 +113,9 @@
         }
       },
 
-      _interpret: function(ast, initialState, grammar, Context) {
-        const context = this._createContext(initialState, Context);
-
+      _interpret: function(ast, initialState) {
         try {
-          grammar.interpret(ast, context);
-          return context;
+          return this.parser.interpret(ast, initialState);
         } catch (e) {
           // Runtime errors
           if (e.error) this._reportError(e, e.error);
@@ -141,24 +137,16 @@
         }]);
       },
 
-      _createContext: function(initialState, Context) {
-        const context = new Context();
-        context.board().sizeX = initialState.size.x;
-        context.board().sizeY = initialState.size.y;
-        context.init();
-
-        _.assign(context.board(), {
-          x: initialState.header.x,
-          y: initialState.header.y,
-          table: initialState.table
-        });
-
-        return context;
-      },
-
       _subscribeToBoards: function(eventName, eventHandler) {
         this.async(() => {
           document.querySelector("#boards").addEventListener(eventName, eventHandler);
+        });
+      },
+
+      _subscribeToChangeEvents: function() {
+        this.editor.getSession().on("change", () => {
+          this.editor.getSession().setAnnotations([]);
+          this.fire("editor-dirty");
         });
       },
 
@@ -168,13 +156,6 @@
           name: "run-code",
           bindKey: { win: "ctrl+enter", mac: "command+enter" },
           exec: () => { this.onRunCode() }
-        });
-      },
-
-      _subscribeToChangeEvents: function() {
-        this.editor.getSession().on("change", () => {
-          this.editor.getSession().setAnnotations([]);
-          this.fire("editor-dirty");
         });
       }
     });
