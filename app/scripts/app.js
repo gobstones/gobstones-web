@@ -85,4 +85,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   // editor.setHighlightActiveLine(false);
 
 
+  // TODO: Hacer andar esto
+  $(".panel-left").resizable({
+   handleSelector: ".splitter",
+   resizeHeight: false
+  });
+
 })(document);
