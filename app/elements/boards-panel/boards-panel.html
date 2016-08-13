@@ -72,6 +72,9 @@
         finalState: Object,
         error: Object
       },
+      listeners: {
+        "board-changed": "_clean"
+      },
 
       ready: function() {
         this._adapter = new ParserAndBoardAdapter();
