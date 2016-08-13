@@ -113,9 +113,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                 left panel
             </div>
 
-            <div class="splitter">
-            </div>
-
             <div class="panel-right">
                 right panel
             </div>
@@ -152,9 +149,24 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
 </template>
 
+<script type="text/javascript">
+  // Set resizable panels
+  $(document).ready(function() {
+    $(".panel-left").resizable({
+      resizeHeight: false
+    });
+
+    setTimeout(function() {
+      $(".ui-resizable-s").hide();
+      $(".ui-resizable-se").hide();
+    }, 0);
+  });
+</script>
+
 <!-- build:js scripts/app.js -->
 <script src="scripts/app.js"></script>
 <!-- endbuild-->
+
 </body>
 
 </html>
