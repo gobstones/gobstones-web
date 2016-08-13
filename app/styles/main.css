@@ -19,6 +19,7 @@ body {
 
 #drawer {
   border-left: 1px solid rgba(0, 0, 0, 0.22);
+  z-index: 999;
 }
 
 .app-name {

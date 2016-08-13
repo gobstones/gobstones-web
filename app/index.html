@@ -72,22 +72,21 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
 <template is="dom-bind" id="app">
 
-  <paper-drawer-panel right-drawer id="paperDrawerPanel" drawer-width="500px">
+  <paper-drawer-panel left-drawer id="paperDrawerPanel" drawer-width="200px" force-narrow>
     <!-- Drawer Scroll Header Panel -->
     <paper-header-panel drawer>
 
-      <!-- Drawer Content -->
-      <paper-menu class="app-menu" attr-for-selected="data-route" selected="[[route]]">
-      </paper-menu>
+      <h1>// TODO</h1>
+      <!-- <boards-panel id="boards"></boards-panel> -->
 
-      <boards-panel id="boards"></boards-panel>
     </paper-header-panel>
 
     <!-- Main Area -->
     <paper-header-panel main id="headerPanelMain" fixed>
       <!-- Main Toolbar -->
       <paper-toolbar id="mainToolbar">
-        <paper-icon-button id="paperToggle" icon="menu" paper-drawer-toggle></paper-icon-button>
+        <!-- // TODO: Desocultar para hacer el menú de la izquierda -->
+        <!-- <paper-icon-button id="paperToggle" icon="menu" paper-drawer-toggle></paper-icon-button> -->
 
         <span class="space"></span>
 
