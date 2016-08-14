@@ -72,47 +72,51 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
 <template is="dom-bind" id="app">
 
-  <paper-drawer-panel right-drawer id="paperDrawerPanel" drawer-width="500px">
-    <!-- Drawer Scroll Header Panel -->
+  <paper-drawer-panel left-drawer id="paperDrawerPanel" drawer-width="200px" force-narrow>
+    <!-- LEFT MENU -->
     <paper-header-panel drawer>
-
-      <!-- Drawer Content -->
-      <paper-menu class="app-menu" attr-for-selected="data-route" selected="[[route]]">
-      </paper-menu>
-
-      <boards-panel id="boards"></boards-panel>
+      <h1>// TODO</h1>
     </paper-header-panel>
 
     <!-- Main Area -->
     <paper-header-panel main id="headerPanelMain" fixed>
-      <!-- Main Toolbar -->
-      <paper-toolbar id="mainToolbar">
-        <paper-icon-button id="paperToggle" icon="menu" paper-drawer-toggle></paper-icon-button>
-
-        <span class="space"></span>
-
-        <!-- Toolbar icons -->
-        <!--
-        <paper-icon-button icon="refresh"></paper-icon-button>
-        <paper-icon-button icon="search"></paper-icon-button>
-        -->
-
-        <!-- Application name -->
-        <div class="middle middle-container">
-          <img class="app-logo" src="images/logo.png" />
-          <div class="app-name">Gobstones</div>
-        </div>
-
-        <editor-toolbar></editor-toolbar>
-
-      </paper-toolbar>
-
-      <!-- Main Content -->
+      <!-- MAIN CONTENT -->
       <div class="content">
-        <!-- // TODO: Se supone que tiene que aparecer en el ACE 'Editable code here'? El editor debería soportar recibir código inicial (útil para la futura carga de archivos) -->
-        <gobstones-editor id="editor" class="gobstones-editor">Editable code here</gobstones-editor>
-      </div>
+        <div class="panel-container">
+            <div class="panel-left">
+              <!-- Main Toolbar -->
+              <paper-toolbar id="mainToolbar">
+                <!--
+                  // TODO: Desocultar para hacer el menú de la izquierda
+                -->
+                <!-- <paper-icon-button id="paperToggle" icon="menu" paper-drawer-toggle></paper-icon-button> -->
 
+                <span class="space"></span>
+
+                <!-- Toolbar icons -->
+                <!--
+                <paper-icon-button icon="refresh"></paper-icon-button>
+                <paper-icon-button icon="search"></paper-icon-button>
+                -->
+
+                <!-- Application name -->
+                <div class="middle middle-container">
+                  <img class="app-logo" src="images/logo.png" />
+                  <div class="app-name">Gobstones</div>
+                </div>
+
+                <editor-toolbar></editor-toolbar>
+              </paper-toolbar>
+
+              <!-- // TODO: Se supone que tiene que aparecer en el ACE 'Editable code here'? El editor debería soportar recibir código inicial (útil para la futura carga de archivos) -->
+              <gobstones-editor id="editor" class="gobstones-editor">Editable code here</gobstones-editor>
+            </div>
+
+            <div class="panel-right">
+                <boards-panel id="boards"></boards-panel>
+            </div>
+        </div>
+      </div>
     </paper-header-panel>
   </paper-drawer-panel>
 
@@ -143,6 +147,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <!-- build:js scripts/app.js -->
 <script src="scripts/app.js"></script>
 <!-- endbuild-->
+
 </body>
 
 </html>

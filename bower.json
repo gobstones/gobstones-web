@@ -11,7 +11,9 @@
     "ace-widget": "LostInBrittany/ace-widget#^1.0.13",
     "gs-board": "gobstones/gs-board#^0.1.0",
     "lodash": "^4.14.0",
-    "webcomponentsjs": "^0.7.22"
+    "webcomponentsjs": "^0.7.22",
+    "jquery": "~3.1.0",
+    "jquery-ui": "~1.12.0"
   },
   "devDependencies": {
     "web-component-tester": "^4.0.0"

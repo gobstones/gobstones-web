@@ -11,16 +11,22 @@
         text-align: center;
       }
 
+      .wind-rose-container {
+        position: relative;
+      }
+
       .wind-rose {
         position: absolute;
-        z-index: 99;
-        opacity: 0.5;
+        transform: translate(0, -50%);
         top: 0;
         right: 0;
         margin: 5px;
+        opacity: 0.5;
+        z-index: 20;
       }
 
       .initial-board {
+        margin-top: 50px;
         margin-bottom: 20px;
       }
 
@@ -36,7 +42,10 @@
 
     <paper-toast class="toast" id="toast"></paper-toast>
 
-    <img class="wind-rose" src="../../images/wind-rose.png" />
+    <div class="wind-rose-container">
+      <img class="wind-rose" src="../../images/wind-rose.png" />
+    </div>
+
     <div class="boards-panel">
       <div class="initial-board">
         <div>Tablero inicial:</div>
@@ -77,6 +86,8 @@
       },
 
       ready: function() {
+        this._setResizablePanels();
+
         this._adapter = new ParserAndBoardAdapter();
 
         this._subscribeToEditor("execution-request", () => {
@@ -147,6 +158,19 @@
           document.querySelector("#editor").addEventListener(eventName, handler);
         });
         return this;
+      },
+
+      _setResizablePanels: function() {
+        $(document).ready(function() {
+          $(".panel-left").resizable({
+            resizeHeight: false
+          });
+
+          setTimeout(function() {
+            $(".panel-left .ui-resizable-s").hide();
+            $(".panel-left .ui-resizable-se").hide();
+          }, 0);
+        });
       }
     });
 
