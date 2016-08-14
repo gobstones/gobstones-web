@@ -11,13 +11,22 @@
         text-align: center;
       }
 
+      .wind-rose-container {
+        position: relative;
+      }
+
       .wind-rose {
+        position: absolute;
+        transform: translate(0, -50%);
+        top: 0;
+        right: 0;
+        margin: 5px;
         opacity: 0.5;
-        margin-left: 100%;
-        transform: translate(-100%, 0);
+        z-index: 20;
       }
 
       .initial-board {
+        margin-top: 50px;
         margin-bottom: 20px;
       }
 
@@ -33,7 +42,10 @@
 
     <paper-toast class="toast" id="toast"></paper-toast>
 
-    <img class="wind-rose" src="../../images/wind-rose.png" />
+    <div class="wind-rose-container">
+      <img class="wind-rose" src="../../images/wind-rose.png" />
+    </div>
+
     <div class="boards-panel">
       <div class="initial-board">
         <div>Tablero inicial:</div>
@@ -155,8 +167,8 @@
           });
 
           setTimeout(function() {
-            $(".ui-resizable-s").hide();
-            $(".ui-resizable-se").hide();
+            $(".panel-left .ui-resizable-s").hide();
+            $(".panel-left .ui-resizable-se").hide();
           }, 0);
         });
       }
