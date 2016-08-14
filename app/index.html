@@ -73,55 +73,48 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <template is="dom-bind" id="app">
 
   <paper-drawer-panel left-drawer id="paperDrawerPanel" drawer-width="200px" force-narrow>
-    <!-- Drawer Scroll Header Panel -->
+    <!-- LEFT MENU -->
     <paper-header-panel drawer>
-
       <h1>// TODO</h1>
-      <!-- <boards-panel id="boards"></boards-panel> -->
-
     </paper-header-panel>
 
     <!-- Main Area -->
     <paper-header-panel main id="headerPanelMain" fixed>
-      <!-- Main Toolbar -->
-      <paper-toolbar id="mainToolbar">
-        <!-- // TODO: Desocultar para hacer el menú de la izquierda -->
-        <!-- <paper-icon-button id="paperToggle" icon="menu" paper-drawer-toggle></paper-icon-button> -->
-
-        <span class="space"></span>
-
-        <!-- Toolbar icons -->
-        <!--
-        <paper-icon-button icon="refresh"></paper-icon-button>
-        <paper-icon-button icon="search"></paper-icon-button>
-        -->
-
-        <!-- Application name -->
-        <div class="middle middle-container">
-          <img class="app-logo" src="images/logo.png" />
-          <div class="app-name">Gobstones</div>
-        </div>
-
-        <editor-toolbar></editor-toolbar>
-
-      </paper-toolbar>
-
-      <!-- Main Content -->
+      <!-- MAIN CONTENT -->
       <div class="content">
         <div class="panel-container">
             <div class="panel-left">
-                left panel
+              <!-- Main Toolbar -->
+              <paper-toolbar id="mainToolbar">
+                <!-- // TODO: Desocultar para hacer el menú de la izquierda -->
+                <!-- <paper-icon-button id="paperToggle" icon="menu" paper-drawer-toggle></paper-icon-button> -->
+
+                <span class="space"></span>
+
+                <!-- Toolbar icons -->
+                <!--
+                <paper-icon-button icon="refresh"></paper-icon-button>
+                <paper-icon-button icon="search"></paper-icon-button>
+                -->
+
+                <!-- Application name -->
+                <div class="middle middle-container">
+                  <img class="app-logo" src="images/logo.png" />
+                  <div class="app-name">Gobstones</div>
+                </div>
+
+                <editor-toolbar></editor-toolbar>
+              </paper-toolbar>
+
+              <!-- // TODO: Se supone que tiene que aparecer en el ACE 'Editable code here'? El editor debería soportar recibir código inicial (útil para la futura carga de archivos) -->
+              <gobstones-editor id="editor" class="gobstones-editor">Editable code here</gobstones-editor>
             </div>
 
             <div class="panel-right">
-                right panel
+                <boards-panel id="boards"></boards-panel>
             </div>
         </div>
-
-        <!-- // TODO: Se supone que tiene que aparecer en el ACE 'Editable code here'? El editor debería soportar recibir código inicial (útil para la futura carga de archivos) -->
-        <!-- <gobstones-editor id="editor" class="gobstones-editor">Editable code here</gobstones-editor> -->
       </div>
-
     </paper-header-panel>
   </paper-drawer-panel>
 
@@ -148,20 +141,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   -->
 
 </template>
-
-<script type="text/javascript">
-  // Set resizable panels
-  $(document).ready(function() {
-    $(".panel-left").resizable({
-      resizeHeight: false
-    });
-
-    setTimeout(function() {
-      $(".ui-resizable-s").hide();
-      $(".ui-resizable-se").hide();
-    }, 0);
-  });
-</script>
 
 <!-- build:js scripts/app.js -->
 <script src="scripts/app.js"></script>

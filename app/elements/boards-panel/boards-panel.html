@@ -12,12 +12,9 @@
       }
 
       .wind-rose {
-        position: absolute;
-        z-index: 99;
         opacity: 0.5;
-        top: 0;
-        right: 0;
-        margin: 5px;
+        margin-left: 100%;
+        transform: translate(-100%, 0);
       }
 
       .initial-board {
@@ -77,6 +74,8 @@
       },
 
       ready: function() {
+        this._setResizablePanels();
+
         this._adapter = new ParserAndBoardAdapter();
 
         this._subscribeToEditor("execution-request", () => {
@@ -147,6 +146,19 @@
           document.querySelector("#editor").addEventListener(eventName, handler);
         });
         return this;
+      },
+
+      _setResizablePanels: function() {
+        $(document).ready(function() {
+          $(".panel-left").resizable({
+            resizeHeight: false
+          });
+
+          setTimeout(function() {
+            $(".ui-resizable-s").hide();
+            $(".ui-resizable-se").hide();
+          }, 0);
+        });
       }
     });
 
