@@ -26,30 +26,30 @@
         color: red;
       }
 
-      #mainToolbar.tall .app-name {
+      .main-toolbar.tall .app-name {
         font-size: 40px;
         font-weight: 300;
         -webkit-transform-origin: left center;
         transform-origin: left center;
       }
 
-      #mainToolbar .middle-container,
-      #mainToolbar .bottom-container {
+      .main-toolbar .middle-container,
+      .main-toolbar .bottom-container {
         @apply(--layout-horizontal);
         @apply(--layout-center);
       }
 
-      #mainToolbar .middle-container  {
+      .main-toolbar .middle-container  {
         height: 100%;
         margin-left: 48px;
       }
 
-      #mainToolbar:not(.tall) .middle-container {
+      .main-toolbar:not(.tall) .middle-container {
         font-size: 18px;
         padding-bottom: 0;
       }
 
-      #mainToolbar .bottom-container {
+      .main-toolbar .bottom-container {
         @apply(--paper-font-subhead);
 
         margin-left: 48px;
@@ -58,7 +58,7 @@
       }
     </style>
 
-    <paper-toolbar id="mainToolbar">
+    <paper-toolbar class="main-toolbar">
       <!--
         // TODO: Desocultar para hacer el menú de la izquierda
       -->
