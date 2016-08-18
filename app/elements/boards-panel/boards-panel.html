@@ -1,4 +1,5 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/app-localize-behavior/app-localize-behavior.html">
 <link rel="import" href="../../bower_components/gs-board/dist/components/gs-board.html">
 <link rel="import" href="../../scripts/parserAndBoardAdapter.html">
 <link rel="import" href="../../scripts/stylist.html">
@@ -48,14 +49,14 @@
 
     <div class="boards-panel">
       <div class="initial-board">
-        <div>Tablero inicial:</div>
+        <div>[[localize("initial-board")]]:</div>
         <gs-board id="initialStateEditor" size='{ "x": 4, "y": 4 }' options='{ "editable": true }' cell-size="60" min-width="147" min-height="146"></gs-board>
       </div>
 
       <template is="dom-if" if="{{error}}">
         <div>
           <img src="../../images/boom.png" />
-          <h2>BOOM</h1>
+          <h2>[[localize("boom")]]</h1>
           <div class="alert">{{error}}</div>
         </div>
       </template>
@@ -63,7 +64,7 @@
       <template is="dom-if" if="{{!error}}">
         <template is="dom-if" if="{{finalState}}" restamp="true">
           <div>
-            <div>Tablero final (resultado):</div>
+            <div>[[localize("final-board")]]:</div>
             <gs-board table='{{finalState.table}}' header="{{finalState.header}}"></gs-board>
           </div>
         </template>
@@ -77,12 +78,20 @@
 
     Polymer({
       is: 'boards-panel',
+      behaviors: [
+        Polymer.AppLocalizeBehavior
+      ],
       properties: {
         finalState: Object,
-        error: Object
+        error: Object,
+        language: { value: "es" }
       },
       listeners: {
         "board-changed": "_clean"
+      },
+
+      attached: function() {
+        this.loadResources(this.resolveUrl("../../locales/locales.json"));
       },
 
       ready: function() {
@@ -127,7 +136,7 @@
       },
 
       _onCompilationError: function(error) {
-        this._showToast("El programa tiene errores");
+        this._showToast(this.localize("the-program-has-errors"));
       },
 
       _onExecutionError: function(error) {
