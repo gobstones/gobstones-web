@@ -1,33 +1,49 @@
 class Stylist {
-  setPanelAsResizable(cssClass) {
-    $(document).ready(function() {
-      $(cssClass).resizable({
+  constructor() {
+    this.DEFAULT_PERCENTAGE = 0.6;
+    this.INITIAL_SCALE = 1;
+  }
+
+  setPanelAsResizable(panelCssClass, boardCssClass) {
+    $(document).ready(() => {
+      $(panelCssClass).resizable({
         resizeHeight: false
       });
 
-      setTimeout(function() {
-        $(`${cssClass} .ui-resizable-s`).hide();
-        $(`${cssClass} .ui-resizable-se`).hide();
+      setTimeout(() => {
+        $(`${panelCssClass} .ui-resizable-s`).hide();
+        $(`${panelCssClass} .ui-resizable-se`).hide();
 
+        this.scaleBoard(this.DEFAULT_PERCENTAGE);
       }, 0);
     });
 
-    this.keepAspectRatioOnWindowResize(cssClass);
+    this.beResponsive(panelCssClass, boardCssClass);
   }
 
-  keepAspectRatioOnWindowResize(cssClass) {
+  beResponsive(panelCssClass, boardCssClass) {
     $(window).resize(() => {
-      let documentWidth = $(document).width()
+      // keep aspect ratio on window resize:
+      const documentWidth = $(document).width()
       if (!this.lastSize) {
         this.lastSize = documentWidth;
         return;
       }
 
-      let leftPanel = $(cssClass);
-      let percentage = leftPanel.width() / this.lastSize;
+      const leftPanel = $(panelCssClass);
+      const percentage = leftPanel.width() / this.lastSize;
 
       leftPanel.width(percentage * documentWidth);
       this.lastSize = documentWidth;
+
+      // adapt board size to panel:
+      // // TODO: this.scaleBoard(percentage, boardCssClass);
     });
+  }
+
+  scaleBoard(percentage, boardCssClass) {
+    const scaleDiff = -(percentage / this.DEFAULT_PERCENTAGE) + 1
+    const scale = this.INITIAL_SCALE + scaleDiff;
+    $(".gbs_board").css("transform", `scale(${scale})`);
   }
 }
