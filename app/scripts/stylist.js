@@ -43,12 +43,14 @@ class Stylist {
   }
 
   scaleBoardAndPutInCenter(percentage, boardCssClass) {
+    if (!this.originalHeight) this.originalHeight = $(boardCssClass).height();
+
     const scaleDiff = -(percentage / this.DEFAULT_PERCENTAGE) + 1
     const scale = this.INITIAL_SCALE + scaleDiff;
-    // $(boardCssClass).css("transform", `scale(${scale})`); // TODO
+    $(boardCssClass).css("transform", `scale(${scale})`);
 
     const middleY = ($(document).height() - this.TOOLBAR_HEIGHT) / 2;
-    const offsetY = $(boardCssClass).height() / 2;
+    const offsetY = this.originalHeight / 2;
     $(boardCssClass).css("margin-top", `${middleY - offsetY}px`);
   }
 }
