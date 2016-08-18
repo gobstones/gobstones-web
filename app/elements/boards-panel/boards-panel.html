@@ -1,7 +1,7 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
-<link rel="import" href="../../scripts/jquery.html">
 <link rel="import" href="../../bower_components/gs-board/dist/components/gs-board.html">
 <link rel="import" href="../../scripts/parserAndBoardAdapter.html">
+<link rel="import" href="../../scripts/stylist.html">
 
 <dom-module id="boards-panel">
   <template>
@@ -86,7 +86,7 @@
       },
 
       ready: function() {
-        this._setResizablePanels();
+        new Stylist().setPanelAsResizable(".panel-left");
 
         this._adapter = new ParserAndBoardAdapter();
 
@@ -158,19 +158,6 @@
           document.querySelector("#editor").addEventListener(eventName, handler);
         });
         return this;
-      },
-
-      _setResizablePanels: function() {
-        $(document).ready(function() {
-          $(".panel-left").resizable({
-            resizeHeight: false
-          });
-
-          setTimeout(function() {
-            $(".panel-left .ui-resizable-s").hide();
-            $(".panel-left .ui-resizable-se").hide();
-          }, 0);
-        });
       }
     });
 
