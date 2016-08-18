@@ -36,16 +36,14 @@
         border-left: solid 1px;
         border-color: #688998
       }
-
-      :root {
-        --paper-tabs-selection-bar-color: #49555a;
-      }
     </style>
 
     <paper-toolbar class="tabs">
-      <paper-tabs selected="0" class="bottom self-end" no-slide>
+      <paper-tabs selected="{{selectedTab}}" class="bottom self-end" no-slide no-bar>
         <paper-tab>[[localize("initial-board")]]</paper-tab>
-        <paper-tab>[[localize("final-board")]]</paper-tab>
+        <template is="dom-if" if="{{isFinalBoardVisible(finalState, error)}}">
+          <paper-tab>[[localize("final-board")]]</paper-tab>
+        </template>
       </paper-tabs>
       <img class="wind-rose" src="../../images/wind-rose.png" />
     </paper-toolbar>
@@ -53,30 +51,29 @@
     <paper-toast class="toast" id="toast"></paper-toast>
 
     <div class="boards-panel">
-      <template is="dom-if" if="{{!error}}">
-        <template is="dom-if" if="{{!finalState}}">
-          <div class="board">
-            <gs-board id="initialStateEditor" size='{ "x": 4, "y": 4 }' options='{ "editable": true }' cell-size="60" min-width="147" min-height="146"></gs-board>
-          </div>
-        </template>
-      </template>
-
-      <template is="dom-if" if="{{error}}">
-        <div>
-          <img src="../../images/boom.png" />
-          <h2>[[localize("boom")]]</h1>
-          <div class="alert">{{error}}</div>
+      <template is="dom-if" if="{{isInitialBoardSelected(selectedTab)}}">
+        <div class="board">
+          <gs-board id="initialStateEditor" size='{ "x": 4, "y": 4 }' options='{ "editable": true }' cell-size="60" min-width="147" min-height="146"></gs-board>
         </div>
       </template>
 
-      <template is="dom-if" if="{{!error}}">
-        <template is="dom-if" if="{{finalState}}" restamp="true">
-          <div class="board">
-            <gs-board table='{{finalState.table}}' header="{{finalState.header}}"></gs-board>
+      <template is="dom-if" if="{{isFinalBoardSelected(selectedTab)}}">
+        <template is="dom-if" if="{{error}}">
+          <div>
+            <img src="../../images/boom.png" />
+            <h2>[[localize("boom")]]</h1>
+            <div class="alert">{{error}}</div>
           </div>
         </template>
-      </template>
 
+        <template is="dom-if" if="{{!error}}">
+          <template is="dom-if" if="{{finalState}}" restamp="true">
+            <div class="board">
+              <gs-board table='{{finalState.table}}' header="{{finalState.header}}"></gs-board>
+            </div>
+          </template>
+        </template>
+      </template>
     </div>
 
   </template>
@@ -89,6 +86,10 @@
         Polymer.AppLocalizeBehavior
       ],
       properties: {
+        selectedTab: {
+          type: Number,
+          value: 0
+        },
         finalState: Object,
         error: Object,
         language: { value: "es" }
@@ -121,14 +122,14 @@
         });
       },
 
-      getSelectedTab: function(finalState, error) {
-        return this.isEditing ? 1 : 0;
-      },
+      isInitialBoardSelected: (selectedTab) => selectedTab === 0,
+      isFinalBoardSelected: (selectedTab) => selectedTab === 1,
+      isFinalBoardVisible: (finalState, error) => finalState || error,
 
       _onRunRequest: function() {
         this._clean();
 
-        const initialStateEditor = this.$.initialStateEditor;
+        const initialStateEditor = this.$$("#initialStateEditor");
         const initialState = {
           header: initialStateEditor.header,
           table: this._adapter.adaptToParser(initialStateEditor.table),
@@ -152,18 +153,21 @@
 
       _onExecutionError: function(error) {
         this.error = error;
+        this.selectedTab = 1;
       },
 
       _setFinalState: function(finalState) {
         this.finalState = null;
         this.async(function() {
           this.finalState = finalState;
+          this.selectedTab = 1;
         });
       },
 
       _clean: function() {
         this.finalState = null;
         this.error = null;
+        this.selectedTab = 0;
       },
 
       _showToast: function(message) {
