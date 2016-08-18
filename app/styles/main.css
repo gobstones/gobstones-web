@@ -55,11 +55,3 @@ body {
   width: 100%;
   background: white;
 }
-
-.splitter {
-  flex: 0 0 auto;
-  width: 18px;
-  background: url(https://raw.githubusercontent.com/RickStrahl/jquery-resizable/master/assets/vsizegrip.png) center center no-repeat #535353;
-  min-height: 200px;
-  cursor: col-resize;
-}

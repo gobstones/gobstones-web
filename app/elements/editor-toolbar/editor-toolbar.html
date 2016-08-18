@@ -1,12 +1,14 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../scripts/jquery.html">
 
 <dom-module id="editor-toolbar">
   <template>
 
     <style>
-      .size-button {
-        cursor: pointer;
-        color: white;
+      .size-buttons {
+        position: absolute;
+        right: 13px;
+
         -webkit-touch-callout: none;
         -webkit-user-select: none;
         -khtml-user-select: none;
@@ -15,13 +17,72 @@
         user-select: none;
       }
 
+      .size-button {
+        cursor: pointer;
+        color: white;
+      }
+
       .size-button:hover {
         color: red;
       }
+
+      #mainToolbar.tall .app-name {
+        font-size: 40px;
+        font-weight: 300;
+        -webkit-transform-origin: left center;
+        transform-origin: left center;
+      }
+
+      #mainToolbar .middle-container,
+      #mainToolbar .bottom-container {
+        @apply(--layout-horizontal);
+        @apply(--layout-center);
+      }
+
+      #mainToolbar .middle-container  {
+        height: 100%;
+        margin-left: 48px;
+      }
+
+      #mainToolbar:not(.tall) .middle-container {
+        font-size: 18px;
+        padding-bottom: 0;
+      }
+
+      #mainToolbar .bottom-container {
+        @apply(--paper-font-subhead);
+
+        margin-left: 48px;
+        -webkit-transform-origin: left center;
+        transform-origin: left center;
+      }
     </style>
 
-    <paper-button on-click="moreSize"><span class="size-button" on-click>▲</span></paper-button>
-    <paper-button on-click="lessSize"><span class="size-button" on-click>▼</span></paper-button>
+    <paper-toolbar id="mainToolbar">
+      <!--
+        // TODO: Desocultar para hacer el menú de la izquierda
+      -->
+      <!-- <paper-icon-button icon="menu" paper-drawer-toggle on-click="togglePanel"></paper-icon-button> -->
+
+      <span class="space"></span>
+
+      <!-- Toolbar icons -->
+      <!--
+      <paper-icon-button icon="refresh"></paper-icon-button>
+      <paper-icon-button icon="search"></paper-icon-button>
+      -->
+
+      <!-- Application name -->
+      <div class="middle middle-container">
+        <img class="app-logo" src="../../images/logo.png" />
+        <div class="app-name">Gobstones</div>
+
+        <div class="size-buttons">
+          <paper-button on-click="moreSize"><span class="size-button" on-click>▲</span></paper-button>
+          <paper-button on-click="lessSize"><span class="size-button" on-click>▼</span></paper-button>
+        </div>
+      </div>
+    </paper-toolbar>
 
   </template>
 
@@ -38,6 +99,10 @@
 
       ready: function() {
         this.HOP_SIZE = 3;
+      },
+
+      togglePanel: function() {
+        $("paper-drawer-panel")[0].togglePanel()
       },
 
       moreSize: function() {
