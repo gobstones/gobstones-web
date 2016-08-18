@@ -51,29 +51,27 @@
     <paper-toast class="toast" id="toast"></paper-toast>
 
     <div class="boards-panel">
-      <template is="dom-if" if="{{isInitialBoardSelected(selectedTab)}}">
-        <div class="board">
+      <div class="board">
+        <template is="dom-if" if="{{isInitialBoardSelected(selectedTab)}}">
           <gs-board id="initialStateEditor" size='{ "x": 4, "y": 4 }' options='{ "editable": true }' cell-size="60" min-width="147" min-height="146"></gs-board>
-        </div>
-      </template>
-
-      <template is="dom-if" if="{{isFinalBoardSelected(selectedTab)}}">
-        <template is="dom-if" if="{{error}}">
-          <div>
-            <img src="../../images/boom.png" />
-            <h2>[[localize("boom")]]</h1>
-            <div class="alert">{{error}}</div>
-          </div>
         </template>
 
-        <template is="dom-if" if="{{!error}}">
-          <template is="dom-if" if="{{finalState}}" restamp="true">
-            <div class="board">
-              <gs-board table='{{finalState.table}}' header="{{finalState.header}}"></gs-board>
+        <template is="dom-if" if="{{isFinalBoardSelected(selectedTab)}}">
+          <template is="dom-if" if="{{error}}">
+            <div>
+              <img src="../../images/boom.png" />
+              <h2>[[localize("boom")]]</h1>
+              <div class="alert">{{error}}</div>
             </div>
           </template>
-        </template>
+
+          <template is="dom-if" if="{{!error}}">
+            <template is="dom-if" if="{{finalState}}" restamp="true">
+              <gs-board table='{{finalState.table}}' header="{{finalState.header}}"></gs-board>
+            </template>
+          </template>
       </template>
+      </div>
     </div>
 
   </template>
