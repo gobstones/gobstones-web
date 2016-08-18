@@ -15,7 +15,7 @@ class Stylist {
         $(`${panelCssClass} .ui-resizable-s`).hide();
         $(`${panelCssClass} .ui-resizable-se`).hide();
 
-        this.scaleBoardAndPutInCenter(this.DEFAULT_PERCENTAGE, boardCssClass);
+        this.scaleAndCenterBoard(this.DEFAULT_PERCENTAGE, boardCssClass);
       }, 0);
     });
 
@@ -24,33 +24,37 @@ class Stylist {
 
   beResponsive(panelCssClass, boardCssClass) {
     $(window).resize(() => {
-      // keep aspect ratio on window resize:
-      const documentWidth = $(document).width()
-      if (!this.lastSize) {
-        this.lastSize = documentWidth;
-        return;
-      }
-
-      const leftPanel = $(panelCssClass);
-      const percentage = leftPanel.width() / this.lastSize;
-
-      leftPanel.width(percentage * documentWidth);
-      this.lastSize = documentWidth;
-
-      // adapt board size to panel:
-      this.scaleBoardAndPutInCenter(percentage, boardCssClass);
+      var percentage = this.keepAspectRatioOnWindowResize(panelCssClass);
+      this.scaleAndCenterBoard(percentage, boardCssClass);
     });
   }
 
-  scaleBoardAndPutInCenter(percentage, boardCssClass) {
-    if (!this.originalHeight) this.originalHeight = $(boardCssClass).height();
+  keepAspectRatioOnWindowResize(panelCssClass) {
+    const documentWidth = $(document).width()
+    if (!this.lastSize) {
+      this.lastSize = documentWidth;
+      return this.DEFAULT_PERCENTAGE;
+    }
 
+    const leftPanel = $(panelCssClass);
+    const percentage = leftPanel.width() / this.lastSize;
+
+    leftPanel.width(percentage * documentWidth);
+    this.lastSize = documentWidth;
+    return percentage;
+  }
+
+  scaleAndCenterBoard(percentage, boardCssClass) {
     const scaleDiff = -(percentage / this.DEFAULT_PERCENTAGE) + 1
     const scale = this.INITIAL_SCALE + scaleDiff;
     $(boardCssClass).css("transform", `scale(${scale})`);
+    this.centerBoardVertically(scale, boardCssClass);
+  }
 
+  centerBoardVertically(scale, boardCssClass) {
+    const originalHeight = $(boardCssClass).height() / scale;
     const middleY = ($(document).height() - this.TOOLBAR_HEIGHT) / 2;
-    const offsetY = this.originalHeight / 2;
+    const offsetY = originalHeight / 2;
     $(boardCssClass).css("margin-top", `${middleY - offsetY}px`);
   }
 }
