@@ -1,4 +1,5 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/paper-tabs/paper-tabs.html">
 <link rel="import" href="../../bower_components/app-localize-behavior/app-localize-behavior.html">
 <link rel="import" href="../../bower_components/gs-board/dist/components/gs-board.html">
 <link rel="import" href="../../scripts/parserAndBoardAdapter.html">
@@ -12,23 +13,12 @@
         text-align: center;
       }
 
-      .wind-rose-container {
-        position: relative;
-      }
-
       .wind-rose {
+        width: 62px;
+        height: 62px;
         position: absolute;
-        transform: translate(0, -50%);
-        top: 0;
-        right: 0;
-        margin: 5px;
-        opacity: 0.5;
-        z-index: 20;
-      }
-
-      .initial-board {
-        margin-top: 50px;
-        margin-bottom: 20px;
+        right: 2px;
+        top: 0px;
       }
 
       .alert {
@@ -39,19 +29,37 @@
         --paper-toast-background-color: rgba(255, 0, 0, 0.8);
         margin-left: 40% !important;
       }
+
+      .tabs {
+        margin-left: -10px;
+        margin-top: -10px;
+        border-left: solid 1px;
+        border-color: #688998
+      }
+
+      :root {
+        --paper-tabs-selection-bar-color: #49555a;
+      }
     </style>
+
+    <paper-toolbar class="tabs">
+      <paper-tabs selected="0" class="bottom self-end" no-slide>
+        <paper-tab>[[localize("initial-board")]]</paper-tab>
+        <paper-tab>[[localize("final-board")]]</paper-tab>
+      </paper-tabs>
+      <img class="wind-rose" src="../../images/wind-rose.png" />
+    </paper-toolbar>
 
     <paper-toast class="toast" id="toast"></paper-toast>
 
-    <div class="wind-rose-container">
-      <img class="wind-rose" src="../../images/wind-rose.png" />
-    </div>
-
     <div class="boards-panel">
-      <div class="initial-board">
-        <div>[[localize("initial-board")]]:</div>
-        <gs-board id="initialStateEditor" size='{ "x": 4, "y": 4 }' options='{ "editable": true }' cell-size="60" min-width="147" min-height="146"></gs-board>
-      </div>
+      <template is="dom-if" if="{{!error}}">
+        <template is="dom-if" if="{{!finalState}}">
+          <div class="board">
+            <gs-board id="initialStateEditor" size='{ "x": 4, "y": 4 }' options='{ "editable": true }' cell-size="60" min-width="147" min-height="146"></gs-board>
+          </div>
+        </template>
+      </template>
 
       <template is="dom-if" if="{{error}}">
         <div>
@@ -63,8 +71,7 @@
 
       <template is="dom-if" if="{{!error}}">
         <template is="dom-if" if="{{finalState}}" restamp="true">
-          <div>
-            <div>[[localize("final-board")]]:</div>
+          <div class="board">
             <gs-board table='{{finalState.table}}' header="{{finalState.header}}"></gs-board>
           </div>
         </template>
@@ -95,7 +102,7 @@
       },
 
       ready: function() {
-        new Stylist().setPanelAsResizable(".panel-left");
+        new Stylist().setPanelAsResizable(".panel-left", ".board");
 
         this._adapter = new ParserAndBoardAdapter();
 
@@ -112,6 +119,10 @@
         })._subscribeToEditor("editor-dirty", () => {
           this._clean();
         });
+      },
+
+      getSelectedTab: function(finalState, error) {
+        return this.isEditing ? 1 : 0;
       },
 
       _onRunRequest: function() {

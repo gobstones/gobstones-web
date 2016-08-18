@@ -2,6 +2,7 @@ class Stylist {
   constructor() {
     this.DEFAULT_PERCENTAGE = 0.6;
     this.INITIAL_SCALE = 1;
+    this.TOOLBAR_HEIGHT = 64;
   }
 
   setPanelAsResizable(panelCssClass, boardCssClass) {
@@ -14,7 +15,7 @@ class Stylist {
         $(`${panelCssClass} .ui-resizable-s`).hide();
         $(`${panelCssClass} .ui-resizable-se`).hide();
 
-        this.scaleBoard(this.DEFAULT_PERCENTAGE);
+        this.scaleBoardAndPutInCenter(this.DEFAULT_PERCENTAGE, boardCssClass);
       }, 0);
     });
 
@@ -37,13 +38,17 @@ class Stylist {
       this.lastSize = documentWidth;
 
       // adapt board size to panel:
-      // // TODO: this.scaleBoard(percentage, boardCssClass);
+      this.scaleBoardAndPutInCenter(percentage, boardCssClass);
     });
   }
 
-  scaleBoard(percentage, boardCssClass) {
+  scaleBoardAndPutInCenter(percentage, boardCssClass) {
     const scaleDiff = -(percentage / this.DEFAULT_PERCENTAGE) + 1
     const scale = this.INITIAL_SCALE + scaleDiff;
-    $(".gbs_board").css("transform", `scale(${scale})`);
+    // $(boardCssClass).css("transform", `scale(${scale})`); // TODO
+
+    const middleY = ($(document).height() - this.TOOLBAR_HEIGHT) / 2;
+    const offsetY = $(boardCssClass).height() / 2;
+    $(boardCssClass).css("margin-top", `${middleY - offsetY}px`);
   }
 }
