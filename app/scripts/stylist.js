@@ -45,10 +45,11 @@ class Stylist {
   }
 
   scaleAndCenterBoard(percentage, boardCssClass) {
-    const scaleDiff = -(percentage / this.DEFAULT_PERCENTAGE) + 1
-    const scale = this.INITIAL_SCALE + scaleDiff;
-    $(boardCssClass).css("transform", `scale(${scale})`);
-    this.centerBoardVertically(scale, boardCssClass);
+    // Disabled for now
+    // const scaleDiff = -(percentage / this.DEFAULT_PERCENTAGE) + 1
+    // const scale = this.INITIAL_SCALE + scaleDiff;
+    // $(boardCssClass).css("transform", `scale(${scale})`);
+    this.centerBoardVertically(1, boardCssClass);
   }
 
   centerBoardVertically(scale, boardCssClass) {
