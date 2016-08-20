@@ -13,6 +13,11 @@
         text-align: center;
       }
 
+      .show-code-icon {
+        margin-left: -5px;
+        margin-right: 10px;
+      }
+
       .wind-rose {
         margin-left: 10px;
         width: 62px;
@@ -45,6 +50,9 @@
     </style>
 
     <paper-toolbar class="tabs">
+      <div>
+        <paper-button on-click="toggleShowCode"><iron-icon class$="button show-code-icon {{buttonCssClass(showCode)}}" icon="icons:chevron-left"></iron-icon></paper-button>
+      </div>
       <div style="width: 90%">
         <paper-tabs selected="{{selectedTab}}" class="bottom self-end">
           <paper-tab>[[localize("initial-board")]]</paper-tab>
@@ -52,10 +60,6 @@
             <paper-tab>[[localize("final-board")]]</paper-tab>
           </template>
         </paper-tabs>
-      </div>
-
-      <div>
-        <paper-button on-click="toggleShowCode"><iron-icon class$="button {{buttonCssClass(showCode)}}" icon="icons:code"></iron-icon></paper-button>
       </div>
       <div>
         <img class="wind-rose" src="../../images/wind-rose.png" />
