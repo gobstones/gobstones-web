@@ -13,18 +13,10 @@
         text-align: center;
       }
 
-      .show-board-button {
-        position: absolute;
-        right: 75px;
-        top: 20px;
-      }
-
       .wind-rose {
+        margin-left: 10px;
         width: 62px;
         height: 62px;
-        position: absolute;
-        right: 2px;
-        top: 0px;
       }
 
       .alert {
@@ -53,15 +45,21 @@
     </style>
 
     <paper-toolbar class="tabs">
-      <paper-tabs selected="{{selectedTab}}" class="bottom self-end" no-slide no-bar>
-        <paper-tab>[[localize("initial-board")]]</paper-tab>
-        <template is="dom-if" if="{{isFinalBoardVisible(finalState, error)}}">
-          <paper-tab>[[localize("final-board")]]</paper-tab>
-        </template>
-      </paper-tabs>
+      <div style="width: 90%">
+        <paper-tabs selected="{{selectedTab}}" class="bottom self-end" no-slide no-bar>
+          <paper-tab>[[localize("initial-board")]]</paper-tab>
+          <template is="dom-if" if="{{isFinalBoardVisible(finalState, error)}}">
+            <paper-tab>[[localize("final-board")]]</paper-tab>
+          </template>
+        </paper-tabs>
+      </div>
 
-      <paper-button on-click="toggleShowCode"><iron-icon class$="button show-board-button {{buttonCssClass(showCode)}}" icon="icons:code"></iron-icon></paper-button>
-      <img class="wind-rose" src="../../images/wind-rose.png" />
+      <div>
+        <paper-button on-click="toggleShowCode"><iron-icon class$="button {{buttonCssClass(showCode)}}" icon="icons:code"></iron-icon></paper-button>
+      </div>
+      <div>
+        <img class="wind-rose" src="../../images/wind-rose.png" />
+      </div>
     </paper-toolbar>
 
     <paper-toast class="toast" id="toast"></paper-toast>
