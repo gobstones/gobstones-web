@@ -46,7 +46,7 @@
 
     <paper-toolbar class="tabs">
       <div style="width: 90%">
-        <paper-tabs selected="{{selectedTab}}" class="bottom self-end" no-slide no-bar>
+        <paper-tabs selected="{{selectedTab}}" class="bottom self-end">
           <paper-tab>[[localize("initial-board")]]</paper-tab>
           <template is="dom-if" if="{{isFinalBoardVisible(finalState, error)}}">
             <paper-tab>[[localize("final-board")]]</paper-tab>
