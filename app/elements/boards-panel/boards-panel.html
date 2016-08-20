@@ -13,6 +13,12 @@
         text-align: center;
       }
 
+      .show-board-button {
+        position: absolute;
+        right: 75px;
+        top: 20px;
+      }
+
       .wind-rose {
         width: 62px;
         height: 62px;
@@ -37,6 +43,12 @@
         border-color: #688998;
 
         z-index: 10;
+        -webkit-touch-callout: none;
+        -webkit-user-select: none;
+        -khtml-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
       }
     </style>
 
@@ -47,6 +59,8 @@
           <paper-tab>[[localize("final-board")]]</paper-tab>
         </template>
       </paper-tabs>
+
+      <paper-button on-click="toggleShowCode"><iron-icon class$="button show-board-button {{buttonCssClass(showCode)}}" icon="icons:code"></iron-icon></paper-button>
       <img class="wind-rose" src="../../images/wind-rose.png" />
     </paper-toolbar>
 
@@ -90,6 +104,10 @@
           type: Number,
           value: 0
         },
+        showCode: {
+          type: Boolean,
+          value: true
+        },
         finalState: Object,
         error: Object,
         language: { value: "es" }
@@ -120,6 +138,16 @@
         })._subscribeToEditor("editor-dirty", () => {
           this._clean();
         });
+      },
+
+      toggleShowCode: function() {
+        this.showCode = !this.showCode;
+        this.fire("show-code-changed", this.showCode);
+      },
+
+      buttonCssClass: function(element) {
+        if (!this.domHost) return;
+        return this.domHost.buttonCssClass(element);
       },
 
       isInitialBoardSelected: (selectedTab) => selectedTab === 0,

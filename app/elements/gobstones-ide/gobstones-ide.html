@@ -1,4 +1,5 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../scripts/jquery.html">
 
 <dom-module id="gobstones-ide">
   <template>
@@ -7,16 +8,18 @@
     </style>
 
     <div class="panel-container">
+      <template is="dom-if" if="{{showCode}}">
         <div class="panel-left">
           <editor-toolbar></editor-toolbar>
 
           <!-- // TODO: Se supone que tiene que aparecer en el ACE 'Editable code here'? El editor debería soportar recibir código inicial (útil para la futura carga de archivos) -->
           <gobstones-editor id="editor" class="gobstones-editor">Editable code here</gobstones-editor>
         </div>
+      </template>
 
-        <div class="panel-right">
-          <boards-panel id="boards"></boards-panel>
-        </div>
+      <div class="panel-right">
+        <boards-panel id="boards"></boards-panel>
+      </div>
     </div>
 
   </template>
@@ -24,7 +27,33 @@
   <script>
 
     Polymer({
-      is: 'gobstones-ide'
+      is: 'gobstones-ide',
+      properties: {
+        showCode: {
+          type: Boolean,
+          value: true
+        }
+      },
+      listeners: {
+        "show-code-changed": "_showCodeChanged",
+        "show-boards-changed": "_showBoardsChanged"
+      },
+
+      buttonCssClass: function(show) {
+        return !show ? "button-disabled" : "";
+      },
+
+      _showCodeChanged: function({ detail }) {
+        this.showCode = detail;
+      },
+
+      _showBoardsChanged: function({ detail }) {
+        const documentWidth = $(document).width();
+        $(".panel-left").width(
+          detail ? documentWidth * 0.6 : documentWidth
+        );
+        $(window).trigger("resize");
+      }
     });
 
   </script>
