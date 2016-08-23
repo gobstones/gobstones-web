@@ -1,5 +1,6 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 <link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../bower_components/app-localize-behavior/app-localize-behavior.html">
 
 <dom-module id="left-menu">
   <template>
@@ -22,20 +23,21 @@
       }
     </style>
 
-    <h1 class="title">Acciones</h1>
+    <h1 class="title">[[localize("actions")]]</h1>
 
     <div class="actions">
       <div class="clickable action">
         <paper-button on-click="saveProgram">
-          <iron-icon icon="icons:save"></iron-icon> <span class="action-text">Guardar</span>
+          <iron-icon icon="icons:save"></iron-icon> <span class="action-text">[[localize("save")]]</span>
         </paper-button>
       </div>
 
-      <div class="clickable action">
+      <!-- // TODO: Falta esta funcionalidad -->
+<!--       <div class="clickable action">
         <paper-button on-click="loadProgram">
-          <iron-icon icon="icons:folder-open"></iron-icon> <span class="action-text">Abrir</span>
+          <iron-icon icon="icons:folder-open"></iron-icon> <span class="action-text">[[localize("open")]]</span>
         </paper-button>
-      </div>
+      </div> -->
     </div>
   </template>
 
@@ -43,6 +45,16 @@
 
     Polymer({
       is: 'left-menu',
+      behaviors: [
+        Polymer.AppLocalizeBehavior
+      ],
+      properties: {
+        language: { value: "es" }
+      },
+
+      attached: function() {
+        this.loadResources(this.resolveUrl("../../locales.json"));
+      },
 
       saveProgram: function() {
         const editor = this._getEditor().editor;
