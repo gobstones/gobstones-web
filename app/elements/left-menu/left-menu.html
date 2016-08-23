@@ -45,11 +45,25 @@
       is: 'left-menu',
 
       saveProgram: function() {
-        alert("// TODO");
+        const editor = this._getEditor().editor;
+        const code = editor.getValue()
+        this._saveFile(code, "program.gbs");
       },
 
       loadProgram: function() {
         alert("// TODO");
+      },
+
+      _saveFile: function(content, name) {
+        const a = document.createElement("a");
+        const file = new Blob([content], { type: "text/plain" });
+        a.href = URL.createObjectURL(file);
+        a.download = name;
+        a.click();
+      },
+
+      _getEditor: function() {
+        return document.querySelector("#editor");
       }
     });
 
