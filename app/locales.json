@@ -7,6 +7,9 @@
     "size": "Tamaño",
     "columns": "columnas",
     "by": "x",
-    "rows": "filas"
+    "rows": "filas",
+    "actions": "Acciones",
+    "save": "Guardar",
+    "open": "Abrir"
   }
 }
