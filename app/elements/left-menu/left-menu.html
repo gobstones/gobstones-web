@@ -23,19 +23,19 @@
     <h1 class="title">[[localize("actions")]]</h1>
 
     <div class="actions">
-      <div class="clickable action">
-        <paper-button on-click="saveProgram">
+      <paper-button on-click="saveProgram">
+        <div class="clickable action">
           <iron-icon icon="icons:save"></iron-icon> <span class="action-text">[[localize("save")]]</span>
-        </paper-button>
-      </div>
+        </div>
+      </paper-button>
 
       <input id="fileToOpen" type="file" accept=".gbs" on-change="onSelectFile" style="visibility:hidden" />
 
-      <div class="clickable action">
-        <paper-button on-click="loadProgram">
+      <paper-button on-click="loadProgram">
+        <div class="clickable action">
           <iron-icon icon="icons:folder-open"></iron-icon> <span class="action-text">[[localize("open")]]</span>
-        </paper-button>
-      </div>
+        </div>
+      </paper-button>
     </div>
   </template>
 
