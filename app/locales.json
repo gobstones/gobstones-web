@@ -3,6 +3,10 @@
     "initial-board": "Tablero inicial",
     "final-board": "Resultados",
     "boom": "BOOM",
-    "the-program-has-errors": "El programa tiene errores"
+    "the-program-has-errors": "El programa tiene errores",
+    "size": "Tamaño",
+    "columns": "columnas",
+    "by": "x",
+    "rows": "filas"
   }
 }

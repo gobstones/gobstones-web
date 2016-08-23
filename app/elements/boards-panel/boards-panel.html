@@ -1,5 +1,6 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 <link rel="import" href="../../bower_components/paper-tabs/paper-tabs.html">
+<link rel="import" href="../../bower_components/paper-input/paper-input.html">
 <link rel="import" href="../../bower_components/app-localize-behavior/app-localize-behavior.html">
 <link rel="import" href="../../bower_components/gs-board/dist/components/gs-board.html">
 <link rel="import" href="../../scripts/parserAndBoardAdapter.html">
@@ -35,6 +36,7 @@
 
       .tabs {
         margin-left: -10px;
+        margin-right: -10px;
         margin-top: -10px;
         border-left: solid 1px;
         border-color: #688998;
@@ -47,6 +49,22 @@
         -ms-user-select: none;
         user-select: none;
       }
+
+      .size-bar {
+        margin-top: -22px;
+        margin-bottom: 5px;
+        overflow: hidden;
+        white-space: nowrap;
+      }
+
+      .size-input {
+        display: inline-block;
+        width: 50px;
+      }
+
+      .boom-container {
+        margin-top: 10px;
+      }
     </style>
 
     <paper-toolbar class="tabs">
@@ -54,7 +72,7 @@
         <paper-button on-click="toggleShowCode"><iron-icon class$="button show-code-icon {{buttonCssClass(showCode)}}" icon="icons:chevron-left"></iron-icon></paper-button>
       </div>
       <div style="width: 90%">
-        <paper-tabs selected="{{selectedTab}}" class="bottom self-end">
+        <paper-tabs selected="{{selectedTab}}" class="bottom self-end" no-bar>
           <paper-tab>[[localize("initial-board")]]</paper-tab>
           <template is="dom-if" if="{{isFinalBoardVisible(finalState, error)}}">
             <paper-tab>[[localize("final-board")]]</paper-tab>
@@ -69,27 +87,62 @@
     <paper-toast class="toast" id="toast"></paper-toast>
 
     <div class="boards-panel">
-      <div class="board">
-        <template is="dom-if" if="{{isInitialBoardSelected(selectedTab)}}">
-          <gs-board id="initialStateEditor" size='{ "x": 4, "y": 4 }' options='{ "editable": true }' cell-size="60" min-width="147" min-height="146"></gs-board>
-        </template>
+      <template is="dom-if" if="{{isInitialBoardSelected(selectedTab)}}">
+        <div class="size-bar">
+          <form>
+            <strong>[[localize("size")]]:</strong>
+            <paper-input class="size-input" value="{{sizeX}}" type="number" min="1" max="30"></paper-input>
+            <span>[[localize("columns")]] <strong>[[localize("by")]]</strong></span>
+            <paper-input class="size-input" value="{{sizeY}}" type="number" min="1" max="30"></paper-input>
+            <span>[[localize("rows")]]</span>
+          </form>
+        </div>
+      </template>
 
-        <template is="dom-if" if="{{isFinalBoardSelected(selectedTab)}}">
-          <template is="dom-if" if="{{error}}">
-            <div>
-              <img src="../../images/boom.png" />
-              <h2>[[localize("boom")]]</h1>
-              <div class="alert">{{error}}</div>
+      <template is="dom-if" if="{{isFinalBoardSelected(selectedTab)}}">
+        <template is="dom-if" if="{{!error}}">
+          <template is="dom-if" if="{{finalState}}" restamp="true">
+            <div class="size-bar">
+              <form>
+                <strong>[[localize("size")]]:</strong>
+                <span>{{sizeX}}</span>
+                <span>[[localize("columns")]] <strong>[[localize("by")]]</strong></span>
+                <span>{{sizeY}}</span>
+                <span>[[localize("rows")]]</span>
+                <paper-input style="visibility: hidden;" class="size-input"></paper-input>
+              </form>
             </div>
           </template>
+        </template>
+      </template>
 
-          <template is="dom-if" if="{{!error}}">
-            <template is="dom-if" if="{{finalState}}" restamp="true">
-              <gs-board table='{{finalState.table}}' header="{{finalState.header}}"></gs-board>
+      <div class="theBoardContainer" style="position: relative">
+        <div class="theBoard" style="position: absolute; left: 0; right: 0;">
+          <!-- Initial board -->
+          <template is="dom-if" if="{{isInitialBoardSelected(selectedTab)}}">
+            <gs-board id="initialStateEditor" size='{{size}}' options='{ "editable": true }' cell-size="60" min-width="147" min-height="146"></gs-board>
+          </template>
+
+          <!-- Final board -->
+          <template is="dom-if" if="{{isFinalBoardSelected(selectedTab)}}">
+            <template is="dom-if" if="{{!error}}">
+              <template is="dom-if" if="{{finalState}}" restamp="true">
+                <gs-board table='{{finalState.table}}' header="{{finalState.header}}"></gs-board>
+              </template>
             </template>
           </template>
-      </template>
+        </div>
       </div>
+
+      <template is="dom-if" if="{{isFinalBoardSelected(selectedTab)}}">
+        <template is="dom-if" if="{{error}}">
+          <div class="boom-container">
+            <img src="../../images/boom.png" />
+            <h2>[[localize("boom")]]</h2>
+            <div class="alert">{{error}}</div>
+          </div>
+        </template>
+      </template>
     </div>
 
   </template>
@@ -102,6 +155,20 @@
         Polymer.AppLocalizeBehavior
       ],
       properties: {
+        sizeX: {
+          type: Number,
+          value: 4,
+          observer: "_updateSize"
+        },
+        sizeY: {
+          type: Number,
+          value: 4,
+          observer: "_updateSize"
+        },
+        size: {
+          type: Object,
+          computed: '_computeSize(sizeX, sizeY)'
+        },
         selectedTab: {
           type: Number,
           value: 0
@@ -110,9 +177,9 @@
           type: Boolean,
           value: true
         },
+        language: { value: "es" },
         finalState: Object,
-        error: Object,
-        language: { value: "es" }
+        error: Object
       },
       listeners: {
         "board-changed": "_clean"
@@ -123,7 +190,8 @@
       },
 
       ready: function() {
-        new Stylist().setPanelAsResizable(".panel-left", ".board");
+        this.stylist = new Stylist();
+        this.stylist.setPanelAsResizable(".panel-left", this.size);
 
         this._adapter = new ParserAndBoardAdapter();
 
@@ -212,6 +280,17 @@
           document.querySelector("#editor").addEventListener(eventName, handler);
         });
         return this;
+      },
+
+      _updateSize: function() {
+        const limit = (n) => Math.max(Math.min(n, 30), 1);
+        if (this.sizeX) this.sizeX = limit(this.sizeX);
+        if (this.sizeY) this.sizeY = limit(this.sizeY);
+        if (this.stylist) this.stylist.updateBoardSize(".panel-left", this.size);
+      },
+
+      _computeSize: function(sizeX, sizeY) {
+        return { x: sizeX, y: sizeY };
       }
     });
 
