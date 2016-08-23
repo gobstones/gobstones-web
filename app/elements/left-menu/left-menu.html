@@ -1,0 +1,57 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+
+<dom-module id="left-menu">
+  <template>
+
+    <style>
+      .title {
+        text-align: center;
+      }
+
+      .actions {
+        margin-left: 5px;
+      }
+
+      .action {
+        margin-bottom: 10px;
+      }
+
+      .action-text {
+        vertical-align: middle;
+      }
+    </style>
+
+    <h1 class="title">Acciones</h1>
+
+    <div class="actions">
+      <div class="clickable action">
+        <paper-button on-click="saveProgram">
+          <iron-icon icon="icons:save"></iron-icon> <span class="action-text">Guardar</span>
+        </paper-button>
+      </div>
+
+      <div class="clickable action">
+        <paper-button on-click="loadProgram">
+          <iron-icon icon="icons:folder-open"></iron-icon> <span class="action-text">Abrir</span>
+        </paper-button>
+      </div>
+    </div>
+  </template>
+
+  <script>
+
+    Polymer({
+      is: 'left-menu',
+
+      saveProgram: function() {
+        alert("// TODO");
+      },
+
+      loadProgram: function() {
+        alert("// TODO");
+      }
+    });
+
+  </script>
+</dom-module>
