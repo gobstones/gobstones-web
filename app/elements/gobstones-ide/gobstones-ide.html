@@ -8,14 +8,12 @@
     </style>
 
     <div class="panel-container">
-      <template is="dom-if" if="{{showCode}}">
-        <div class="panel-left">
-          <editor-toolbar></editor-toolbar>
+      <div class="panel-left">
+        <editor-toolbar></editor-toolbar>
 
-          <!-- // TODO: Se supone que tiene que aparecer en el ACE 'Editable code here'? El editor debería soportar recibir código inicial (útil para la futura carga de archivos) -->
-          <gobstones-editor id="editor" class="gobstones-editor">Editable code here</gobstones-editor>
-        </div>
-      </template>
+        <!-- // TODO: Se supone que tiene que aparecer en el ACE 'Editable code here'? El editor debería soportar recibir código inicial (útil para la futura carga de archivos) -->
+        <gobstones-editor id="editor" class="gobstones-editor">Editable code here</gobstones-editor>
+      </div>
 
       <div class="panel-right">
         <boards-panel id="boards"></boards-panel>
@@ -28,12 +26,6 @@
 
     Polymer({
       is: 'gobstones-ide',
-      properties: {
-        showCode: {
-          type: Boolean,
-          value: true
-        }
-      },
       listeners: {
         "show-code-changed": "_showCodeChanged",
         "show-boards-changed": "_showBoardsChanged"
@@ -44,13 +36,16 @@
       },
 
       _showCodeChanged: function({ detail }) {
-        this.showCode = detail;
+        this._resizeLeftPanel(detail, 0);
       },
 
       _showBoardsChanged: function({ detail }) {
-        const documentWidth = $(document).width();
+        this._resizeLeftPanel(detail, $(document).width());
+      },
+
+      _resizeLeftPanel: function(show, size) {
         $(".panel-left").width(
-          detail ? documentWidth * 0.6 : documentWidth
+          show ? $(document).width() * 0.6 : size
         );
         $(window).trigger("resize");
       }

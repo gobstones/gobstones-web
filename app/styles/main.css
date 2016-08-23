@@ -44,7 +44,6 @@ body {
 .panel-left {
   flex: 0 0 auto;
   width: 60%;
-  min-width: 300px;
   white-space: nowrap;
   background: white;
 }
