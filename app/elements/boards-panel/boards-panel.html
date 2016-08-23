@@ -191,7 +191,7 @@
 
       ready: function() {
         this.stylist = new Stylist();
-        this.stylist.setPanelAsResizable(".panel-left", this.size);
+        this.stylist.setPanelAsResizable(this.size);
 
         this._adapter = new ParserAndBoardAdapter();
 
@@ -286,7 +286,7 @@
         const limit = (n) => Math.max(Math.min(n, 30), 1);
         if (this.sizeX) this.sizeX = limit(this.sizeX);
         if (this.sizeY) this.sizeY = limit(this.sizeY);
-        if (this.stylist) this.stylist.updateBoardSize(".panel-left", this.size);
+        if (this.stylist) this.stylist.updateBoardSize(this.size);
       },
 
       _computeSize: function(sizeX, sizeY) {

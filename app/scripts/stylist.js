@@ -2,36 +2,37 @@ class Stylist {
   constructor() {
     this.DEFAULT_PERCENTAGE = 0.6;
     this.TOOLBAR_HEIGHT = 102;
-    this.BOARD_CSS_CLASS = ".theBoard"
+    this.BOARD_CSS_CLASS = ".theBoard";
+    this.PANEL_CSS_CLASS = ".panel-left";
   }
 
-  setPanelAsResizable(panelCssClass, boardDimensions) {
+  setPanelAsResizable(boardDimensions) {
     const boardSize = this._getBoardSize(boardDimensions);
 
     $(document).ready(() => {
-      this._makeResizable(panelCssClass);
+      this._makeResizable();
       setTimeout(() => {
-        $(`${panelCssClass} .ui-resizable-s`).hide();
-        $(`${panelCssClass} .ui-resizable-se`).hide();
+        $(`${this.PANEL_CSS_CLASS} .ui-resizable-s`).hide();
+        $(`${this.PANEL_CSS_CLASS} .ui-resizable-se`).hide();
 
         this._scaleAndCenterBoard(this.DEFAULT_PERCENTAGE, boardSize);
       }, 0);
     });
 
     $(window).resize(() => {
-      this._makeResizable(panelCssClass);
-      this._beResponsive(panelCssClass, boardSize);
+      this._makeResizable();
+      this._beResponsive(boardSize);
     });
   }
 
-  updateBoardSize(panelCssClass, boardDimensions) {
+  updateBoardSize(boardDimensions) {
     const boardSize = this._getBoardSize(boardDimensions);
 
-    const scale = this._getScale(this._getPercentage(panelCssClass), boardSize);
+    const scale = this._getScale(this._getPercentage(), boardSize);
     this.currentBoardWidth = boardSize.width;
     this.currentBoardHeight = boardSize.height;
 
-    this._beResponsive(panelCssClass, boardSize);
+    this._beResponsive(boardSize);
   }
 
   _getBoardSize(boardDimensions) {
@@ -41,26 +42,26 @@ class Stylist {
     };
   }
 
-  _beResponsive(panelCssClass, boardSize) {
-    var percentage = this._keepAspectRatioOnWindowResize(panelCssClass);
+  _beResponsive(boardSize) {
+    var percentage = this._keepAspectRatioOnWindowResize(this.PANEL_CSS_CLASS);
     this._scaleAndCenterBoard(percentage, boardSize);
   }
 
-  _getPercentage(panelCssClass) {
-    const leftPanel = $(panelCssClass);
+  _getPercentage() {
+    const leftPanel = $(this.PANEL_CSS_CLASS);
     return leftPanel.width() / this.lastDocumentWidth;
   }
 
-  _keepAspectRatioOnWindowResize(panelCssClass) {
+  _keepAspectRatioOnWindowResize() {
     const documentWidth = $(document).width()
     if (!this.lastDocumentWidth) {
       this.lastDocumentWidth = documentWidth;
       return this.DEFAULT_PERCENTAGE;
     }
 
-    const percentage = this._getPercentage(panelCssClass);
+    const percentage = this._getPercentage();
 
-    const leftPanel = $(panelCssClass);
+    const leftPanel = $(this.PANEL_CSS_CLASS);
     leftPanel.width(percentage * documentWidth);
     this.lastDocumentWidth = documentWidth;
     return percentage;
@@ -72,9 +73,9 @@ class Stylist {
     this._centerBoard(boardSize);
   }
 
-  _makeResizable(panelCssClass) {
+  _makeResizable() {
     const documentWidth = $(document).width()
-    $(panelCssClass).resizable({
+    $(this.PANEL_CSS_CLASS).resizable({
       maxWidth: documentWidth * this.DEFAULT_PERCENTAGE,
       resizeHeight: false
     });
