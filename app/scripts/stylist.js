@@ -20,7 +20,6 @@ class Stylist {
     });
 
     $(window).resize(() => {
-      this._makeResizable();
       this._beResponsive(boardSize);
     });
   }
@@ -76,7 +75,6 @@ class Stylist {
   _makeResizable() {
     const documentWidth = $(document).width()
     $(this.PANEL_CSS_CLASS).resizable({
-      maxWidth: documentWidth * this.DEFAULT_PERCENTAGE,
       resizeHeight: false
     });
   }
