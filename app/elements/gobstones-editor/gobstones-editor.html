@@ -58,6 +58,7 @@
     Polymer({
       is: "gobstones-editor",
       listeners: {
+        "ace.editor-ready": "onAceReady",
         "ace.editor-content": "onContentChange",
         "iron-localstorage-load": "onLastCodeLoaded"
       },
@@ -79,6 +80,10 @@
         this.stylist = new Stylist();
         this.setSize(14);
         $(window).resize(() => { this._fixEditorHeight(); });
+      },
+
+      onAceReady: function() {
+        this.$.ace.editor.$blockScrolling = Infinity;
       },
 
       onContentChange: function(content) {
