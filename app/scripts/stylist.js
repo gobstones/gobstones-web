@@ -1,13 +1,28 @@
 class Stylist {
   constructor() {
     this.DEFAULT_PERCENTAGE = 0.6;
-    this.TOOLBAR_HEIGHT = 102;
+    this.TOOLBAR_HEIGHT = 64;
+    this.TOOLBAR_AND_SIZE_SELECTOR_HEIGHT = this.TOOLBAR_HEIGHT + 38;
     this.CELL_SIZE = 59;
     this.BOARD_CSS_CLASS = ".theBoard";
     this.BOARD_CONTAINER_CSS_CLASS = ".theBoardContainer";
     this.BOARD_CONTAINER_OFFSET = 8;
     this.BOARD_CONTAINER_VERTICAL_MARGIN = 20;
     this.LEFT_PANEL_CSS_CLASS = ".panel-left";
+  }
+
+  correctEditorHeight(editor) {
+    const fixHeight = () => {
+      const lineHeight = editor.renderer.lineHeight;
+
+      const availableLines = ($(document).height() - this.TOOLBAR_HEIGHT) / editor.renderer.lineHeight;
+      console.log("availableLines", availableLines);
+      editor.setOption("minLines", availableLines);
+      editor.setOption("maxLines", availableLines);
+    }
+
+    setTimeout(fixHeight);
+    $(window).resize(fixHeight);
   }
 
   setPanelAsResizable(boardDimensions) {
@@ -104,7 +119,7 @@ class Stylist {
   }
 
   _getRightPanelHeight() {
-    return $(document).height() - this.TOOLBAR_HEIGHT - this.BOARD_CONTAINER_VERTICAL_MARGIN;
+    return $(document).height() - this.TOOLBAR_AND_SIZE_SELECTOR_HEIGHT - this.BOARD_CONTAINER_VERTICAL_MARGIN;
   }
 
   _getScale(percentage) {

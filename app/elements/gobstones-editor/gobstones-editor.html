@@ -3,6 +3,7 @@
 <link rel="import" href="../../bower_components/paper-fab/paper-fab.html">
 <link rel="import" href="../../bower_components/ace-widget/ace-widget.html">
 <link rel="import" href="../../scripts/parser.html">
+<link rel="import" href="../../scripts/stylist.html">
 
 <dom-module id="gobstones-editor">
   <template>
@@ -16,7 +17,6 @@
       ace-widget {
         height: 100%;
         --ace-widget-editor:{
-          height: 100% !important;
           font: var(--editor-size)/normal 'Monaco', 'Menlo', 'Ubuntu Mono', 'Consolas', 'source-code-pro', monospace !important;
           @apply(--gobstones-editor);
         }
@@ -35,10 +35,10 @@
       theme="ace/theme/chrome"
       font-size="5"
       tab-size="4"
+      minlines="30"
       maxlines="30"
       initial-focus
     >program { Poner(Rojo) }</ace-widget>
-    <!-- // TODO: Ese maxlines está causando el bug de las 30 líneas (30 es el default) -->
 
     <paper-fab icon="av:play-arrow"
                class="run-button"
@@ -50,9 +50,7 @@
 
     Polymer({
       is: "gobstones-editor",
-
       listeners: {
-        "ace.editor-ready": "onAceReady",
         "ace.editor-content": "onContentChange"
       },
 
@@ -66,10 +64,8 @@
 
         this._setFatalities();
         this._subscribeToChangeEvents();
-      },
 
-      onAceReady: function() {
-        this.$.ace.editor.$blockScrolling = Infinity;
+        new Stylist().correctEditorHeight(this.editor);
       },
 
       onContentChange: function(content) {
