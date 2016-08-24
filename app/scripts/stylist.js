@@ -15,7 +15,6 @@ class Stylist {
     const lineHeight = editor.renderer.lineHeight;
     const availableLines = ($(document).height() - this.TOOLBAR_HEIGHT) / editor.renderer.lineHeight;
 
-    console.log("availableLines", availableLines); // TODO: Borrar
     editor.setOption("minLines", availableLines);
     editor.setOption("maxLines", availableLines);
   }

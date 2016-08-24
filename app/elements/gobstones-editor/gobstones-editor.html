@@ -67,7 +67,7 @@
         this._subscribeToChangeEvents();
 
         this.stylist = new Stylist();
-        setTimeout(() => { this.setSize(14); });
+        this.setSize(14);
         $(window).resize(() => { this._fixEditorHeight(); });
       },
 
@@ -80,10 +80,9 @@
       },
 
       setSize: function(newSize) {
-        console.log(newSize); // TODO: Borrar
         this.customStyle["--editor-size"] = `${newSize}px`;
         this.updateStyles();
-        this._fixEditorHeight();
+        setTimeout(() => { this._fixEditorHeight(); }, 500);
       },
 
       _runCode: function(initialState) {
