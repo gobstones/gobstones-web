@@ -5,40 +5,35 @@ class Stylist {
     this.BOARD_CSS_CLASS = ".theBoard";
     this.BOARD_CONTAINER_CSS_CLASS = ".theBoardContainer";
     this.BOARD_CONTAINER_OFFSET = 8;
+    this.BOARD_CONTAINER_VERTICAL_MARGIN = 20;
     this.LEFT_PANEL_CSS_CLASS = ".panel-left";
   }
 
   setPanelAsResizable(boardDimensions) {
-    const boardSize = this._getBoardSize(boardDimensions);
-
     $(document).ready(() => {
       this._makeResizable();
       setTimeout(() => {
         $(`${this.LEFT_PANEL_CSS_CLASS} .ui-resizable-s`).hide();
         $(`${this.LEFT_PANEL_CSS_CLASS} .ui-resizable-se`).hide();
 
-        this._saveBoardSize(boardSize);
-        this._scaleAndCenterBoard(this.DEFAULT_PERCENTAGE, boardSize);
+        this.updateBoardSize(boardDimensions);
       }, 0);
     });
 
     $(window).resize(() => {
-      this._beResponsive(boardSize);
+      this._beResponsive();
     });
   }
 
   updateBoardSize(boardDimensions) {
     const boardSize = this._getBoardSize(boardDimensions);
-
-    const scale = this._getScale(this._getPercentage(), boardSize);
     this._saveBoardSize(boardSize);
-
-    this._beResponsive(boardSize);
+    this._beResponsive();
   }
 
-  _beResponsive(boardSize) {
+  _beResponsive() {
     var percentage = this._keepAspectRatioOnWindowResize(this.LEFT_PANEL_CSS_CLASS);
-    this._scaleAndCenterBoard(percentage, boardSize);
+    this._scaleAndCenterBoard(percentage);
   }
 
   _keepAspectRatioOnWindowResize() {
@@ -57,13 +52,13 @@ class Stylist {
     return percentage;
   }
 
-  _scaleAndCenterBoard(percentage, boardSize) {
-    const scale = this._getScale(percentage, boardSize);
+  _scaleAndCenterBoard(percentage) {
+    const scale = this._getScale(percentage);
     $(this.BOARD_CSS_CLASS).css("transform", `scale(${scale})`);
-    this._centerBoard(percentage, boardSize, scale);
+    this._centerBoard(percentage, scale);
   }
 
-  _centerBoard(percentage, boardSize, scale) {
+  _centerBoard(percentage, scale) {
     // center vertically
     const middleY = (this._getRightPanelHeight()) / 2;
     const offsetY = this.currentBoardHeight / 2;
@@ -105,10 +100,10 @@ class Stylist {
   }
 
   _getRightPanelHeight() {
-    return $(document).height() - this.TOOLBAR_HEIGHT;
+    return $(document).height() - this.TOOLBAR_HEIGHT - this.BOARD_CONTAINER_VERTICAL_MARGIN;
   }
 
-  _getScale(percentage, boardSize) {
+  _getScale(percentage) {
     const panelWidth = this._getRightPanelWidth(percentage);
     const scaleX = panelWidth / this.currentBoardWidth;
 
