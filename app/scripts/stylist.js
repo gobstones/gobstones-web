@@ -17,6 +17,7 @@ class Stylist {
         $(`${this.LEFT_PANEL_CSS_CLASS} .ui-resizable-s`).hide();
         $(`${this.LEFT_PANEL_CSS_CLASS} .ui-resizable-se`).hide();
 
+        this._saveBoardSize(boardSize);
         this._scaleAndCenterBoard(this.DEFAULT_PERCENTAGE, boardSize);
       }, 0);
     });
@@ -30,8 +31,7 @@ class Stylist {
     const boardSize = this._getBoardSize(boardDimensions);
 
     const scale = this._getScale(this._getPercentage(), boardSize);
-    this.currentBoardWidth = boardSize.width;
-    this.currentBoardHeight = boardSize.height;
+    this._saveBoardSize(boardSize);
 
     this._beResponsive(boardSize);
   }
@@ -65,23 +65,27 @@ class Stylist {
 
   _centerBoard(percentage, boardSize, scale) {
     // center vertically
-    const middleY = ($(document).height() - this.TOOLBAR_HEIGHT) / 2;
+    const middleY = (this._getRightPanelHeight()) / 2;
     const offsetY = this.currentBoardHeight / 2;
     $(this.BOARD_CSS_CLASS).css("margin-top", `${middleY - offsetY}px`);
 
     // center horizontally
     $(".theBoardContainer").width(0); // avoid increasing container width
-    const panelWidth = this._getRightPanelWidth($(document).width(), percentage);
+    const panelWidth = this._getRightPanelWidth(percentage);
     const middleX = panelWidth / 2;
     const offsetX = this.BOARD_CONTAINER_OFFSET + (this.currentBoardWidth * scale) / 2;
     $(this.BOARD_CONTAINER_CSS_CLASS).css("margin-left", `${middleX - offsetX}px`);
   }
 
   _makeResizable() {
-    const documentWidth = $(document).width()
     $(this.LEFT_PANEL_CSS_CLASS).resizable({
       resizeHeight: false
     });
+  }
+
+  _saveBoardSize(boardSize) {
+    this.currentBoardWidth = boardSize.width;
+    this.currentBoardHeight = boardSize.height;
   }
 
   _getBoardSize(boardDimensions) {
@@ -91,27 +95,24 @@ class Stylist {
     };
   }
 
-  _getRightPanelWidth(documentWidth, percentage) {
-    return documentWidth * (1 - percentage);
-  }
-
   _getPercentage() {
     const leftPanel = $(this.LEFT_PANEL_CSS_CLASS);
     return leftPanel.width() / this.lastDocumentWidth;
   }
 
-  _getScale(percentage, boardSize) {
-    // scaleY
-    const documentWidth = $(document).width()
-    const panelWidth = this._getRightPanelWidth(documentWidth, percentage);
+  _getRightPanelWidth(percentage) {
+    return $(document).width() * (1 - percentage);
+  }
 
-    if (!this.currentBoardWidth) this.currentBoardWidth = boardSize.width;
+  _getRightPanelHeight() {
+    return $(document).height() - this.TOOLBAR_HEIGHT;
+  }
+
+  _getScale(percentage, boardSize) {
+    const panelWidth = this._getRightPanelWidth(percentage);
     const scaleX = panelWidth / this.currentBoardWidth;
 
-    // scaleY
-    const documentHeight = $(document).height()
-    const panelHeight = documentHeight - this.TOOLBAR_HEIGHT;
-    if (!this.currentBoardHeight) this.currentBoardHeight = boardSize.height;
+    const panelHeight = this._getRightPanelHeight();
     const scaleY = panelHeight / this.currentBoardHeight;
 
     return Math.min(scaleX, scaleY)
