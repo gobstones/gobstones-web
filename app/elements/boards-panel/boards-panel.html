@@ -168,11 +168,11 @@
         sizeY: {
           type: Number,
           value: 4,
-          observer: "_updateSize"
         },
         size: {
           type: Object,
-          computed: '_computeSize(sizeX, sizeY)'
+          computed: "_computeSize(sizeX, sizeY)",
+          observer: "_updateSize"
         },
         selectedTab: {
           type: Number,
@@ -286,20 +286,20 @@
         return this;
       },
 
-      _updateSize: function() {
-        if (this.sizeX) this.sizeX = this._limitSize(this.sizeX);
-        if (this.sizeY) this.sizeY = this._limitSize(this.sizeY);
-        if (this.stylist) this.stylist.updateBoardSize(this.size);
-      },
-
       _computeSize: function(sizeX, sizeY) {
-        const x = sizeX === "" ? this.size.x : sizeX;
-        const y = sizeY === "" ? this.size.y : sizeY;
+        const x = sizeX === "" ? this.size.x : this._limitSize(sizeX);
+        const y = sizeY === "" ? this.size.y : this._limitSize(sizeY);
+        if (sizeX !== "") this.sizeX = x;
+        if (sizeY !== "") this.sizeY = y;
         return { x: x, y: y };
       },
 
       _limitSize: function(n) {
         return Math.max(Math.min(n, 30), 1);
+      },
+
+      _updateSize: function() {
+        if (this.stylist) this.stylist.updateBoardSize(this.size);
       }
     });
 
