@@ -2,6 +2,7 @@ class Stylist {
   constructor() {
     this.DEFAULT_PERCENTAGE = 0.6;
     this.TOOLBAR_HEIGHT = 102;
+    this.CELL_SIZE = 59;
     this.BOARD_CSS_CLASS = ".theBoard";
     this.BOARD_CONTAINER_CSS_CLASS = ".theBoardContainer";
     this.BOARD_CONTAINER_OFFSET = 8;
@@ -26,8 +27,7 @@ class Stylist {
   }
 
   updateBoardSize(boardDimensions) {
-    const boardSize = this._getBoardSize(boardDimensions);
-    this._saveBoardSize(boardSize);
+    this._saveBoardSize(boardDimensions);
     this._beResponsive();
   }
 
@@ -68,7 +68,9 @@ class Stylist {
     $(".theBoardContainer").width(0); // avoid increasing container width
     const panelWidth = this._getRightPanelWidth(percentage);
     const middleX = panelWidth / 2;
-    const offsetX = this.BOARD_CONTAINER_OFFSET + (this.currentBoardWidth * scale) / 2;
+    const microMarginFix = - (-0.000975862 * this.boardDimensions.x + 0.131475862) * this.CELL_SIZE * scale;
+    const offsetX = this.BOARD_CONTAINER_OFFSET + (this.currentBoardWidth * scale) / 2 + microMarginFix;
+
     $(this.BOARD_CONTAINER_CSS_CLASS).css("margin-left", `${middleX - offsetX}px`);
   }
 
@@ -78,15 +80,17 @@ class Stylist {
     });
   }
 
-  _saveBoardSize(boardSize) {
+  _saveBoardSize(boardDimensions) {
+    const boardSize = this._getBoardSize(boardDimensions);
     this.currentBoardWidth = boardSize.width;
     this.currentBoardHeight = boardSize.height;
+    this.boardDimensions = boardDimensions;
   }
 
   _getBoardSize(boardDimensions) {
     return {
-      width: 39 + boardDimensions.x * 59,
-      height: 39 + boardDimensions.y * 59
+      width: 39 + boardDimensions.x * this.CELL_SIZE,
+      height: 39 + boardDimensions.y * this.CELL_SIZE
     };
   }
 
