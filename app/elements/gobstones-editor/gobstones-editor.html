@@ -2,6 +2,7 @@
 <link rel="import" href="../../bower_components/iron-icons/av-icons.html">
 <link rel="import" href="../../bower_components/paper-fab/paper-fab.html">
 <link rel="import" href="../../bower_components/ace-widget/ace-widget.html">
+<link rel="import" href="../../scripts/jquery.html">
 <link rel="import" href="../../scripts/parser.html">
 <link rel="import" href="../../scripts/stylist.html">
 
@@ -65,7 +66,9 @@
         this._setFatalities();
         this._subscribeToChangeEvents();
 
-        new Stylist().correctEditorHeight(this.editor);
+        this.stylist = new Stylist();
+        setTimeout(() => { this.setSize(14); });
+        $(window).resize(() => { this._fixEditorHeight(); });
       },
 
       onContentChange: function(content) {
@@ -77,8 +80,10 @@
       },
 
       setSize: function(newSize) {
+        console.log(newSize); // TODO: Borrar
         this.customStyle["--editor-size"] = `${newSize}px`;
         this.updateStyles();
+        this._fixEditorHeight();
       },
 
       _runCode: function(initialState) {
@@ -152,6 +157,10 @@
           bindKey: { win: "ctrl+enter", mac: "command+enter" },
           exec: () => { this.onRunCode() }
         });
+      },
+
+      _fixEditorHeight: function() {
+        this.stylist.correctEditorHeight(this.editor);
       }
     });
 

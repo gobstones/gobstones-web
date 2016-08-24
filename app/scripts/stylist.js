@@ -12,17 +12,12 @@ class Stylist {
   }
 
   correctEditorHeight(editor) {
-    const fixHeight = () => {
-      const lineHeight = editor.renderer.lineHeight;
+    const lineHeight = editor.renderer.lineHeight;
+    const availableLines = ($(document).height() - this.TOOLBAR_HEIGHT) / editor.renderer.lineHeight;
 
-      const availableLines = ($(document).height() - this.TOOLBAR_HEIGHT) / editor.renderer.lineHeight;
-      console.log("availableLines", availableLines);
-      editor.setOption("minLines", availableLines);
-      editor.setOption("maxLines", availableLines);
-    }
-
-    setTimeout(fixHeight);
-    $(window).resize(fixHeight);
+    console.log("availableLines", availableLines); // TODO: Borrar
+    editor.setOption("minLines", availableLines);
+    editor.setOption("maxLines", availableLines);
   }
 
   setPanelAsResizable(boardDimensions) {
