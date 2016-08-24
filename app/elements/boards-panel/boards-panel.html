@@ -287,23 +287,18 @@
       },
 
       _updateSize: function() {
-        if (this.sizeX === "") {
-          this.$$("#initialStateEditor").header.x = 0;
-          return this.sizeX = 1;
-        }
-        if (this.sizeY === "") {
-          this.$$("#initialStateEditor").header.y = 0;
-          return this.sizeY = 1;
-        }
-
-        const limit = (n) => Math.max(Math.min(n, 30), 1);
-        if (this.sizeX) this.sizeX = limit(this.sizeX);
-        if (this.sizeY) this.sizeY = limit(this.sizeY);
+        if (this.sizeX) this.sizeX = this._limitSize(this.sizeX);
+        if (this.sizeY) this.sizeY = this._limitSize(this.sizeY);
         if (this.stylist) this.stylist.updateBoardSize(this.size);
       },
 
       _computeSize: function(sizeX, sizeY) {
-        return { x: sizeX, y: sizeY };
+        const sizeOrOne = (n) => n === "" ? 1 : n;
+        return { x: sizeOrOne(sizeX), y: sizeOrOne(sizeY) };
+      },
+
+      _limitSize: function(n) {
+        return Math.max(Math.min(n, 30), 1);
       }
     });
 
