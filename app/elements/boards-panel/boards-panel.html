@@ -293,8 +293,9 @@
       },
 
       _computeSize: function(sizeX, sizeY) {
-        const sizeOrOne = (n) => n === "" ? 1 : n;
-        return { x: sizeOrOne(sizeX), y: sizeOrOne(sizeY) };
+        const x = sizeX === "" ? this.size.x : sizeX;
+        const y = sizeY === "" ? this.size.y : sizeY;
+        return { x: x, y: y };
       },
 
       _limitSize: function(n) {
