@@ -37,10 +37,10 @@
   "main": "index.html",
   "window": {
     "title": "Gobstones Web",
-    "width": "800",
-    "height": "600",
-    "min_width": "640",
-    "min_height": "480",
+    "width": 800,
+    "height": 600,
+    "min_width": 640,
+    "min_height": 480,
     "icon": "favicon.ico",
     "position": "center"
   },
