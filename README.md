@@ -58,7 +58,7 @@ rm gobstones-web.nw
 ### generate native distributable binaries
 The previous steps (1), (2), and (3) are pre-conditions.
 ```bash
-./node_modules/nw-builder/bin/nwbuild --platforms win32,win64,linux32,linux64 --run .
+./node_modules/nw-builder/bin/nwbuild --platforms win32,win64,linux32,linux64 .
 # the output is in /build
 ```
 
