@@ -18,7 +18,7 @@
 
       ace-widget {
         height: 100%;
-        --ace-widget-editor:{
+        --ace-widget-editor: {
           font: var(--editor-size)/normal 'Monaco', 'Menlo', 'Ubuntu Mono', 'Consolas', 'source-code-pro', monospace !important;
           @apply(--gobstones-editor);
         }
@@ -46,7 +46,7 @@
       initial-focus
     ></ace-widget>
 
-    <paper-fab style="z-index: 999;"
+    <paper-fab style="z-index: 10;"
                icon="av:play-arrow"
                class="run-button"
                on-click="onRunCode"
@@ -137,22 +137,22 @@
           return this.parser.interpret(ast, initialState);
         } catch (e) {
           // Runtime errors
-          if (e.error) this._reportError(e, e.error);
+          if (e.error) this._reportError(e, e.error, "info");
 
           // Business errors
-          if (e.on) this._reportError(e, e.message);
+          if (e.on) this._reportError(e, e.message, "info");
 
           this.fire("execution-error", e.message);
           return e;
         }
       },
 
-      _reportError: function(e, message) {
+      _reportError: function(e, message, type = "error") {
         this.editor.getSession().setAnnotations([{
           row: e.on.range.start.row,
           column: 0,
           text: message,
-          type: "error"
+          type: type
         }]);
       },
 
