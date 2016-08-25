@@ -122,8 +122,6 @@ gulp.task('images', function() {
 gulp.task('copy', function() {
   var app = gulp.src([
     'package.json',
-    'offline.js',
-    'gulpfile.js',
     'app/*',
     '!app/test',
     '!app/elements',
