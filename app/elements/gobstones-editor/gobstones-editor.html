@@ -63,7 +63,8 @@
         "iron-localstorage-load": "onLastCodeLoaded"
       },
       properties: {
-        code: String
+        codeWasLoaded: { type: Boolean, value: false },
+        code: String,
       },
 
       ready: function() {
@@ -92,7 +93,9 @@
       },
 
       onLastCodeLoaded: function() {
+        if (this.codeWasLoaded) return;
         this.editor.setValue(this.code);
+        this.codeWasLoaded = true;
       },
 
       onRunCode: function() {
