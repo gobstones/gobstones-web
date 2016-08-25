@@ -121,6 +121,9 @@ gulp.task('images', function() {
 // Copy all files at the root level (app)
 gulp.task('copy', function() {
   var app = gulp.src([
+    'package.json',
+    'offline.js',
+    'gulpfile.js',
     'app/*',
     '!app/test',
     '!app/elements',

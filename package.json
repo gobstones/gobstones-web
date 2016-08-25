@@ -1,4 +1,6 @@
 {
+  "name": "gobstones-web",
+  "version": "1.0.0",
   "private": true,
   "devDependencies": {
     "browser-sync": "^2.7.7",
@@ -31,9 +33,19 @@
     "vulcanize": ">= 1.4.2",
     "web-component-tester": "^4.0.0"
   },
+  "main": "index.html",
+  "window": {
+    "title": "Gobstones Web",
+    "width": "800",
+    "height": "600",
+    "min_width": "640",
+    "min_height": "480",
+    "icon": "favicon.ico",
+    "position": "center"
+  },
   "scripts": {
-    "test": "gulp test:local",
-    "start": "gulp serve"
+    "start": "gulp serve",
+    "test": "gulp test:local"
   },
   "engines": {
     "node": ">=0.10.0"
