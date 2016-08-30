@@ -9,7 +9,7 @@
     "platinum-elements": "PolymerElements/platinum-elements#^1.1.0",
     "polymer": "Polymer/polymer#^1.2.0",
     "ace-widget": "LostInBrittany/ace-widget#^1.0.13",
-    "gs-board": "gobstones/gs-board#^0.1.0",
+    "gs-board": "gobstones/gs-board#^1.0.0",
     "lodash": "^4.14.0",
     "webcomponentsjs": "^0.7.22",
     "jquery": "~3.1.0",
