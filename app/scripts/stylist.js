@@ -7,7 +7,7 @@ class Stylist {
     this.BOARD_CSS_CLASS = ".theBoard";
     this.BOARD_CONTAINER_CSS_CLASS = ".theBoardContainer";
     this.BOARD_CONTAINER_OFFSET = 8;
-    this.BOARD_CONTAINER_VERTICAL_MARGIN = 20;
+    this.BOARD_CONTAINER_VERTICAL_MARGIN = 50;
     this.LEFT_PANEL_CSS_CLASS = ".panel-left";
   }
 
@@ -68,17 +68,18 @@ class Stylist {
   }
 
   _centerBoard(percentage, scale) {
+    const applyMargin = (x, m, b) => - (m*x + b) * this.CELL_SIZE * scale;
+
     // center vertically
     const middleY = (this._getRightPanelHeight()) / 2;
-    const offsetY = this.currentBoardHeight / 2;
+    const offsetY = this.currentBoardHeight / 2 + applyMargin(this.boardDimensions.y, 0.111561862, -0.111561862);
     $(this.BOARD_CSS_CLASS).css("margin-top", `${middleY - offsetY}px`);
 
     // center horizontally
     $(".theBoardContainer").width(0); // avoid increasing container width
     const panelWidth = this._getRightPanelWidth(percentage);
     const middleX = panelWidth / 2;
-    const microMarginFix = - (-0.000975862 * this.boardDimensions.x + 0.131475862) * this.CELL_SIZE * scale;
-    const offsetX = this.BOARD_CONTAINER_OFFSET + (this.currentBoardWidth * scale) / 2 + microMarginFix;
+    const offsetX = this.BOARD_CONTAINER_OFFSET + (this.currentBoardWidth * scale) / 2 + applyMargin(this.boardDimensions.x, -0.000975862, 0.131475862);
 
     $(this.BOARD_CONTAINER_CSS_CLASS).css("margin-left", `${middleX - offsetX}px`);
   }
