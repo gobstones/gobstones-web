@@ -80,7 +80,6 @@
         this.parser = new Parser();
 
         this._setFatalities();
-        this._subscribeToChangeEvents();
 
         this.stylist = new Stylist();
         this.setSize(14);
@@ -103,6 +102,7 @@
       },
 
       onRunCode: function() {
+        this._setMode("main");
         this.fire("execution-request");
       },
 
@@ -121,8 +121,10 @@
       _runCode: function(initialState) {
         this.editor.getSession().clearAnnotations();
 
-        const libraryAst = this._parse(this.code.library);
-        if (libraryAst.error) return this._setMode("library");
+        try {
+          const libraryAst = this._parse(this.code.library);
+          if (libraryAst && libraryAst.error) return this._setMode("library");
+        } catch(e) { /* library errors, bleh */ }
 
         const sourceCode = this.code.library + "\n" + this.code.main
 
@@ -186,13 +188,6 @@
         });
       },
 
-      _subscribeToChangeEvents: function() {
-        this.editor.getSession().on("change", () => {
-          this.editor.getSession().setAnnotations([]);
-          this.fire("editor-dirty");
-        });
-      },
-
       _setFatalities: function() {
         const ace = this.$.ace;
         ace.editor.commands.addCommand({
@@ -208,6 +203,9 @@
 
       _onCodeChange: function() {
         if (!this.code) this.code = { main: "", library: "" };
+
+        this.editor.getSession().setAnnotations([]);
+        this.fire("editor-dirty");
       }
     });
 
