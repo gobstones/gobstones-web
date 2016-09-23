@@ -32,7 +32,7 @@
     </style>
 
     <iron-localstorage id="localStorage"
-      name="last-code" value="{{code}}" use-raw auto-save-disabled
+      name="last-code" value="{{code}}" auto-save-disabled
     ></iron-localstorage>
 
     <ace-widget
@@ -63,8 +63,12 @@
         "iron-localstorage-load": "onLastCodeLoaded"
       },
       properties: {
+        mode: { type: String, value: "main" },
         codeWasLoaded: { type: Boolean, value: false },
-        code: String,
+        code: {
+          type: Object,
+          observer: "_onCodeChange"
+        }
       },
 
       ready: function() {
@@ -88,13 +92,13 @@
       },
 
       onContentChange: function(content) {
-        this.code = content.detail.value;
+        this.code[this.mode] = content.detail.value;
         this.$.localStorage.save()
       },
 
       onLastCodeLoaded: function() {
         if (this.codeWasLoaded) return;
-        this.editor.setValue(this.code);
+        this.editor.setValue(this.code.main);
         this.codeWasLoaded = true;
       },
 
@@ -106,6 +110,14 @@
         this.customStyle["--editor-size"] = `${newSize}px`;
         this.updateStyles();
         setTimeout(() => { this._fixEditorHeight(); }, 500);
+      },
+
+      toggleMode: function() {
+        if (this.mode === "main") this.mode = "library";
+        else this.mode = "main";
+
+        this.editor.setValue(this.code[this.mode]);
+        this.editor.focus();
       },
 
       _runCode: function(initialState) {
@@ -183,6 +195,10 @@
 
       _fixEditorHeight: function() {
         this.stylist.correctEditorHeight(this.editor);
+      },
+
+      _onCodeChange: function() {
+        if (!this.code) this.code = { main: "", library: "" };
       }
     });
 
