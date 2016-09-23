@@ -113,16 +113,18 @@
       },
 
       toggleMode: function() {
-        if (this.mode === "main") this.mode = "library";
-        else this.mode = "main";
-
-        this.editor.setValue(this.code[this.mode]);
-        this.editor.focus();
+        this._setMode(
+          this.mode === "main" ? "library" : "main"
+        );
       },
 
       _runCode: function(initialState) {
         this.editor.getSession().clearAnnotations();
-        const sourceCode = this.editor.getValue();
+
+        const libraryAst = this._parse(this.code.library);
+        if (libraryAst.error) return this._setMode("library");
+
+        const sourceCode = this.code.library + "\n" + this.code.main
 
         const ast = this._parse(sourceCode);
         if (ast.error) return;
@@ -169,6 +171,12 @@
           text: message,
           type: type
         }]);
+      },
+
+      _setMode: function(mode) {
+        this.mode = mode;
+        this.editor.setValue(this.code[this.mode]);
+        this.editor.focus();
       },
 
       _subscribeToBoards: function(eventName, eventHandler) {
