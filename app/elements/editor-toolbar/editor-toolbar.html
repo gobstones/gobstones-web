@@ -60,7 +60,7 @@
         <div class="buttons">
           <paper-button on-click="moreSize"><iron-icon class="button" icon="icons:zoom-in"></iron-icon></paper-button>
           <paper-button on-click="lessSize"><iron-icon class="button" icon="icons:zoom-out"></iron-icon></paper-button>
-          <paper-button on-click="toggleLibrary"><iron-icon class="button" icon="icons:chrome-reader-mode"></iron-icon></paper-button>
+          <paper-button on-click="toggleLibrary"><iron-icon class$="button {{buttonCssClass(showLibrary)}}" icon="icons:chrome-reader-mode"></iron-icon></paper-button>
           <paper-button on-click="toggleShowBoards"><iron-icon class$="button {{buttonCssClass(showBoards)}}" icon="icons:chevron-right"></iron-icon></paper-button>
         </div>
       </div>
@@ -81,10 +81,20 @@
           type: Boolean,
           value: true
         },
+        showLibrary: {
+          type: Boolean,
+          value: false
+        }
       },
 
       ready: function() {
         this.HOP_SIZE = 3;
+
+        this.async(() => {
+          this._editor().addEventListener("mode-change", ({ detail }) => {
+            this.showLibrary = detail === "library";
+          });
+        });
       },
 
       togglePanel: function() {
@@ -97,7 +107,7 @@
       },
 
       toggleLibrary: function() {
-        this._editor().toggleMode()
+        this._editor().toggleMode();
       },
 
       buttonCssClass: function(element) {

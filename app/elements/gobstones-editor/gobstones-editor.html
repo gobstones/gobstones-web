@@ -175,6 +175,7 @@
 
       _setMode: function(mode) {
         this.mode = mode;
+        this.fire("mode-change", this.mode);
         this.editor.setValue(this.code[this.mode]);
         this.editor.focus();
       },
