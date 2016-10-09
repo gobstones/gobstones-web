@@ -1,6 +1,8 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 <link rel="import" href="../../bower_components/paper-tabs/paper-tabs.html">
 <link rel="import" href="../../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../../bower_components/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../../bower_components/paper-listbox/paper-listbox.html">
 <link rel="import" href="../../bower_components/app-localize-behavior/app-localize-behavior.html">
 <link rel="import" href="../../bower_components/gs-board/dist/components/gs-board.html">
 <link rel="import" href="../../scripts/parserAndBoardAdapter.html">
@@ -58,6 +60,19 @@
         white-space: nowrap;
       }
 
+      .size-container {
+        display: inline;
+      }
+
+      .clothing-container {
+        -webkit-touch-callout: none;
+        -webkit-user-select: none;
+        -khtml-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+      }
+
       .size-input {
         display: inline-block;
         width: 50px;
@@ -95,11 +110,15 @@
       <template is="dom-if" if="{{isInitialBoardSelected(selectedTab)}}">
         <div class="size-bar">
           <form>
-            <strong>[[localize("size")]]:</strong>
-            <paper-input class="size-input" value="{{sizeX}}" type="number" min="1" max="30"></paper-input>
-            <span>[[localize("columns")]] <strong>[[localize("by")]]</strong></span>
-            <paper-input class="size-input" value="{{sizeY}}" type="number" min="1" max="30"></paper-input>
-            <span>[[localize("rows")]]</span>
+            <div class="size-container">
+              <strong>[[localize("size")]]:</strong>
+              <paper-input class="size-input" value="{{sizeX}}" type="number" min="1" max="30"></paper-input>
+            </div>
+            <div class="size-container">
+              <span>[[localize("columns")]] <strong>[[localize("by")]]</strong></span>
+              <paper-input class="size-input" value="{{sizeY}}" type="number" min="1" max="30"></paper-input>
+              <span>[[localize("rows")]]</span>
+            </div>
           </form>
         </div>
       </template>
@@ -108,14 +127,28 @@
         <template is="dom-if" if="{{!error}}">
           <template is="dom-if" if="{{finalState}}" restamp="true">
             <div class="size-bar">
-              <form>
-                <strong>[[localize("size")]]:</strong>
-                <span>{{sizeX}}</span>
-                <span>[[localize("columns")]] <strong>[[localize("by")]]</strong></span>
-                <span>{{sizeY}}</span>
-                <span>[[localize("rows")]]</span>
-                <paper-input style="visibility: hidden;" class="size-input"></paper-input>
-              </form>
+              <div>
+                <form>
+                  <div class="size-container">
+                    <strong>[[localize("size")]]:</strong>
+                    <span>{{sizeX}}</span>
+                    <span>[[localize("columns")]] <strong>[[localize("by")]]</strong></span>
+                    <span>{{sizeY}}</span>
+                    <span>[[localize("rows")]]</span>
+                    <paper-input style="visibility: hidden;" class="size-input"></paper-input>
+                  </div>
+                </form>
+              </div>
+              <div class="clothing-container">
+                <paper-button on-click="toggleShowClothing"><iron-icon class="black-button" icon="icons:visibility"></iron-icon></paper-button>
+                <strong>[[localize("clothing")]]:</strong>
+                <paper-dropdown-menu no-animations no-label-float vertical-align="bottom" horizontal-align="left" disabled="{{!showClothing}}">
+                  <paper-listbox class="dropdown-content" selected="0">
+                    <paper-item>Mine</paper-item>
+                    <paper-item>Fruits</paper-item>
+                  </paper-listbox>
+                </paper-dropdown-menu>
+              </div>
             </div>
           </template>
         </template>
@@ -183,6 +216,10 @@
           type: Boolean,
           value: true
         },
+        showClothing: {
+          type: Boolean,
+          value: false
+        },
         finalState: Object,
         error: Object
       },
@@ -218,6 +255,10 @@
       toggleShowCode: function() {
         this.showCode = !this.showCode;
         this.fire("show-code-changed", this.showCode);
+      },
+
+      toggleShowClothing: function() {
+        this.showClothing = !this.showClothing;
       },
 
       buttonCssClass: function(element) {

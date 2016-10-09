@@ -8,6 +8,9 @@
     "columns": "columnas",
     "by": "x",
     "rows": "filas",
+    "clothing": "Vestimenta",
+    "enable": "Activar",
+    "disable": "Desactivar",
     "actions": "Acciones",
     "save": "Guardar",
     "open": "Abrir"
