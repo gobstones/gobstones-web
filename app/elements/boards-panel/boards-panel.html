@@ -356,8 +356,13 @@
       _setClothing: function() {
         // TODO: Deshardcodear todo esto
 
+        var reRun = function() {
+          try { this._onRunRequest(); } catch(e) { }
+        }.bind(this);
+
         if (!this.showClothing) {
-          return this.clothing = null
+          this.clothing = null;
+          return reRun();
         }
 
         if (this.selectedClothing === 0)
@@ -420,8 +425,7 @@
             ]
           }
 
-        var run = this._onRunRequest.bind(this);
-        if (run) run();
+        return reRun();
       }
     });
 
