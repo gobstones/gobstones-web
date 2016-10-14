@@ -1,6 +1,6 @@
 class CodeLoader extends Loader {
   save(context) {
-    const code = context.editor.code.code;
+    const code = context.editor.code.main;
     this._saveFile(context, code, "code", "gbs");
   }
 

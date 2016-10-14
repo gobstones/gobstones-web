@@ -2,6 +2,7 @@
 <link rel="import" href="../../bower_components/app-localize-behavior/app-localize-behavior.html">
 <link rel="import" href="../../bower_components/paper-input/paper-input.html">
 <link rel="import" href="../../scripts/jquery.html">
+<link rel="import" href="../../scripts/loaders/projectLoader.html">
 <link rel="import" href="../../scripts/loaders/codeLoader.html">
 <link rel="import" href="../../scripts/loaders/libraryLoader.html">
 <link rel="import" href="../../scripts/loaders/clothingLoader.html">
@@ -54,6 +55,8 @@
         </li>
       </ul>
 
+      <input id="Project" type="file" accept=".gbp" on-change="onLoadedProject" style="visibility: hidden;" />
+
       <input id="Code" type="file" accept=".gbs" on-change="onLoadedCode" style="visibility: hidden;" />
 
       <input id="Library" type="file" accept=".gbs" on-change="onLoadedLibrary" style="visibility: hidden;" />
@@ -80,12 +83,13 @@
       attached: function() {
         this.loadResources(this.resolveUrl("../../locales.json"));
         this.loaders = {
+          Project: new ProjectLoader(),
           Code: new CodeLoader(),
           Library: new LibraryLoader(),
           Clothing: new ClothingLoader()
         };
 
-        ["Code", "Library", "Clothing"].forEach(item => {
+        ["Project", "Code", "Library", "Clothing"].forEach(item => {
           this.loaders[`save${item}`] = () => {
             this[item].save(this._context());
           };
