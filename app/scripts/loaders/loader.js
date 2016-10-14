@@ -3,7 +3,15 @@ class Loader {
     this._saveText(this.getFile(context));
   }
 
+  read(context, event, callback) {
+    this._readText(event, (code, fileName) => {
+      this.readContent(context, code, fileName);
+      callback();
+    });
+  }
+
   // getFile(context); <<abstract>>
+  // readContent(context, content, fileName); <<abstract>>
 
   _setAndRunCode(context, code, mode) {
     context.editor.setCode(code, mode);
@@ -28,7 +36,7 @@ class Loader {
     a.click();
   }
 
-  _read(event, callback) {
+  _readText(event, callback) {
     const { file, fileName } = this._readLocalFile(event);
 
     const reader = new FileReader();

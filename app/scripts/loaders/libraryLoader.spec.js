@@ -34,7 +34,7 @@ describe('LibraryLoader', function() {
       }
     };
 
-    loader._read = sinon.stub().callsArgWith(1, "AContent", "AFileName");
+    loader._readText = sinon.stub().callsArgWith(1, "AContent", "AFileName");
     loader.read(context, null, callback);
 
     expect(callback.called).toBeTruthy();

@@ -4,10 +4,7 @@ class LibraryLoader extends Loader {
     return this._getFile(context, code, "library", "gbs");
   }
 
-  read(context, event, callback) {
-    this._read(event, (code) => {
-      this._setAndRunCode(context, code, "library");
-      callback();
-    });
+  readContent(context, content, fileName) {
+    this._setAndRunCode(context, content, "library");
   }
 }

@@ -36,7 +36,7 @@ describe('CodeLoader', function() {
       setProjectName: setProjectName
     };
 
-    loader._read = sinon.stub().callsArgWith(1, "AContent", "AFileName");
+    loader._readText = sinon.stub().callsArgWith(1, "AContent", "AFileName");
     loader.read(context, null, callback);
 
     expect(setProjectName.calledWith("AFileName")).toBeTruthy();
