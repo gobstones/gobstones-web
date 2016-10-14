@@ -86,6 +86,11 @@
         $(window).resize(() => { this._fixEditorHeight(); });
       },
 
+      setCode: function(code, mode = "main") {
+        this.code[mode] = code;
+        if (this.mode === mode) this.editor.setValue(code);
+      },
+
       onAceReady: function() {
         this.$.ace.editor.$blockScrolling = Infinity;
       },

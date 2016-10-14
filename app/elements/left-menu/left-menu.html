@@ -98,12 +98,14 @@
       },
 
       onLoadedCode: function(event) {
-        this._loadFile(event, (code) => { this._setAndRunCode(code) });
+        this._loadFile(event, (code) => {
+          this._setAndRunCode(code)
+        });
       },
 
       onLoadedLibrary: function(event) {
-        this._loadFile(event, (a) => {
-          alert("mirá", a);
+        this._loadFile(event, (code) => {
+          this._setAndRunCode(code, "library")
         });
       },
 
@@ -128,9 +130,9 @@
         });
       },
 
-      _setAndRunCode: function(code) {
+      _setAndRunCode: function(code, mode) {
         const editorElement = this._getEditorElement();
-        editorElement.editor.setValue(code);
+        editorElement.setCode(code, mode);
         editorElement.onRunCode();
       },
 
