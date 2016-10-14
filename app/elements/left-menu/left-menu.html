@@ -31,67 +31,27 @@
     </style>
 
     <div>
-      <paper-button on-click="saveProgram">
-        <span class="clickable action">
-          <iron-icon icon="icons:save"></iron-icon>
-        </span>
-      </paper-button>
-      <paper-button on-click="loadProgram">
-        <span class="clickable action">
-          <iron-icon icon="icons:folder-open"></iron-icon>
-        </span>
-      </paper-button>
-    </iron-icon>
+      <save-and-load on-save="saveProject" on-load="loadProject"></save-and-load>
+    </div>
     <h1 class="title">[[localize("project")]]</h1>
-    <h3 class="subtitle">Nuevo proyecto</h2>
+    <h3 class="subtitle">
+      Nuevo proyecto <!-- // TODO: Textbox -->
+    </h2>
 
     <div class="items">
       <ul>
         <li class="action">
           <span>Código</span>
-          <span>
-            <paper-button on-click="saveProgram">
-              <span class="clickable action">
-                <iron-icon icon="icons:save"></iron-icon>
-              </span>
-            </paper-button>
-            <paper-button on-click="loadProgram">
-              <span class="clickable action">
-                <iron-icon icon="icons:folder-open"></iron-icon>
-              </span>
-            </paper-button>
-          </span>
+          <save-and-load on-save="saveCode" on-load="loadCode"></save-and-load>
         </li>
         <li class="action">
           <span>Biblioteca</span>
-          <span>
-            <paper-button on-click="saveProgram">
-              <span class="clickable action">
-                <iron-icon icon="icons:save"></iron-icon>
-              </span>
-            </paper-button>
-            <paper-button on-click="loadProgram">
-              <span class="clickable action">
-                <iron-icon icon="icons:folder-open"></iron-icon>
-              </span>
-            </paper-button>
-          </span>
+          <save-and-load on-save="saveLibrary" on-load="loadLibrary"></save-and-load>
         </li>
         <!-- <li>Tablero inicial</li> --> <!-- // TODO -->
         <li class="action">
           <span>Vestimenta</span>
-          <span>
-            <paper-button on-click="saveProgram">
-              <span class="clickable action">
-                <iron-icon icon="icons:save"></iron-icon>
-              </span>
-            </paper-button>
-            <paper-button on-click="loadProgram">
-              <span class="clickable action">
-                <iron-icon icon="icons:folder-open"></iron-icon>
-              </span>
-            </paper-button>
-          </span>
+          <save-and-load on-save="saveClothes" on-load="loadClothes"></save-and-load>
         </li>
       </ul>
 
