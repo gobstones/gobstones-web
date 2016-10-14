@@ -13,12 +13,12 @@ describe('LibraryLoader', function() {
           library: "The library code"
         }
       },
-      getProjectName: function() { return "hola" }
+      getProjectName: function() { return "sarasa" }
     };
 
     expect(loader.getFile(context)).toEqual({
       content: "The library code",
-      name: "hola.library.gbs"
+      name: "sarasa.library.gbs"
     });
   });
 
