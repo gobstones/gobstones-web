@@ -1,4 +1,4 @@
-class AvailableClothings {
+class AvailableAttires {
   getAll() {
     return [
       {

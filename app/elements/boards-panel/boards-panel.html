@@ -7,7 +7,7 @@
 <link rel="import" href="../../bower_components/gs-board/dist/components/gs-board.html">
 <link rel="import" href="../../scripts/parserAndBoardAdapter.html">
 <link rel="import" href="../../scripts/stylist.html">
-<link rel="import" href="../../scripts/availableClothings.html">
+<link rel="import" href="../../scripts/availableAttires.html">
 
 <dom-module id="boards-panel">
   <template>
@@ -65,7 +65,7 @@
         display: inline;
       }
 
-      .clothing-container {
+      .attire-container {
         -webkit-touch-callout: none;
         -webkit-user-select: none;
         -khtml-user-select: none;
@@ -140,12 +140,12 @@
                   </div>
                 </form>
               </div>
-              <div class="clothing-container">
-                <paper-button on-click="toggleShowClothing"><iron-icon class="black-button" icon="icons:visibility"></iron-icon></paper-button>
-                <strong>[[localize("clothing")]]:</strong>
-                <paper-dropdown-menu no-animations no-label-float vertical-align="bottom" horizontal-align="right" disabled="{{!showClothing}}">
-                  <paper-listbox class="dropdown-content" selected="{{selectedClothing}}">
-                    <template is="dom-repeat" items="{{ availableClothings }}">
+              <div class="attire-container">
+                <paper-button on-click="toggleShowAttire"><iron-icon class="black-button" icon="icons:visibility"></iron-icon></paper-button>
+                <strong>[[localize("attire")]]:</strong>
+                <paper-dropdown-menu no-animations no-label-float vertical-align="bottom" horizontal-align="right" disabled="{{!showAttire}}">
+                  <paper-listbox class="dropdown-content" selected="{{selectedAttire}}">
+                    <template is="dom-repeat" items="{{ availableAttires }}">
                       <paper-item>{{item.name}}</paper-item>
                     </template>
                   </paper-listbox>
@@ -167,7 +167,7 @@
           <template is="dom-if" if="{{isFinalBoardSelected(selectedTab)}}">
             <template is="dom-if" if="{{!error}}">
               <template is="dom-if" if="{{finalState}}" restamp="true">
-                <gs-board table='{{finalState.table}}' header="{{finalState.header}}" clothing="{{clothing}}"></gs-board>
+                <gs-board table='{{finalState.table}}' header="{{finalState.header}}" attire="{{attire}}"></gs-board>
               </template>
             </template>
           </template>
@@ -220,19 +220,19 @@
         },
         finalState: Object,
         error: Object,
-        availableClothings: {
+        availableAttires: {
           type: Object,
-          value: new AvailableClothings().getAll()
+          value: new AvailableAttires().getAll()
         },
-        clothing: {
+        attire: {
           type: Object
         },
-        selectedClothing: {
+        selectedAttire: {
           type: Number,
           value: 0,
-          observer: "_setClothing"
+          observer: "_setAttire"
         },
-        showClothing: {
+        showAttire: {
           type: Boolean,
           value: false
         }
@@ -271,9 +271,9 @@
         this.fire("show-code-changed", this.showCode);
       },
 
-      toggleShowClothing: function() {
-        this.showClothing = !this.showClothing;
-        this._setClothing();
+      toggleShowAttire: function() {
+        this.showAttire = !this.showAttire;
+        this._setAttire();
       },
 
       buttonCssClass: function(element) {
@@ -285,21 +285,20 @@
       isFinalBoardSelected: (selectedTab) => selectedTab === 1,
       isFinalBoardVisible: (finalState, error) => finalState || error,
 
-      getClothing: function() {
-        if (this.showClothing) return this.clothing;
+      getAttire: function() {
+        if (this.showAttire) return this.attire;
       },
 
-      addOrSetClothing: function(clothing) {
-        var availableClothing = _.find(this.availableClothings, { name: clothing.name });
-        if (!availableClothing) {
-          this.push("availableClothings", clothing);
-          this.selectedClothing = this.availableClothings.length - 1;
-        } else {
-          this.selectedClothing = this.availableClothings.indexOf(availableClothing);
-        }
+      addOrSetAttire: function(attire) {
+        var availableAttire = _.find(this.availableAttires, { name: attire.name });
+        if (!availableAttire) {
+          this.push("availableAttires", attire);
+          this.selectedAttire = this.availableAttires.length - 1;
+        } else
+          this.selectedAttire = this.availableAttires.indexOf(availableAttire);
 
-        this.showClothing = true;
-        this._setClothing();
+        this.showAttire = true;
+        this._setAttire();
       },
 
       _onRunRequest: function() {
@@ -376,17 +375,17 @@
         if (this.stylist) this.stylist.updateBoardSize(this.size);
       },
 
-      _setClothing: function() {
+      _setAttire: function() {
         var reRun = function() {
           try { this._onRunRequest(); } catch(e) { }
         }.bind(this);
 
-        if (!this.showClothing) {
-          this.clothing = null;
+        if (!this.showAttire) {
+          this.attire = null;
           return reRun();
         }
 
-        this.clothing = this.availableClothings[this.selectedClothing];
+        this.attire = this.availableAttires[this.selectedAttire];
 
         return reRun();
       }
