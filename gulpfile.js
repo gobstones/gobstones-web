@@ -331,6 +331,8 @@ gulp.task('bowertotmp', function () {
 gulp.task('jasmine', function() {
   return gulp.src([
     'app/bower_components/lodash/dist/lodash.min.js',
+    'app/bower_components/sinon/sinon.js',
+    'app/scripts/loaders/loader.js',
     'app/scripts/**/*.js',
     'app/scripts/**/*.spec.js'
   ])
