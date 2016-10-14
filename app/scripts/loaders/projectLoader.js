@@ -22,10 +22,13 @@ class ProjectLoader extends Loader {
   }
 
   read(context, event, callback) {
-    // this._read(event, (code, fileName) => {
-    //   context.setProjectName(fileName);
-    //   this._setAndRunCode(context, code);
-    //   callback();
-    // });
+    const { file, fileName } = this._readLocalFile(event);
+
+    JSZip.loadAsync(file).then(zip => {
+      zip.forEach(function(relativePath, zipEntry) {
+        console.log(relativePath, zipEntry);
+        // TODO: Leer y blah
+      });
+    });
   }
 }

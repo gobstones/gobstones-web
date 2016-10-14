@@ -29,9 +29,7 @@ class Loader {
   }
 
   _read(event, callback) {
-    const input = event.target;
-
-    const fileName = input.files[0].name.split(".")[0];
+    const { file, fileName } = this._readLocalFile(event);
 
     const reader = new FileReader();
     reader.onload = function(){
@@ -39,6 +37,14 @@ class Loader {
       input.value = null;
       callback(content, fileName);
     };
-    reader.readAsText(input.files[0]);
+    reader.readAsText(file);
+  }
+
+  _readLocalFile(event) {
+    const input = event.target;
+    const file = input.files[0];
+    const fileName = file.name.split(".")[0];
+
+    return { file: file, fileName: fileName };
   }
 }
