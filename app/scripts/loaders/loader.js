@@ -1,6 +1,6 @@
 class Loader {
   save(context) {
-    this._save(this.getFile(context));
+    this._saveText(this.getFile(context));
   }
 
   // getFile(context); <<abstract>>
@@ -17,10 +17,13 @@ class Loader {
     };
   }
 
-  _save({ content, name }) {
+  _saveText({ content, name }) {
+    this._saveBlob(new Blob([content], { type: "text/plain" }), name);
+  }
+
+  _saveBlob(blob, name) {
     const a = document.createElement("a");
-    const file = new Blob([content], { type: "text/plain" });
-    a.href = URL.createObjectURL(file);
+    a.href = URL.createObjectURL(blob);
     a.download = name;
     a.click();
   }

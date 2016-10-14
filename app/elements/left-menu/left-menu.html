@@ -83,15 +83,15 @@
       attached: function() {
         this.loadResources(this.resolveUrl("../../locales.json"));
         this.loaders = {
-          Project: new ProjectLoader(),
-          Code: new CodeLoader(),
-          Library: new LibraryLoader(),
-          Clothing: new ClothingLoader()
+          Project: new ProjectLoader,
+          Code: new CodeLoader,
+          Library: new LibraryLoader,
+          Clothing: new ClothingLoader
         };
 
         ["Project", "Code", "Library", "Clothing"].forEach(item => {
-          this.loaders[`save${item}`] = () => {
-            this[item].save(this._context());
+          this[`save${item}`] = () => {
+            this.loaders[item].save(this._context());
           };
 
           this[`load${item}`] = () => {

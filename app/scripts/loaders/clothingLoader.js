@@ -1,7 +1,7 @@
 class ClothingLoader extends Loader {
   getFile(context) {
     const clothing = context.boards.clothing;
-    this._getFile(JSON.stringify(clothing), "clothing", "json");
+    return this._getFile(context, JSON.stringify(clothing), "clothing", "json");
   }
 
   read(context, event, callback) {
