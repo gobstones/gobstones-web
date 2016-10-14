@@ -8,34 +8,94 @@
 
     <style>
       .title {
-        text-align: center;
+        margin: 3px;
       }
 
-      .actions {
-        margin-left: 5px;
+      .subtitle {
+        margin: 3px;
+        text-align: center;
+        font-style: italic;
+      }
+
+      .items {
+        margin-top: 25px;
       }
 
       .action-text {
         vertical-align: middle;
       }
+
+      .action {
+        margin: 10px 0;
+      }
     </style>
 
-    <h1 class="title">[[localize("actions")]]</h1>
-
-    <div class="actions">
+    <div>
       <paper-button on-click="saveProgram">
-        <div class="clickable action">
-          <iron-icon icon="icons:save"></iron-icon> <span class="action-text">[[localize("save")]]</span>
-        </div>
+        <span class="clickable action">
+          <iron-icon icon="icons:save"></iron-icon>
+        </span>
       </paper-button>
+      <paper-button on-click="loadProgram">
+        <span class="clickable action">
+          <iron-icon icon="icons:folder-open"></iron-icon>
+        </span>
+      </paper-button>
+    </iron-icon>
+    <h1 class="title">[[localize("project")]]</h1>
+    <h3 class="subtitle">Nuevo proyecto</h2>
+
+    <div class="items">
+      <ul>
+        <li class="action">
+          <span>Código</span>
+          <span>
+            <paper-button on-click="saveProgram">
+              <span class="clickable action">
+                <iron-icon icon="icons:save"></iron-icon>
+              </span>
+            </paper-button>
+            <paper-button on-click="loadProgram">
+              <span class="clickable action">
+                <iron-icon icon="icons:folder-open"></iron-icon>
+              </span>
+            </paper-button>
+          </span>
+        </li>
+        <li class="action">
+          <span>Biblioteca</span>
+          <span>
+            <paper-button on-click="saveProgram">
+              <span class="clickable action">
+                <iron-icon icon="icons:save"></iron-icon>
+              </span>
+            </paper-button>
+            <paper-button on-click="loadProgram">
+              <span class="clickable action">
+                <iron-icon icon="icons:folder-open"></iron-icon>
+              </span>
+            </paper-button>
+          </span>
+        </li>
+        <!-- <li>Tablero inicial</li> --> <!-- // TODO -->
+        <li class="action">
+          <span>Vestimenta</span>
+          <span>
+            <paper-button on-click="saveProgram">
+              <span class="clickable action">
+                <iron-icon icon="icons:save"></iron-icon>
+              </span>
+            </paper-button>
+            <paper-button on-click="loadProgram">
+              <span class="clickable action">
+                <iron-icon icon="icons:folder-open"></iron-icon>
+              </span>
+            </paper-button>
+          </span>
+        </li>
+      </ul>
 
       <input id="fileToOpen" type="file" accept=".gbs" on-change="onSelectFile" style="visibility: hidden;" />
-
-      <paper-button on-click="loadProgram">
-        <div class="clickable action">
-          <iron-icon icon="icons:folder-open"></iron-icon> <span class="action-text">[[localize("open")]]</span>
-        </div>
-      </paper-button>
     </div>
   </template>
 
