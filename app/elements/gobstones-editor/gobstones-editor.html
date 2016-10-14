@@ -67,7 +67,7 @@
         codeWasLoaded: { type: Boolean, value: false },
         code: {
           type: Object,
-          observer: "_onCodeChange"
+          observer: "_initializeCode"
         }
       },
 
@@ -97,7 +97,9 @@
 
       onContentChange: function(content) {
         this.code[this.mode] = content.detail.value;
-        this.$.localStorage.save()
+        this.$.localStorage.save();
+
+        this._setAsDirty();
       },
 
       onLastCodeLoaded: function() {
@@ -131,7 +133,7 @@
           if (libraryAst && libraryAst.error) return this._setMode("library");
         } catch(e) { /* library errors, bleh */ }
 
-        const sourceCode = this.code.library + "\n" + this.code.main
+        const sourceCode = this.code.library + "\n" + this.code.main;
 
         const ast = this._parse(sourceCode);
         if (ast.error) return;
@@ -206,9 +208,11 @@
         this.stylist.correctEditorHeight(this.editor);
       },
 
-      _onCodeChange: function() {
+      _initializeCode: function() {
         if (!this.code) this.code = { main: "", library: "" };
+      },
 
+      _setAsDirty: function() {
         this.editor.getSession().setAnnotations([]);
         this.fire("editor-dirty");
       }

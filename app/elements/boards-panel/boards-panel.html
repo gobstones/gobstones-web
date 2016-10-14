@@ -262,6 +262,7 @@
         })._subscribeToEditor("execution-error", (eventInfo) => {
           this._onExecutionError(eventInfo);
         })._subscribeToEditor("editor-dirty", () => {
+          console.log("llegó el evento");
           this._clean();
         });
       },
@@ -341,6 +342,7 @@
       },
 
       _clean: function() {
+        console.log("clean");
         this.finalState = null;
         this.error = null;
         this.selectedTab = 0;
