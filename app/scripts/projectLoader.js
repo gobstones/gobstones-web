@@ -15,6 +15,7 @@ class ProjectLoader {
     const reader = new FileReader();
     reader.onload = function(){
       const content = reader.result;
+      input.value = null;
       callback(content, fileName);
     };
     reader.readAsText(input.files[0]);
