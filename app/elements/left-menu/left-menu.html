@@ -101,6 +101,7 @@
 
       onLoadedCode: function(event) {
         this._loadFile(event, (code) => {
+          this.projectName = fileName;
           this._setAndRunCode(code)
         });
       },
@@ -128,8 +129,7 @@
 
       _loadFile: function(event, callback) {
         this._projectLoader.read(event, (content, fileName) => {
-          this.projectName = fileName;
-          callback(content);
+          callback(content, fileName);
           this._closePanel();
         });
       },
