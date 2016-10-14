@@ -12,6 +12,8 @@
     "enable": "Activar",
     "disable": "Desactivar",
     "project": "Proyecto",
+    "code": "Código",
+    "library": "Biblioteca",
     "save": "Guardar",
     "open": "Abrir"
   }

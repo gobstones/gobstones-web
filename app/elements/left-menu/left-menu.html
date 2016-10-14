@@ -1,7 +1,8 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
-<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
 <link rel="import" href="../../bower_components/app-localize-behavior/app-localize-behavior.html">
+<link rel="import" href="../../bower_components/paper-input/paper-input.html">
 <link rel="import" href="../../scripts/jquery.html">
+<link rel="import" href="../../scripts/projectLoader.html">
 
 <dom-module id="left-menu">
   <template>
@@ -11,14 +12,12 @@
         margin: 3px;
       }
 
-      .subtitle {
-        margin: 3px;
-        text-align: center;
-        font-style: italic;
+      .project-title {
+        margin: -20px 30px;
       }
 
       .items {
-        margin-top: 25px;
+        margin-top: 40px;
       }
 
       .action-text {
@@ -34,28 +33,30 @@
       <save-and-load on-save="saveProject" on-load="loadProject"></save-and-load>
     </div>
     <h1 class="title">[[localize("project")]]</h1>
-    <h3 class="subtitle">
-      Nuevo proyecto <!-- // TODO: Textbox -->
-    </h2>
+    <paper-input class="project-title" value="{{projectName}}"></paper-input>
 
     <div class="items">
       <ul>
         <li class="action">
-          <span>Código</span>
+          <span>[[localize("code")]]</span>
           <save-and-load on-save="saveCode" on-load="loadCode"></save-and-load>
         </li>
         <li class="action">
-          <span>Biblioteca</span>
+          <span>[[localize("library")]]</span>
           <save-and-load on-save="saveLibrary" on-load="loadLibrary"></save-and-load>
         </li>
         <!-- <li>Tablero inicial</li> --> <!-- // TODO -->
         <li class="action">
-          <span>Vestimenta</span>
-          <save-and-load on-save="saveClothes" on-load="loadClothes"></save-and-load>
+          <span>[[localize("clothing")]]</span>
+          <save-and-load on-save="saveClothing" on-load="loadClothing"></save-and-load>
         </li>
       </ul>
 
-      <input id="fileToOpen" type="file" accept=".gbs" on-change="onSelectFile" style="visibility: hidden;" />
+      <input id="Code" type="file" accept=".gbs" on-change="onLoadedCode" style="visibility: hidden;" />
+
+      <input id="Library" type="file" accept=".gbs" on-change="onLoadedLibrary" style="visibility: hidden;" />
+
+      <input id="Clothing" type="file" accept=".json" on-change="onLoadedClothing" style="visibility: hidden;" />
     </div>
   </template>
 
@@ -67,51 +68,74 @@
         Polymer.AppLocalizeBehavior
       ],
       properties: {
-        language: { value: "es" }
+        language: { value: "es" },
+        projectName: {
+          type: String,
+          value: "Program"
+        }
       },
 
       attached: function() {
         this.loadResources(this.resolveUrl("../../locales.json"));
-      },
+        this._projectLoader = new ProjectLoader();
 
-      saveProgram: function() {
-        const code = this._getEditorElement().editor.getValue()
-        const fileName = this._currentFileName || "program.gbs";
-        this._saveFile(code, fileName);
-      },
-
-      loadProgram: function() {
-        $("#fileToOpen").click();
-      },
-
-      onSelectFile: function(event) {
-        this._readFile(event, (code) => {
-          const editorElement = this._getEditorElement();
-          editorElement.editor.setValue(code);
-          editorElement.onRunCode();
-          $("paper-drawer-panel")[0].togglePanel();
+        ["Code", "Library", "Clothing"].forEach(item => {
+          this[`load${item}`] = () => { $(`#${item}`).click(); };
         });
       },
 
-      _saveFile: function(content, name) {
-        const a = document.createElement("a");
-        const file = new Blob([content], { type: "text/plain" });
-        a.href = URL.createObjectURL(file);
-        a.download = name;
-        a.click();
+      saveCode: function() {
+        const code = this._getEditorElement().editor.getValue();
+        this._saveFile(code, "code", "gbs");
       },
 
-      _readFile: function(event, callback) {
-        const input = event.target;
+      saveLibrary: function() {
+        this._saveFile("no sé", "library", "gbs");
+      },
 
-        this._currentFileName = input.files[0].name;
+      saveClothing: function() {
+        this._saveFile("{}{}", "clothing", "json");
+      },
 
-        const reader = new FileReader();
-        reader.onload = function(){
-          const content = reader.result;
+      onLoadedCode: function(event) {
+        this._loadFile(event, (code) => { this._setAndRunCode(code) });
+      },
+
+      onLoadedLibrary: function(event) {
+        this._loadFile(event, (a) => {
+          alert("mirá", a);
+        });
+      },
+
+      onLoadedClothing: function(event) {
+        this._loadFile(event, (a) => {
+          alert("mirá", a);
+        });
+      },
+
+      _saveFile: function(content, type, extension) {
+        this._projectLoader.save(
+          content,
+          `${this.projectName}.${type}.${extension}`
+        );
+      },
+
+      _loadFile: function(event, callback) {
+        this._projectLoader.read(event, (content, fileName) => {
+          this.projectName = fileName;
           callback(content);
-        };
-        reader.readAsText(input.files[0]);
+          this._closePanel();
+        });
+      },
+
+      _setAndRunCode: function(code) {
+        const editorElement = this._getEditorElement();
+        editorElement.editor.setValue(code);
+        editorElement.onRunCode();
+      },
+
+      _closePanel: function() {
+        $("paper-drawer-panel")[0].togglePanel();
       },
 
       _getEditorElement: function() {
