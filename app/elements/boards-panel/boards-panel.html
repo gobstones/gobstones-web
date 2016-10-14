@@ -7,6 +7,7 @@
 <link rel="import" href="../../bower_components/gs-board/dist/components/gs-board.html">
 <link rel="import" href="../../scripts/parserAndBoardAdapter.html">
 <link rel="import" href="../../scripts/stylist.html">
+<link rel="import" href="../../scripts/availableClothings.html">
 
 <dom-module id="boards-panel">
   <template>
@@ -144,8 +145,9 @@
                 <strong>[[localize("clothing")]]:</strong>
                 <paper-dropdown-menu no-animations no-label-float vertical-align="bottom" horizontal-align="right" disabled="{{!showClothing}}">
                   <paper-listbox class="dropdown-content" selected="{{selectedClothing}}">
-                    <paper-item>Mine</paper-item>
-                    <paper-item>Fruits</paper-item>
+                    <template is="dom-repeat" items="{{ availableClothings }}">
+                      <paper-item>{{item.name}}</paper-item>
+                    </template>
                   </paper-listbox>
                 </paper-dropdown-menu>
               </div>
@@ -194,6 +196,14 @@
       ],
       properties: {
         language: { value: "es" },
+        showCode: {
+          type: Boolean,
+          value: true
+        },
+        selectedTab: {
+          type: Number,
+          value: 0
+        },
         sizeX: {
           type: Number,
           value: 4,
@@ -208,16 +218,14 @@
           computed: "_computeSize(sizeX, sizeY)",
           observer: "_updateSize"
         },
+        finalState: Object,
+        error: Object,
+        availableClothings: {
+          type: Object,
+          value: new AvailableClothings().getAll()
+        },
         clothing: {
           type: Object
-        },
-        selectedTab: {
-          type: Number,
-          value: 0
-        },
-        showCode: {
-          type: Boolean,
-          value: true
         },
         selectedClothing: {
           type: Number,
@@ -227,9 +235,7 @@
         showClothing: {
           type: Boolean,
           value: false
-        },
-        finalState: Object,
-        error: Object
+        }
       },
       listeners: {
         "board-changed": "_clean"
@@ -278,6 +284,23 @@
       isInitialBoardSelected: (selectedTab) => selectedTab === 0,
       isFinalBoardSelected: (selectedTab) => selectedTab === 1,
       isFinalBoardVisible: (finalState, error) => finalState || error,
+
+      getClothing: function() {
+        if (this.showClothing) return this.clothing;
+      },
+
+      addOrSetClothing: function(clothing) {
+        var availableClothing = _.find(this.availableClothings, { name: clothing.name });
+        if (!availableClothing) {
+          this.push("availableClothings", clothing);
+          this.selectedClothing = this.availableClothings.length - 1;
+        } else {
+          this.selectedClothing = this.availableClothings.indexOf(availableClothing);
+        }
+
+        this.showClothing = true;
+        this._setClothing();
+      },
 
       _onRunRequest: function() {
         this._clean();
@@ -354,8 +377,6 @@
       },
 
       _setClothing: function() {
-        // TODO: Deshardcodear todo esto
-
         var reRun = function() {
           try { this._onRunRequest(); } catch(e) { }
         }.bind(this);
@@ -365,65 +386,7 @@
           return reRun();
         }
 
-        if (this.selectedClothing === 0)
-          this.clothing = {
-            "rules": [
-              {
-                "when": { "blue": "*", "black": "+", "red": 4, "green": "*" },
-                "image": "https://cloud.githubusercontent.com/assets/1631752/19217961/ef2e0d4c-8dea-11e6-960d-69585778f89d.png"
-              },
-
-              {
-                "when": { "blue": 0, "black": 0, "red": 0, "green": 0 },
-                "image": "https://cloud.githubusercontent.com/assets/1631752/19217956/ef1d928c-8dea-11e6-8b53-8d2495cdd3e9.png"
-              },
-
-              {
-                "when": { "blue": 0, "black": 0, "red": 0, "green": 1 },
-                "image": "https://cloud.githubusercontent.com/assets/1631752/19217959/ef27e822-8dea-11e6-9bb0-57892593c9d8.png"
-              },
-
-              {
-                "when": { "blue": 1, "black": 0, "red": 0, "green": 0 },
-                "image": "https://cloud.githubusercontent.com/assets/1631752/19217958/ef245892-8dea-11e6-80f4-aeb5d1862b1c.png"
-              },
-
-              {
-                "when": { "blue": 0, "black": 1, "red": 0, "green": 0 },
-                "image": "https://cloud.githubusercontent.com/assets/1631752/19217957/ef20120a-8dea-11e6-825c-23e7773269b0.png"
-              },
-
-              {
-                "when": { "blue": 0, "black": 0, "red": 1, "green": 0 },
-                "image": "https://cloud.githubusercontent.com/assets/1631752/19217960/ef2ad3c0-8dea-11e6-8434-ff9152b76f3b.png"
-              }
-            ]
-          };
-
-        if (this.selectedClothing === 1)
-          this.clothing = {
-            "rules": [
-              {
-                "when": { "blue": 0, "black": 0, "red": 0, "green": 1 },
-                "image": "https://cloud.githubusercontent.com/assets/1631752/19218600/74382b40-8dfe-11e6-8c4b-26e080db42be.png"
-              },
-
-              {
-                "when": { "blue": 1, "black": 0, "red": 0, "green": 0 },
-                "image": "https://cloud.githubusercontent.com/assets/1631752/19218598/74186116-8dfe-11e6-90a6-bcdbeed8725d.png"
-              },
-
-              {
-                "when": { "blue": 0, "black": 1, "red": 0, "green": 0 },
-                "image": "https://cloud.githubusercontent.com/assets/1631752/19375196/ffc4c0b6-91d1-11e6-985e-b072bd07b3e2.png"
-              },
-
-              {
-                "when": { "blue": 0, "black": 0, "red": 1, "green": 0 },
-                "image": "https://cloud.githubusercontent.com/assets/1631752/19218597/7417576c-8dfe-11e6-9fe4-25d8820b8095.png"
-              }
-            ]
-          }
+        this.clothing = this.availableClothings[this.selectedClothing];
 
         return reRun();
       }

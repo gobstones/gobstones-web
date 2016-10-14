@@ -11,7 +11,9 @@
     "clothing": "Vestimenta",
     "enable": "Activar",
     "disable": "Desactivar",
-    "actions": "Acciones",
+    "project": "Proyecto",
+    "code": "Código",
+    "library": "Biblioteca",
     "save": "Guardar",
     "open": "Abrir"
   }
