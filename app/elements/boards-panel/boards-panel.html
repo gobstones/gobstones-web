@@ -292,7 +292,7 @@
       addOrSetClothing: function(clothing) {
         var availableClothing = _.find(this.availableClothings, { name: clothing.name });
         if (!availableClothing) {
-          this.availableClothings.push(clothing);
+          this.push("availableClothings", clothing);
           this.selectedClothing = this.availableClothings.length - 1;
         } else {
           this.selectedClothing = this.availableClothings.indexOf(availableClothing);
