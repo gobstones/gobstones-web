@@ -2,7 +2,9 @@
 <link rel="import" href="../../bower_components/app-localize-behavior/app-localize-behavior.html">
 <link rel="import" href="../../bower_components/paper-input/paper-input.html">
 <link rel="import" href="../../scripts/jquery.html">
-<link rel="import" href="../../scripts/projectLoader.html">
+<link rel="import" href="../../scripts/loaders/codeLoader.html">
+<link rel="import" href="../../scripts/loaders/libraryLoader.html">
+<link rel="import" href="../../scripts/loaders/clothingLoader.html">
 
 <dom-module id="left-menu">
   <template>
@@ -77,80 +79,43 @@
 
       attached: function() {
         this.loadResources(this.resolveUrl("../../locales.json"));
-        this._projectLoader = new ProjectLoader();
+        this.loaders = {
+          Code: new CodeLoader(),
+          Library: new LibraryLoader(),
+          Clothing: new ClothingLoader()
+        };
 
         ["Code", "Library", "Clothing"].forEach(item => {
-          this[`load${item}`] = () => { $(`#${item}`).click(); };
+          this.loaders[`save${item}`] = () => {
+            this[item].save(this._context());
+          };
+
+          this[`load${item}`] = () => {
+            $(`#${item}`).click();
+          };
+
+          this[`onLoaded${item}`] = () => {
+            this.loaders[item].read(this._context(), event, () => {
+              this._closePanel();
+            });
+          };
         });
-      },
-
-      saveCode: function() {
-        const code = this._editor().code.main;
-        this._saveFile(code, "code", "gbs");
-      },
-
-      saveLibrary: function() {
-        const code = this._editor().code.library;
-        this._saveFile(code, "library", "gbs");
-      },
-
-      saveClothing: function() {
-        const clothing = this._boards().clothing;
-        this._saveFile(JSON.stringify(clothing), "clothing", "json");
-      },
-
-      onLoadedCode: function(event) {
-        this._loadFile(event, (code) => {
-          this.projectName = fileName;
-          this._setAndRunCode(code)
-        });
-      },
-
-      onLoadedLibrary: function(event) {
-        this._loadFile(event, (code) => {
-          this._setAndRunCode(code, "library")
-        });
-      },
-
-      onLoadedClothing: function(event) {
-        this._loadFile(event, (json) => {
-          const clothing = JSON.parse(json);
-          if (clothing && clothing.name && clothing.rules)
-            this._boards().addOrSetClothing(clothing);
-        });
-      },
-
-      _saveFile: function(content, type, extension) {
-        this._projectLoader.save(
-          content,
-          `${this.projectName}.${type}.${extension}`
-        );
-      },
-
-      _loadFile: function(event, callback) {
-        this._projectLoader.read(event, (content, fileName) => {
-          callback(content, fileName);
-          this._closePanel();
-        });
-      },
-
-      _setAndRunCode: function(code, mode) {
-        const editorElement = this._editor();
-        editorElement.setCode(code, mode);
-        editorElement.onRunCode();
       },
 
       _closePanel: function() {
         $("paper-drawer-panel")[0].togglePanel();
       },
 
-      _editor: function() {
-        return document.querySelector("#editor");
-      },
+      _context: function() {
+        const query = (id) => document.querySelector(id);
 
-      _boards: function() {
-        return document.querySelector("#boards");
-      }
+        return {
+          editor: query("#editor"),
+          boards: query("#boards"),
+          getProjectName: () => this.projectName,
+          setProjectName: (name) => this.projectName = name
+        };
+      },
     });
 
   </script>
