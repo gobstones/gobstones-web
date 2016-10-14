@@ -285,6 +285,23 @@
       isFinalBoardSelected: (selectedTab) => selectedTab === 1,
       isFinalBoardVisible: (finalState, error) => finalState || error,
 
+      getClothing: function() {
+        if (this.showClothing) return this.clothing;
+      },
+
+      addOrSetClothing: function(clothing) {
+        var availableClothing = _.find(this.availableClothings, { name: clothing.name });
+        if (!availableClothing) {
+          this.availableClothings.push(clothing);
+          this.selectedClothing = this.availableClothings.length - 1;
+        } else {
+          this.selectedClothing = this.availableClothings.indexOf(availableClothing);
+        }
+
+        this.showClothing = true;
+        this._setClothing();
+      },
+
       _onRunRequest: function() {
         this._clean();
 

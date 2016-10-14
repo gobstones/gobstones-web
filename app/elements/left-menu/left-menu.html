@@ -85,16 +85,18 @@
       },
 
       saveCode: function() {
-        const code = this._getEditorElement().editor.getValue();
+        const code = this._editor().code.main;
         this._saveFile(code, "code", "gbs");
       },
 
       saveLibrary: function() {
-        this._saveFile("no sé", "library", "gbs");
+        const code = this._editor().code.library;
+        this._saveFile(code, "library", "gbs");
       },
 
       saveClothing: function() {
-        this._saveFile("{}{}", "clothing", "json");
+        const clothing = this._boards().clothing;
+        this._saveFile(JSON.stringify(clothing), "clothing", "json");
       },
 
       onLoadedCode: function(event) {
@@ -110,8 +112,10 @@
       },
 
       onLoadedClothing: function(event) {
-        this._loadFile(event, (a) => {
-          alert("mirá", a);
+        this._loadFile(event, (json) => {
+          const clothing = JSON.parse(json);
+          if (clothing && clothing.name && clothing.rules)
+            this._boards().addOrSetClothing(clothing);
         });
       },
 
@@ -131,7 +135,7 @@
       },
 
       _setAndRunCode: function(code, mode) {
-        const editorElement = this._getEditorElement();
+        const editorElement = this._editor();
         editorElement.setCode(code, mode);
         editorElement.onRunCode();
       },
@@ -140,8 +144,12 @@
         $("paper-drawer-panel")[0].togglePanel();
       },
 
-      _getEditorElement: function() {
+      _editor: function() {
         return document.querySelector("#editor");
+      },
+
+      _boards: function() {
+        return document.querySelector("#boards");
       }
     });
 
