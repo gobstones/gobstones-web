@@ -1,7 +1,7 @@
 class LibraryLoader extends Loader {
-  save(context) {
+  getFile(context) {
     const code = context.editor.code.library;
-    this._saveFile(context, code, "library", "gbs");
+    return this._getFile(context, code, "library", "gbs");
   }
 
   read(context, event, callback) {
