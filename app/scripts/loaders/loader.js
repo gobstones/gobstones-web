@@ -5,6 +5,9 @@ class Loader {
 
   read(context, event, callback) {
     this._readText(event, (code, fileName) => {
+      if (!code || !fileName)
+        return this._clean(event);
+
       this.readContent(context, code, fileName);
       callback();
     });
@@ -42,17 +45,20 @@ class Loader {
     const reader = new FileReader();
     reader.onload = function(){
       const content = reader.result;
-      input.value = null;
       callback(content, fileName);
     };
     reader.readAsText(file);
   }
 
   _readLocalFile(event) {
-    const input = event.target;
-    const file = input.files[0];
+    const file = event.target.files[0];
     const fileName = file.name.split(".")[0];
 
+    this._clean(event);
     return { file: file, fileName: fileName };
+  }
+
+  _clean(event) {
+    event.target.value = null;
   }
 }
