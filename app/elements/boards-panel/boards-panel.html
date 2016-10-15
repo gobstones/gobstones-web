@@ -291,6 +291,7 @@
 
       addOrSetAttire: function(attire) {
         var availableAttire = _.find(this.availableAttires, { name: attire.name });
+
         if (!availableAttire) {
           this.push("availableAttires", attire);
           this.selectedAttire = this.availableAttires.length - 1;

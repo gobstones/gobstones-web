@@ -16,6 +16,7 @@ class ProjectLoader extends Loader {
     files.forEach(file => {
       zip.file(file.name, file.content);
     });
+
     zip.generateAsync({ type: "blob" }).then(content => {
       this._saveBlob(content, `${context.getProjectName()}.gbp`);
     });
@@ -25,10 +26,20 @@ class ProjectLoader extends Loader {
     const { file, fileName } = this._readLocalFile(event);
 
     JSZip.loadAsync(file).then(zip => {
-      zip.forEach(function(relativePath, zipEntry) {
-        console.log(relativePath, zipEntry);
-        // TODO: Leer y blah
+      zip.forEach((relativePath, zipEntry) => {
+        this._loadComponent(context, relativePath, zipEntry);
       });
+
+      context.setProjectName(fileName);
+      context.editor.setAsDirty();
+      callback();
+    });
+  }
+
+  _loadComponent(context, relativePath, zipEntry) {
+    this.loaders.forEach(loader => {
+      const getContent = () => zipEntry.async("string");
+      loader.readIfNeeded(context, relativePath, getContent);
     });
   }
 }

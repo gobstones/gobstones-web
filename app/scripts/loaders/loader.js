@@ -4,27 +4,48 @@ class Loader {
   }
 
   read(context, event, callback) {
-    this._readText(event, (code, fileName) => {
-      if (!code || !fileName)
+    this._readText(event, (content, fileName) => {
+      if (!content || !fileName)
         return this._clean(event);
 
-      this.readContent(context, code, fileName);
+      this.readContent(context, content, fileName);
       callback();
     });
   }
 
+  readIfNeeded(context, path, getContent) {
+    if (_.endsWith(path, this.SUFFIX)) {
+      getContent().then(content => {
+        this.readContentForProject(context, content);
+      });
+    }
+  }
+
+  readContentForProject(context, content) {
+    this.readContent(context, content);
+  }
+
+  // SUFFIX; <<abstract>>
   // getFile(context); <<abstract>>
   // readContent(context, content, fileName); <<abstract>>
 
-  _setAndRunCode(context, code, mode) {
+  _setCode(context, code, mode) {
     context.editor.setCode(code, mode);
+  }
+
+  _runCode(context) {
     context.editor.onRunCode();
   }
 
-  _getFile(context, content, type, extension) {
+  _setAndRunCode(context, code, mode) {
+    this._setCode(context, code, mode);
+    this._runCode();
+  }
+
+  _getFile(context, content) {
     return {
       content: content,
-      name: `${context.getProjectName()}.${type}.${extension}`
+      name: context.getProjectName() + this.SUFFIX
     };
   }
 
@@ -51,8 +72,8 @@ class Loader {
   }
 
   _readLocalFile(event) {
-    const file = event.target.files[0];
-    const fileName = file.name.split(".")[0];
+    const file = _.first(event.target.files);
+    const fileName = _.first(file.name.split("."));
 
     this._clean(event);
     return { file: file, fileName: fileName };

@@ -99,7 +99,7 @@
         this.code[this.mode] = content.detail.value;
         this.$.localStorage.save();
 
-        this._setAsDirty();
+        this.setAsDirty();
       },
 
       onLastCodeLoaded: function() {
@@ -123,6 +123,11 @@
         this._setMode(
           this.mode === "main" ? "library" : "main"
         );
+      },
+
+      setAsDirty: function() {
+        this.editor.getSession().setAnnotations([]);
+        this.fire("editor-dirty");
       },
 
       _runCode: function(initialState) {
@@ -210,11 +215,6 @@
 
       _initializeCode: function() {
         if (!this.code) this.code = { main: "", library: "" };
-      },
-
-      _setAsDirty: function() {
-        this.editor.getSession().setAnnotations([]);
-        this.fire("editor-dirty");
       }
     });
 
