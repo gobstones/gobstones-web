@@ -5,6 +5,7 @@
 <link rel="import" href="../../scripts/loaders/projectLoader.html">
 <link rel="import" href="../../scripts/loaders/codeLoader.html">
 <link rel="import" href="../../scripts/loaders/libraryLoader.html">
+<link rel="import" href="../../scripts/loaders/initialBoardLoader.html">
 <link rel="import" href="../../scripts/loaders/attireLoader.html">
 
 <dom-module id="left-menu">
@@ -48,7 +49,10 @@
           <span>[[localize("library")]]</span>
           <save-and-load on-save="saveLibrary" on-load="loadLibrary"></save-and-load>
         </li>
-        <!-- <li>Tablero inicial</li> --> <!-- // TODO -->
+        <li class="action">
+          <span>[[localize("initial-board")]]</span>
+          <save-and-load on-save="saveInitialBoard" on-load="loadInitialBoard"></save-and-load>
+        </li>
         <li class="action">
           <span>[[localize("attire")]]</span>
           <save-and-load on-save="saveAttire" on-load="loadAttire"></save-and-load>
@@ -60,6 +64,8 @@
       <input id="Code" type="file" accept=".gbs" on-change="onLoadedCode" style="visibility: hidden;" />
 
       <input id="Library" type="file" accept=".gbs" on-change="onLoadedLibrary" style="visibility: hidden;" />
+
+      <input id="InitialBoard" type="file" accept=".gbb" on-change="onLoadedInitialBoard" style="visibility: hidden;" />
 
       <input id="Attire" type="file" accept=".json" on-change="onLoadedAttire" style="visibility: hidden;" />
     </div>
@@ -86,10 +92,11 @@
           Project: new ProjectLoader,
           Code: new CodeLoader,
           Library: new LibraryLoader,
+          InitialBoard: new InitialBoardLoader,
           Attire: new AttireLoader
         };
 
-        ["Project", "Code", "Library", "Attire"].forEach(item => {
+        ["Project", "Code", "Library", "InitialBoard", "Attire"].forEach(item => {
           this[`save${item}`] = () => {
             this.loaders[item].save(this._context());
           };

@@ -1,15 +1,14 @@
 class CodeLoader extends Loader {
   constructor() {
     super();
-    this.SUFFIX = ".code.gbs"
+    this.SUFFIX = ".code.gbs";
   }
 
-  getFile(context) {
-    const code = context.editor.code.main;
-    return this._getFile(context, code);
+  _buildFile(context) {
+    return context.editor.code.main;
   }
 
-  readContent(context, content, fileName) {
+  _readContent(context, content, fileName) {
     context.setProjectName(fileName);
     this._setCode(context, content);
   }

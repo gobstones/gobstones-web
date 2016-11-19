@@ -160,14 +160,14 @@
         <div class="theBoard" style="position: absolute; left: 0; right: 0;">
           <!-- Initial board -->
           <template is="dom-if" if="{{isInitialBoardSelected(selectedTab)}}">
-            <gs-board id="initialStateEditor" size='{{size}}' options='{ "editable": true }'></gs-board>
+            <gs-board id="initialStateEditor" table="{{initialState.table}}" size="{{size}}" options='{ "editable": true }'></gs-board>
           </template>
 
           <!-- Final board -->
           <template is="dom-if" if="{{isFinalBoardSelected(selectedTab)}}">
             <template is="dom-if" if="{{!error}}">
               <template is="dom-if" if="{{finalState}}" restamp="true">
-                <gs-board table='{{finalState.table}}' header="{{finalState.header}}" attire="{{attire}}"></gs-board>
+                <gs-board table="{{finalState.table}}" header="{{finalState.header}}" attire="{{attire}}"></gs-board>
               </template>
             </template>
           </template>
@@ -212,12 +212,14 @@
         sizeY: {
           type: Number,
           value: 4,
+          observer: "_updateSize"
         },
         size: {
           type: Object,
           computed: "_computeSize(sizeX, sizeY)",
           observer: "_updateSize"
         },
+        initialState: Object,
         finalState: Object,
         error: Object,
         availableAttires: {
@@ -238,7 +240,7 @@
         }
       },
       listeners: {
-        "board-changed": "_clean"
+        "board-changed": "_onBoardChanged"
       },
 
       attached: function() {
@@ -264,6 +266,11 @@
         })._subscribeToEditor("editor-dirty", () => {
           this._clean();
         });
+
+        this.initialState = {
+          header: { x: 0, y: 0 },
+          table: [ [{}, {}, {}, {}], [{}, {}, {}, {}], [{}, {}, {}, {}], [{}, {}, {}, {}] ]
+        };
       },
 
       toggleShowCode: function() {
@@ -302,6 +309,15 @@
         this._setAttire();
       },
 
+      setInitialState: function(initialState) {
+        this._clean();
+        this.initialState = null;
+        this.async(function() {
+          this.initialState = initialState;
+          this.selectedTab = 0;
+        });
+      },
+
       _onRunRequest: function() {
         this._clean();
 
@@ -338,6 +354,14 @@
           this.finalState = finalState;
           this.selectedTab = 1;
         });
+      },
+
+      _onBoardChanged: function() {
+        const initialStateEditor = this.$$("#initialStateEditor");
+        this.initialState.header = initialStateEditor.header;
+        this.initialState.table = initialStateEditor.table;
+
+        this._clean();
       },
 
       _clean: function() {
