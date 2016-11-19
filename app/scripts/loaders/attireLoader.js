@@ -1,7 +1,7 @@
 class AttireLoader extends Loader {
   constructor() {
     super();
-    this.SUFFIX = ".attire.json"
+    this.SUFFIX = ".attire.json";
   }
 
   getFile(context) {

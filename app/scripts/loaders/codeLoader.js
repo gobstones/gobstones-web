@@ -1,7 +1,7 @@
 class CodeLoader extends Loader {
   constructor() {
     super();
-    this.SUFFIX = ".code.gbs"
+    this.SUFFIX = ".code.gbs";
   }
 
   getFile(context) {

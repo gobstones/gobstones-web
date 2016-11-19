@@ -1,7 +1,7 @@
 class LibraryLoader extends Loader {
   constructor() {
     super();
-    this.SUFFIX = ".library.gbs"
+    this.SUFFIX = ".library.gbs";
   }
 
   getFile(context) {
