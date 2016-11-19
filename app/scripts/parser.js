@@ -1,9 +1,11 @@
 class Parser {
   constructor() {
-    const { Context, getParser } = window.gsWeblangCore;
+    const { Context, Board, getParser, gbb } = window.gsWeblangCore;
 
     this.Context = Context;
+    this.Board = Board;
     this.gsParser = getParser();
+    this.gbb = gbb;
   }
 
   parse(sourceCode) {
@@ -13,6 +15,16 @@ class Parser {
   interpret(ast, initialState) {
     const context = this._createContext(initialState);
     return ast.interpret(context);
+  }
+
+  readGbb(gbb) {
+    return this.gbb.reader.fromString(gbb);
+  }
+
+  buildGbb(initialState, size) {
+    return gbb.builder.build(
+      new this.Board(size.x, size.y).fromView(initialState.table)
+    );
   }
 
   _createContext(initialState) {

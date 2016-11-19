@@ -5,10 +5,19 @@ class InitialBoardLoader extends Loader {
   }
 
   getFile(context) {
-    // TODO
+    //console.log(context.boards);
+    //console.log(context.boards.initialStateEditor);
   }
 
   readContent(context, content, fileName) {
-    // TODO
+    const board = new Parser().readGbb(content);
+    const initialState = context.boards.initialState;
+
+    context.boards.sizeX = board.sizeX;
+    context.boards.sizeY = board.sizeY;
+    context.boards.setInitialState({
+      table: board.toView(),
+      header: { x: board.x, y: board.y }
+    });
   }
 }
