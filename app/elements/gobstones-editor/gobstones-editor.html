@@ -167,11 +167,8 @@
         try {
           return this.parser.interpret(ast, initialState);
         } catch (e) {
-          // Runtime errors
-          if (e.error) this._reportError(e, e.error, "info");
-
-          // Business errors
-          if (e.on) this._reportError(e, e.message, "info");
+          // Runtime & Business errors
+          if (e.message) this._reportError(e, e.message, "info");
 
           this.fire("execution-error", e.message);
           return e;
