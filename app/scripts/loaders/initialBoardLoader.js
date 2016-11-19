@@ -4,12 +4,12 @@ class InitialBoardLoader extends Loader {
     this.SUFFIX = ".board.gbb";
   }
 
-  getFile(context) {
+  _buildFile(context) {
     const panel = context.boards;
-    return this._getFile(context, new Parser().buildGbb(panel.initialState, panel.size));
+    return new Parser().buildGbb(panel.initialState, panel.size);
   }
 
-  readContent(context, content, fileName) {
+  _readContent(context, content, fileName) {
     const panel = context.boards;
     const board = new Parser().readGbb(content);
     const initialState = panel.initialState;

@@ -8,7 +8,7 @@ class Loader {
       if (!content || !fileName)
         return this._clean(event);
 
-      this.readContent(context, content, fileName);
+      this._readContent(context, content, fileName);
       callback();
     });
   }
@@ -22,12 +22,19 @@ class Loader {
   }
 
   readContentForProject(context, content) {
-    this.readContent(context, content);
+    this._readContent(context, content);
+  }
+
+  getFile(context) {
+    return {
+      content: this._buildFile(context),
+      name: context.getProjectName() + this.SUFFIX
+    };
   }
 
   // SUFFIX; <<abstract>>
-  // getFile(context); <<abstract>>
-  // readContent(context, content, fileName); <<abstract>>
+  // _buildFile(context); <<abstract>>
+  // _readContent(context, content, fileName); <<abstract>>
 
   _setCode(context, code, mode) {
     context.editor.setCode(code, mode);
@@ -40,13 +47,6 @@ class Loader {
   _setAndRunCode(context, code, mode) {
     this._setCode(context, code, mode);
     this._runCode();
-  }
-
-  _getFile(context, content) {
-    return {
-      content: content,
-      name: context.getProjectName() + this.SUFFIX
-    };
   }
 
   _saveText({ content, name }) {

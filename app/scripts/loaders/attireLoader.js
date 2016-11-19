@@ -4,12 +4,12 @@ class AttireLoader extends Loader {
     this.SUFFIX = ".attire.json";
   }
 
-  getFile(context) {
+  _buildFile(context) {
     const attire = context.boards.attire;
-    return this._getFile(context, JSON.stringify(attire));
+    return JSON.stringify(attire);
   }
 
-  readContent(context, content, fileName) {
+  _readContent(context, content, fileName) {
     const attire = JSON.parse(content);
     if (attire && attire.name && attire.rules)
       context.boards.addOrSetAttire(attire);
