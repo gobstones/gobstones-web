@@ -160,7 +160,7 @@
         <div class="theBoard" style="position: absolute; left: 0; right: 0;">
           <!-- Initial board -->
           <template is="dom-if" if="{{isInitialBoardSelected(selectedTab)}}">
-            <gs-board id="initialStateEditor" table="{{initialState.table}}" header="{{initialState.header}}" size="{{size}}" options='{ "editable": true }'></gs-board>
+            <gs-board id="initialStateEditor" table="{{initialState.table}}" size="{{size}}" options='{ "editable": true }'></gs-board>
           </template>
 
           <!-- Final board -->
@@ -240,7 +240,7 @@
         }
       },
       listeners: {
-        "board-changed": "_clean"
+        "board-changed": "_onBoardChanged"
       },
 
       attached: function() {
@@ -354,6 +354,14 @@
           this.finalState = finalState;
           this.selectedTab = 1;
         });
+      },
+
+      _onBoardChanged: function() {
+        const initialStateEditor = this.$$("#initialStateEditor");
+        this.initialState.header = initialStateEditor.header;
+        this.initialState.table = initialStateEditor.table;
+
+        this._clean();
       },
 
       _clean: function() {
