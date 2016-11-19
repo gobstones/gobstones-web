@@ -7,13 +7,12 @@ class Parser {
   }
 
   parse(sourceCode) {
-    return this.gsParser.parseProgram(sourceCode)[0];
+    return _.last(this.gsParser.parseProgram(sourceCode));
   }
 
   interpret(ast, initialState) {
     const context = this._createContext(initialState);
-    ast.interpret(context);
-    return context;
+    return ast.interpret(context);
   }
 
   _createContext(initialState) {
