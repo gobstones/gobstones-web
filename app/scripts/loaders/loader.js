@@ -53,11 +53,9 @@ class Loader {
     this._saveBlob(new Blob([content], { type: "text/plain" }), name);
   }
 
-  _saveBlob(blob, name) {
-    const a = document.createElement("a");
-    a.href = URL.createObjectURL(blob);
-    a.download = name;
-    a.click();
+  _saveBlob(content, name) {
+    const blob = new Blob([content], { type: "text/plain;charset=utf-8" });
+    saveAs(blob, name);
   }
 
   _readText(event, callback) {
