@@ -3,8 +3,8 @@
 <link rel="import" href="../../bower_components/paper-input/paper-input.html">
 <link rel="import" href="../../bower_components/paper-dropdown-menu/paper-dropdown-menu.html">
 <link rel="import" href="../../bower_components/paper-listbox/paper-listbox.html">
-<link rel="import" href="../../bower_components/app-localize-behavior/app-localize-behavior.html">
 <link rel="import" href="../../bower_components/gs-board/dist/components/gs-board.html">
+<link rel="import" href="../../scripts/behaviors/localizationBehavior.html">
 <link rel="import" href="../../scripts/parserAndBoardAdapter.html">
 <link rel="import" href="../../scripts/stylist.html">
 <link rel="import" href="../../scripts/availableAttires.html">
@@ -198,10 +198,9 @@
     Polymer({
       is: 'boards-panel',
       behaviors: [
-        Polymer.AppLocalizeBehavior
+        Polymer.LocalizationBehavior
       ],
       properties: {
-        language: { value: "es" },
         showCode: {
           type: Boolean,
           value: true
@@ -247,10 +246,6 @@
       },
       listeners: {
         "board-changed": "_onBoardChanged"
-      },
-
-      attached: function() {
-        this.loadResources(this.resolveUrl("../../locales.json"));
       },
 
       ready: function() {
