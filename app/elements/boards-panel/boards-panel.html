@@ -86,6 +86,12 @@
       .theBoardContainer {
         margin-left: -8px;
       }
+
+      paper-tab {
+        --paper-tab-content-unselected: {
+          opacity: 0.5;
+        }
+      }
     </style>
 
     <paper-toolbar class="tabs">
@@ -93,7 +99,7 @@
         <paper-button on-click="toggleShowCode"><iron-icon class$="button show-code-icon {{buttonCssClass(showCode)}}" icon="icons:chevron-left"></iron-icon></paper-button>
       </div>
       <div style="width: 90%">
-        <paper-tabs selected="{{selectedTab}}" class="bottom self-end" no-bar>
+        <paper-tabs selected="{{selectedTab}}" class="bottom self-end">
           <paper-tab>[[localize("initial-board")]]</paper-tab>
           <template is="dom-if" if="{{isFinalBoardVisible(finalState, error)}}">
             <paper-tab>[[localize("final-board")]]</paper-tab>
