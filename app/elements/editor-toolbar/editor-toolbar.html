@@ -74,8 +74,7 @@
       is: 'editor-toolbar',
       properties: {
         editorSize: {
-          type: Number,
-          value: 14
+          type: Number
         },
         showBoards: {
           type: Boolean,
@@ -88,6 +87,7 @@
       },
 
       ready: function() {
+        this.editorSize = this._editor.defaultSize;
         this.HOP_SIZE = 3;
 
         this.async(() => {
