@@ -96,7 +96,7 @@
 
     <paper-toolbar class="tabs">
       <div>
-        <paper-button on-click="toggleShowCode"><iron-icon class="button show-code-icon" icon$="icons:chevron-{{_showCodeDirection(showCode)}}"></iron-icon></paper-button>
+        <paper-button on-click="toggleShowCode"><iron-icon class="button show-code-icon" icon="icons:chevron-{{_showCodeDirection(showCode)}}"></iron-icon></paper-button>
       </div>
       <div style="width: 90%">
         <paper-tabs no-bar$="{{!isFinalBoardVisible(finalState, error)}}" selected="{{selectedTab}}" class="bottom self-end">
