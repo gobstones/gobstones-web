@@ -133,30 +133,16 @@
       <template is="dom-if" if="{{isFinalBoardSelected(selectedTab)}}">
         <template is="dom-if" if="{{!error}}">
           <template is="dom-if" if="{{finalState}}" restamp="true">
-            <div class="size-bar">
-              <div>
-                <form>
-                  <div class="size-container">
-                    <strong>[[localize("size")]]:</strong>
-                    <span>{{sizeX}}</span>
-                    <span>[[localize("columns")]] <strong>[[localize("by")]]</strong></span>
-                    <span>{{sizeY}}</span>
-                    <span>[[localize("rows")]]</span>
-                    <paper-input style="visibility: hidden;" class="size-input"></paper-input>
-                  </div>
-                </form>
-              </div>
-              <div class="attire-container">
-                <paper-button on-click="toggleShowAttire"><iron-icon class="black-button" icon="icons:visibility"></iron-icon></paper-button>
-                <strong>[[localize("attire")]]:</strong>
-                <paper-dropdown-menu no-animations no-label-float vertical-align="bottom" horizontal-align="right" disabled="{{!showAttire}}">
-                  <paper-listbox class="dropdown-content" selected="{{selectedAttire}}">
-                    <template is="dom-repeat" items="{{ availableAttires }}">
-                      <paper-item>{{item.name}}</paper-item>
-                    </template>
-                  </paper-listbox>
-                </paper-dropdown-menu>
-              </div>
+            <div class="attire-container">
+              <paper-button on-click="toggleShowAttire"><iron-icon class="black-button" icon="icons:visibility"></iron-icon></paper-button>
+              <strong>[[localize("attire")]]:</strong>
+              <paper-dropdown-menu no-animations no-label-float vertical-align="bottom" horizontal-align="right" disabled="{{!showAttire}}">
+                <paper-listbox class="dropdown-content" selected="{{selectedAttire}}">
+                  <template is="dom-repeat" items="{{ availableAttires }}">
+                    <paper-item>{{item.name}}</paper-item>
+                  </template>
+                </paper-listbox>
+              </paper-dropdown-menu>
             </div>
           </template>
         </template>
