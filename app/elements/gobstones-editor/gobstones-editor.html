@@ -91,7 +91,7 @@
 
         this.stylist = new Stylist();
         this.fontSize = this.DEFAULT_FONT_SIZE;
-
+        this._removePrintMarginColumn();
         $(window).resize(() => { this._fixEditorHeight(); });
       },
 
@@ -210,6 +210,10 @@
         this.fire("mode-change", this.mode);
         this.editor.setValue(this.code[this.mode]);
         this.editor.focus();
+      },
+
+      _removePrintMarginColumn: function() {
+        this.editor.setShowPrintMargin(false);
       },
 
       _subscribeToBoards: function(eventName, eventHandler) {
