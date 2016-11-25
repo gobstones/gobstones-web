@@ -142,8 +142,7 @@
         if (this.fontSize <= 8) return;
 
         this.fontSize = newSize;
-        this.customStyle["--editor-size"] = `${newSize}px`;
-        this.updateStyles();
+        this.editor.setFontSize(newSize);
         setTimeout(() => { this._fixEditorHeight(); }, 500);
       },
 
