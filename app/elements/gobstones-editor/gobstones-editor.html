@@ -32,7 +32,7 @@
       }
     </style>
 
-    <iron-localstorage id="lastCodeStorage" name="last-code" value="{{code}}" auto-save-disabled></iron-localstorage>
+    <iron-localstorage id="lastCodeStorage" name="last-code" value="{{code}}"></iron-localstorage>
     <iron-localstorage name="font-size" value="{{fontSize}}" on-iron-localstorage-load-empty="_initializeDefaultFontSize"></iron-localstorage>
 
     <ace-widget
@@ -108,8 +108,7 @@
       },
 
       onContentChange: function(content) {
-        this.code[this.mode] = content.detail.value;
-        this.$.lastCodeStorage.save();
+        this.set(`code.${this.mode}`, content.detail.value);
 
         this.setAsDirty();
       },
