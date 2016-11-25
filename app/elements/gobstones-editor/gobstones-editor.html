@@ -3,6 +3,7 @@
 <link rel="import" href="../../bower_components/paper-fab/paper-fab.html">
 <link rel="import" href="../../bower_components/ace-widget/ace-widget.html">
 <link rel="import" href="../../bower_components/iron-localstorage/iron-localstorage.html">
+<link rel="import" href="../../scripts/behaviors/localizationBehavior.html">
 <link rel="import" href="../../scripts/jquery.html">
 <link rel="import" href="../../scripts/parser.html">
 <link rel="import" href="../../scripts/stylist.html">
@@ -49,6 +50,7 @@
     <paper-fab style="z-index: 10;"
                icon="av:play-arrow"
                class="run-button"
+               title="{{localize('execute')}}"
                on-click="onRunCode"
     ></paper-fab>
   </template>
@@ -57,6 +59,9 @@
 
     Polymer({
       is: "gobstones-editor",
+      behaviors: [
+        Polymer.LocalizationBehavior
+      ],
       listeners: {
         "ace.editor-ready": "onAceReady",
         "ace.editor-content": "onContentChange",
