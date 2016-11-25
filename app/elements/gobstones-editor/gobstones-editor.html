@@ -69,13 +69,15 @@
           type: Object,
           observer: "_initializeCode"
         },
-        defaultSize: {
-          type: Number,
-          value: 14
+        fontSize: {
+          type: Number
         }
       },
 
       ready: function() {
+        this.DEFAULT_FONT_SIZE = 14;
+        this.HOP_SIZE = 3;
+
         this._subscribeToBoards("initial-state", (eventInfo) => {
           this._runCode(eventInfo.detail);
         });
@@ -86,7 +88,7 @@
         this._setFatalities();
 
         this.stylist = new Stylist();
-        this.setSize(this.defaultSize);
+        this._setFontSize(this.DEFAULT_FONT_SIZE);
         $(window).resize(() => { this._fixEditorHeight(); });
       },
 
@@ -117,10 +119,12 @@
         this.fire("execution-request");
       },
 
-      setSize: function(newSize) {
-        this.customStyle["--editor-size"] = `${newSize}px`;
-        this.updateStyles();
-        setTimeout(() => { this._fixEditorHeight(); }, 500);
+      increaseFontSize: function() {
+        this._setFontSize(this.fontSize + this.HOP_SIZE);
+      },
+
+      decreaseFontSize: function() {
+        this._setFontSize(this.fontSize - this.HOP_SIZE);
       },
 
       toggleMode: function() {
@@ -132,6 +136,15 @@
       setAsDirty: function() {
         this.editor.getSession().setAnnotations([]);
         this.fire("editor-dirty");
+      },
+
+      _setFontSize: function(newSize) {
+        if (this.fontSize <= 8) return;
+
+        this.fontSize = newSize;
+        this.customStyle["--editor-size"] = `${newSize}px`;
+        this.updateStyles();
+        setTimeout(() => { this._fixEditorHeight(); }, 500);
       },
 
       _runCode: function(initialState) {
