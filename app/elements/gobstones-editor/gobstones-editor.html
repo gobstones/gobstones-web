@@ -70,11 +70,13 @@
           observer: "_initializeCode"
         },
         fontSize: {
-          type: Number
+          type: Number,
+          observer: "_fontSizeChanged"
         }
       },
 
       ready: function() {
+        this.MIN_FONT_SIZE = 8;
         this.DEFAULT_FONT_SIZE = 17;
         this.HOP_SIZE = 3;
 
@@ -88,7 +90,8 @@
         this._setFatalities();
 
         this.stylist = new Stylist();
-        this._setFontSize(this.DEFAULT_FONT_SIZE);
+        this.fontSize = this.DEFAULT_FONT_SIZE;
+
         $(window).resize(() => { this._fixEditorHeight(); });
       },
 
@@ -120,11 +123,11 @@
       },
 
       increaseFontSize: function() {
-        this._setFontSize(this.fontSize + this.HOP_SIZE);
+        this.fontSize += this.HOP_SIZE;
       },
 
       decreaseFontSize: function() {
-        this._setFontSize(this.fontSize - this.HOP_SIZE);
+        this.fontSize -= this.HOP_SIZE;
       },
 
       toggleMode: function() {
@@ -138,11 +141,13 @@
         this.fire("editor-dirty");
       },
 
-      _setFontSize: function(newSize) {
-        if (this.fontSize <= 8) return;
+      _fontSizeChanged: function(newValue, oldValue) {
+        if (newValue <= this.MIN_FONT_SIZE) {
+          this.fontSize = oldValue;
+          return;
+        }
 
-        this.fontSize = newSize;
-        this.editor.setFontSize(newSize);
+        this.editor.setFontSize(newValue);
         setTimeout(() => { this._fixEditorHeight(); }, 500);
       },
 
@@ -215,6 +220,7 @@
 
       _setFatalities: function() {
         const ace = this.$.ace;
+
         ace.editor.commands.addCommand({
           name: "run-code",
           bindKey: { win: "ctrl+enter", mac: "command+enter" },
