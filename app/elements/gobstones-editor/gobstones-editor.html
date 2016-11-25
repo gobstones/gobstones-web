@@ -32,9 +32,8 @@
       }
     </style>
 
-    <iron-localstorage id="localStorage"
-      name="last-code" value="{{code}}" auto-save-disabled
-    ></iron-localstorage>
+    <iron-localstorage name="last-code" value="{{code}}" auto-save-disabled></iron-localstorage>
+    <iron-localstorage name="font-size" value="{{fontSize}}" on-iron-localstorage-load-empty="_initializeDefaultFontSize"></iron-localstorage>
 
     <ace-widget
       id="ace"
@@ -95,7 +94,6 @@
         this._setFatalities();
 
         this.stylist = new Stylist();
-        this.fontSize = this.DEFAULT_FONT_SIZE;
         this._removePrintMarginColumn();
         $(window).resize(() => { this._fixEditorHeight(); });
       },
@@ -144,6 +142,10 @@
       setAsDirty: function() {
         this.editor.getSession().setAnnotations([]);
         this.fire("editor-dirty");
+      },
+
+      _initializeDefaultFontSize: function() {
+        this.fontSize = this.DEFAULT_FONT_SIZE;
       },
 
       _fontSizeChanged: function(newValue, oldValue) {
