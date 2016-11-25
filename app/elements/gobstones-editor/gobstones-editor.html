@@ -68,6 +68,10 @@
         code: {
           type: Object,
           observer: "_initializeCode"
+        },
+        defaultSize: {
+          type: Number,
+          value: 14
         }
       },
 
@@ -82,7 +86,7 @@
         this._setFatalities();
 
         this.stylist = new Stylist();
-        this.setSize(14);
+        this.setSize(this.defaultSize);
         $(window).resize(() => { this._fixEditorHeight(); });
       },
 
