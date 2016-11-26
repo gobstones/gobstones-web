@@ -3,8 +3,8 @@
 <link rel="import" href="../../bower_components/paper-input/paper-input.html">
 <link rel="import" href="../../bower_components/paper-dropdown-menu/paper-dropdown-menu.html">
 <link rel="import" href="../../bower_components/paper-listbox/paper-listbox.html">
-<link rel="import" href="../../bower_components/app-localize-behavior/app-localize-behavior.html">
 <link rel="import" href="../../bower_components/gs-board/dist/components/gs-board.html">
+<link rel="import" href="../../scripts/behaviors/localizationBehavior.html">
 <link rel="import" href="../../scripts/parserAndBoardAdapter.html">
 <link rel="import" href="../../scripts/stylist.html">
 <link rel="import" href="../../scripts/availableAttires.html">
@@ -25,8 +25,8 @@
       .wind-rose {
         margin-top: 3px;
         margin-left: 10px;
-        width: 62px;
-        height: 62px;
+        width: 55px;
+        height: 55px;
       }
 
       .alert {
@@ -86,14 +86,20 @@
       .theBoardContainer {
         margin-left: -8px;
       }
+
+      paper-tab {
+        --paper-tab-content-unselected: {
+          opacity: 0.5;
+        }
+      }
     </style>
 
     <paper-toolbar class="tabs">
       <div>
-        <paper-button on-click="toggleShowCode"><iron-icon class$="button show-code-icon {{buttonCssClass(showCode)}}" icon="icons:chevron-left"></iron-icon></paper-button>
+        <paper-button on-click="toggleShowCode"><iron-icon class="button show-code-icon" icon="icons:chevron-{{_showCodeDirection(showCode)}}"></iron-icon></paper-button>
       </div>
       <div style="width: 90%">
-        <paper-tabs selected="{{selectedTab}}" class="bottom self-end" no-bar>
+        <paper-tabs no-bar$="{{!isFinalBoardVisible(finalState, error)}}" selected="{{selectedTab}}" class="bottom self-end">
           <paper-tab>[[localize("initial-board")]]</paper-tab>
           <template is="dom-if" if="{{isFinalBoardVisible(finalState, error)}}">
             <paper-tab>[[localize("final-board")]]</paper-tab>
@@ -127,30 +133,16 @@
       <template is="dom-if" if="{{isFinalBoardSelected(selectedTab)}}">
         <template is="dom-if" if="{{!error}}">
           <template is="dom-if" if="{{finalState}}" restamp="true">
-            <div class="size-bar">
-              <div>
-                <form>
-                  <div class="size-container">
-                    <strong>[[localize("size")]]:</strong>
-                    <span>{{sizeX}}</span>
-                    <span>[[localize("columns")]] <strong>[[localize("by")]]</strong></span>
-                    <span>{{sizeY}}</span>
-                    <span>[[localize("rows")]]</span>
-                    <paper-input style="visibility: hidden;" class="size-input"></paper-input>
-                  </div>
-                </form>
-              </div>
-              <div class="attire-container">
-                <paper-button on-click="toggleShowAttire"><iron-icon class="black-button" icon="icons:visibility"></iron-icon></paper-button>
-                <strong>[[localize("attire")]]:</strong>
-                <paper-dropdown-menu no-animations no-label-float vertical-align="bottom" horizontal-align="right" disabled="{{!showAttire}}">
-                  <paper-listbox class="dropdown-content" selected="{{selectedAttire}}">
-                    <template is="dom-repeat" items="{{ availableAttires }}">
-                      <paper-item>{{item.name}}</paper-item>
-                    </template>
-                  </paper-listbox>
-                </paper-dropdown-menu>
-              </div>
+            <div class="attire-container">
+              <paper-button on-click="toggleShowAttire"><iron-icon class="black-button" icon="icons:visibility"></iron-icon></paper-button>
+              <strong>[[localize("attire")]]:</strong>
+              <paper-dropdown-menu no-animations no-label-float vertical-align="bottom" horizontal-align="right" disabled="{{!showAttire}}">
+                <paper-listbox class="dropdown-content" selected="{{selectedAttire}}">
+                  <template is="dom-repeat" items="{{ availableAttires }}">
+                    <paper-item>{{item.name}}</paper-item>
+                  </template>
+                </paper-listbox>
+              </paper-dropdown-menu>
             </div>
           </template>
         </template>
@@ -192,10 +184,9 @@
     Polymer({
       is: 'boards-panel',
       behaviors: [
-        Polymer.AppLocalizeBehavior
+        Polymer.LocalizationBehavior
       ],
       properties: {
-        language: { value: "es" },
         showCode: {
           type: Boolean,
           value: true
@@ -241,10 +232,6 @@
       },
       listeners: {
         "board-changed": "_onBoardChanged"
-      },
-
-      attached: function() {
-        this.loadResources(this.resolveUrl("../../locales.json"));
       },
 
       ready: function() {
@@ -413,6 +400,10 @@
         this.attire = this.availableAttires[this.selectedAttire];
 
         return reRun();
+      },
+
+      _showCodeDirection: function(value) {
+        return value ? 'left' : 'right';
       }
     });
 

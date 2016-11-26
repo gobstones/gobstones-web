@@ -3,6 +3,7 @@
 <link rel="import" href="../../bower_components/paper-fab/paper-fab.html">
 <link rel="import" href="../../bower_components/ace-widget/ace-widget.html">
 <link rel="import" href="../../bower_components/iron-localstorage/iron-localstorage.html">
+<link rel="import" href="../../scripts/behaviors/localizationBehavior.html">
 <link rel="import" href="../../scripts/jquery.html">
 <link rel="import" href="../../scripts/parser.html">
 <link rel="import" href="../../scripts/stylist.html">
@@ -31,9 +32,8 @@
       }
     </style>
 
-    <iron-localstorage id="localStorage"
-      name="last-code" value="{{code}}" auto-save-disabled
-    ></iron-localstorage>
+    <iron-localstorage name="last-code" value="{{code}}"></iron-localstorage>
+    <iron-localstorage name="font-size" value="{{fontSize}}" on-iron-localstorage-load-empty="_initializeDefaultFontSize"></iron-localstorage>
 
     <ace-widget
       id="ace"
@@ -49,6 +49,7 @@
     <paper-fab style="z-index: 10;"
                icon="av:play-arrow"
                class="run-button"
+               title="{{localize('execute')}}"
                on-click="onRunCode"
     ></paper-fab>
   </template>
@@ -57,6 +58,9 @@
 
     Polymer({
       is: "gobstones-editor",
+      behaviors: [
+        Polymer.LocalizationBehavior
+      ],
       listeners: {
         "ace.editor-ready": "onAceReady",
         "ace.editor-content": "onContentChange",
@@ -68,10 +72,18 @@
         code: {
           type: Object,
           observer: "_initializeCode"
+        },
+        fontSize: {
+          type: Number,
+          observer: "_fontSizeChanged"
         }
       },
 
       ready: function() {
+        this.MIN_FONT_SIZE = 8;
+        this.DEFAULT_FONT_SIZE = 17;
+        this.HOP_SIZE = 3;
+
         this._subscribeToBoards("initial-state", (eventInfo) => {
           this._runCode(eventInfo.detail);
         });
@@ -82,7 +94,7 @@
         this._setFatalities();
 
         this.stylist = new Stylist();
-        this.setSize(14);
+        this._removePrintMarginColumn();
         $(window).resize(() => { this._fixEditorHeight(); });
       },
 
@@ -96,8 +108,7 @@
       },
 
       onContentChange: function(content) {
-        this.code[this.mode] = content.detail.value;
-        this.$.localStorage.save();
+        this.set(`code.${this.mode}`, content.detail.value);
 
         this.setAsDirty();
       },
@@ -113,10 +124,12 @@
         this.fire("execution-request");
       },
 
-      setSize: function(newSize) {
-        this.customStyle["--editor-size"] = `${newSize}px`;
-        this.updateStyles();
-        setTimeout(() => { this._fixEditorHeight(); }, 500);
+      increaseFontSize: function() {
+        this.fontSize += this.HOP_SIZE;
+      },
+
+      decreaseFontSize: function() {
+        this.fontSize -= this.HOP_SIZE;
       },
 
       toggleMode: function() {
@@ -128,6 +141,20 @@
       setAsDirty: function() {
         this.editor.getSession().setAnnotations([]);
         this.fire("editor-dirty");
+      },
+
+      _initializeDefaultFontSize: function() {
+        this.fontSize = this.DEFAULT_FONT_SIZE;
+      },
+
+      _fontSizeChanged: function(newValue, oldValue) {
+        if (newValue <= this.MIN_FONT_SIZE) {
+          this.fontSize = oldValue;
+          return;
+        }
+
+        this.editor.setFontSize(newValue);
+        setTimeout(() => { this._fixEditorHeight(); }, 500);
       },
 
       _runCode: function(initialState) {
@@ -191,6 +218,10 @@
         this.editor.focus();
       },
 
+      _removePrintMarginColumn: function() {
+        this.editor.setShowPrintMargin(false);
+      },
+
       _subscribeToBoards: function(eventName, eventHandler) {
         this.async(() => {
           document.querySelector("#boards").addEventListener(eventName, eventHandler);
@@ -199,6 +230,7 @@
 
       _setFatalities: function() {
         const ace = this.$.ace;
+
         ace.editor.commands.addCommand({
           name: "run-code",
           bindKey: { win: "ctrl+enter", mac: "command+enter" },

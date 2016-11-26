@@ -1,20 +1,21 @@
 {
   "es": {
-    "initial-board": "Tablero inicial",
-    "final-board": "Resultados",
-    "boom": "BOOM",
-    "the-program-has-errors": "El programa tiene errores",
-    "size": "Tamaño",
-    "columns": "columnas",
-    "by": "x",
-    "rows": "filas",
     "attire": "Vestimenta",
-    "enable": "Activar",
-    "disable": "Desactivar",
-    "project": "Proyecto",
+    "boom": "BOOM",
+    "by": "x",
     "code": "Código",
+    "columns": "columnas",
+    "disable": "Desactivar",
+    "enable": "Activar",
+    "execute": "Ejecutar",
+    "final-board": "Resultados",
+    "initial-board": "Tablero inicial",
     "library": "Biblioteca",
+    "open": "Abrir",
+    "project": "Proyecto",
+    "rows": "filas",
     "save": "Guardar",
-    "open": "Abrir"
+    "size": "Tamaño",
+    "the-program-has-errors": "El programa tiene errores"
   }
 }

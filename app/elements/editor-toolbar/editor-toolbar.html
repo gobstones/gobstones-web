@@ -58,10 +58,10 @@
         <div class="app-name" style="width: 90%">Gobstones</div>
 
         <div class="buttons">
-          <paper-button on-click="moreSize"><iron-icon class="button" icon="icons:zoom-in"></iron-icon></paper-button>
-          <paper-button on-click="lessSize"><iron-icon class="button" icon="icons:zoom-out"></iron-icon></paper-button>
+          <paper-button on-click="increaseEditorFontSize"><iron-icon class="button" icon="icons:zoom-in"></iron-icon></paper-button>
+          <paper-button on-click="decreaseEditorFontSize"><iron-icon class="button" icon="icons:zoom-out"></iron-icon></paper-button>
           <paper-button on-click="toggleLibrary"><iron-icon class$="button {{buttonCssClass(showLibrary)}}" icon="icons:chrome-reader-mode"></iron-icon></paper-button>
-          <paper-button on-click="toggleShowBoards"><iron-icon class$="button {{buttonCssClass(showBoards)}}" icon="icons:chevron-right"></iron-icon></paper-button>
+          <paper-button on-click="toggleShowBoards"><iron-icon class="button" icon$="icons:chevron-{{_showBoardsDirection(showBoards)}}"></iron-icon></paper-button>
         </div>
       </div>
     </paper-toolbar>
@@ -73,10 +73,6 @@
     Polymer({
       is: 'editor-toolbar',
       properties: {
-        editorSize: {
-          type: Number,
-          value: 14
-        },
         showBoards: {
           type: Boolean,
           value: true
@@ -88,8 +84,6 @@
       },
 
       ready: function() {
-        this.HOP_SIZE = 3;
-
         this.async(() => {
           this._editor().addEventListener("mode-change", ({ detail }) => {
             this.showLibrary = detail === "library";
@@ -115,23 +109,20 @@
         return this.domHost.buttonCssClass(element);
       },
 
-      moreSize: function() {
-        this.editorSize += this.HOP_SIZE;
-        this._updateSize();
+      increaseEditorFontSize: function() {
+        this._editor().increaseFontSize();
       },
 
-      lessSize: function() {
-        this.editorSize -= this.HOP_SIZE;
-        this._updateSize();
-      },
-
-      _updateSize: function() {
-        if (this.editorSize <= 8) return;
-        this._editor().setSize(this.editorSize);
+      decreaseEditorFontSize: function() {
+        this._editor().decreaseFontSize();
       },
 
       _editor: function() {
         return document.querySelector("#editor");
+      },
+
+      _showBoardsDirection: function(value) {
+        return value ? 'right' : 'left';
       }
     });
 
