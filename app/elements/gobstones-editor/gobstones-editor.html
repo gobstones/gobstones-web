@@ -162,25 +162,27 @@
 
         try {
           const libraryAst = this._parse(this.code.library);
-          if (libraryAst && libraryAst.error) return this._setMode("library");
+          if (libraryAst && libraryAst.error)
+            this._setMode("library");
         } catch(e) { /* library errors, bleh */ }
 
         const sourceCode = this.code.library + "\n" + this.code.main;
 
-        const ast = this._parse(sourceCode);
+        const options = { onlyCode: true };
+        const ast = this._parse(sourceCode, options);
         if (ast.error) return;
-        const context = this._interpret(ast, initialState);
+        const context = this._interpret(ast, initialState, options);
         if (context.error || context.on) return;
 
         this.fire("execution-result", { context: context });
       },
 
-      _parse: function(sourceCode) {
+      _parse: function(sourceCode, options) {
         try {
           return this.parser.parse(sourceCode);
         } catch (e) {
           // Parser errors
-          this._reportError(e, e.error);
+          this._reportError(e, e.error, "error", options);
 
           // var AceRange = ace.require('ace/range').Range;
           // this.editor.getSession().addMarker(new AceRange(e.on.range.start.row, e.on.range.start.column, e.on.range.end.row, e.on.range.end.column), "error-line", "fullLine", true)
@@ -190,21 +192,23 @@
         }
       },
 
-      _interpret: function(ast, initialState) {
+      _interpret: function(ast, initialState, options) {
         try {
           return this.parser.interpret(ast, initialState);
         } catch (e) {
           // Runtime & Business errors
-          if (e.message) this._reportError(e, e.message, "info");
+          if (e.message) this._reportError(e, e.message, "info", options);
 
           this.fire("execution-error", e.message);
           return e;
         }
       },
 
-      _reportError: function(e, message, type = "error") {
+      _reportError: function(e, message, type, options = {}) {
+        const libraryLines = this.code.library.split("\n").length;
+
         this.editor.getSession().setAnnotations([{
-          row: e.on.range.start.row,
+          row: e.on.range.start.row - (options.onlyCode ? libraryLines : 0),
           column: 0,
           text: message,
           type: type
