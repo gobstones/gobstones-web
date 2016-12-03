@@ -2,7 +2,7 @@ class Stylist {
   constructor() {
     this.DEFAULT_PERCENTAGE = 0.6;
     this.TOOLBAR_HEIGHT = 64;
-    this.TOOLBAR_AND_SIZE_SELECTOR_HEIGHT = this.TOOLBAR_HEIGHT + 78;
+    this.TOOLBAR_AND_SIZE_SELECTOR_HEIGHT = this.TOOLBAR_HEIGHT + 156;
     this.CELL_SIZE = 59;
     this.BOARD_CSS_CLASS = ".theBoard";
     this.BOARD_CONTAINER_CSS_CLASS = ".theBoardContainer";
