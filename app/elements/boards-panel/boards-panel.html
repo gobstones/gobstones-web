@@ -277,10 +277,6 @@
       isFinalBoardSelected: (selectedTab) => selectedTab === 1,
       isFinalBoardVisible: (finalState, error) => finalState || error,
 
-      getAttire: function() {
-        if (this.showAttire) return this.attire;
-      },
-
       addOrSetAttire: function(attire) {
         var availableAttire = _.find(this.availableAttires, { name: attire.name });
 
@@ -386,18 +382,9 @@
       },
 
       _setAttire: function() {
-        var reRun = function() {
-          try { this._onRunRequest(); } catch(e) { }
-        }.bind(this);
-
-        if (!this.showAttire) {
-          this.attire = null;
-          return reRun();
-        }
-
-        this.attire = this.availableAttires[this.selectedAttire];
-
-        return reRun();
+        if (this.showAttire)
+          this.attire = this.availableAttires[this.selectedAttire];
+          // TODO: Hacer que esto recargue la vestimenta. El board debería avivarse que cambió
       },
 
       _showCodeDirection: function(value) {
