@@ -9,7 +9,7 @@ class Parser {
   }
 
   parse(sourceCode) {
-    return _.last(this.gsParser.parseProgram(sourceCode));
+    return this.gsParser.parse(sourceCode).program;
   }
 
   interpret(ast, initialState) {
