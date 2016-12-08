@@ -38,6 +38,10 @@
         margin-left: 40% !important;
       }
 
+      .gray {
+        color: gray;
+      }
+
       .tabs {
         margin-left: -10px;
         margin-right: -10px;
@@ -114,45 +118,39 @@
     <paper-toast class="toast" id="toast"></paper-toast>
 
     <div class="boards-panel">
-      <template is="dom-if" if="{{isInitialBoardSelected(selectedTab)}}">
-        <div class="size-bar">
+      <div class="size-bar">
+        <div class$="{{boardSizeCss(selectedTab, showAttire)}}">
           <form>
             <div class="size-container">
               <strong>[[localize("size")]]:</strong>
-              <paper-input class="size-input" value="{{sizeX}}" type="number" min="1" max="30"></paper-input>
+              <paper-input class="size-input" value="{{sizeX}}" type="number" min="1" max="30" disabled$="{{isInitialBoardEditable(selectedTab, showAttire)}}"></paper-input>
             </div>
             <div class="size-container">
               <span>[[localize("columns")]] <strong>[[localize("by")]]</strong></span>
-              <paper-input class="size-input" value="{{sizeY}}" type="number" min="1" max="30"></paper-input>
+              <paper-input class="size-input" value="{{sizeY}}" type="number" min="1" max="30" disabled$="{{isInitialBoardEditable(selectedTab, showAttire)}}"></paper-input>
               <span>[[localize("rows")]]</span>
             </div>
           </form>
         </div>
-      </template>
+      </div>
 
-      <template is="dom-if" if="{{isFinalBoardSelected(selectedTab)}}">
-        <template is="dom-if" if="{{!error}}">
-          <template is="dom-if" if="{{finalState}}" restamp="true">
-            <div class="attire-container">
-              <paper-button on-click="toggleShowAttire"><iron-icon class="black-button" icon="icons:visibility"></iron-icon></paper-button>
-              <strong>[[localize("attire")]]:</strong>
-              <paper-dropdown-menu no-animations no-label-float vertical-align="bottom" horizontal-align="right" disabled="{{!showAttire}}">
-                <paper-listbox class="dropdown-content" selected="{{selectedAttire}}">
-                  <template is="dom-repeat" items="{{ availableAttires }}">
-                    <paper-item>{{item.name}}</paper-item>
-                  </template>
-                </paper-listbox>
-              </paper-dropdown-menu>
-            </div>
-          </template>
-        </template>
-      </template>
+      <div class="attire-container">
+        <paper-button on-click="toggleShowAttire"><iron-icon class="black-button" icon="icons:visibility"></iron-icon></paper-button>
+        <strong>[[localize("attire")]]:</strong>
+        <paper-dropdown-menu no-animations no-label-float vertical-align="bottom" horizontal-align="right" disabled="{{!showAttire}}">
+          <paper-listbox class="dropdown-content" selected="{{selectedAttire}}">
+            <template is="dom-repeat" items="{{ availableAttires }}">
+              <paper-item>{{item.name}}</paper-item>
+            </template>
+          </paper-listbox>
+        </paper-dropdown-menu>
+      </div>
 
       <div class="theBoardContainer" style="position: relative;">
         <div class="theBoard" style="position: absolute; left: 0; right: 0;">
           <!-- Initial board -->
           <template is="dom-if" if="{{isInitialBoardSelected(selectedTab)}}">
-            <gs-board id="initialStateEditor" table="{{initialState.table}}" header="{{initialState.header}}" size="{{size}}" options='{ "editable": true }'></gs-board>
+            <gs-board id="initialStateEditor" table="{{initialState.table}}" header="{{initialState.header}}" size="{{size}}" options='{{initialBoardOptions}}' attire="{{attire}}"></gs-board>
           </template>
 
           <!-- Final board -->
@@ -195,6 +193,7 @@
           type: Number,
           value: 0
         },
+
         sizeX: {
           type: Number,
           value: 4,
@@ -210,24 +209,30 @@
           computed: "_computeSize(sizeX, sizeY)",
           observer: "_updateSize"
         },
+        initialBoardOptions: {
+          type: Object,
+          computed: "_computeInitialBoardOptions(showAttire)"
+        },
         initialState: Object,
         finalState: Object,
         error: Object,
+
         availableAttires: {
           type: Object,
           value: new AvailableAttires().getAll()
         },
         attire: {
-          type: Object
+          type: Object,
+          computed: "_computeAttire(selectedAttire, showAttire)"
         },
         selectedAttire: {
           type: Number,
-          value: 0,
-          observer: "_setAttire"
+          value: 0
         },
         showAttire: {
           type: Boolean,
-          value: false
+          value: false,
+          observer: "_updateAttire"
         }
       },
       listeners: {
@@ -267,7 +272,6 @@
 
       toggleShowAttire: function() {
         this.showAttire = !this.showAttire;
-        this._setAttire();
       },
 
       buttonCssClass: function(element) {
@@ -278,10 +282,7 @@
       isInitialBoardSelected: (selectedTab) => selectedTab === 0,
       isFinalBoardSelected: (selectedTab) => selectedTab === 1,
       isFinalBoardVisible: (finalState, error) => finalState || error,
-
-      getAttire: function() {
-        if (this.showAttire) return this.attire;
-      },
+      isInitialBoardEditable: (selectedTab, showAttire) => selectedTab === 1 || showAttire,
 
       addOrSetAttire: function(attire) {
         var availableAttire = _.find(this.availableAttires, { name: attire.name });
@@ -291,9 +292,6 @@
           this.selectedAttire = this.availableAttires.length - 1;
         } else
           this.selectedAttire = this.availableAttires.indexOf(availableAttire);
-
-        this.showAttire = true;
-        this._setAttire();
       },
 
       setInitialState: function(initialState) {
@@ -371,12 +369,26 @@
         return this;
       },
 
+      _showCodeDirection: function(value) {
+        return value ? 'left' : 'right';
+      },
+
       _computeSize: function(sizeX, sizeY) {
         const x = sizeX === "" ? this.size.x : this._limitSize(sizeX);
         const y = sizeY === "" ? this.size.y : this._limitSize(sizeY);
         if (sizeX !== "") this.sizeX = x;
         if (sizeY !== "") this.sizeY = y;
         return { x: x, y: y };
+      },
+
+      _computeAttire: function(selectedAttire, showAttire) {
+        var attire = this.availableAttires[selectedAttire];
+        attire.enabled = showAttire;
+        return attire;
+      },
+
+      _computeInitialBoardOptions: function(showAttire) {
+        return { editable: !showAttire };
       },
 
       _limitSize: function(n) {
@@ -387,23 +399,12 @@
         if (this.stylist) this.stylist.updateBoardSize(this.size);
       },
 
-      _setAttire: function() {
-        var reRun = function() {
-          try { this._onRunRequest(); } catch(e) { }
-        }.bind(this);
-
-        if (!this.showAttire) {
-          this.attire = null;
-          return reRun();
-        }
-
-        this.attire = this.availableAttires[this.selectedAttire];
-
-        return reRun();
+      _updateAttire: function() {
+        this.set("attire.enabled", this.showAttire);
       },
 
-      _showCodeDirection: function(value) {
-        return value ? 'left' : 'right';
+      boardSizeCss: function(selectedTab, showAttire) {
+        return this.isInitialBoardEditable(selectedTab, showAttire) ? "gray" : "";
       }
     });
 
