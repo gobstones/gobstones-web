@@ -259,10 +259,7 @@
           this._clean();
         });
 
-        this.initialState = {
-          header: { x: 0, y: 0 },
-          table: [ [{}, {}, {}, {}], [{}, {}, {}, {}], [{}, {}, {}, {}], [{}, {}, {}, {}] ]
-        };
+        this._init();
       },
 
       toggleShowCode: function() {
@@ -301,6 +298,13 @@
           this.initialState = initialState;
           this.selectedTab = 0;
         });
+      },
+
+      reset: function() {
+        this._init();
+        this._clean();
+        this.selectedAttire = 0;
+        this.showAttire = false;
       },
 
       _onRunRequest: function() {
@@ -353,6 +357,15 @@
         this.finalState = null;
         this.error = null;
         this.selectedTab = 0;
+      },
+
+      _init: function() {
+        this.sizeX = 4;
+        this.sizeY = 4;
+        this.initialState = {
+          header: { x: 0, y: 0 },
+          table: [ [{}, {}, {}, {}], [{}, {}, {}, {}], [{}, {}, {}, {}], [{}, {}, {}, {}] ]
+        };
       },
 
       _showToast: function(message) {

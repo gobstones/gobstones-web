@@ -143,6 +143,12 @@
         this.fire("editor-dirty");
       },
 
+      reset: function() {
+        this._setMode("main");
+        this.setCode("", "main");
+        this.setCode("", "library");
+      },
+
       _initializeDefaultFontSize: function() {
         this.fontSize = this.DEFAULT_FONT_SIZE;
       },

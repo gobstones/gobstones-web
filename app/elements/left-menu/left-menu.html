@@ -1,5 +1,6 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 <link rel="import" href="../../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
 <link rel="import" href="../../scripts/jquery.html">
 <link rel="import" href="../../scripts/behaviors/localizationBehavior.html">
 <link rel="import" href="../../scripts/loaders/projectLoader.html">
@@ -34,6 +35,12 @@
     </style>
 
     <div>
+      <paper-button on-click="newProject">
+        <span class="clickable action">
+          <iron-icon icon="icons:description"></iron-icon>
+        </span>
+      </paper-button>
+
       <save-and-load on-save="saveProject" on-load="loadProject"></save-and-load>
     </div>
     <h1 class="title">[[localize("project")]]</h1>
@@ -109,6 +116,15 @@
             });
           };
         });
+      },
+
+      newProject: function() {
+        if (!confirm(this.localize("new-project-confirm"))) return;
+
+        const context = this._context();
+        context.setProjectName("Program");
+        context.editor.reset();
+        context.boards.reset();
       },
 
       _closePanel: function() {
