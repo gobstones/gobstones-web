@@ -8,7 +8,7 @@ class LibraryLoader extends Loader {
     return context.editor.code.library;
   }
 
-  _readContent(context, content, fileName) {
+  _readContent(context, content) {
     this._setCode(context, content, "library");
   }
 }

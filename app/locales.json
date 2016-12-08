@@ -11,6 +11,7 @@
     "final-board": "Resultados",
     "initial-board": "Tablero inicial",
     "library": "Biblioteca",
+    "new-project-confirm": "¿Está seguro que desea crear un nuevo proyecto? Se perderá todo el progreso no guardado.",
     "open": "Abrir",
     "project": "Proyecto",
     "rows": "filas",

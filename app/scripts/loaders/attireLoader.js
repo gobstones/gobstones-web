@@ -9,11 +9,21 @@ class AttireLoader extends Loader {
     return this._serialize(attire);
   }
 
-  _readContent(context, content, fileName) {
+  _readContent(context, content) {
+    this._setAttire(context, content, () => {
+      context.boards.showAttire = true;
+    });
+  }
+
+  readContentForProject(context, content) {
+    this._setAttire(context, content);
+  }
+
+  _setAttire(context, content, then) {
     const attire = this._deserialize(content);
     if (attire && attire.name && attire.rules) {
       context.boards.addOrSetAttire(attire);
-      context.boards.showAttire = true;
+      if (then) then();
     }
   }
 

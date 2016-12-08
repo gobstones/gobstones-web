@@ -9,7 +9,7 @@ class InitialBoardLoader extends Loader {
     return new Parser().buildGbb(panel.initialState, panel.size);
   }
 
-  _readContent(context, content, fileName) {
+  _readContent(context, content) {
     const panel = context.boards;
     const board = new Parser().readGbb(content);
     const initialState = panel.initialState;
