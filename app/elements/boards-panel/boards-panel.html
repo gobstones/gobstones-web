@@ -119,15 +119,15 @@
 
     <div class="boards-panel">
       <div class="size-bar">
-        <div class$="{{boardSizeCss(selectedTab)}}">
+        <div class$="{{boardSizeCss(selectedTab, showAttire)}}">
           <form>
             <div class="size-container">
               <strong>[[localize("size")]]:</strong>
-              <paper-input class="size-input" value="{{sizeX}}" type="number" min="1" max="30" disabled$="{{isFinalBoardSelected(selectedTab)}}"></paper-input>
+              <paper-input class="size-input" value="{{sizeX}}" type="number" min="1" max="30" disabled$="{{isSizeDisabled(selectedTab, showAttire)}}"></paper-input>
             </div>
             <div class="size-container">
               <span>[[localize("columns")]] <strong>[[localize("by")]]</strong></span>
-              <paper-input class="size-input" value="{{sizeY}}" type="number" min="1" max="30" disabled$="{{isFinalBoardSelected(selectedTab)}}"></paper-input>
+              <paper-input class="size-input" value="{{sizeY}}" type="number" min="1" max="30" disabled$="{{isSizeDisabled(selectedTab, showAttire)}}"></paper-input>
               <span>[[localize("rows")]]</span>
             </div>
           </form>
@@ -150,7 +150,7 @@
         <div class="theBoard" style="position: absolute; left: 0; right: 0;">
           <!-- Initial board -->
           <template is="dom-if" if="{{isInitialBoardSelected(selectedTab)}}">
-            <gs-board id="initialStateEditor" table="{{initialState.table}}" header="{{initialState.header}}" size="{{size}}" options='{ "editable": true }'></gs-board>
+            <gs-board id="initialStateEditor" table="{{initialState.table}}" header="{{initialState.header}}" size="{{size}}" options='{ "editable": true }' attire="{{attire}}"></gs-board>
           </template>
 
           <!-- Final board -->
@@ -216,16 +216,17 @@
           value: new AvailableAttires().getAll()
         },
         attire: {
-          type: Object
+          type: Object,
+          computed: "_computeAttire(selectedAttire)"
         },
         selectedAttire: {
           type: Number,
-          value: 0,
-          observer: "_setAttire"
+          value: 0
         },
         showAttire: {
           type: Boolean,
-          value: false
+          value: false,
+          observer: "_updateAttire"
         }
       },
       listeners: {
@@ -265,7 +266,6 @@
 
       toggleShowAttire: function() {
         this.showAttire = !this.showAttire;
-        this._setAttire();
       },
 
       buttonCssClass: function(element) {
@@ -276,6 +276,7 @@
       isInitialBoardSelected: (selectedTab) => selectedTab === 0,
       isFinalBoardSelected: (selectedTab) => selectedTab === 1,
       isFinalBoardVisible: (finalState, error) => finalState || error,
+      isSizeDisabled: (selectedTab, showAttire) => selectedTab === 1 || showAttire,
 
       addOrSetAttire: function(attire) {
         var availableAttire = _.find(this.availableAttires, { name: attire.name });
@@ -285,9 +286,6 @@
           this.selectedAttire = this.availableAttires.length - 1;
         } else
           this.selectedAttire = this.availableAttires.indexOf(availableAttire);
-
-        this.showAttire = true;
-        this._setAttire();
       },
 
       setInitialState: function(initialState) {
@@ -373,6 +371,10 @@
         return { x: x, y: y };
       },
 
+      _computeAttire: function(selectedAttire) {
+        return this.availableAttires[selectedAttire];
+      },
+
       _limitSize: function(n) {
         return Math.max(Math.min(n, 30), 1);
       },
@@ -381,18 +383,16 @@
         if (this.stylist) this.stylist.updateBoardSize(this.size);
       },
 
-      _setAttire: function() {
-        if (this.showAttire)
-          this.attire = this.availableAttires[this.selectedAttire];
-          // TODO: Hacer que esto recargue la vestimenta. El board debería avivarse que cambió
+      _updateAttire: function() {
+        this.set("attire.enabled", this.showAttire);
       },
 
       _showCodeDirection: function(value) {
         return value ? 'left' : 'right';
       },
 
-      boardSizeCss: function(selectedTab) {
-        return this.isFinalBoardSelected(selectedTab) ? "gray" : "";
+      boardSizeCss: function(selectedTab, showAttire) {
+        return this.isSizeDisabled(selectedTab, showAttire) ? "gray" : "";
       }
     });
 
