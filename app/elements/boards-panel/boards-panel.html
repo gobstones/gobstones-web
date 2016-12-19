@@ -42,6 +42,10 @@
         color: gray;
       }
 
+      .hidden {
+        visibility: hidden;
+      }
+
       .tabs {
         margin-left: -10px;
         margin-right: -10px;
@@ -91,6 +95,12 @@
         margin-left: -8px;
       }
 
+      .clear-button {
+        position: absolute;
+        margin-left: -9px;
+        color: #708090;
+      }
+
       paper-tab {
         --paper-tab-content-unselected: {
           opacity: 0.5;
@@ -117,17 +127,19 @@
 
     <paper-toast class="toast" id="toast"></paper-toast>
 
+    <paper-button class="clear-button" on-click="cleanBoards"><iron-icon class$="{{clearButtonCss(selectedTab, showAttire)}}" icon="icons:delete-forever"></iron-icon></paper-button>
+
     <div class="boards-panel">
       <div class="size-bar">
         <div class$="{{boardSizeCss(selectedTab, showAttire)}}">
           <form>
             <div class="size-container">
               <strong>[[localize("size")]]:</strong>
-              <paper-input class="size-input" value="{{sizeX}}" type="number" min="1" max="30" disabled$="{{isInitialBoardEditable(selectedTab, showAttire)}}"></paper-input>
+              <paper-input class="size-input" value="{{sizeX}}" type="number" min="1" max="30" disabled$="{{isInitialBoardNotEditable(selectedTab, showAttire)}}"></paper-input>
             </div>
             <div class="size-container">
               <span>[[localize("columns")]] <strong>[[localize("by")]]</strong></span>
-              <paper-input class="size-input" value="{{sizeY}}" type="number" min="1" max="30" disabled$="{{isInitialBoardEditable(selectedTab, showAttire)}}"></paper-input>
+              <paper-input class="size-input" value="{{sizeY}}" type="number" min="1" max="30" disabled$="{{isInitialBoardNotEditable(selectedTab, showAttire)}}"></paper-input>
               <span>[[localize("rows")]]</span>
             </div>
           </form>
@@ -256,7 +268,7 @@
         })._subscribeToEditor("execution-error", (eventInfo) => {
           this._onExecutionError(eventInfo);
         })._subscribeToEditor("editor-dirty", () => {
-          this._clean();
+          this._cleanState();
         });
 
         this._init();
@@ -279,7 +291,7 @@
       isInitialBoardSelected: (selectedTab) => selectedTab === 0,
       isFinalBoardSelected: (selectedTab) => selectedTab === 1,
       isFinalBoardVisible: (finalState, error) => finalState || error,
-      isInitialBoardEditable: (selectedTab, showAttire) => selectedTab === 1 || showAttire,
+      isInitialBoardNotEditable: (selectedTab, showAttire) => selectedTab === 1 || showAttire,
 
       addOrSetAttire: function(attire) {
         var availableAttire = _.find(this.availableAttires, { name: attire.name });
@@ -292,7 +304,7 @@
       },
 
       setInitialState: function(initialState) {
-        this._clean();
+        this._cleanState();
         this.initialState = null;
         this.async(function() {
           this.initialState = initialState;
@@ -301,14 +313,21 @@
       },
 
       reset: function() {
+        this.sizeX = 4;
+        this.sizeY = 4;
         this._init();
-        this._clean();
+        this._cleanState();
         this.selectedAttire = 0;
         this.showAttire = false;
       },
 
+      cleanBoards: function() {
+        this._init();
+        this._cleanState();
+      },
+
       _onRunRequest: function() {
-        this._clean();
+        this._cleanState();
 
         const initialStateEditor = this.$$("#initialStateEditor");
         const initialState = {
@@ -350,21 +369,25 @@
         this.initialState.header = initialStateEditor.header;
         this.initialState.table = initialStateEditor.table;
 
-        this._clean();
+        this._cleanState();
       },
 
-      _clean: function() {
+      _cleanState: function() {
         this.finalState = null;
         this.error = null;
         this.selectedTab = 0;
       },
 
       _init: function() {
-        this.sizeX = 4;
-        this.sizeY = 4;
+        var self = this;
+
         this.initialState = {
           header: { x: 0, y: 0 },
-          table: [ [{}, {}, {}, {}], [{}, {}, {}, {}], [{}, {}, {}, {}], [{}, {}, {}, {}] ]
+          table: _.range(self.sizeY).map(function(row) {
+            return _.range(self.sizeX).map(function(cell) {
+              return {};
+            })
+          })
         };
       },
 
@@ -417,7 +440,11 @@
       },
 
       boardSizeCss: function(selectedTab, showAttire) {
-        return this.isInitialBoardEditable(selectedTab, showAttire) ? "gray" : "";
+        return this.isInitialBoardNotEditable(selectedTab, showAttire) ? "gray" : "";
+      },
+
+      clearButtonCss: function(selectedTab, showAttire) {
+        return "black-button" + (this.isInitialBoardNotEditable(selectedTab, showAttire) ? " hidden" : "");
       }
     });
 
