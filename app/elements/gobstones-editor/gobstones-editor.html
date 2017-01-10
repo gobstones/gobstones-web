@@ -172,15 +172,21 @@
             this._setMode("library");
         } catch(e) { /* library errors, bleh */ }
 
-        const sourceCode = this.code.library + "\n" + this.code.main;
+        try {
+          const sourceCode = this.code.library + "\n" + this.code.main;
+          const options = { onlyCode: true };
 
-        const options = { onlyCode: true };
-        const ast = this._parse(sourceCode, options);
-        if (ast.error) return;
-        const context = this._interpret(ast, initialState, options);
-        if (context.error || context.on) return;
+          const ast = this._parse(sourceCode, options);
+          if (ast.error) return;
+          const context = this._interpret(ast, initialState, options);
+          if (context.error || context.on) return;
 
-        this.fire("execution-result", { context: context });
+          this.fire("execution-result", { context: context });
+        } catch (e) {
+          this.fire("unknown-error", e);
+          console.error("---UNKNOWN ERROR---");
+          throw e;
+        }
       },
 
       _parse: function(sourceCode, options) {
@@ -210,15 +216,25 @@
         }
       },
 
-      _reportError: function(e, message, type, options = {}) {
-        const libraryLines = this.code.library.split("\n").length;
+      _reportError: function(e, message, type, options) {
+        const line = this._getErrorLine(e, options);
 
         this.editor.getSession().setAnnotations([{
-          row: e.on.range.start.row - (options.onlyCode ? libraryLines : 0),
+          row: line,
           column: 0,
           text: message,
           type: type
         }]);
+      },
+
+      _getErrorLine: function(e, options = {}) {
+        const libraryLines = this.code.library.split("\n").length;
+
+        try {
+          return e.on.range.start.row - (options.onlyCode ? libraryLines : 0);
+        } catch(unknownError) {
+          throw e;
+        }
       },
 
       _setMode: function(mode) {

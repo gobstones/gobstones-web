@@ -17,6 +17,7 @@
     "rows": "filas",
     "save": "Guardar",
     "size": "Tamaño",
-    "the-program-has-errors": "El programa tiene errores"
+    "the-program-has-errors": "El programa tiene errores",
+    "unknown-interpreter-error": "Error desconocido"
   }
 }

@@ -267,6 +267,8 @@
           this._onCompilationError(eventInfo);
         })._subscribeToEditor("execution-error", (eventInfo) => {
           this._onExecutionError(eventInfo);
+        })._subscribeToEditor("unknown-error", (eventInfo) => {
+          this._onUnknownError(eventInfo);
         })._subscribeToEditor("editor-dirty", () => {
           this._cleanState();
         });
@@ -354,6 +356,10 @@
       _onExecutionError: function(error) {
         this.error = error;
         this.selectedTab = 1;
+      },
+
+      _onUnknownError: function(error) {
+        this._showToast(this.localize("unknown-interpreter-error"));
       },
 
       _setFinalState: function(finalState) {
