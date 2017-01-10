@@ -70,44 +70,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <!-- Global libraries -->
 <link rel="import" href="scripts/lodash.html">
 
-<template is="dom-bind" id="app">
+<!-- APP -->
+<template is="dom-bind">
 
-  <paper-drawer-panel left-drawer id="paperDrawerPanel" drawer-width="200px" force-narrow disable-edge-swipe>
-    <!-- LEFT MENU -->
-    <paper-header-panel drawer>
-      <left-menu></left-menu>
-    </paper-header-panel>
-
-    <!-- Main Area -->
-    <paper-header-panel main id="headerPanelMain" fixed>
-      <!-- MAIN CONTENT -->
-      <div class="content">
-        <gobstones-ide></gobstones-ide>
-      </div>
-    </paper-header-panel>
-  </paper-drawer-panel>
-
-  <paper-toast id="toast">
-    <span class="toast-hide-button" role="button" tabindex="0" onclick="app.$.toast.hide()">Ok</span>
-  </paper-toast>
-
-  <!-- Uncomment next block to enable Service Worker support (1/2) -->
-  <!--
-  <paper-toast id="caching-complete"
-               duration="6000"
-               text="Caching complete! This app will work offline.">
-  </paper-toast>
-
-  <platinum-sw-register auto-register
-                        clients-claim
-                        skip-waiting
-                        base-uri="bower_components/platinum-sw/bootstrap"
-                        on-service-worker-installed="displayInstalledToast">
-    <platinum-sw-cache default-cache-strategy="fastest"
-                       cache-config-file="cache-config.json">
-    </platinum-sw-cache>
-  </platinum-sw-register>
-  -->
+  <main-app></main-app>
 
 </template>
 
