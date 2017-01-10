@@ -71,10 +71,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="scripts/lodash.html">
 
 <!-- APP -->
-<template is="dom-bind">
+<template is="dom-bind" id="app">
+  <app-router>
+      <app-route path="/code" import="elements/main-app/view-code.html"></app-route>
 
-  <main-app></main-app>
+      <app-route path="/blocks" import="elements/main-app/view-blocks.html"></app-route>
 
+      <app-route path="*" import="/elements/main-app/select-project.html"></app-route>
+  </app-router>
 </template>
 
 <!-- build:js scripts/app.js -->
