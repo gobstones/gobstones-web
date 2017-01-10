@@ -1,0 +1,30 @@
+.main-toolbar.tall .app-name {
+  font-size: 40px;
+  font-weight: 300;
+  -webkit-transform-origin: left center;
+  transform-origin: left center;
+}
+
+.main-toolbar .middle-container,
+.main-toolbar .bottom-container {
+  @apply(--layout-horizontal);
+  @apply(--layout-center);
+}
+
+.main-toolbar .middle-container  {
+  height: 100%;
+  margin-left: 48px;
+}
+
+.main-toolbar:not(.tall) .middle-container {
+  font-size: 18px;
+  padding-bottom: 0;
+}
+
+.main-toolbar .bottom-container {
+  @apply(--paper-font-subhead);
+
+  margin-left: 48px;
+  -webkit-transform-origin: left center;
+  transform-origin: left center;
+}

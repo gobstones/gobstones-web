@@ -11,13 +11,17 @@
     "final-board": "Resultados",
     "initial-board": "Tablero inicial",
     "library": "Biblioteca",
+    "new-blocks-project": "Nuevo proyecto de bloques",
+    "new-code-project": "Nuevo proyecto de código",
     "new-project-confirm": "¿Está seguro que desea crear un nuevo proyecto? Se perderá todo el progreso no guardado.",
     "open": "Abrir",
+    "open-project": "Abrir proyecto",
     "project": "Proyecto",
     "rows": "filas",
     "save": "Guardar",
     "size": "Tamaño",
     "the-program-has-errors": "El programa tiene errores",
-    "unknown-interpreter-error": "Error desconocido"
+    "unknown-interpreter-error": "Error desconocido",
+    "what-do-you-want": "¿Qué desea hacer?"
   }
 }

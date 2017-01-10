@@ -1,13 +1,82 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../scripts/behaviors/localizationBehavior.html">
 
 <dom-module id="select-project">
+  <style>
+    .content {
+      margin-left: 50%;
+      transform: translateX(-25%);
+    }
+
+    .options {
+      text-align: left;
+    }
+
+    .option {
+      margin-bottom: 10px;
+    }
+
+    .option > span {
+      vertical-align: middle;
+    }
+  </style>
+
   <template>
-    Tenés que entrar a /#/code o a /#/blocks
+    <editor-toolbar empty></editor-toolbar>
+    <div class="content">
+      <h1>[[localize("what-do-you-want")]]</h1>
+
+      <div class="option">
+        <paper-button on-click="newBlocksProject">
+          <span class="clickable action">
+            <iron-icon icon="icons:extension"></iron-icon>
+          </span>
+        </paper-button>
+        <span>[[localize("new-blocks-project")]]</span>
+      </div>
+
+      <div class="option">
+        <paper-button on-click="newCodeProject">
+          <span class="clickable action">
+            <iron-icon icon="icons:code"></iron-icon>
+          </span>
+        </paper-button>
+        <span>[[localize("new-code-project")]]</span>
+      </div>
+
+      <div class="option">
+        <paper-button on-click="openProject">
+          <span class="clickable action">
+            <iron-icon icon="icons:folder-open"></iron-icon>
+          </span>
+        </paper-button>
+        <span>[[localize("open-project")]]</span>
+      </div>
+    </div>
   </template>
 
   <script>
     Polymer({
-      is: 'select-project'
+      is: 'select-project',
+      behaviors: [
+        Polymer.LocalizationBehavior
+      ],
+
+      newBlocksProject: function() {
+        this._goTo("/blocks");
+      },
+
+      newCodeProject: function() {
+        this._goTo("/code");
+      },
+
+      openProject: function() {
+        // TODO: Hacer esto
+      },
+
+      _goTo: function(route) {
+        return document.querySelector("app-router").go(route);
+      }
     });
   </script>
 </dom-module>

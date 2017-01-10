@@ -48,7 +48,9 @@
     </style>
 
     <paper-toolbar class="main-toolbar" style="z-index: 10;">
-      <paper-icon-button icon="menu" paper-drawer-toggle on-click="togglePanel"></paper-icon-button>
+      <template is="dom-if" if="{{!empty}}">
+        <paper-icon-button icon="menu" paper-drawer-toggle on-click="togglePanel"></paper-icon-button>
+      </template>
 
       <span class="space"></span>
 
@@ -57,12 +59,14 @@
         <img class="app-logo" src="../../images/logo.png" />
         <div class="app-name" style="width: 90%">Gobstones</div>
 
-        <div class="buttons">
-          <paper-button on-click="increaseEditorFontSize"><iron-icon class="button" icon="icons:zoom-in"></iron-icon></paper-button>
-          <paper-button on-click="decreaseEditorFontSize"><iron-icon class="button" icon="icons:zoom-out"></iron-icon></paper-button>
-          <paper-button on-click="toggleLibrary"><iron-icon class$="button {{buttonCssClass(showLibrary)}}" icon="icons:chrome-reader-mode"></iron-icon></paper-button>
-          <paper-button on-click="toggleShowBoards"><iron-icon class="button" icon$="icons:chevron-{{_showBoardsDirection(showBoards)}}"></iron-icon></paper-button>
-        </div>
+        <template is="dom-if" if="{{!empty}}">
+          <div class="buttons">
+            <paper-button on-click="increaseEditorFontSize"><iron-icon class="button" icon="icons:zoom-in"></iron-icon></paper-button>
+            <paper-button on-click="decreaseEditorFontSize"><iron-icon class="button" icon="icons:zoom-out"></iron-icon></paper-button>
+            <paper-button on-click="toggleLibrary"><iron-icon class$="button {{buttonCssClass(showLibrary)}}" icon="icons:chrome-reader-mode"></iron-icon></paper-button>
+            <paper-button on-click="toggleShowBoards"><iron-icon class="button" icon$="icons:chevron-{{_showBoardsDirection(showBoards)}}"></iron-icon></paper-button>
+          </div>
+        </template>
       </div>
     </paper-toolbar>
 
@@ -73,6 +77,10 @@
     Polymer({
       is: 'editor-toolbar',
       properties: {
+        empty: {
+          type: Boolean,
+          value: false
+        },
         showBoards: {
           type: Boolean,
           value: true
@@ -84,6 +92,8 @@
       },
 
       ready: function() {
+        if (this.empty) return;
+
         this.async(() => {
           this._editor().addEventListener("mode-change", ({ detail }) => {
             this.showLibrary = detail === "library";
