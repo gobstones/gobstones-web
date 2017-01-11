@@ -26,7 +26,7 @@
                title="{{localize('execute')}}"
                on-click="onButtonClick"
     ></paper-fab>
-    <paper-slider style="z-index: 10" class="speed-slider" snaps min="1" max="4" max-markers="4" step="1" value="{{speed}}"></paper-slider>
+    <paper-slider style="z-index: 10" class="speed-slider" snaps min="1" max="4" max-markers="4" step="1" immediate-value="{{speed}}" value="4"></paper-slider>
   </template>
 
   <script>
@@ -51,7 +51,7 @@
         }
       },
       listeners: {
-        "value-change": "_onSpeedChange"
+        "immediate-value-change": "_onSpeedChange"
       },
 
       ready: function() {
