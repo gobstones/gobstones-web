@@ -1,0 +1,64 @@
+<dom-module id="code-runner">
+  <template>
+    <paper-fab id="playButton"
+               style="z-index: 10;"
+               icon="av:play-arrow"
+               class="run-button"
+               title="{{localize('execute')}}"
+               on-click="onButtonClick"
+    ></paper-fab>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'code-runner',
+      properties: {
+        isRunning: {
+          type: Boolean,
+          value: false,
+          observer: "_updateIcon"
+        },
+        speed: {
+          type: Number,
+          value: 300
+        }
+      },
+
+      created: function() {
+        this.handles = [];
+      },
+
+      run: function(states, notify) {
+        var handles = states.map((state, i) =>
+          setTimeout(() => notify(state), i * 300)
+        );
+      },
+
+      requestRun: function() {
+        this.clear();
+        this.isRunning = true;
+        this.fire("run");
+      },
+
+      stop: function() {
+        this.clear();
+        this.isRunning = false;
+        this.fire("stop");
+      },
+
+      clear: function() {
+        // TODO: Clean handles
+      },
+
+      onButtonClick: function() {
+        this.isRunning = !this.isRunning;
+        if (this.isRunning) this.requestRun()
+        else this.stop();
+      },
+
+      _updateIcon: function() {
+        this.$.playButton.icon = this.isRunning ? "av:stop" : "av:play-arrow";
+      }
+    });
+  </script>
+</dom-module>

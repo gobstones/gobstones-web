@@ -46,12 +46,7 @@
       initial-focus
     ></ace-widget>
 
-    <paper-fab style="z-index: 10;"
-               icon="av:play-arrow"
-               class="run-button"
-               title="{{localize('execute')}}"
-               on-click="onRunCode"
-    ></paper-fab>
+    <code-runner id="runner"></code-runner>
   </template>
 
   <script>
@@ -88,6 +83,8 @@
           this._runCode(eventInfo.detail);
         });
 
+        this.$.runner.addEventListener("run", () => this._onRunRequest());
+
         this.editor = this.$.ace.editor;
         this.parser = new Parser();
 
@@ -119,11 +116,6 @@
         this.codeWasLoaded = true;
       },
 
-      onRunCode: function() {
-        this._setMode("main");
-        this.fire("execution-request");
-      },
-
       increaseFontSize: function() {
         this.fontSize += this.HOP_SIZE;
       },
@@ -147,6 +139,11 @@
         this._setMode("main");
         this.setCode("", "main");
         this.setCode("", "library");
+      },
+
+      _onRunRequest: function() {
+        this._setMode("main");
+        this.fire("execution-request");
       },
 
       _initializeDefaultFontSize: function() {
@@ -180,9 +177,7 @@
           if (ast.error) return;
           const states = this._interpret(ast, initialState, options);
 
-          states.forEach((state, i) => {
-            setTimeout(() => this._notify(state), i * 300);
-          });
+          this.$.runner.run(states, (state) => this._notify(state));
         } catch (e) {
           this.fire("unknown-error", e);
           console.error("---UNKNOWN ERROR---");
@@ -272,7 +267,7 @@
         ace.editor.commands.addCommand({
           name: "run-code",
           bindKey: { win: "ctrl+enter", mac: "command+enter" },
-          exec: () => { this.onRunCode() }
+          exec: () => { this.$.runner.requestRun() }
         });
       },
 
