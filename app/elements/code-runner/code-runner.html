@@ -61,24 +61,24 @@
         this.handles = [];
       },
 
-      run: function({ initialState, teacherAst, sourceCode, options }, onSuccess, onError) {
+      run: function({ initialState, code, options }, onSuccess, onLibraryError, onError) {
         this.isRunning = true;
 
-        const ast = this.parse(sourceCode, (e) => onError(e));
-        if (ast.error) return this.isRunning = false;
-        const states = this._interpret(ast.program, teacherAst, initialState, options);
+        // TODO: NECESITO DESHACERME DE ESTAS OPTIONS
 
-        if (this.throttle === 0) {
-          onSuccess(_.last(states));
-          return this.stop("end");
+        try {
+          const teacherAst = this._checkLibrariesAndGetTeacherAst(code, onLibraryError);
+          const sourceCode = code.library + "\n" + code.main + "\n" + code.teacher;
+
+          const ast = this._parse(sourceCode, (e) => onError(e));
+          if (ast.error) return this.isRunning = false;
+          const states = this._interpret(ast.program, teacherAst, initialState, options);
+
+          this._notifyResults(states, onSuccess)
+        } catch (e) {
+          this.stop();
+          throw e;
         }
-
-        this.handles = states.map((state, i) =>
-          setTimeout(() => {
-            onSuccess(state);
-            if (i === states.length - 1) this.stop("end");
-          }, i * this.throttle)
-        );
       },
 
       requestRun: function() {
@@ -103,7 +103,46 @@
         else this.stop();
       },
 
-      parse: function(sourceCode, onError = () => {}) {
+      _notifyResults: function(states, onSuccess) {
+        if (this.throttle === 0) {
+          onSuccess(_.last(states));
+          return this.stop("end");
+        }
+
+        this.handles = states.map((state, i) =>
+          setTimeout(() => {
+            onSuccess(state);
+            if (i === states.length - 1) this.stop("end");
+          }, i * this.throttle)
+        );
+      },
+
+      _checkLibrariesAndGetTeacherAst: function(code, onLibraryError) {
+        this._checkLibraryCompiles(code.library, onLibraryError);
+
+        return this._checkLibraryCompiles(code.teacher, () => {
+          const message = "The teacher's library has errors. This is bad.";
+          alert(message);
+          throw new Error(message);
+        });
+      },
+
+      _checkLibraryCompiles: function(sourceCode, onError) {
+        const ast = this._parse(sourceCode);
+        const dummyAst = { declarations: [] };
+
+        if (_.trim(sourceCode) === "")
+          return dummyAst;
+
+        if (_.isError(ast) || ast.error) {
+          onError();
+          return dummyAst;
+        }
+
+        return ast;
+      },
+
+      _parse: function(sourceCode, onError = () => {}) {
         try {
           return this.parser.parse(sourceCode);
         } catch (e) {
