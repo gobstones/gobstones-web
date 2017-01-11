@@ -18,7 +18,7 @@
         isRunning: {
           type: Boolean,
           value: false,
-          observer: "_updateIcon"
+          observer: "_update"
         },
         throttle: {
           type: Number,
@@ -39,7 +39,7 @@
         this.handles = states.map((state, i) =>
           setTimeout(() => {
             onSuccess(state);
-            if (i === states.length - 1) this.stop(false);
+            if (i === states.length - 1) this.stop("end");
           }, i * this.throttle)
         );
       },
@@ -50,10 +50,10 @@
         this.fire("run");
       },
 
-      stop: function(fireCancel = true) {
+      stop: function(eventToFire = "cancel") {
         this.clear();
         this.isRunning = false;
-        if (fireCancel) this.fire("cancel");
+        this.fire(eventToFire);
       },
 
       clear: function() {
@@ -90,8 +90,9 @@
         return context.board().snapshots.concat(lastState);
       },
 
-      _updateIcon: function() {
+      _update: function() {
         this.$.playButton.icon = this.isRunning ? "av:stop" : "av:play-arrow";
+        window.IS_RUNNING = this.isRunning;
       }
     });
   </script>

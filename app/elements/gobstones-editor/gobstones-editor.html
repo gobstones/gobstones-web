@@ -83,8 +83,17 @@
         });
 
         this.runner = this.$.runner;
-        this.runner.addEventListener("run", () => this._onRunRequest());
-        this.runner.addEventListener("cancel", () => this.fire("clear-request"));
+        this.runner.addEventListener("run", () => {
+          this._onRunRequest()
+          this.editor.readonly = true;
+        });
+        this.runner.addEventListener("cancel", () => {
+          this.fire("cancel-request");
+          this.editor.readonly = false;
+        });
+        this.runner.addEventListener("end", () => {
+          this.editor.readonly = false;
+        });
 
         this.editor = this.$.ace.editor;
         this._setFatalities();
@@ -141,7 +150,7 @@
 
       _onRunRequest: function() {
         this._setMode("main");
-        this.fire("execution-request");
+        this.fire("run-request");
       },
 
       _initializeDefaultFontSize: function() {
