@@ -259,9 +259,9 @@
 
         this._subscribeToEditor("execution-request", () => {
           this._onRunRequest();
-        });
-
-        this._subscribeToEditor("execution-result", (eventInfo) => {
+        })._subscribeToEditor("clear-request", () => {
+          this._cleanState();
+        })._subscribeToEditor("execution-result", (eventInfo) => {
           this._onResult(eventInfo);
         })._subscribeToEditor("compilation-error", (eventInfo) => {
           this._onCompilationError(eventInfo);

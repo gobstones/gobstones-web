@@ -5,7 +5,6 @@
 <link rel="import" href="../../bower_components/iron-localstorage/iron-localstorage.html">
 <link rel="import" href="../../scripts/behaviors/localizationBehavior.html">
 <link rel="import" href="../../scripts/jquery.html">
-<link rel="import" href="../../scripts/parser.html">
 <link rel="import" href="../../scripts/stylist.html">
 
 <dom-module id="gobstones-editor">
@@ -46,7 +45,7 @@
       initial-focus
     ></ace-widget>
 
-    <code-runner id="runner"></code-runner>
+    <code-runner class="run-button" id="runner"></code-runner>
   </template>
 
   <script>
@@ -83,11 +82,11 @@
           this._runCode(eventInfo.detail);
         });
 
-        this.$.runner.addEventListener("run", () => this._onRunRequest());
+        this.runner = this.$.runner;
+        this.runner.addEventListener("run", () => this._onRunRequest());
+        this.runner.addEventListener("cancel", () => this.fire("clear-request"));
 
         this.editor = this.$.ace.editor;
-        this.parser = new Parser();
-
         this._setFatalities();
 
         this.stylist = new Stylist();
@@ -106,7 +105,6 @@
 
       onContentChange: function(content) {
         this.set(`code.${this.mode}`, content.detail.value);
-
         this.setAsDirty();
       },
 
@@ -163,49 +161,26 @@
       _runCode: function(initialState) {
         this.editor.getSession().clearAnnotations();
 
-        try {
-          const libraryAst = this._parse(this.code.library);
-          if (libraryAst && libraryAst.error)
-            this._setMode("library");
-        } catch(e) { /* library errors, bleh */ }
+        const libraryAst = this.runner.parse(this.code.library);
+        if (libraryAst && libraryAst.error)
+          this._setMode("library");
+
+        const sourceCode = this.code.library + "\n" + this.code.main;
+        const options = { onlyCode: true };
 
         try {
-          const sourceCode = this.code.library + "\n" + this.code.main;
-          const options = { onlyCode: true };
-
-          const ast = this._parse(sourceCode, options);
-          if (ast.error) return;
-          const states = this._interpret(ast, initialState, options);
-
-          this.$.runner.run(states, (state) => this._notify(state));
+          this.runner.run(
+            { initialState, sourceCode, options },
+            (state) => this._notify(state),
+            (e) => {
+              this._reportError(e, e.error, "error", options);
+              this.fire("compilation-error", e.error);
+            }
+          );
         } catch (e) {
           this.fire("unknown-error", e);
           console.error("---UNKNOWN ERROR---");
           throw e;
-        }
-      },
-
-      _parse: function(sourceCode, options) {
-        try {
-          return this.parser.parse(sourceCode);
-        } catch (e) {
-          this._reportError(e, e.error, "error", options);
-          this.fire("compilation-error", e.error);
-
-          // var AceRange = ace.require('ace/range').Range;
-          // this.editor.getSession().addMarker(new AceRange(e.on.range.start.row, e.on.range.start.column, e.on.range.end.row, e.on.range.end.column), "error-line", "fullLine", true)
-
-          return e;
-        }
-      },
-
-      _interpret: function(ast, initialState, options) {
-        try {
-          var context = this.parser.interpret(ast, initialState);
-          return this._getStates(context, context.board());
-        } catch (e) {
-          e.options = options;
-          return this._getStates(e.context, { error: e });
         }
       },
 
@@ -217,10 +192,6 @@
           this.fire("execution-error", e.message);
         } else
           this.fire("execution-result", { board: state });
-      },
-
-      _getStates: function(context, lastState) {
-        return context.board().snapshots.concat(lastState);
       },
 
       _reportError: function(e, message, type, options) {
@@ -267,7 +238,7 @@
         ace.editor.commands.addCommand({
           name: "run-code",
           bindKey: { win: "ctrl+enter", mac: "command+enter" },
-          exec: () => { this.$.runner.requestRun() }
+          exec: () => { this.runner.requestRun() }
         });
       },
 

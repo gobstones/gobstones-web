@@ -1,3 +1,5 @@
+<link rel="import" href="../../scripts/parser.html">
+
 <dom-module id="code-runner">
   <template>
     <paper-fab id="playButton"
@@ -18,19 +20,27 @@
           value: false,
           observer: "_updateIcon"
         },
-        speed: {
+        throttle: {
           type: Number,
           value: 300
         }
       },
 
-      created: function() {
+      ready: function() {
+        this.parser = new Parser();
         this.handles = [];
       },
 
-      run: function(states, notify) {
-        var handles = states.map((state, i) =>
-          setTimeout(() => notify(state), i * 300)
+      run: function({ initialState, sourceCode, options }, onSuccess, onError) {
+        const ast = this.parse(sourceCode, (e) => onError(e));
+        if (ast.error) return;
+        const states = this._interpret(ast, initialState, options);
+
+        this.handles = states.map((state, i) =>
+          setTimeout(() => {
+            onSuccess(state);
+            if (i === states.length - 1) this.stop(false);
+          }, i * this.throttle)
         );
       },
 
@@ -40,20 +50,44 @@
         this.fire("run");
       },
 
-      stop: function() {
+      stop: function(fireCancel = true) {
         this.clear();
         this.isRunning = false;
-        this.fire("stop");
+        if (fireCancel) this.fire("cancel");
       },
 
       clear: function() {
-        // TODO: Clean handles
+        this.handles.forEach(clearInterval);
+        this.handles = [];
       },
 
       onButtonClick: function() {
         this.isRunning = !this.isRunning;
         if (this.isRunning) this.requestRun()
         else this.stop();
+      },
+
+      parse: function(sourceCode, onError = () => {}) {
+        try {
+          return this.parser.parse(sourceCode);
+        } catch (e) {
+          onError(e);
+          return e;
+        }
+      },
+
+      _interpret: function(ast, initialState, options) {
+        try {
+          var context = this.parser.interpret(ast, initialState);
+          return this._getStates(context, context.board());
+        } catch (e) {
+          e.options = options;
+          return this._getStates(e.context, { error: e });
+        }
+      },
+
+      _getStates: function(context, lastState) {
+        return context.board().snapshots.concat(lastState);
       },
 
       _updateIcon: function() {
