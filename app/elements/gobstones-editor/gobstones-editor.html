@@ -184,6 +184,7 @@
             }
           );
         } catch (e) {
+          this.runner.stop();
           this.fire("unknown-error", e);
           console.error("---UNKNOWN ERROR---");
           throw e;
@@ -196,21 +197,24 @@
         });
 
         return this._checkLibraryCompiles(this.code.teacher, () => {
-          if (_.trim(this.code.teacher) !== "") {
-            const message = "The teacher's library has errors. This is bad.";
-            alert(message);
-            throw new Error(message);
-          }
+          const message = "The teacher's library has errors. This is bad.";
+          alert(message);
+          throw new Error(message);
         });
       },
 
       _checkLibraryCompiles: function(code, onError) {
         const ast = this.runner.parse(code);
+        const dummyAst = { declarations: [] };
 
-        if (ast.error) {
+        if (_.trim(code) === "")
+          return dummyAst;
+
+        if (_.isError(ast) || ast.error) {
           onError();
-          return { declarations: [] };
+          return dummyAst;
         }
+
         return ast;
       },
 
