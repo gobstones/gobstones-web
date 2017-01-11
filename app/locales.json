@@ -20,6 +20,10 @@
     "rows": "filas",
     "save": "Guardar",
     "size": "Tamaño",
+    "speed-1": "Velocidad: lenta",
+    "speed-2": "Velocidad: media",
+    "speed-3": "Velocidad: rápida",
+    "speed-4": "Velocidad: instantánea",
     "the-program-has-errors": "El programa tiene errores",
     "unknown-interpreter-error": "Error desconocido",
     "what-do-you-want": "¿Qué desea hacer?"

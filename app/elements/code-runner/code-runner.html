@@ -1,29 +1,57 @@
 <link rel="import" href="../../scripts/parser.html">
+<link rel="import" href="../../scripts/behaviors/localizationBehavior.html">
 
 <dom-module id="code-runner">
+  <style>
+    .speed-slider {
+      width: 80px;
+      transform: translateX(-14px);
+
+      --paper-slider-knob-start-color: var(--google-blue-700);
+      --paper-slider-knob-start-border-color: var(--google-blue-700);
+      --paper-slider-pin-start-color: var(--google-blue-700);
+    }
+
+    .toast {
+      --paper-toast-background-color: rgba(11, 70, 93, 0.8);
+      margin-left: 53px !important;
+    }
+  </style>
+
   <template>
+    <paper-toast class="toast" id="toast"></paper-toast>
     <paper-fab id="playButton"
                style="z-index: 10;"
                icon="av:play-arrow"
-               class="run-button"
                title="{{localize('execute')}}"
                on-click="onButtonClick"
     ></paper-fab>
+    <paper-slider style="z-index: 10" class="speed-slider" snaps min="1" max="4" max-markers="4" step="1" value="{{speed}}"></paper-slider>
   </template>
 
   <script>
     Polymer({
       is: 'code-runner',
+      behaviors: [
+        Polymer.LocalizationBehavior
+      ],
       properties: {
         isRunning: {
           type: Boolean,
           value: false,
           observer: "_update"
         },
+        speed: {
+          type: Number,
+          value: 4
+        },
         throttle: {
           type: Number,
-          value: 300
+          value: 0
         }
+      },
+      listeners: {
+        "value-change": "_onSpeedChange"
       },
 
       ready: function() {
@@ -33,7 +61,7 @@
 
       run: function({ initialState, sourceCode, options }, onSuccess, onError) {
         const ast = this.parse(sourceCode, (e) => onError(e));
-        if (ast.error) return;
+        if (ast.error) return this.isRunning = false;
         const states = this._interpret(ast, initialState, options);
 
         this.handles = states.map((state, i) =>
@@ -88,6 +116,13 @@
 
       _getStates: function(context, lastState) {
         return context.board().snapshots.concat(lastState);
+      },
+
+      _onSpeedChange: function() {
+        this.$.toast.text = this.localize(`speed-${this.speed}`);
+        this.$.toast.opened = true;
+        this.$.toast.center();
+        this.throttle = -(this.speed - 4) * 300;
       },
 
       _update: function() {
