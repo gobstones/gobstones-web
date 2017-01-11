@@ -1,0 +1,99 @@
+<link rel="import" href="../../scripts/parser.html">
+
+<dom-module id="code-runner">
+  <template>
+    <paper-fab id="playButton"
+               style="z-index: 10;"
+               icon="av:play-arrow"
+               class="run-button"
+               title="{{localize('execute')}}"
+               on-click="onButtonClick"
+    ></paper-fab>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'code-runner',
+      properties: {
+        isRunning: {
+          type: Boolean,
+          value: false,
+          observer: "_update"
+        },
+        throttle: {
+          type: Number,
+          value: 300
+        }
+      },
+
+      ready: function() {
+        this.parser = new Parser();
+        this.handles = [];
+      },
+
+      run: function({ initialState, sourceCode, options }, onSuccess, onError) {
+        const ast = this.parse(sourceCode, (e) => onError(e));
+        if (ast.error) return;
+        const states = this._interpret(ast, initialState, options);
+
+        this.handles = states.map((state, i) =>
+          setTimeout(() => {
+            onSuccess(state);
+            if (i === states.length - 1) this.stop("end");
+          }, i * this.throttle)
+        );
+      },
+
+      requestRun: function() {
+        this.clear();
+        this.isRunning = true;
+        this.fire("run");
+      },
+
+      stop: function(eventToFire = "cancel") {
+        this.clear();
+        this.isRunning = false;
+        this.fire(eventToFire);
+      },
+
+      clear: function() {
+        this.handles.forEach(clearInterval);
+        this.handles = [];
+      },
+
+      onButtonClick: function() {
+        this.isRunning = !this.isRunning;
+        if (this.isRunning) this.requestRun()
+        else this.stop();
+      },
+
+      parse: function(sourceCode, onError = () => {}) {
+        try {
+          return this.parser.parse(sourceCode);
+        } catch (e) {
+          onError(e);
+          return e;
+        }
+      },
+
+      _interpret: function(ast, initialState, options) {
+        try {
+          var context = this.parser.interpret(ast, initialState);
+          return this._getStates(context, context.board());
+        } catch (e) {
+          e.options = options;
+          return this._getStates(e.context, { error: e });
+        }
+      },
+
+      _getStates: function(context, lastState) {
+        return context.board().snapshots.concat(lastState);
+      },
+
+      _update: function() {
+        this.$.playButton.icon = this.isRunning ? "av:stop" : "av:play-arrow";
+        window.IS_RUNNING = this.isRunning;
+      }
+    });
+  </script>
+</dom-module>

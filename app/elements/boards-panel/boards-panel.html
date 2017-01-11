@@ -113,7 +113,7 @@
         <paper-button on-click="toggleShowCode"><iron-icon class="button show-code-icon" icon="icons:chevron-{{_showCodeDirection(showCode)}}"></iron-icon></paper-button>
       </div>
       <div style="width: 90%">
-        <paper-tabs no-bar$="{{!isFinalBoardVisible(finalState, error)}}" selected="{{selectedTab}}" class="bottom self-end">
+        <paper-tabs no-bar selected="{{selectedTab}}" class="bottom self-end">
           <paper-tab>[[localize("initial-board")]]</paper-tab>
           <template is="dom-if" if="{{isFinalBoardVisible(finalState, error)}}">
             <paper-tab>[[localize("final-board")]]</paper-tab>
@@ -203,9 +203,9 @@
         },
         selectedTab: {
           type: Number,
-          value: 0
+          value: 0,
+          observer: "_protectSelectedTab"
         },
-
         sizeX: {
           type: Number,
           value: 4,
@@ -225,6 +225,7 @@
           type: Object,
           computed: "_computeInitialBoardOptions(showAttire)"
         },
+
         initialState: Object,
         finalState: Object,
         error: Object,
@@ -257,11 +258,11 @@
 
         this._adapter = new ParserAndBoardAdapter();
 
-        this._subscribeToEditor("execution-request", () => {
+        this._subscribeToEditor("run-request", () => {
           this._onRunRequest();
-        });
-
-        this._subscribeToEditor("execution-result", (eventInfo) => {
+        })._subscribeToEditor("cancel-request", () => {
+          this._cleanState();
+        })._subscribeToEditor("execution-result", (eventInfo) => {
           this._onResult(eventInfo);
         })._subscribeToEditor("compilation-error", (eventInfo) => {
           this._onCompilationError(eventInfo);
@@ -341,7 +342,7 @@
       },
 
       _onResult: function(result) {
-        const board = result.context.board();
+        const board = result.board;
 
         this._setFinalState({
           header: _.pick(board, "x", "y"),
@@ -443,6 +444,10 @@
 
       _updateAttire: function() {
         this.set("attire.enabled", this.showAttire);
+      },
+
+      _protectSelectedTab: function() {
+        if (IS_RUNNING) this.selectedTab = 1;
       },
 
       boardSizeCss: function(selectedTab, showAttire) {
