@@ -170,14 +170,13 @@
       _runCode: function(initialState) {
         this.editor.getSession().clearAnnotations();
 
-        this._checkLibrariesCompile();
-
+        const teacherAst = this._checkLibrariesAndGetTeacherAst();
         const sourceCode = this.code.library + "\n" + this.code.main + "\n" + this.code.teacher;
-        const options = { onlyCode: true };
+        const options = { onlyCode : true };
 
         try {
           this.runner.run(
-            { initialState, sourceCode, options },
+            { initialState, teacherAst, sourceCode, options },
             (state) => this._notify(state),
             (e) => {
               this._reportError(e, e.error, "error", options);
@@ -191,12 +190,12 @@
         }
       },
 
-      _checkLibrariesCompile: function() {
+      _checkLibrariesAndGetTeacherAst: function() {
         this._checkLibraryCompiles(this.code.library, () => {
           this._setMode("library");
         });
 
-        this._checkLibraryCompiles(this.code.teacher, () => {
+        return this._checkLibraryCompiles(this.code.teacher, () => {
           if (_.trim(this.code.teacher) !== "") {
             const message = "The teacher's library has errors. This is bad.";
             alert(message);
@@ -207,7 +206,12 @@
 
       _checkLibraryCompiles: function(code, onError) {
         const ast = this.runner.parse(code);
-        if (ast && ast.error) onError();
+
+        if (ast.error) {
+          onError();
+          return { declarations: [] };
+        }
+        return ast;
       },
 
       _notify: function(state) {

@@ -61,12 +61,12 @@
         this.handles = [];
       },
 
-      run: function({ initialState, sourceCode, options }, onSuccess, onError) {
+      run: function({ initialState, teacherAst, sourceCode, options }, onSuccess, onError) {
         this.isRunning = true;
 
         const ast = this.parse(sourceCode, (e) => onError(e));
         if (ast.error) return this.isRunning = false;
-        const states = this._interpret(ast, initialState, options);
+        const states = this._interpret(ast.program, teacherAst, initialState, options);
 
         if (this.throttle === 0) {
           onSuccess(_.last(states));
@@ -112,19 +112,24 @@
         }
       },
 
-      _interpret: function(ast, initialState, options) {
+      _interpret: function(programAst, teacherAst, initialState, options) {
         try {
-          var context = this.parser.interpret(ast, initialState);
-          return this._getStates(context, context.board());
+          var context = this.parser.interpret(programAst, initialState);
+          return this._getStates(context, teacherAst, context.board());
         } catch (e) {
           e.options = options;
-          return this._getStates(e.context, { error: e });
+          return this._getStates(e.context, teacherAst, { error: e });
         }
       },
 
-      _getStates: function(context, lastState) {
+      _getStates: function(context, teacherAst, lastState) {
+        var teacherTools = teacherAst.declarations
+          .filter(it => _.includes(["procedureDeclaration", "functionDeclaration"], it.alias))
+          .map(it => it.name);
+
         return context.board()
           .snapshots
+          .filter(snapshot => !_.includes(teacherTools, snapshot.name))
           .map(snapshot => snapshot.board)
           .concat(lastState);
       },
