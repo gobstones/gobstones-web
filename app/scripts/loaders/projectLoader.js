@@ -5,6 +5,7 @@ class ProjectLoader extends Loader {
     this.loaders = [
       new CodeLoader,
       new LibraryLoader,
+      new TeacherLoader,
       new InitialBoardLoader,
       new AttireLoader
     ];
