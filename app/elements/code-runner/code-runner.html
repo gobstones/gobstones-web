@@ -62,6 +62,8 @@
       },
 
       run: function({ initialState, sourceCode, options }, onSuccess, onError) {
+        this.isRunning = true;
+
         const ast = this.parse(sourceCode, (e) => onError(e));
         if (ast.error) return this.isRunning = false;
         const states = this._interpret(ast, initialState, options);
@@ -81,7 +83,6 @@
 
       requestRun: function() {
         this.clear();
-        this.isRunning = true;
         this.fire("run");
       },
 

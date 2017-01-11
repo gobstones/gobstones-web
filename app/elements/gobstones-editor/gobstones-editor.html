@@ -145,6 +145,7 @@
         this._setMode("main");
         this.setCode("", "main");
         this.setCode("", "library");
+        this.setCode("", "teacher");
       },
 
       _onRunRequest: function() {
@@ -169,11 +170,9 @@
       _runCode: function(initialState) {
         this.editor.getSession().clearAnnotations();
 
-        const libraryAst = this.runner.parse(this.code.library);
-        if (libraryAst && libraryAst.error)
-          this._setMode("library");
+        this._checkLibrariesCompile();
 
-        const sourceCode = this.code.library + "\n" + this.code.main;
+        const sourceCode = this.code.library + "\n" + this.code.main + "\n" + this.code.teacher;
         const options = { onlyCode: true };
 
         try {
@@ -190,6 +189,25 @@
           console.error("---UNKNOWN ERROR---");
           throw e;
         }
+      },
+
+      _checkLibrariesCompile: function() {
+        this._checkLibraryCompiles(this.code.library, () => {
+          this._setMode("library");
+        });
+
+        this._checkLibraryCompiles(this.code.teacher, () => {
+          if (_.trim(this.code.teacher) !== "") {
+            const message = "The teacher's library has errors. This is bad.";
+            alert(message);
+            throw new Error(message);
+          }
+        });
+      },
+
+      _checkLibraryCompiles: function(code, onError) {
+        const ast = this.runner.parse(code);
+        if (ast && ast.error) onError();
       },
 
       _notify: function(state) {
@@ -255,7 +273,7 @@
       },
 
       _initializeCode: function() {
-        if (!this.code) this.code = { main: "", library: "" };
+        if (!this.code) this.code = { main: "", library: "", teacher: "" };
       }
     });
 
