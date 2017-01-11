@@ -178,10 +178,11 @@
 
           const ast = this._parse(sourceCode, options);
           if (ast.error) return;
-          const context = this._interpret(ast, initialState, options);
-          if (context.error || context.on) return;
+          const states = this._interpret(ast, initialState, options);
 
-          this.fire("execution-result", { context: context });
+          states.forEach((state, i) => {
+            setTimeout(() => this._notify(state), i * 300);
+          });
         } catch (e) {
           this.fire("unknown-error", e);
           console.error("---UNKNOWN ERROR---");
@@ -193,27 +194,38 @@
         try {
           return this.parser.parse(sourceCode);
         } catch (e) {
-          // Parser errors
           this._reportError(e, e.error, "error", options);
+          this.fire("compilation-error", e.error);
 
           // var AceRange = ace.require('ace/range').Range;
           // this.editor.getSession().addMarker(new AceRange(e.on.range.start.row, e.on.range.start.column, e.on.range.end.row, e.on.range.end.column), "error-line", "fullLine", true)
 
-          this.fire("compilation-error", e.error);
           return e;
         }
       },
 
       _interpret: function(ast, initialState, options) {
         try {
-          return this.parser.interpret(ast, initialState);
+          var context = this.parser.interpret(ast, initialState);
+          return this._getStates(context, context.board());
         } catch (e) {
-          // Runtime & Business errors
-          if (e.message) this._reportError(e, e.message, "info", options);
-
-          this.fire("execution-error", e.message);
-          return e;
+          e.options = options;
+          return this._getStates(e.context, { error: e });
         }
+      },
+
+      _notify: function(state) {
+        const e = state.error;
+
+        if (e) {
+          this._reportError(e, e.message, "info", e.options);
+          this.fire("execution-error", e.message);
+        } else
+          this.fire("execution-result", { board: state });
+      },
+
+      _getStates: function(context, lastState) {
+        return context.board().snapshots.concat(lastState);
       },
 
       _reportError: function(e, message, type, options) {

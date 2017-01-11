@@ -341,7 +341,7 @@
       },
 
       _onResult: function(result) {
-        const board = result.context.board();
+        const board = result.board;
 
         this._setFinalState({
           header: _.pick(board, "x", "y"),
