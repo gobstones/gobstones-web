@@ -421,7 +421,7 @@
 
       _computeAttire: function(selectedAttire, showAttire) {
         var attire = this.availableAttires[selectedAttire];
-        attire.enabled = showAttire;
+        if (attire) attire.enabled = showAttire;
         return attire;
       },
 

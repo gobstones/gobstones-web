@@ -12,7 +12,7 @@ class ProjectLoader extends Loader {
   }
 
   save(context) {
-    var files = this.loaders.map(loader => loader.getFile(context));
+    const files = this.loaders.map(loader => loader.getFile(context));
 
     const zip = new JSZip();
     files.forEach(file => {
@@ -40,7 +40,7 @@ class ProjectLoader extends Loader {
 
   _loadComponent(context, relativePath, zipEntry) {
     this.loaders.forEach(loader => {
-      const getContent = () => zipEntry.async("string");
+      const getContent = () => zipEntry.async("arraybuffer");
       loader.readIfNeeded(context, relativePath, getContent);
     });
   }
