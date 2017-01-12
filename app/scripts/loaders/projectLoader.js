@@ -7,12 +7,12 @@ class ProjectLoader extends Loader {
       new LibraryLoader,
       new TeacherLoader,
       new InitialBoardLoader,
-      new AttireLoader
+      //new ProjectAttireLoader // TODO: Hacer esto
     ];
   }
 
   save(context) {
-    var files = this.loaders.map(loader => loader.getFile(context));
+    const files = this.loaders.map(loader => loader.getFile(context));
 
     const zip = new JSZip();
     files.forEach(file => {

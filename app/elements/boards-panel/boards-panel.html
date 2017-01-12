@@ -3,7 +3,6 @@
 <link rel="import" href="../../scripts/behaviors/localizationBehavior.html">
 <link rel="import" href="../../scripts/parserAndBoardAdapter.html">
 <link rel="import" href="../../scripts/stylist.html">
-<link rel="import" href="../../scripts/availableAttires.html">
 
 <dom-module id="boards-panel">
   <template>
@@ -227,8 +226,8 @@
         error: Object,
 
         availableAttires: {
-          type: Object,
-          value: new AvailableAttires().getAll()
+          type: Array,
+          value: []
         },
         attire: {
           type: Object,
@@ -422,7 +421,7 @@
 
       _computeAttire: function(selectedAttire, showAttire) {
         var attire = this.availableAttires[selectedAttire];
-        attire.enabled = showAttire;
+        if (attire) attire.enabled = showAttire;
         return attire;
       },
 
