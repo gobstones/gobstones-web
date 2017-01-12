@@ -168,19 +168,17 @@
       },
 
       _runCode: function(initialState) {
-        const options = { fixLines : true };
         const code = this.code;
         this.editor.getSession().clearAnnotations();
 
         try {
           this.runner.run(
-            { initialState, code, options },
-            (state) => this._notify(state),
-            () => this._setMode("library"),
+            { initialState, code },
             (e) => {
-              this._reportError(e, e.error, "error", options);
+              this._reportError(e, "error");
               this.fire("compilation-error", e.error);
-            }
+            },
+            (state) => this._notify(state)
           );
         } catch (e) {
           this.fire("unknown-error", e);
@@ -190,34 +188,22 @@
       },
 
       _notify: function(state) {
-        const e = state.error;
-
-        if (e) {
-          this._reportError(e, e.message, "info", e.options);
-          this.fire("execution-error", e.message);
+        if (state.error) {
+          this._reportError(state.error, "info");
+          this.fire("execution-error", state.error.message);
         } else
           this.fire("execution-result", { board: state });
       },
 
-      _reportError: function(e, message, type, options) {
-        const line = this._getErrorLine(e, options);
+      _reportError: function(error, type) {
+        if (error.location.mode === "library") this._setMode("library");
 
         this.editor.getSession().setAnnotations([{
-          row: line,
+          row: error.location.line,
           column: 0,
-          text: message,
+          text: error.message,
           type: type
         }]);
-      },
-
-      _getErrorLine: function(e, options = {}) {
-        const libraryLines = this.code.library.split("\n").length;
-
-        try {
-          return e.on.range.start.row - (options.fixLines ? libraryLines : 0);
-        } catch(unknownError) {
-          throw e;
-        }
       },
 
       _setMode: function(mode) {

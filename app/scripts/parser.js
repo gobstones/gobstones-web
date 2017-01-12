@@ -8,8 +8,17 @@ class Parser {
     this.Board = Board;
   }
 
-  parse(sourceCode) {
-    return this.gsParser.parse(sourceCode);
+  parse(sourceCode, onError = () => {}, onSuccess = (it) => it) {
+    try {
+      return onSuccess(this.gsParser.parse(sourceCode));
+    } catch (e) {
+      if (e.error) {
+        e.message = e.error;
+        delete e.error;
+        onError(e); // known errors
+      }
+      else throw e; // unknown errors
+    }
   }
 
   interpret(ast, initialState) {

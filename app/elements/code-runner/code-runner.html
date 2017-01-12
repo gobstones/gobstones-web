@@ -61,20 +61,22 @@
         this.handles = [];
       },
 
-      run: function({ initialState, code, options }, onSuccess, onLibraryError, onError) {
+      run: function(request, onCompilationError, onResult) {
         this.isRunning = true;
 
-        // TODO: NECESITO DESHACERME DE ESTAS OPTIONS
+        const code = request.code;
+        const itBroke = (err) => {
+          this.stop();
+          onCompilationError(err);
+        };
 
         try {
-          const teacherAst = this._checkLibrariesAndGetTeacherAst(code, onLibraryError);
-          const sourceCode = code.library + "\n" + code.main + "\n" + code.teacher;
-
-          const ast = this._parse(sourceCode, (e) => onError(e));
-          if (ast.error) return this.isRunning = false;
-          const states = this._interpret(ast.program, teacherAst, initialState, options);
-
-          this._notifyResults(states, onSuccess)
+          this._checkAndGetTeacherAst(code, itBroke, (teacherAst) => {
+            this._parse(code, itBroke, (ast) => {
+              const states = this._interpret(ast.program, teacherAst, request);
+              this._notifyResults(states, onResult)
+            }, true);
+          });
         } catch (e) {
           this.stop();
           throw e;
@@ -103,61 +105,68 @@
         else this.stop();
       },
 
-      _notifyResults: function(states, onSuccess) {
+      _notifyResults: function(states, onResult) {
         if (this.throttle === 0) {
-          onSuccess(_.last(states));
+          onResult(_.last(states));
           return this.stop("end");
         }
 
         this.handles = states.map((state, i) =>
           setTimeout(() => {
-            onSuccess(state);
+            onResult(state);
             if (i === states.length - 1) this.stop("end");
           }, i * this.throttle)
         );
       },
 
-      _checkLibrariesAndGetTeacherAst: function(code, onLibraryError) {
-        this._checkLibraryCompiles(code.library, onLibraryError);
-
-        return this._checkLibraryCompiles(code.teacher, () => {
-          const message = "The teacher's library has errors. This is bad.";
-          alert(message);
-          throw new Error(message);
+      _checkAndGetTeacherAst: function(code, onError, onSuccess) {
+        this._checkLibraryCompiles(code.library, onError, () => {
+          return this._checkLibraryCompiles(code.teacher, () => {
+            const message = "The teacher's library has errors. This is bad.";
+            alert(message);
+            throw new Error(message);
+          }, onSuccess);
         });
       },
 
-      _checkLibraryCompiles: function(sourceCode, onError) {
-        const ast = this._parse(sourceCode);
-        const dummyAst = { declarations: [] };
+      _checkLibraryCompiles: function(sourceCode, onError, onSuccess) {
+        this._parse({ library: sourceCode, main: "", teacher: "" }, onError, onSuccess);
+      },
+
+      _parse: function(code, onError, onSuccess, fixMainErrorLines) {
+        const sourceCode = code.library + "\n" + code.main + "\n" + code.teacher;
 
         if (_.trim(sourceCode) === "")
-          return dummyAst;
+          return onSuccess({ declarations: [] });
 
-        if (_.isError(ast) || ast.error) {
-          onError();
-          return dummyAst;
-        }
-
-        return ast;
+        this.parser.parse(sourceCode, (e) => {
+          e.location = this._getErrorLineAndMode(e, code, fixMainErrorLines);
+          return onError(e);
+        }, onSuccess);
       },
 
-      _parse: function(sourceCode, onError = () => {}) {
-        try {
-          return this.parser.parse(sourceCode);
-        } catch (e) {
-          onError(e);
-          return e;
-        }
-      },
-
-      _interpret: function(programAst, teacherAst, initialState, options) {
+      _interpret: function(programAst, teacherAst, { initialState, code }) {
         try {
           var context = this.parser.interpret(programAst, initialState);
           return this._getStates(context, teacherAst, context.board());
         } catch (e) {
-          e.options = options;
+          e.location = this._getErrorLineAndMode(e, code);
           return this._getStates(e.context, teacherAst, { error: e });
+        }
+      },
+
+      _getErrorLineAndMode: function(e, code, forceIsInMainCode) {
+        const libraryLines = code.library.split("\n").length;
+
+        try {
+          const isInMainCode = forceIsInMainCode || e.on.range.start.row > libraryLines;
+
+          return {
+            line: e.on.range.start.row - (isInMainCode ? libraryLines : 0),
+            mode: isInMainCode ? "main" : "library"
+          };
+        } catch(unknownError) {
+          throw e;
         }
       },
 
