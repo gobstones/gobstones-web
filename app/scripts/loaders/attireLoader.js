@@ -28,7 +28,7 @@ class AttireLoader extends Loader {
   }
 
   _serialize(attire) {
-    return JSON.stringify(this._transform(attire));
+    return JSON.stringify(this._transform(attire), null, 2);
   }
 
   _deserialize(json) {

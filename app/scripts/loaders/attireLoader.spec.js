@@ -34,7 +34,7 @@ describe('AttireLoader', function() {
       name: "Example",
       rules: []
     };
-    loader._readText = sinon.stub().callsArgWith(1, JSON.stringify(example), "AFileName");
+    loader._readText = sinon.stub().callsArgWith(1, JSON.stringify(example, null, 2), "AFileName");
     loader.read(context, null, callback);
 
     expect(callback.called).toBeTruthy();
