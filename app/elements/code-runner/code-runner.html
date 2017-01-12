@@ -175,11 +175,16 @@
           .filter(it => _.includes(["procedureDeclaration", "functionDeclaration"], it.alias))
           .map(it => it.name);
 
+        var previousContext = "program";
         return context.board()
           .snapshots
-          .filter(snapshot => !_.includes(teacherTools, snapshot.name))
-          .map(snapshot => snapshot.board)
-          .concat(lastState);
+          .filter(snapshot => {
+            const hasToIgnoreIt = _.includes(teacherTools, snapshot.name);
+            const isTheFirstOcurrence = previousContext !== snapshot.name;
+
+            previousContext = snapshot.name;
+            return !hasToIgnoreIt || isTheFirstOcurrence;
+          }).map(snapshot => snapshot.board).concat(lastState);
       },
 
       _onSpeedChange: function() {
