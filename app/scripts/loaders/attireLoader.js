@@ -11,39 +11,26 @@ const toBinary = (base64) => {
   return array;
 };
 
-class AttireLoader extends Loader {
+class AttireLoader {
   constructor() {
-    super();
     this.FILE_EXTENSION = ".attire.json";
     this.BASE64_PREFIX = "data:image/png;base64,";
   }
 
-  save(context) {
-    const attire = context.boards.attire;
-    if (!attire) return;
-
-    const zip = new JSZip();
-    zip.file(attire.name + this.FILE_EXTENSION, this._serialize(attire));
+  writeToZip(attire, zip, pathPrefix = "") {
+    zip.file(pathPrefix + attire.name + this.FILE_EXTENSION, this._serialize(attire));
 
     attire.rules.forEach(rule => {
       const imageBase64 = rule.image.replace(this.BASE64_PREFIX, "");
       const pngContent = toBinary(imageBase64);
-      zip.file(rule.fileName, pngContent);
-    });
-
-    zip.generateAsync({ type: "blob" }).then(content => {
-      this._saveBlob(content, `${attire.name}.gbat`);
+      zip.file(pathPrefix + rule.fileName, pngContent);
     });
   }
 
-  read(context, event, callback) {
-    const { file, fileName } = this._readLocalFile(event);
-
-    JSZip.loadAsync(file).then(zip => {
-      zip.forEach((relativePath, zipEntry) => {
-        if (_.endsWith(relativePath, this.FILE_EXTENSION))
-          this._processAttire(context, zipEntry, zip, callback);
-      });
+  readFromZip(context, zip, callback) {
+    zip.forEach((relativePath, zipEntry) => {
+      if (_.endsWith(relativePath, this.FILE_EXTENSION))
+        this._processAttire(context, zipEntry, zip, callback);
     });
   }
 

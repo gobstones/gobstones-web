@@ -6,7 +6,7 @@
 <link rel="import" href="../../scripts/loaders/codeLoader.html">
 <link rel="import" href="../../scripts/loaders/libraryLoader.html">
 <link rel="import" href="../../scripts/loaders/initialBoardLoader.html">
-<link rel="import" href="../../scripts/loaders/attireLoader.html">
+<link rel="import" href="../../scripts/loaders/individualAttireLoader.html">
 
 <dom-module id="left-menu">
   <template>
@@ -97,7 +97,7 @@
           Code: new CodeLoader,
           Library: new LibraryLoader,
           InitialBoard: new InitialBoardLoader,
-          Attire: new AttireLoader
+          Attire: new IndividualAttireLoader
         };
 
         ["Project", "Code", "Library", "InitialBoard", "Attire"].forEach(item => {

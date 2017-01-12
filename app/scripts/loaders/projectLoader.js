@@ -7,7 +7,7 @@ class ProjectLoader extends Loader {
       new LibraryLoader,
       new TeacherLoader,
       new InitialBoardLoader,
-      new AttireLoader
+      //new ProjectAttireLoader // TODO: Hacer esto
     ];
   }
 
@@ -40,7 +40,7 @@ class ProjectLoader extends Loader {
 
   _loadComponent(context, relativePath, zipEntry) {
     this.loaders.forEach(loader => {
-      const getContent = () => zipEntry.async("arraybuffer");
+      const getContent = () => zipEntry.async("string");
       loader.readIfNeeded(context, relativePath, getContent);
     });
   }
