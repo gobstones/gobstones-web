@@ -1,40 +1,7 @@
 class Loader {
-  save(context) {
-    this._saveText(this.getFile(context));
-  }
-
-  read(context, event, callback) {
-    this._readText(event, (content, fileName) => {
-      if (!content || !fileName)
-        return this._clean(event);
-
-      this._readContent(context, content, fileName);
-      callback();
-    });
-  }
-
-  readIfNeeded(context, path, getContent) {
-    if (_.endsWith(path, this.SUFFIX)) {
-      getContent().then(content => {
-        this.readContentForProject(context, content);
-      });
-    }
-  }
-
-  readContentForProject(context, content) {
-    this._readContent(context, content);
-  }
-
-  getFile(context) {
-    return {
-      content: this._buildFile(context),
-      name: context.getProjectName() + this.SUFFIX
-    };
-  }
-
-  // SUFFIX; <<abstract>>
-  // _buildFile(context); <<abstract>>
-  // _readContent(context, content, fileName); <<abstract>>
+  // <<abstract>>:
+  // save(context);
+  // read(context, event, callback);
 
   _setCode(context, code, mode) {
     context.editor.setCode(code, mode);

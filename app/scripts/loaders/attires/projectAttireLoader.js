@@ -1,6 +1,5 @@
 class ProjectAttireLoader {
   constructor(pathPrefix) {
-    super();
     this.reader = new AttireReader();
     this.pathPrefix = pathPrefix;
   }

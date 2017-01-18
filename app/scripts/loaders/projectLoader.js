@@ -8,6 +8,9 @@ class ProjectLoader extends BlobLoader {
       new TeacherLoader,
       new InitialBoardLoader
     ];
+    // Loaders must understand:
+    // - SUFFIX
+    // - readContentForProject(context, content)
 
     this.attireLoader = new ProjectAttireLoader("attires/");
     this.ATTIRES_FOLDER = "attires/";
@@ -47,7 +50,15 @@ class ProjectLoader extends BlobLoader {
   _loadComponent(context, relativePath, zipEntry) {
     this.loaders.forEach(loader => {
       const getContent = () => zipEntry.async("string");
-      loader.readIfNeeded(context, relativePath, getContent);
+      this._callComponentIfNeeded(loader, context, relativePath, getContent);
     });
+  }
+
+  _callComponentIfNeeded(loader, context, path, getContent) {
+    if (_.endsWith(path, loader.SUFFIX)) {
+      getContent().then(content => {
+        loader.readContentForProject(context, content);
+      });
+    }
   }
 }
