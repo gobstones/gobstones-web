@@ -1,0 +1,19 @@
+<link rel="import" href="../textLoader.html">
+<link rel="import" href="mixins/singleFileComponent.html">
+
+<script>
+  class TeacherLoader extends mix(TextLoader).with(SingleFileComponent) {
+    constructor() {
+      super();
+      this.SUFFIX = ".teacher.gbs";
+    }
+
+    buildContent(context) {
+      return context.editor.code.teacher;
+    }
+
+    readContent(context, content) {
+      this._setCode(context, content, "teacher");
+    }
+  }
+</script>

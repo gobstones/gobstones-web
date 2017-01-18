@@ -83,5 +83,4 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   // editor.session.setMode("ace/mode/gobstones");
   // editor.getSession().setTabSize(4);
   // editor.setHighlightActiveLine(false);
-
 })(document);

@@ -1,17 +1,16 @@
-<link rel="import" href="../blobLoader.html">
+<link rel="import" href="../../blobLoader.html">
 <link rel="import" href="attireReader.html">
 
 <script>
   class ProjectAttireLoader {
-    constructor(pathPrefix) {
+    constructor() {
       this.reader = new AttireReader();
-      this.pathPrefix = pathPrefix;
     }
 
     writeToZip(context, zip) {
-      zip.file(this.pathPrefix + "coming_soon", "coming");
-      zip.file(this.pathPrefix + "in", "coming");
-      zip.file(this.pathPrefix + "the_best_cinemas", "coming");
+      zip.file("coming_soon", "coming");
+      zip.file("in", "coming");
+      zip.file("the_best_cinemas", "coming");
       // TODO: Obtener vestimentas y llamar a attireReader por cada una
     }
 

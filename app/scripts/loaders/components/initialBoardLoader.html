@@ -1,19 +1,20 @@
-<link rel="import" href="Textloader.html">
-<link rel="import" href="../parser.html">
+<link rel="import" href="../textLoader.html">
+<link rel="import" href="mixins/singleFileComponent.html">
+<link rel="import" href="../../parser.html">
 
 <script>
-  class InitialBoardLoader extends TextLoader {
+  class InitialBoardLoader extends mix(TextLoader).with(SingleFileComponent) {
     constructor() {
       super();
       this.SUFFIX = ".board.gbb";
     }
 
-    _buildFile(context) {
+    buildContent(context) {
       const panel = context.boards;
       return new Parser().buildGbb(panel.initialState, panel.size);
     }
 
-    _readContent(context, content) {
+    readContent(context, content) {
       const panel = context.boards;
       const board = new Parser().readGbb(content);
       const initialState = panel.initialState;

@@ -1,4 +1,5 @@
 describe('LibraryLoader', function() {
+  // TODO: Revisar estos tests
 
   var loader;
 

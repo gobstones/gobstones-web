@@ -1,0 +1,18 @@
+<script>
+  class SingleFileComponent {
+    // <<abstract>>:
+    // SUFFIX;
+    // buildContent(context);
+
+    getFile(context) {
+      return {
+        content: this._buildFile(context),
+        name: context.getProjectName() + this.SUFFIX
+      };
+    }
+
+    shouldHandle(path) {
+      return _.endsWith(path, this.SUFFIX);
+    }
+  }
+</script>

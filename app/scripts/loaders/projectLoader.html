@@ -1,9 +1,9 @@
 <link rel="import" href="blobLoader.html">
-<link rel="import" href="codeLoader.html">
-<link rel="import" href="libraryLoader.html">
-<link rel="import" href="teacherLoader.html">
-<link rel="import" href="initialBoardLoader.html">
-<link rel="import" href="attires/projectAttireLoader.html">
+<link rel="import" href="components/codeLoader.html">
+<link rel="import" href="components/libraryLoader.html">
+<link rel="import" href="components/teacherLoader.html">
+<link rel="import" href="components/initialBoardLoader.html">
+<link rel="import" href="components/attires/projectAttireLoader.html">
 <script src="../../bower_components/jszip/dist/jszip.min.js"></script>
 
 <script>
@@ -15,14 +15,13 @@
         new CodeLoader,
         new LibraryLoader,
         new TeacherLoader,
-        new InitialBoardLoader
+        new InitialBoardLoader,
+        new ProjectAttireLoader
       ];
-      // Loaders must understand:
-      // - SUFFIX
-      // - readContentForProject(context, content)
 
-      this.attireLoader = new ProjectAttireLoader("attires/");
-      this.ATTIRES_FOLDER = "attires/";
+      // Loaders must understand:
+      // shouldHandle(path);
+      // readProjectComponent(context, content);
     }
 
     save(context) {
@@ -56,19 +55,15 @@
       });
     }
 
-    _loadComponent(context, relativePath, zipEntry) {
+    _loadComponent(context, path, zipEntry) {
       this.loaders.forEach(loader => {
         const getContent = () => zipEntry.async("string");
-        this._callComponentIfNeeded(loader, context, relativePath, getContent);
-      });
-    }
+        if (!loader.shouldHandle(path)) return;
 
-    _callComponentIfNeeded(loader, context, path, getContent) {
-      if (_.endsWith(path, loader.SUFFIX)) {
         getContent().then(content => {
-          loader.readContentForProject(context, content);
+          loader.readProjectComponent(context, path, content);
         });
-      }
+      });
     }
   }
 </script>
