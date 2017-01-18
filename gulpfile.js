@@ -332,8 +332,10 @@ gulp.task('jasmine', function() {
   return gulp.src([
     'app/bower_components/lodash/dist/lodash.min.js',
     'app/bower_components/sinon/sinon.js',
-    'app/scripts/loaders/loader.js',
-    'app/scripts/**/*.js',
+    'app/scripts/loaders/loader.html',
+    'app/scripts/loaders/textLoader.html',
+    'app/scripts/loaders/blobLoader.html', // TODO: Chequear esto
+    'app/scripts/**/*.html',
     'app/scripts/**/*.spec.js'
   ])
     .pipe($.jasmineBrowser.specRunner())
