@@ -11,7 +11,7 @@ const toBinary = (base64) => {
   return array;
 };
 
-class AttireLoader {
+class AttireReader {
   constructor() {
     this.FILE_EXTENSION = ".attire.json";
     this.BASE64_PREFIX = "data:image/png;base64,";
@@ -28,6 +28,7 @@ class AttireLoader {
   }
 
   readFromZip(context, zip, callback) {
+    // TODO: Pasarle un pathPrefix y hacer un _.startsWith
     zip.forEach((relativePath, zipEntry) => {
       if (_.endsWith(relativePath, this.FILE_EXTENSION))
         this._processAttire(context, zipEntry, zip, callback);

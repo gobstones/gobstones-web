@@ -1,4 +1,4 @@
-class LibraryLoader extends Loader {
+class LibraryLoader extends TextLoader {
   constructor() {
     super();
     this.SUFFIX = ".library.gbs";

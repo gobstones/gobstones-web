@@ -49,26 +49,6 @@ class Loader {
     this._runCode();
   }
 
-  _saveText({ content, name }) {
-    this._saveBlob(new Blob([content], { type: "text/plain" }), name);
-  }
-
-  _saveBlob(content, name) {
-    const blob = new Blob([content], { type: "text/plain;charset=utf-8" });
-    saveAs(blob, name);
-  }
-
-  _readText(event, callback) {
-    const { file, fileName } = this._readLocalFile(event);
-
-    const reader = new FileReader();
-    reader.onload = function(){
-      const content = reader.result;
-      callback(content, fileName);
-    };
-    reader.readAsText(file);
-  }
-
   _readLocalFile(event) {
     const file = _.first(event.target.files);
     const fileName = _.first(file.name.split("."));

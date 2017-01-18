@@ -1,4 +1,4 @@
-class ProjectLoader extends Loader {
+class ProjectLoader extends BlobLoader {
   constructor() {
     super();
 
@@ -6,9 +6,11 @@ class ProjectLoader extends Loader {
       new CodeLoader,
       new LibraryLoader,
       new TeacherLoader,
-      new InitialBoardLoader,
-      //new ProjectAttireLoader // TODO: Hacer esto
+      new InitialBoardLoader
     ];
+
+    this.attireLoader = new ProjectAttireLoader("attires/");
+    this.ATTIRES_FOLDER = "attires/";
   }
 
   save(context) {
@@ -18,6 +20,8 @@ class ProjectLoader extends Loader {
     files.forEach(file => {
       zip.file(file.name, file.content);
     });
+
+    this.attireLoader.writeToZip(context, zip);
 
     zip.generateAsync({ type: "blob" }).then(content => {
       this._saveBlob(content, `${context.getProjectName()}.gbp`);
@@ -34,6 +38,8 @@ class ProjectLoader extends Loader {
 
       context.setProjectName(fileName);
       context.editor.setAsDirty();
+
+      this.attireLoader.readFromZip(context, zip);
       callback();
     });
   }

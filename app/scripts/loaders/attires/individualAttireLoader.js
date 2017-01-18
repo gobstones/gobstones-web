@@ -1,7 +1,7 @@
-class IndividualAttireLoader extends Loader {
+class IndividualAttireLoader extends BlobLoader {
   constructor() {
     super();
-    this.attireLoader = new AttireLoader();
+    this.reader = new AttireReader();
   }
 
   save(context) {
@@ -9,7 +9,7 @@ class IndividualAttireLoader extends Loader {
     if (!attire) return;
 
     const zip = new JSZip();
-    this.attireLoader.writeToZip(attire, zip);
+    this.reader.writeToZip(attire, zip);
 
     zip.generateAsync({ type: "blob" }).then(content => {
       this._saveBlob(content, `${attire.name}.gbat`);
@@ -20,7 +20,8 @@ class IndividualAttireLoader extends Loader {
     const { file, fileName } = this._readLocalFile(event);
 
     JSZip.loadAsync(file).then(zip => {
-      this.attireLoader.readFromZip(context, zip, callback);
+      this.reader.readFromZip(context, zip, callback);
+      // TODO: Pasarle como pathPrefix un "/" y probar que efectivamente eso sea así en JSZip
     });
   }
 }

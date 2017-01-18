@@ -1,4 +1,4 @@
-class CodeLoader extends Loader {
+class CodeLoader extends TextLoader {
   constructor() {
     super();
     this.SUFFIX = ".code.gbs";

@@ -1,4 +1,4 @@
-class InitialBoardLoader extends Loader {
+class InitialBoardLoader extends TextLoader {
   constructor() {
     super();
     this.SUFFIX = ".board.gbb";
