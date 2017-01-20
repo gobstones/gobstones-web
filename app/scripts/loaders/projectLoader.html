@@ -15,13 +15,14 @@
         new CodeLoader,
         new LibraryLoader,
         new TeacherLoader,
-        new InitialBoardLoader,
-        new ProjectAttireLoader
+        new InitialBoardLoader
       ];
 
       // Loaders must understand:
       // shouldHandle(path);
       // readProjectContent(context, content);
+
+      this.attireLoader = new ProjectAttireLoader("attires/");
     }
 
     save(context) {

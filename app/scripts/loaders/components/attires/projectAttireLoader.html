@@ -2,20 +2,20 @@
 
 <script>
   class ProjectAttireLoader {
-    constructor() {
+    constructor(pathPrefix) {
       this.reader = new AttireReader();
+      this.pathPrefix = pathPrefix;
     }
 
     writeToZip(context, zip) {
-      zip.file("coming_soon", "coming");
-      zip.file("in", "coming");
-      zip.file("the_best_cinemas", "coming");
-      // TODO: Obtener vestimentas y llamar a attireReader por cada una
+      const attires = context.boards.availableAttires;
+      attires.forEach(attire => {
+        this.reader.writeToZip(attire, zip, this.pathPrefix + attire.name);
+      });
     }
 
     readFromZip(context, zip) {
       this.reader.readFromZip(context, zip, _.noop);
-      // TODO: Leer zip y por cada carpeta dentro de attires, llamar a readFromZip por cada una con el path
     }
   }
 </script>

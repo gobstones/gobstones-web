@@ -1,1 +1,7 @@
 <script src="../bower_components/lodash/dist/lodash.min.js"></script>
+
+<script>
+  String.prototype.getPath = function() {
+    return this.substring(0, this.lastIndexOf("/") +1);
+  }
+</script>

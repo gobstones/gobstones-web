@@ -29,16 +29,20 @@
     }
 
     readFromZip(context, zip, callback) {
-      // TODO: Pasarle un pathPrefix y hacer un _.startsWith
       zip.forEach((relativePath, zipEntry) => {
-        if (_.endsWith(relativePath, this.FILE_EXTENSION))
-          this._processAttire(context, zipEntry, zip, callback);
+        const isInNamespace = _.startsWith(relativePath, pathPrefix);
+        const isAnAttire = _.endsWith(relativePath, this.FILE_EXTENSION);
+
+        if (isInNamespace && isAnAttire) {
+          const directory = relativePath.getPath();
+          this._processAttire(context, zipEntry, zip, directory, callback);
+        }
       });
     }
 
-    _processAttire(context, zipEntry, zip, callback) {
+    _processAttire(context, zipEntry, zip, pathPrefix, callback) {
       const findImage = (path) => {
-        const imageZipEntry = zip.files[path];
+        const imageZipEntry = zip.files[pathPrefix + path];
         if (!imageZipEntry) throw new Error("Missing file in attire: " + path);
         return imageZipEntry;
       };
