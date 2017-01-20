@@ -30,10 +30,9 @@
 
     readFromZip(context, zip, callback) {
       zip.forEach((relativePath, zipEntry) => {
-        const isInNamespace = _.startsWith(relativePath, pathPrefix);
         const isAnAttire = _.endsWith(relativePath, this.FILE_EXTENSION);
 
-        if (isInNamespace && isAnAttire) {
+        if (isAnAttire) {
           const directory = relativePath.getPath();
           this._processAttire(context, zipEntry, zip, directory, callback);
         }
