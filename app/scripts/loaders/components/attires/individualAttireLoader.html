@@ -1,0 +1,31 @@
+<link rel="import" href="../../loader.html">
+<link rel="import" href="attireReader.html">
+
+<script>
+  class IndividualAttireLoader extends Loader {
+    constructor() {
+      super();
+      this.reader = new AttireReader();
+    }
+
+    save(context) {
+      const attire = context.boards.attire;
+      if (!attire) return;
+
+      const zip = new JSZip();
+      this.reader.writeToZip(attire, zip);
+
+      zip.generateAsync({ type: "blob" }).then(content => {
+        this._saveBlob(content, `${attire.name}.zip`);
+      });
+    }
+
+    read(context, event, callback) {
+      const { file, fileName } = this._readLocalFile(event);
+
+      JSZip.loadAsync(file).then(zip => {
+        this.reader.readFromZip(context, zip, callback);
+      });
+    }
+  }
+</script>

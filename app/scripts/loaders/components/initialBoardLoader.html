@@ -1,0 +1,31 @@
+<link rel="import" href="../textLoader.html">
+<link rel="import" href="mixins/singleFileComponent.html">
+<link rel="import" href="../../parser.html">
+
+<script>
+  class InitialBoardLoader extends TextLoader {
+    constructor() {
+      super();
+      _.defaults(this, SingleFileComponent);
+      this.SUFFIX = ".board.gbb";
+    }
+
+    buildContent(context) {
+      const panel = context.boards;
+      return new Parser().buildGbb(panel.initialState, panel.size);
+    }
+
+    readContent(context, content) {
+      const panel = context.boards;
+      const board = new Parser().readGbb(content);
+      const initialState = panel.initialState;
+
+      panel.sizeX = board.sizeX;
+      panel.sizeY = board.sizeY;
+      panel.setInitialState({
+        table: board.toView(),
+        header: { x: board.x, y: board.y }
+      });
+    }
+  }
+</script>

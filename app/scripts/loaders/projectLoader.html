@@ -1,8 +1,70 @@
 <link rel="import" href="loader.html">
-<link rel="import" href="codeLoader.html">
-<link rel="import" href="libraryLoader.html">
-<link rel="import" href="teacherLoader.html">
-<link rel="import" href="initialBoardLoader.html">
-<link rel="import" href="attires/projectAttireLoader.html">
+<link rel="import" href="components/codeLoader.html">
+<link rel="import" href="components/libraryLoader.html">
+<link rel="import" href="components/teacherLoader.html">
+<link rel="import" href="components/initialBoardLoader.html">
+<link rel="import" href="components/attires/projectAttireLoader.html">
 <script src="../../bower_components/jszip/dist/jszip.min.js"></script>
-<script src="projectLoader.js"></script>
+
+<script>
+  class ProjectLoader extends Loader {
+    constructor() {
+      super();
+
+      this.loaders = [
+        new CodeLoader,
+        new LibraryLoader,
+        new TeacherLoader,
+        new InitialBoardLoader
+      ];
+
+      // Loaders must understand:
+      // shouldHandle(path);
+      // readProjectContent(context, content);
+
+      this.attireLoader = new ProjectAttireLoader("attires/");
+    }
+
+    save(context) {
+      const files = this.loaders.map(loader => loader.getFile(context));
+
+      const zip = new JSZip();
+      files.forEach(file => {
+        zip.file(file.name, file.content);
+      });
+
+      this.attireLoader.writeToZip(context, zip);
+
+      zip.generateAsync({ type: "blob" }).then(content => {
+        this._saveBlob(content, `${context.getProjectName()}.gbp`);
+      });
+    }
+
+    read(context, event, callback) {
+      const { file, fileName } = this._readLocalFile(event);
+
+      JSZip.loadAsync(file).then(zip => {
+        zip.forEach((relativePath, zipEntry) => {
+          this._loadComponent(context, relativePath, zipEntry);
+        });
+
+        context.setProjectName(fileName);
+        context.editor.setAsDirty();
+
+        this.attireLoader.readFromZip(context, zip);
+        callback();
+      });
+    }
+
+    _loadComponent(context, path, zipEntry) {
+      this.loaders.forEach(loader => {
+        const getContent = () => zipEntry.async("string");
+        if (!loader.shouldHandle(path)) return;
+
+        getContent().then(content => {
+          loader.readProjectContent(context, content);
+        });
+      });
+    }
+  }
+</script>

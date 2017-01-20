@@ -1,2 +1,13 @@
 <link rel="import" href="parser.html">
-<script src="parserAndBoardAdapter.js"></script>
+
+<script>
+  class ParserAndBoardAdapter {
+    adaptToBoard(table) {
+      return gsWeblangCore.viewAdapter.toView(table);
+    }
+
+    adaptToParser(table) {
+      return gsWeblangCore.viewAdapter.toModel(table);
+    }
+  }
+</script>

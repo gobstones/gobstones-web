@@ -1,5 +1,4 @@
 describe('LibraryLoader', function() {
-
   var loader;
 
   beforeEach(function() {

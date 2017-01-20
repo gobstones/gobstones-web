@@ -1,0 +1,22 @@
+<script>
+  // <<abstract>>:
+  // SUFFIX;
+  // buildContent(context);
+  // readContent(context, content);
+  window.SingleFileComponent = {
+    getFile: function(context) {
+      return {
+        content: this.buildContent(context),
+        name: context.getProjectName() + this.SUFFIX
+      };
+    },
+
+    shouldHandle: function(path) {
+      return _.endsWith(path, this.SUFFIX);
+    },
+
+    readProjectContent: function(context, content) {
+      this.readContent(context, content);
+    }
+  }
+</script>

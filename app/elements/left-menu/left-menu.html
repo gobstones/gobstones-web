@@ -3,10 +3,10 @@
 <link rel="import" href="../../scripts/jquery.html">
 <link rel="import" href="../../scripts/behaviors/localizationBehavior.html">
 <link rel="import" href="../../scripts/loaders/projectLoader.html">
-<link rel="import" href="../../scripts/loaders/codeLoader.html">
-<link rel="import" href="../../scripts/loaders/libraryLoader.html">
-<link rel="import" href="../../scripts/loaders/initialBoardLoader.html">
-<link rel="import" href="../../scripts/loaders/attires/individualAttireLoader.html">
+<link rel="import" href="../../scripts/loaders/components/codeLoader.html">
+<link rel="import" href="../../scripts/loaders/components/libraryLoader.html">
+<link rel="import" href="../../scripts/loaders/components/initialBoardLoader.html">
+<link rel="import" href="../../scripts/loaders/components/attires/individualAttireLoader.html">
 
 <dom-module id="left-menu">
   <template>
@@ -73,7 +73,7 @@
 
       <input id="InitialBoard" type="file" accept=".gbb" on-change="onLoadedInitialBoard" style="visibility: hidden;" />
 
-      <input id="Attire" type="file" accept=".gbat" on-change="onLoadedAttire" style="visibility: hidden;" />
+      <input id="Attire" type="file" accept=".zip" on-change="onLoadedAttire" style="visibility: hidden;" />
     </div>
   </template>
 
