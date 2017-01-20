@@ -6,7 +6,7 @@
   class InitialBoardLoader extends TextLoader {
     constructor() {
       super();
-      _.assign(this, SingleFileComponent);
+      _.defaults(this, SingleFileComponent);
       this.SUFFIX = ".board.gbb";
     }
 
