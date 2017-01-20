@@ -21,9 +21,7 @@
 
       // Loaders must understand:
       // shouldHandle(path);
-      // readProjectComponent(context, content);
-
-      // TODO: Chequear que todos cumplan esta interfaz
+      // readProjectContent(context, content);
     }
 
     save(context) {
@@ -63,7 +61,7 @@
         if (!loader.shouldHandle(path)) return;
 
         getContent().then(content => {
-          loader.readProjectComponent(context, path, content);
+          loader.readProjectContent(context, path, content);
         });
       });
     }
