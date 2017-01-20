@@ -16,7 +16,7 @@
       this.reader.writeToZip(attire, zip);
 
       zip.generateAsync({ type: "blob" }).then(content => {
-        this._saveBlob(content, `${attire.name}.gbat`);
+        this._saveBlob(content, `${attire.name}.zip`);
       });
     }
 
