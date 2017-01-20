@@ -3,9 +3,10 @@
 <link rel="import" href="../../parser.html">
 
 <script>
-  class InitialBoardLoader extends mix(TextLoader).with(SingleFileComponent) {
+  class InitialBoardLoader extends TextLoader {
     constructor() {
       super();
+      _.assign(this, SingleFileComponent);
       this.SUFFIX = ".board.gbb";
     }
 

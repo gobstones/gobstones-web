@@ -334,7 +334,6 @@ gulp.task('jasmine', function() {
     'app/bower_components/sinon/sinon.js',
     'app/scripts/loaders/loader.html',
     'app/scripts/loaders/textLoader.html',
-    'app/scripts/loaders/blobLoader.html', // TODO: Chequear esto
     'app/scripts/**/*.html',
     'app/scripts/**/*.spec.js'
   ])

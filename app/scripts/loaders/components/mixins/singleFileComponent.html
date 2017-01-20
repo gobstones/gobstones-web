@@ -1,17 +1,16 @@
 <script>
-  class SingleFileComponent {
-    // <<abstract>>:
-    // SUFFIX;
-    // buildContent(context);
-
-    getFile(context) {
+  // <<abstract>>:
+  // SUFFIX;
+  // buildContent(context);
+  window.SingleFileComponent = {
+    getFile: function(context) {
       return {
-        content: this._buildFile(context),
+        content: this.buildContent(context),
         name: context.getProjectName() + this.SUFFIX
       };
-    }
+    },
 
-    shouldHandle(path) {
+    shouldHandle: function(path) {
       return _.endsWith(path, this.SUFFIX);
     }
   }

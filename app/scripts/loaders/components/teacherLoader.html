@@ -2,9 +2,10 @@
 <link rel="import" href="mixins/singleFileComponent.html">
 
 <script>
-  class TeacherLoader extends mix(TextLoader).with(SingleFileComponent) {
+  class TeacherLoader extends TextLoader {
     constructor() {
       super();
+      _.assign(this, SingleFileComponent);
       this.SUFFIX = ".teacher.gbs";
     }
 
