@@ -1,5 +1,4 @@
 describe('CodeLoader', function() {
-
   var loader;
 
   beforeEach(function() {
