@@ -63,7 +63,7 @@
         if (!loader.shouldHandle(path)) return;
 
         getContent().then(content => {
-          loader.readProjectContent(context, path, content);
+          loader.readProjectContent(context, content);
         });
       });
     }
