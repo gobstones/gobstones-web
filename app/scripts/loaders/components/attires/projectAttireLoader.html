@@ -10,7 +10,7 @@
     writeToZip(context, zip) {
       const attires = context.boards.availableAttires;
       attires.forEach(attire => {
-        this.reader.writeToZip(attire, zip, this.pathPrefix + attire.name);
+        this.reader.writeToZip(attire, zip, `${this.pathPrefix}${attire.name}/`);
       });
     }
 
