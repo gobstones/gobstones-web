@@ -2,6 +2,7 @@
 <link rel="import" href="../../bower_components/gs-board/dist/components/gs-board.html">
 <link rel="import" href="../../scripts/behaviors/localizationBehavior.html">
 <link rel="import" href="../../scripts/behaviors/expressionBehavior.html">
+<link rel="import" href="../../scripts/behaviors/toastBehavior.html">
 <link rel="import" href="../../scripts/parserAndBoardAdapter.html">
 <link rel="import" href="../../scripts/stylist.html">
 
@@ -191,7 +192,8 @@
       is: 'boards-panel',
       behaviors: [
         Polymer.LocalizationBehavior,
-        Polymer.ExpressionBehavior
+        Polymer.ExpressionBehavior,
+        Polymer.ToastBehavior
       ],
       properties: {
         showCode: {
@@ -393,7 +395,7 @@
       },
 
       _onCompilationError: function(error) {
-        this._showToast(this.localize("the-program-has-errors"));
+        this.showToast(this.localize("the-program-has-errors"));
       },
 
       _onExecutionError: function(error) {
@@ -402,7 +404,7 @@
       },
 
       _onUnknownError: function(error) {
-        this._showToast(this.localize("unknown-interpreter-error"));
+        this.showToast(this.localize("unknown-interpreter-error"));
       },
 
       _setFinalState: function(finalState) {
@@ -425,12 +427,6 @@
         this.finalState = null;
         this.error = null;
         this.selectedTab = 0;
-      },
-
-      _showToast: function(message) {
-        this.$.toast.text = message;
-        this.$.toast.opened = true;
-        this.$.toast.center();
       },
 
       _subscribeToEditor: function(eventName, eventHandler) {
