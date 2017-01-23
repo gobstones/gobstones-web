@@ -92,16 +92,28 @@
         margin-left: -8px;
       }
 
+      .boards-button {
+        position: absolute;
+        margin-left: -16px;
+        margin-top: -13px;
+      }
+
       .clear-button {
         position: absolute;
         margin-left: 28px;
         margin-top: 2px;
       }
 
-      .boards-button {
+      .add-button {
         position: absolute;
-        margin-left: -16px;
-        margin-top: -13px;
+        margin-left: 50px;
+        margin-top: 2px;
+      }
+
+      .remove-button {
+        position: absolute;
+        margin-left: 74px;
+        margin-top: 2px;
       }
 
       paper-tab {
@@ -130,10 +142,14 @@
 
     <paper-toast class="toast" id="toast"></paper-toast>
 
-    <paper-button class="clear-button" on-click="cleanBoard"><iron-icon class$="{{clearButtonCss(selectedTab, showAttire)}}" icon="icons:delete-forever"></iron-icon></paper-button>
+    <paper-button class="clear-button" on-click="cleanBoard"><iron-icon class$="{{boardButtonCss(selectedTab, showAttire)}}" icon="icons:delete-forever"></iron-icon></paper-button>
+
+    <paper-button class="add-button" on-click="addBoard"><iron-icon class$="{{boardButtonCss(selectedTab, showAttire)}}" icon="icons:add"></iron-icon></paper-button>
+
+    <paper-button class="remove-button" on-click="removeBoard"><iron-icon class$="{{boardButtonCss(selectedTab, showAttire)}}" icon="icons:remove"></iron-icon></paper-button>
 
     <div class="boards-button">
-      <paper-menu-button class$="{{boardButtonCss(selectedTab, showAttire)}}">
+      <paper-menu-button class$="{{boardToolbarCss(selectedTab, showAttire)}}">
         <paper-icon-button icon="menu" class="dropdown-trigger"></paper-icon-button>
         <paper-menu class="dropdown-content" selected="{{ selectedInitialState }}">
           <template is="dom-repeat" items="{{ availableInitialStates }}">
@@ -428,7 +444,6 @@
         console.log("Ahora el header está en", initialStateEditor.header);
         // TODO: Lo siguiente.
         /*
-        - botones + y -
         - persistir en proyecto
         - al cargar proyecto, borrar el default bootstrappeado
         */
@@ -512,11 +527,11 @@
         return this.isInitialBoardNotEditable(selectedTab, showAttire) ? "gray" : "";
       },
 
-      clearButtonCss: function(selectedTab, showAttire) {
-        return this.boardButtonCss(selectedTab, showAttire, "black-button");
+      boardButtonCss: function(selectedTab, showAttire) {
+        return this.boardToolbarCss(selectedTab, showAttire, "black-button");
       },
 
-      boardButtonCss: function(selectedTab, showAttire, extra = "") {
+      boardToolbarCss: function(selectedTab, showAttire, extra = "") {
         return extra + (this.isInitialBoardNotEditable(selectedTab, showAttire) ? " hidden" : "");
       }
     });
