@@ -457,14 +457,12 @@
         const initialState = this.availableInitialStates[this.selectedInitialState];
         // ^ Use this and not `this.initialState`! The listeners execute before computed properties.
 
-        console.log("Ahora el header está en", initialStateEditor.header);
         // TODO: Lo siguiente.
         /*
         - persistir en proyecto
         - al cargar proyecto, borrar el default bootstrappeado
         */
 
-        console.log("EL NUEVO HEADER ES", initialStateEditor.header);
         initialState.header = initialStateEditor.header;
         initialState.table = initialStateEditor.table;
 
