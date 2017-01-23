@@ -20,8 +20,6 @@
       const board = new Parser().readGbb(content);
       const initialState = panel.initialState;
 
-      panel.sizeX = board.sizeX;
-      panel.sizeY = board.sizeY;
       panel.addInitialState({
         header: { x: board.x, y: board.y },
         table: board.toView()

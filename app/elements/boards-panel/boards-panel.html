@@ -94,8 +94,14 @@
 
       .clear-button {
         position: absolute;
-        margin-left: -9px;
-        color: #708090;
+        margin-left: 28px;
+        margin-top: 2px;
+      }
+
+      .boards-button {
+        position: absolute;
+        margin-left: -16px;
+        margin-top: -13px;
       }
 
       paper-tab {
@@ -111,7 +117,7 @@
       </div>
       <div style="width: 90%">
         <paper-tabs no-bar selected="{{selectedTab}}" class="bottom self-end">
-          <paper-tab>[[localize("initial-board")]] {{toOneBased(selectedInitialState)}}</paper-tab>
+          <paper-tab>[[localize("initial-board")]] [[toOneBased(selectedInitialState)]]</paper-tab>
           <template is="dom-if" if="{{isFinalBoardVisible(finalState, error)}}">
             <paper-tab>[[localize("final-board")]]</paper-tab>
           </template>
@@ -125,6 +131,17 @@
     <paper-toast class="toast" id="toast"></paper-toast>
 
     <paper-button class="clear-button" on-click="cleanBoards"><iron-icon class$="{{clearButtonCss(selectedTab, showAttire)}}" icon="icons:delete-forever"></iron-icon></paper-button>
+
+    <div class="boards-button">
+      <paper-menu-button class$="{{boardButtonCss(selectedTab, showAttire)}}">
+        <paper-icon-button icon="menu" class="dropdown-trigger"></paper-icon-button>
+        <paper-menu class="dropdown-content" selected="{{ selectedInitialState }}">
+          <template is="dom-repeat" items="{{ availableInitialStates }}">
+            <paper-item>[[localize("initial-board")]] [[toOneBased(index)]]</paper-item>
+          </template>
+        </paper-menu>
+      </paper-menu-button>
+    </div>
 
     <div class="boards-panel">
       <div class="size-bar">
@@ -234,7 +251,8 @@
         },
         initialState: {
           type: Object,
-          computed: "_computeInitialState(selectedInitialState)"
+          computed: "_computeInitialState(selectedInitialState)",
+          observer: "_onBoardSelected"
         },
         selectedInitialState: {
           type: Number,
@@ -285,7 +303,8 @@
           this._cleanState();
         });
 
-        this.bootstrap();
+        if (this.availableInitialStates.length > 0) return;
+        this._bootstrap();
       },
 
       toggleShowCode: function() {
@@ -319,22 +338,8 @@
       },
 
       addInitialState: function(initialState) {
-        if (this.availableInitialStates.length > 0)
-          this.selectedInitialState++;
-
-        this.setInitialState(initialState);
-      },
-
-      setInitialState: function(initialState) {
-        this._cleanState();
-        const index = this.selectedInitialState;
-
-        this.selectedInitialState = -1;
-        this.async(function() {
-          this.splice("availableInitialStates", index, 0, initialState);
-          this.selectedInitialState = index;
-          this.selectedTab = 0;
-        });
+        this.push("availableInitialStates", initialState);
+        this.selectedInitialState = this.availableInitialStates.length - 1;
       },
 
       reset: function() {
@@ -351,25 +356,32 @@
       },
 
       cleanBoards: function() {
-        this._init();
+        this.sizeX = 4;
+        this.sizeY = 4;
+
+        this.set("initialState.header", { x: 0, y: 0 });
+        this.set("initialState.table", this._buildEmptyTable(this.sizeX, this.sizeY));
+
         this._cleanState();
       },
 
       resetAndBootstrap: function() {
         this.reset();
-        this.bootstrap();
+        this._bootstrap();
       },
 
-      bootstrap: function() {
-        var self = this;
-
-        this.setInitialState({
+      _bootstrap: function() {
+        this.addInitialState({
           header: { x: 0, y: 0 },
-          table: _.range(self.sizeY).map(function(row) {
-            return _.range(self.sizeX).map(function(cell) {
-              return {};
-            })
-          })
+          table: this._buildEmptyTable(this.sizeX, this.sizeY)
+        });
+      },
+
+      _buildEmptyTable: function(sizeX, sizeY) {
+        return _.range(sizeY).map(row => {
+          return _.range(sizeX).map(cell => {
+            return {};
+          });
         });
       },
 
@@ -417,10 +429,29 @@
 
       _onBoardChanged: function() {
         const initialStateEditor = this.$$("#initialStateEditor");
-        this.initialState.header = initialStateEditor.header;
-        this.initialState.table = initialStateEditor.table;
+        const initialState = this.availableInitialStates[this.selectedInitialState];
+        // ^ Use this and not `this.initialState`! The listeners execute before computed properties.
+
+        // TODO: Lo siguiente.
+        /*
+        - el header está desfasado
+        - botones + y -
+        - si tengo dos tableros cargados y hago nuevo proyecto no cambia selectedInitialState
+        - persistir en proyecto
+        */
+
+        console.log("EL NUEVO HEADER ES", initialStateEditor.header);
+        initialState.header = initialStateEditor.header;
+        initialState.table = initialStateEditor.table;
 
         this._cleanState();
+      },
+
+      _onBoardSelected: function() {
+        const size = this._getSizeOf(this.initialState.table);
+
+        this.sizeX = size.x;
+        this.sizeY = size.y;
       },
 
       _cleanState: function() {
@@ -446,6 +477,7 @@
         const y = sizeY === "" ? this.size.y : this._limitSize(sizeY);
         if (sizeX !== "") this.sizeX = x;
         if (sizeY !== "") this.sizeY = y;
+
         return { x: x, y: y };
       },
 
@@ -479,12 +511,20 @@
         if (IS_RUNNING) this.selectedTab = 1;
       },
 
+      _getSizeOf: function(table) {
+        return { x: table[0].length, y: table.length };
+      },
+
       boardSizeCss: function(selectedTab, showAttire) {
         return this.isInitialBoardNotEditable(selectedTab, showAttire) ? "gray" : "";
       },
 
       clearButtonCss: function(selectedTab, showAttire) {
-        return "black-button" + (this.isInitialBoardNotEditable(selectedTab, showAttire) ? " hidden" : "");
+        return this.boardButtonCss(selectedTab, showAttire, "black-button");
+      },
+
+      boardButtonCss: function(selectedTab, showAttire, extra = "") {
+        return extra + (this.isInitialBoardNotEditable(selectedTab, showAttire) ? " hidden" : "");
       }
     });
 
