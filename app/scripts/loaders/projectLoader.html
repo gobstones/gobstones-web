@@ -48,6 +48,7 @@
           this._loadComponent(context, relativePath, zipEntry);
         });
 
+        context.boards.reset();
         context.setProjectName(fileName);
         context.editor.setAsDirty();
 
