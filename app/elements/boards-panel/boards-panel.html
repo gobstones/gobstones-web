@@ -349,6 +349,7 @@
         this.availableInitialStates = [];
         this.availableAttires = [];
 
+        this._bootstrap();
         this._cleanState();
         this.selectedInitialState = 0;
         this.selectedAttire = 0;
@@ -363,11 +364,6 @@
         this.set("initialState.table", this._buildEmptyTable(this.sizeX, this.sizeY));
 
         this._cleanState();
-      },
-
-      resetAndBootstrap: function() {
-        this.reset();
-        this._bootstrap();
       },
 
       _bootstrap: function() {
@@ -436,8 +432,8 @@
         /*
         - el header está desfasado
         - botones + y -
-        - si tengo dos tableros cargados y hago nuevo proyecto no cambia selectedInitialState
         - persistir en proyecto
+        - al cargar proyecto, borrar el default bootstrappeado
         */
 
         console.log("EL NUEVO HEADER ES", initialStateEditor.header);
