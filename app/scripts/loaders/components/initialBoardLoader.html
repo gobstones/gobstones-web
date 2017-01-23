@@ -22,9 +22,9 @@
 
       panel.sizeX = board.sizeX;
       panel.sizeY = board.sizeY;
-      panel.setInitialState({
-        table: board.toView(),
-        header: { x: board.x, y: board.y }
+      panel.addInitialState({
+        header: { x: board.x, y: board.y },
+        table: board.toView()
       });
     }
   }

@@ -126,7 +126,8 @@
         const context = this._context();
         context.setProjectName("Program");
         context.editor.reset();
-        context.boards.reset();
+        context.boards.resetAndBootstrap();
+        this._closePanel();
       },
 
       _closePanel: function() {

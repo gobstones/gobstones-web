@@ -283,7 +283,7 @@
           this._cleanState();
         });
 
-        this._init();
+        this.bootstrap();
       },
 
       toggleShowCode: function() {
@@ -316,6 +316,13 @@
           this.selectedAttire = this.availableAttires.indexOf(availableAttire);
       },
 
+      addInitialState: function(initialState) {
+        if (this.availableInitialStates.length > 0)
+          this.selectedInitialState++;
+
+        this.setInitialState(initialState);
+      },
+
       setInitialState: function(initialState) {
         this._cleanState();
         const index = this.selectedInitialState;
@@ -336,8 +343,7 @@
         this.availableAttires = [];
 
         this._cleanState();
-        this._init();
-        this.selectedInitialBoard = 0;
+        this.selectedInitialState = 0;
         this.selectedAttire = 0;
         this.showAttire = false;
       },
@@ -345,6 +351,24 @@
       cleanBoards: function() {
         this._init();
         this._cleanState();
+      },
+
+      resetAndBootstrap: function() {
+        this.reset();
+        this.bootstrap();
+      },
+
+      bootstrap: function() {
+        var self = this;
+
+        this.setInitialState({
+          header: { x: 0, y: 0 },
+          table: _.range(self.sizeY).map(function(row) {
+            return _.range(self.sizeX).map(function(cell) {
+              return {};
+            })
+          })
+        });
       },
 
       _onRunRequest: function() {
@@ -401,19 +425,6 @@
         this.finalState = null;
         this.error = null;
         this.selectedTab = 0;
-      },
-
-      _init: function() {
-        var self = this;
-
-        this.setInitialState({
-          header: { x: 0, y: 0 },
-          table: _.range(self.sizeY).map(function(row) {
-            return _.range(self.sizeX).map(function(cell) {
-              return {};
-            })
-          })
-        });
       },
 
       _showToast: function(message) {
