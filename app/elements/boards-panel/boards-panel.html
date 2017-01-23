@@ -298,6 +298,9 @@
       },
 
       ready: function() {
+        this.DEFAULT_SIZE_X = 4;
+        this.DEFAULT_SIZE_Y = 4;
+
         this.stylist = new Stylist();
         this.stylist.setPanelAsResizable(this.size);
 
@@ -359,8 +362,8 @@
       },
 
       reset: function() {
-        this.sizeX = 4;
-        this.sizeY = 4;
+        this.sizeX = this.DEFAULT_SIZE_X;
+        this.sizeY = this.DEFAULT_SIZE_Y;
 
         this.availableInitialStates = [];
         this.availableAttires = [];
@@ -379,10 +382,23 @@
         this._cleanState();
       },
 
-      _bootstrap: function() {
+      addBoard: function() {
+        this._bootstrap(this.DEFAULT_SIZE_X, this.DEFAULT_SIZE_Y);
+      },
+
+      removeBoard: function() {
+        if (this.availableInitialStates.length < 2) return;
+
+        const newIndex = this.selectedInitialState - 1;
+        this.pop("availableInitialStates");
+        this.splice("availableInitialStates", this.selectedInitialState, 1);
+        this.selectedInitialState = Math.max(0, newIndex);
+      },
+
+      _bootstrap: function(sizeX = this.sizeX, sizeY = this.sizeY) {
         this.addInitialState({
           header: { x: 0, y: 0 },
-          table: this._buildEmptyTable(this.sizeX, this.sizeY)
+          table: this._buildEmptyTable(sizeX, sizeY)
         });
       },
 
