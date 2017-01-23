@@ -428,9 +428,9 @@
         const initialState = this.availableInitialStates[this.selectedInitialState];
         // ^ Use this and not `this.initialState`! The listeners execute before computed properties.
 
+        console.log("Ahora el header está en", initialStateEditor.header);
         // TODO: Lo siguiente.
         /*
-        - el header está desfasado
         - botones + y -
         - persistir en proyecto
         - al cargar proyecto, borrar el default bootstrappeado
