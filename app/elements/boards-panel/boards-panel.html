@@ -1,6 +1,7 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 <link rel="import" href="../../bower_components/gs-board/dist/components/gs-board.html">
 <link rel="import" href="../../scripts/behaviors/localizationBehavior.html">
+<link rel="import" href="../../scripts/behaviors/expressionBehavior.html">
 <link rel="import" href="../../scripts/parserAndBoardAdapter.html">
 <link rel="import" href="../../scripts/stylist.html">
 
@@ -109,7 +110,7 @@
       </div>
       <div style="width: 90%">
         <paper-tabs no-bar selected="{{selectedTab}}" class="bottom self-end">
-          <paper-tab>[[localize("initial-board")]]</paper-tab>
+          <paper-tab>[[localize("initial-board")]] {{toOneBased(selectedInitialState)}}</paper-tab>
           <template is="dom-if" if="{{isFinalBoardVisible(finalState, error)}}">
             <paper-tab>[[localize("final-board")]]</paper-tab>
           </template>
@@ -189,7 +190,8 @@
     Polymer({
       is: 'boards-panel',
       behaviors: [
-        Polymer.LocalizationBehavior
+        Polymer.LocalizationBehavior,
+        Polymer.ExpressionBehavior
       ],
       properties: {
         showCode: {
@@ -221,9 +223,21 @@
           computed: "_computeInitialBoardOptions(showAttire)"
         },
 
-        initialState: Object,
         finalState: Object,
         error: Object,
+
+        availableInitialStates: {
+          type: Array,
+          value: []
+        },
+        initialState: {
+          type: Object,
+          computed: "_computeInitialState(selectedInitialState)"
+        },
+        selectedInitialState: {
+          type: Number,
+          value: 0
+        },
 
         availableAttires: {
           type: Array,
@@ -304,9 +318,12 @@
 
       setInitialState: function(initialState) {
         this._cleanState();
-        this.initialState = null;
+        const index = this.selectedInitialState;
+
+        this.selectedInitialState = -1;
         this.async(function() {
-          this.initialState = initialState;
+          this.splice("availableInitialStates", index, 0, initialState);
+          this.selectedInitialState = index;
           this.selectedTab = 0;
         });
       },
@@ -384,14 +401,14 @@
       _init: function() {
         var self = this;
 
-        this.initialState = {
+        this.push("availableInitialStates", {
           header: { x: 0, y: 0 },
           table: _.range(self.sizeY).map(function(row) {
             return _.range(self.sizeX).map(function(cell) {
               return {};
             })
           })
-        };
+        });
       },
 
       _showToast: function(message) {
@@ -424,6 +441,10 @@
         var attire = this.availableAttires[selectedAttire];
         if (attire) attire.enabled = showAttire;
         return attire;
+      },
+
+      _computeInitialState: function(selectedInitialState) {
+        return this.availableInitialStates[selectedInitialState];
       },
 
       _computeInitialBoardOptions: function(showAttire) {
