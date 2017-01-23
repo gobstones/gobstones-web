@@ -331,8 +331,13 @@
       reset: function() {
         this.sizeX = 4;
         this.sizeY = 4;
-        this._init();
+
+        this.availableInitialStates = [];
+        this.availableAttires = [];
+
         this._cleanState();
+        this._init();
+        this.selectedInitialBoard = 0;
         this.selectedAttire = 0;
         this.showAttire = false;
       },
@@ -401,7 +406,7 @@
       _init: function() {
         var self = this;
 
-        this.push("availableInitialStates", {
+        this.setInitialState({
           header: { x: 0, y: 0 },
           table: _.range(self.sizeY).map(function(row) {
             return _.range(self.sizeX).map(function(cell) {
