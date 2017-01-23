@@ -130,7 +130,7 @@
 
     <paper-toast class="toast" id="toast"></paper-toast>
 
-    <paper-button class="clear-button" on-click="cleanBoards"><iron-icon class$="{{clearButtonCss(selectedTab, showAttire)}}" icon="icons:delete-forever"></iron-icon></paper-button>
+    <paper-button class="clear-button" on-click="cleanBoard"><iron-icon class$="{{clearButtonCss(selectedTab, showAttire)}}" icon="icons:delete-forever"></iron-icon></paper-button>
 
     <div class="boards-button">
       <paper-menu-button class$="{{boardButtonCss(selectedTab, showAttire)}}">
@@ -356,10 +356,7 @@
         this.showAttire = false;
       },
 
-      cleanBoards: function() {
-        this.sizeX = 4;
-        this.sizeY = 4;
-
+      cleanBoard: function() {
         this.set("initialState.header", { x: 0, y: 0 });
         this.set("initialState.table", this._buildEmptyTable(this.sizeX, this.sizeY));
 
