@@ -1,6 +1,8 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 <link rel="import" href="../../bower_components/gs-board/dist/components/gs-board.html">
 <link rel="import" href="../../scripts/behaviors/localizationBehavior.html">
+<link rel="import" href="../../scripts/behaviors/expressionBehavior.html">
+<link rel="import" href="../../scripts/behaviors/toastBehavior.html">
 <link rel="import" href="../../scripts/parserAndBoardAdapter.html">
 <link rel="import" href="../../scripts/stylist.html">
 
@@ -90,10 +92,28 @@
         margin-left: -8px;
       }
 
+      .boards-button {
+        position: absolute;
+        margin-left: -16px;
+        margin-top: -13px;
+      }
+
       .clear-button {
         position: absolute;
-        margin-left: -9px;
-        color: #708090;
+        margin-left: 28px;
+        margin-top: 2px;
+      }
+
+      .add-button {
+        position: absolute;
+        margin-left: 50px;
+        margin-top: 2px;
+      }
+
+      .remove-button {
+        position: absolute;
+        margin-left: 74px;
+        margin-top: 2px;
       }
 
       paper-tab {
@@ -109,7 +129,7 @@
       </div>
       <div style="width: 90%">
         <paper-tabs no-bar selected="{{selectedTab}}" class="bottom self-end">
-          <paper-tab>[[localize("initial-board")]]</paper-tab>
+          <paper-tab>[[localize("initial-board")]] [[toOneBased(selectedInitialState)]]</paper-tab>
           <template is="dom-if" if="{{isFinalBoardVisible(finalState, error)}}">
             <paper-tab>[[localize("final-board")]]</paper-tab>
           </template>
@@ -122,7 +142,22 @@
 
     <paper-toast class="toast" id="toast"></paper-toast>
 
-    <paper-button class="clear-button" on-click="cleanBoards"><iron-icon class$="{{clearButtonCss(selectedTab, showAttire)}}" icon="icons:delete-forever"></iron-icon></paper-button>
+    <paper-button class="clear-button" on-click="cleanBoard"><iron-icon class$="{{boardButtonCss(selectedTab, showAttire)}}" icon="icons:delete-forever"></iron-icon></paper-button>
+
+    <paper-button class="add-button" on-click="addBoard"><iron-icon class$="{{boardButtonCss(selectedTab, showAttire)}}" icon="icons:add"></iron-icon></paper-button>
+
+    <paper-button class="remove-button" on-click="removeCurrentBoard"><iron-icon class$="{{boardButtonCss(selectedTab, showAttire)}}" icon="icons:remove"></iron-icon></paper-button>
+
+    <div class="boards-button">
+      <paper-menu-button class$="{{boardToolbarCss(selectedTab, showAttire)}}">
+        <paper-icon-button icon="menu" class="dropdown-trigger"></paper-icon-button>
+        <paper-menu class="dropdown-content" selected="{{ selectedInitialState }}">
+          <template is="dom-repeat" items="{{ availableInitialStates }}">
+            <paper-item>[[localize("initial-board")]] [[toOneBased(index)]]</paper-item>
+          </template>
+        </paper-menu>
+      </paper-menu-button>
+    </div>
 
     <div class="boards-panel">
       <div class="size-bar">
@@ -189,7 +224,9 @@
     Polymer({
       is: 'boards-panel',
       behaviors: [
-        Polymer.LocalizationBehavior
+        Polymer.LocalizationBehavior,
+        Polymer.ExpressionBehavior,
+        Polymer.ToastBehavior
       ],
       properties: {
         showCode: {
@@ -221,9 +258,22 @@
           computed: "_computeInitialBoardOptions(showAttire)"
         },
 
-        initialState: Object,
         finalState: Object,
         error: Object,
+
+        availableInitialStates: {
+          type: Array,
+          value: []
+        },
+        initialState: {
+          type: Object,
+          computed: "_computeInitialState(selectedInitialState)",
+          observer: "_onBoardSelected"
+        },
+        selectedInitialState: {
+          type: Number,
+          value: 0
+        },
 
         availableAttires: {
           type: Array,
@@ -248,8 +298,15 @@
       },
 
       ready: function() {
+        this.DEFAULT_SIZE_X = 4;
+        this.DEFAULT_SIZE_Y = 4;
+
         this.stylist = new Stylist();
         this.stylist.setPanelAsResizable(this.size);
+
+        this.async(() => {
+          this.initialStateEditor = this.$$("#initialStateEditor");
+        });
 
         this._adapter = new ParserAndBoardAdapter();
 
@@ -269,7 +326,8 @@
           this._cleanState();
         });
 
-        this._init();
+        if (this.availableInitialStates.length > 0) return;
+        this._bootstrap();
       },
 
       toggleShowCode: function() {
@@ -302,37 +360,85 @@
           this.selectedAttire = this.availableAttires.indexOf(availableAttire);
       },
 
-      setInitialState: function(initialState) {
-        this._cleanState();
-        this.initialState = null;
-        this.async(function() {
-          this.initialState = initialState;
-          this.selectedTab = 0;
-        });
+      addInitialState: function(initialState) {
+        this.push("availableInitialStates", initialState);
+        this.selectedInitialState = this.availableInitialStates.length - 1;
       },
 
       reset: function() {
-        this.sizeX = 4;
-        this.sizeY = 4;
-        this._init();
+        this.sizeX = this.DEFAULT_SIZE_X;
+        this.sizeY = this.DEFAULT_SIZE_Y;
+
+        this.availableInitialStates = [];
+        this.availableAttires = [];
+
+        this._bootstrap();
         this._cleanState();
+        this.selectedInitialState = 0;
         this.selectedAttire = 0;
         this.showAttire = false;
       },
 
-      cleanBoards: function() {
-        this._init();
+      cleanBoard: function() {
+        this.set("initialState.header", { x: 0, y: 0 });
+        this.set("initialState.table", this._buildEmptyTable(this.sizeX, this.sizeY));
+
         this._cleanState();
+      },
+
+      addBoard: function() {
+        this._bootstrap(this.DEFAULT_SIZE_X, this.DEFAULT_SIZE_Y);
+      },
+
+      removeCurrentBoard: function() {
+        this._removeBoard(index => {
+          this.splice("availableInitialStates", index, 1);
+        });
+      },
+
+      removeFirstBoard: function() {
+        this._removeBoard(index => {
+          this.shift("availableInitialStates");
+        });
+      },
+
+      getSizeOf: function({ table }) {
+        return { x: table[0].length, y: table.length };
+      },
+
+      _bootstrap: function(sizeX = this.sizeX, sizeY = this.sizeY) {
+        this.addInitialState({
+          header: { x: 0, y: 0 },
+          table: this._buildEmptyTable(sizeX, sizeY)
+        });
+      },
+
+      _buildEmptyTable: function(sizeX, sizeY) {
+        return _.range(sizeY).map(row => {
+          return _.range(sizeX).map(cell => {
+            return {};
+          });
+        });
+      },
+
+      _removeBoard: function(action) {
+        if (this.availableInitialStates.length < 2) return;
+
+        const oldIndex = this.selectedInitialState
+        const newIndex = this.selectedInitialState - 1;
+
+        if (newIndex < 0) this.selectedInitialState = 1;
+        action(oldIndex);
+        this.selectedInitialState = Math.max(0, newIndex);
       },
 
       _onRunRequest: function() {
         this._cleanState();
 
-        const initialStateEditor = this.$$("#initialStateEditor");
         const initialState = {
-          header: initialStateEditor.header,
-          table: this._adapter.adaptToParser(initialStateEditor.table),
-          size: initialStateEditor.size
+          header: this.initialStateEditor.header,
+          table: this._adapter.adaptToParser(this.initialStateEditor.table),
+          size: this.initialStateEditor.size
         }
         this.fire("initial-state", initialState);
       },
@@ -347,7 +453,7 @@
       },
 
       _onCompilationError: function(error) {
-        this._showToast(this.localize("the-program-has-errors"));
+        this.showToast(this.localize("the-program-has-errors"));
       },
 
       _onExecutionError: function(error) {
@@ -356,7 +462,7 @@
       },
 
       _onUnknownError: function(error) {
-        this._showToast(this.localize("unknown-interpreter-error"));
+        this.showToast(this.localize("unknown-interpreter-error"));
       },
 
       _setFinalState: function(finalState) {
@@ -368,36 +474,29 @@
       },
 
       _onBoardChanged: function() {
-        const initialStateEditor = this.$$("#initialStateEditor");
-        this.initialState.header = initialStateEditor.header;
-        this.initialState.table = initialStateEditor.table;
+        const initialState = this.availableInitialStates[this.selectedInitialState];
+        // ^ Use this and not `this.initialState`! The listeners execute before computed properties.
+
+        initialState.header = this.initialStateEditor.header;
+        initialState.table = this.initialStateEditor.table;
 
         this._cleanState();
+      },
+
+      _onBoardSelected: function() {
+        const size = this.getSizeOf(this.initialState);
+
+        this.sizeX = size.x;
+        this.sizeY = size.y;
+
+        if (this.initialStateEditor) this.initialStateEditor.fillTable();
+        this._selecting = false;
       },
 
       _cleanState: function() {
         this.finalState = null;
         this.error = null;
         this.selectedTab = 0;
-      },
-
-      _init: function() {
-        var self = this;
-
-        this.initialState = {
-          header: { x: 0, y: 0 },
-          table: _.range(self.sizeY).map(function(row) {
-            return _.range(self.sizeX).map(function(cell) {
-              return {};
-            })
-          })
-        };
-      },
-
-      _showToast: function(message) {
-        this.$.toast.text = message;
-        this.$.toast.opened = true;
-        this.$.toast.center();
       },
 
       _subscribeToEditor: function(eventName, eventHandler) {
@@ -417,6 +516,7 @@
         const y = sizeY === "" ? this.size.y : this._limitSize(sizeY);
         if (sizeX !== "") this.sizeX = x;
         if (sizeY !== "") this.sizeY = y;
+
         return { x: x, y: y };
       },
 
@@ -424,6 +524,11 @@
         var attire = this.availableAttires[selectedAttire];
         if (attire) attire.enabled = showAttire;
         return attire;
+      },
+
+      _computeInitialState: function(selectedInitialState) {
+        this._selecting = true;
+        return this.availableInitialStates[selectedInitialState];
       },
 
       _computeInitialBoardOptions: function(showAttire) {
@@ -435,6 +540,7 @@
       },
 
       _updateSize: function() {
+        if (this.initialStateEditor && !this._selecting) this.initialStateEditor.fillTable();
         if (this.stylist) this.stylist.updateBoardSize(this.size);
       },
 
@@ -450,8 +556,12 @@
         return this.isInitialBoardNotEditable(selectedTab, showAttire) ? "gray" : "";
       },
 
-      clearButtonCss: function(selectedTab, showAttire) {
-        return "black-button" + (this.isInitialBoardNotEditable(selectedTab, showAttire) ? " hidden" : "");
+      boardButtonCss: function(selectedTab, showAttire) {
+        return this.boardToolbarCss(selectedTab, showAttire, "black-button");
+      },
+
+      boardToolbarCss: function(selectedTab, showAttire, extra = "") {
+        return extra + (this.isInitialBoardNotEditable(selectedTab, showAttire) ? " hidden" : "");
       }
     });
 

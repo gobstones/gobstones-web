@@ -6,7 +6,6 @@
   class InitialBoardLoader extends TextLoader {
     constructor() {
       super();
-      _.defaults(this, SingleFileComponent);
       this.SUFFIX = ".board.gbb";
     }
 
@@ -15,17 +14,33 @@
       return new Parser().buildGbb(panel.initialState, panel.size);
     }
 
+    getFile(context) {
+      const panel = context.boards;
+      return panel.availableInitialStates.map((initialBoard, i) => {
+        return {
+          name: `Board${i + 1}${this.SUFFIX}`,
+          content: new Parser().buildGbb(initialBoard, panel.getSizeOf(initialBoard))
+        }
+      });
+    }
+
     readContent(context, content) {
       const panel = context.boards;
       const board = new Parser().readGbb(content);
       const initialState = panel.initialState;
 
-      panel.sizeX = board.sizeX;
-      panel.sizeY = board.sizeY;
-      panel.setInitialState({
-        table: board.toView(),
-        header: { x: board.x, y: board.y }
+      panel.addInitialState({
+        header: { x: board.x, y: board.y },
+        table: board.toView()
       });
+    }
+
+    readProjectContent(context, content) {
+      this.readContent(context, content);
+    }
+
+    shouldHandle(path) {
+      return _.endsWith(path, this.SUFFIX);
     }
   }
 </script>

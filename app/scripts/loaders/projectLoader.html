@@ -26,7 +26,7 @@
     }
 
     save(context) {
-      const files = this.loaders.map(loader => loader.getFile(context));
+      const files = _.flatMap(this.loaders, loader => loader.getFile(context));
 
       const zip = new JSZip();
       files.forEach(file => {
@@ -44,25 +44,35 @@
       const { file, fileName } = this._readLocalFile(event);
 
       JSZip.loadAsync(file).then(zip => {
-        zip.forEach((relativePath, zipEntry) => {
-          this._loadComponent(context, relativePath, zipEntry);
-        });
-
+        context.boards.reset();
         context.setProjectName(fileName);
         context.editor.setAsDirty();
 
-        this.attireLoader.readFromZip(context, zip);
-        callback();
+        const finish = () => {
+          context.boards.removeFirstBoard();
+          this.attireLoader.readFromZip(context, zip);
+          callback();
+        };
+
+        const filesCount = _.keys(zip.files).length;
+        var i = 0;
+        zip.forEach((relativePath, zipEntry) => {
+          i++;
+          this._loadComponent(context, relativePath, zipEntry,
+            i === filesCount ? finish : _.noop
+          );
+        });
       });
     }
 
-    _loadComponent(context, path, zipEntry) {
+    _loadComponent(context, path, zipEntry, callback) {
       this.loaders.forEach(loader => {
         const getContent = () => zipEntry.async("string");
         if (!loader.shouldHandle(path)) return;
 
         getContent().then(content => {
           loader.readProjectContent(context, content);
+          callback();
         });
       });
     }
