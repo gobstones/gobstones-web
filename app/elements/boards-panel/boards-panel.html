@@ -146,7 +146,7 @@
 
     <paper-button class="add-button" on-click="addBoard"><iron-icon class$="{{boardButtonCss(selectedTab, showAttire)}}" icon="icons:add"></iron-icon></paper-button>
 
-    <paper-button class="remove-button" on-click="removeBoard"><iron-icon class$="{{boardButtonCss(selectedTab, showAttire)}}" icon="icons:remove"></iron-icon></paper-button>
+    <paper-button class="remove-button" on-click="removeCurrentBoard"><iron-icon class$="{{boardButtonCss(selectedTab, showAttire)}}" icon="icons:remove"></iron-icon></paper-button>
 
     <div class="boards-button">
       <paper-menu-button class$="{{boardToolbarCss(selectedTab, showAttire)}}">
@@ -386,13 +386,16 @@
         this._bootstrap(this.DEFAULT_SIZE_X, this.DEFAULT_SIZE_Y);
       },
 
-      removeBoard: function() {
-        if (this.availableInitialStates.length < 2) return;
+      removeCurrentBoard: function() {
+        this._removeBoard(index => {
+          this.splice("availableInitialStates", index, 1);
+        });
+      },
 
-        const newIndex = this.selectedInitialState - 1;
-        this.pop("availableInitialStates");
-        this.splice("availableInitialStates", this.selectedInitialState, 1);
-        this.selectedInitialState = Math.max(0, newIndex);
+      removeFirstBoard: function() {
+        this._removeBoard(index => {
+          this.shift("availableInitialStates");
+        });
       },
 
       getSizeOf: function({ table }) {
@@ -412,6 +415,17 @@
             return {};
           });
         });
+      },
+
+      _removeBoard: function(action) {
+        if (this.availableInitialStates.length < 2) return;
+
+        const oldIndex = this.selectedInitialState
+        const newIndex = this.selectedInitialState - 1;
+
+        if (newIndex < 0) this.selectedInitialState = 1;
+        action(oldIndex);
+        this.selectedInitialState = Math.max(0, newIndex);
       },
 
       _onRunRequest: function() {
