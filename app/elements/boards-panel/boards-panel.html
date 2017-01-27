@@ -304,6 +304,10 @@
         this.stylist = new Stylist();
         this.stylist.setPanelAsResizable(this.size);
 
+        this.async(() => {
+          this.initialStateEditor = this.$$("#initialStateEditor");
+        });
+
         this._adapter = new ParserAndBoardAdapter();
 
         this._subscribeToEditor("run-request", () => {
@@ -431,11 +435,10 @@
       _onRunRequest: function() {
         this._cleanState();
 
-        const initialStateEditor = this.$$("#initialStateEditor");
         const initialState = {
-          header: initialStateEditor.header,
-          table: this._adapter.adaptToParser(initialStateEditor.table),
-          size: initialStateEditor.size
+          header: this.initialStateEditor.header,
+          table: this._adapter.adaptToParser(this.initialStateEditor.table),
+          size: this.initialStateEditor.size
         }
         this.fire("initial-state", initialState);
       },
@@ -471,12 +474,11 @@
       },
 
       _onBoardChanged: function() {
-        const initialStateEditor = this.$$("#initialStateEditor");
         const initialState = this.availableInitialStates[this.selectedInitialState];
         // ^ Use this and not `this.initialState`! The listeners execute before computed properties.
 
-        initialState.header = initialStateEditor.header;
-        initialState.table = initialStateEditor.table;
+        initialState.header = this.initialStateEditor.header;
+        initialState.table = this.initialStateEditor.table;
 
         this._cleanState();
       },
@@ -486,6 +488,9 @@
 
         this.sizeX = size.x;
         this.sizeY = size.y;
+
+        if (this.initialStateEditor) this.initialStateEditor.fillTable();
+        this._selecting = false;
       },
 
       _cleanState: function() {
@@ -522,6 +527,7 @@
       },
 
       _computeInitialState: function(selectedInitialState) {
+        this._selecting = true;
         return this.availableInitialStates[selectedInitialState];
       },
 
@@ -534,6 +540,7 @@
       },
 
       _updateSize: function() {
+        if (this.initialStateEditor && !this._selecting) this.initialStateEditor.fillTable();
         if (this.stylist) this.stylist.updateBoardSize(this.size);
       },
 
