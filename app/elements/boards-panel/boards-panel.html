@@ -395,6 +395,10 @@
         this.selectedInitialState = Math.max(0, newIndex);
       },
 
+      getSizeOf: function({ table }) {
+        return { x: table[0].length, y: table.length };
+      },
+
       _bootstrap: function(sizeX = this.sizeX, sizeY = this.sizeY) {
         this.addInitialState({
           header: { x: 0, y: 0 },
@@ -457,12 +461,6 @@
         const initialState = this.availableInitialStates[this.selectedInitialState];
         // ^ Use this and not `this.initialState`! The listeners execute before computed properties.
 
-        // TODO: Lo siguiente.
-        /*
-        - persistir en proyecto
-        - al cargar proyecto, borrar el default bootstrappeado
-        */
-
         initialState.header = initialStateEditor.header;
         initialState.table = initialStateEditor.table;
 
@@ -470,7 +468,7 @@
       },
 
       _onBoardSelected: function() {
-        const size = this._getSizeOf(this.initialState.table);
+        const size = this.getSizeOf(this.initialState);
 
         this.sizeX = size.x;
         this.sizeY = size.y;
@@ -531,10 +529,6 @@
 
       _protectSelectedTab: function() {
         if (IS_RUNNING) this.selectedTab = 1;
-      },
-
-      _getSizeOf: function(table) {
-        return { x: table[0].length, y: table.length };
       },
 
       boardSizeCss: function(selectedTab, showAttire) {
