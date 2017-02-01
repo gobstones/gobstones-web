@@ -369,10 +369,12 @@
         this.sizeX = this.DEFAULT_SIZE_X;
         this.sizeY = this.DEFAULT_SIZE_Y;
 
+        this.cleanBoard();
         this.availableInitialStates = [];
         this.availableAttires = [];
 
         this._bootstrap();
+        this._fillTable();
         this._cleanState();
         this.selectedInitialState = 0;
         this.selectedAttire = 0;
@@ -489,8 +491,12 @@
         this.sizeX = size.x;
         this.sizeY = size.y;
 
-        if (this.initialStateEditor) this.initialStateEditor.fillTable();
+        this._fillTable();
         this._selecting = false;
+      },
+
+      _fillTable: function() {
+        if (this.initialStateEditor) this.initialStateEditor.fillTable();
       },
 
       _cleanState: function() {
@@ -540,7 +546,7 @@
       },
 
       _updateSize: function() {
-        if (this.initialStateEditor && !this._selecting) this.initialStateEditor.fillTable();
+        if (!this._selecting) this._fillTable();
         if (this.stylist) this.stylist.updateBoardSize(this.size);
       },
 

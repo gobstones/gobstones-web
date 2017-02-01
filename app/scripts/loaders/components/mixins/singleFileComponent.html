@@ -4,11 +4,11 @@
   // buildContent(context);
   // readContent(context, content);
   window.SingleFileComponent = {
-    getFile: function(context) {
-      return {
+    getFiles: function(context) {
+      return [{
         content: this.buildContent(context),
         name: context.getProjectName() + this.SUFFIX
-      };
+      }];
     },
 
     shouldHandle: function(path) {

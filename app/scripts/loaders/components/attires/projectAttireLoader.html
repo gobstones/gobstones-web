@@ -3,7 +3,9 @@
 <script>
   class ProjectAttireLoader {
     constructor(pathPrefix) {
-      this.reader = new AttireReader();
+      this.reader = new AttireReader(relativePath => {
+        return _.startsWith("/") && _.endsWith(relativePath, ".json");
+      });
       this.pathPrefix = pathPrefix;
     }
 

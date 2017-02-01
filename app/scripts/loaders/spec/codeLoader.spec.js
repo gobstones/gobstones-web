@@ -15,10 +15,10 @@ describe('CodeLoader', function() {
       getProjectName: function() { return "sarasa" }
     };
 
-    expect(loader.getFile(context)).toEqual({
+    expect(loader.getFiles(context)).toEqual([{
       content: "The main code",
       name: "sarasa.code.gbs"
-    });
+    }]);
   });
 
   it("sets the project's name, runs the code and calls the callback after reading", function() {

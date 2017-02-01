@@ -27,7 +27,7 @@
     }
 
     save(context) {
-      const files = _.flatMap(this.loaders, loader => loader.getFile(context));
+      const files = _.flatMap(this.loaders, loader => loader.getFiles(context));
 
       const zip = new JSZip();
       files.forEach(file => {

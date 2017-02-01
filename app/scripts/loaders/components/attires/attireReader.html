@@ -13,9 +13,10 @@
   };
 
   class AttireReader {
-    constructor() {
-      this.FILE_EXTENSION = ".attire.json";
+    constructor(isAnAttire) {
+      this.FILE_EXTENSION = ".json";
       this.BASE64_PREFIX = "data:image/png;base64,";
+      this.isAnAttire = isAnAttire;
     }
 
     writeToZip(attire, zip, pathPrefix = "") {
@@ -30,9 +31,7 @@
 
     readFromZip(context, zip, callback) {
       zip.forEach((relativePath, zipEntry) => {
-        const isAnAttire = _.endsWith(relativePath, this.FILE_EXTENSION);
-
-        if (isAnAttire) {
+        if (this.isAnAttire(relativePath)) {
           const directory = relativePath.getPath();
           this._processAttire(context, zipEntry, zip, directory, callback);
         }
