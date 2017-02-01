@@ -7,7 +7,7 @@
     constructor() {
       super();
       this.reader = new AttireReader(relativePath => {
-        _.endsWith(relativePath, ".json");
+        return _.endsWith(relativePath, ".json");
       });
     }
 

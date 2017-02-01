@@ -15,10 +15,10 @@ describe('LibraryLoader', function() {
       getProjectName: function() { return "sarasa" }
     };
 
-    expect(loader.getFile(context)).toEqual({
+    expect(loader.getFiles(context)).toEqual([{
       content: "The library code",
       name: "sarasa.library.gbs"
-    });
+    }]);
   });
 
   it("runs the code and calls the callback after reading", function() {

@@ -3,11 +3,11 @@
 <script>
   class TextLoader extends Loader {
     // <<abstract>>:
-    // getFile(context); -> { name, content }
+    // getFiles(context); -> [{ name, content }]
     // readContent(context, content, fileName);
 
     save(context) {
-      this._saveText(this.getFile(context));
+      this._saveText(this.getFiles(context)[0]);
     }
 
     read(context, event, callback) {

@@ -14,14 +14,16 @@
       return new Parser().buildGbb(panel.initialState, panel.size);
     }
 
-    getFile(context) {
+    getFiles(context) {
       const panel = context.boards;
-      return panel.availableInitialStates.map((initialBoard, i) => {
+      const files = panel.availableInitialStates.map((initialBoard, i) => {
         return {
           name: `Board${i + 1}${this.SUFFIX}`,
           content: new Parser().buildGbb(initialBoard, panel.getSizeOf(initialBoard))
         }
       });
+
+      return files.splice(panel.selectedInitialState, 1).concat(files);
     }
 
     readContent(context, content) {
