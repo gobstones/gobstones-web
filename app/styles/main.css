@@ -69,6 +69,14 @@ body {
   color: black;
 }
 
+.blue-sky {
+  color: #3367d6;
+}
+
+.grey {
+  color: gray;
+}
+
 .button-disabled {
   color: #9a9a9a;
 }

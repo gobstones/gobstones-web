@@ -35,10 +35,6 @@
         margin-left: 40% !important;
       }
 
-      .gray {
-        color: gray;
-      }
-
       .hidden {
         visibility: hidden;
       }
@@ -310,8 +306,8 @@
 
         this._adapter = new ParserAndBoardAdapter();
 
-        this._subscribeToEditor("run-request", () => {
-          this._onRunRequest();
+        this._subscribeToEditor("run-request", (eventInfo) => {
+          this._onRunRequest(eventInfo);
         })._subscribeToEditor("cancel-request", () => {
           this._cleanState();
         })._subscribeToEditor("execution-result", (eventInfo) => {
@@ -434,15 +430,17 @@
         this.selectedInitialState = Math.max(0, newIndex);
       },
 
-      _onRunRequest: function() {
+      _onRunRequest: function(options) {
         this._cleanState();
 
-        const initialState = {
-          header: this.initialStateEditor.header,
-          table: this._adapter.adaptToParser(this.initialStateEditor.table),
-          size: this.initialStateEditor.size
-        }
-        this.fire("initial-state", initialState);
+        if (options.useRandomBoard)
+          this.selectedInitialState = _.random(0, this.availableInitialStates.length - 1);
+
+        this.fire("initial-state", {
+          header: this.initialState.header,
+          table: this._adapter.adaptToParser(this.initialState.table),
+          size: this.size
+        });
       },
 
       _onResult: function(result) {

@@ -82,8 +82,8 @@
         });
 
         this.runner = this.$.runner;
-        this.runner.addEventListener("run", () => {
-          this._onRunRequest()
+        this.runner.addEventListener("run", ({ detail }) => {
+          this._onRunRequest(detail)
           this.editor.readonly = true;
         });
         this.runner.addEventListener("cancel", () => {
@@ -148,9 +148,9 @@
         this.setCode("", "teacher");
       },
 
-      _onRunRequest: function() {
+      _onRunRequest: function(options) {
         this._setMode("main");
-        this.fire("run-request");
+        this.fire("run-request", options);
       },
 
       _initializeDefaultFontSize: function() {

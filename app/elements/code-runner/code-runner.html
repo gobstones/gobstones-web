@@ -1,8 +1,16 @@
 <link rel="import" href="../../scripts/parser.html">
 <link rel="import" href="../../scripts/behaviors/localizationBehavior.html">
+<link rel="import" href="../../scripts/behaviors/toastBehavior.html">
 
 <dom-module id="code-runner">
   <style>
+    .random-toggle {
+      position: absolute;
+      cursor: pointer;
+      left: 49px;
+      top: 43px;
+    }
+
     .speed-slider {
       width: 80px;
       transform: translateX(-14px);
@@ -26,6 +34,7 @@
                title="{{localize('execute')}}"
                on-click="onButtonClick"
     ></paper-fab>
+    <paper-button class="random-toggle" on-click="toggleRandom"><iron-icon class$="{{toggleRandomCss(useRandomBoard)}}" icon="av:shuffle"></iron-icon></paper-button>
     <paper-slider style="z-index: 10" class="speed-slider" snaps min="1" max="4" max-markers="4" step="1" immediate-value="{{speed}}" value="4"></paper-slider>
   </template>
 
@@ -33,7 +42,8 @@
     Polymer({
       is: 'code-runner',
       behaviors: [
-        Polymer.LocalizationBehavior
+        Polymer.LocalizationBehavior,
+        Polymer.ToastBehavior
       ],
       properties: {
         isRunning: {
@@ -45,6 +55,11 @@
           type: Number,
           value: 4
         },
+        useRandomBoard: {
+          type: Boolean,
+          value: false
+        },
+
         throttle: {
           type: Number,
           value: 0
@@ -85,7 +100,7 @@
 
       requestRun: function() {
         this.clear();
-        this.fire("run");
+        this.fire("run", { useRandomBoard: this.useRandomBoard });
       },
 
       stop: function(eventToFire = "cancel") {
@@ -103,6 +118,11 @@
         this.isRunning = !this.isRunning;
         if (this.isRunning) this.requestRun()
         else this.stop();
+      },
+
+      toggleRandom: function() {
+        this.useRandomBoard = !this.useRandomBoard;
+        this.showToast(this.localize(`using-random-${this.useRandomBoard}`));
       },
 
       _notifyResults: function(states, onResult) {
@@ -188,15 +208,17 @@
       },
 
       _onSpeedChange: function() {
-        this.$.toast.text = this.localize(`speed-${this.speed}`);
-        this.$.toast.opened = true;
-        this.$.toast.center();
+        this.showToast(this.localize(`speed-${this.speed}`));
         this.throttle = -(this.speed - 4) * this.SPEED_MULTIPLIER;
       },
 
       _update: function() {
         this.$.playButton.icon = this.isRunning ? "av:stop" : "av:play-arrow";
         window.IS_RUNNING = this.isRunning;
+      },
+
+      toggleRandomCss: function(useRandomBoard) {
+        return useRandomBoard ? "blue-sky" : "gray"
       }
     });
   </script>
