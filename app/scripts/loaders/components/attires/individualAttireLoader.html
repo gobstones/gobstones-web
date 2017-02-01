@@ -12,7 +12,7 @@
     }
 
     save(context) {
-      const attire = context.boards.attire;
+      const attire = context.boards.availableAttires[context.boards.selectedAttire];
       if (!attire) return;
 
       const zip = new JSZip();
