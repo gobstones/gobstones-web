@@ -4,7 +4,8 @@
 <link rel="import" href="components/teacherLoader.html">
 <link rel="import" href="components/initialBoardLoader.html">
 <link rel="import" href="components/attires/projectAttireLoader.html">
-<script src="../../bower_components/jszip/dist/jszip.min.js"></script>
+<link rel="import" href="../jszip.html">
+<link rel="import" href="../async.html">
 
 <script>
   class ProjectLoader extends Loader {
@@ -48,33 +49,35 @@
         context.setProjectName(fileName);
         context.editor.setAsDirty();
 
-        const finish = () => {
+        let actions = [];
+        zip.forEach((relativePath, zipEntry) => {
+          actions.push(
+            this._loadComponent.bind(this, context, relativePath, zipEntry)
+          );
+        });
+
+        async.parallel(actions, () => {
           context.boards.removeFirstBoard();
           this.attireLoader.readFromZip(context, zip);
           callback();
-        };
-
-        const filesCount = _.keys(zip.files).length;
-        var i = 0;
-        zip.forEach((relativePath, zipEntry) => {
-          i++;
-          this._loadComponent(context, relativePath, zipEntry,
-            i === filesCount ? finish : _.noop
-          );
         });
       });
     }
 
     _loadComponent(context, path, zipEntry, callback) {
+      let handled = false;
       this.loaders.forEach(loader => {
         const getContent = () => zipEntry.async("string");
         if (!loader.shouldHandle(path)) return;
 
+        handled = true;
         getContent().then(content => {
           loader.readProjectContent(context, content);
           callback();
         });
       });
+
+      if (!handled) callback();
     }
   }
 </script>
