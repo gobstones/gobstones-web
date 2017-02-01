@@ -6,7 +6,9 @@
   class IndividualAttireLoader extends Loader {
     constructor() {
       super();
-      this.reader = new AttireReader();
+      this.reader = new AttireReader(relativePath => {
+        _.endsWith(relativePath, ".json");
+      });
     }
 
     save(context) {
