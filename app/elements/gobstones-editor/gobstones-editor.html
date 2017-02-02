@@ -2,6 +2,7 @@
 <link rel="import" href="../../bower_components/iron-icons/av-icons.html">
 <link rel="import" href="../../bower_components/ace-widget/ace-widget.html">
 <link rel="import" href="../../bower_components/iron-localstorage/iron-localstorage.html">
+<link rel="import" href="../../bower_components/gs-element-blockly/gs-element-blockly.html">
 <link rel="import" href="../../scripts/behaviors/localizationBehavior.html">
 <link rel="import" href="../../scripts/jquery.html">
 <link rel="import" href="../../scripts/stylist.html">
@@ -33,7 +34,8 @@
     <iron-localstorage name="last-code" value="{{code}}"></iron-localstorage>
     <iron-localstorage name="font-size" value="{{fontSize}}" on-iron-localstorage-load-empty="_initializeDefaultFontSize"></iron-localstorage>
 
-    <ace-widget
+    <gs-element-blockly></gs-element-blockly>
+<!--     <ace-widget
       id="ace"
       mode="ace/mode/gobstones"
       theme="ace/theme/chrome"
@@ -42,7 +44,7 @@
       minlines="30"
       maxlines="30"
       initial-focus
-    ></ace-widget>
+    ></ace-widget> -->
 
     <code-runner class="run-button" id="runner"></code-runner>
   </template>
