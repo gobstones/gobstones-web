@@ -95,7 +95,7 @@
       },
 
       _runCode: function(initialState) {
-        const code = this.$.blockly.generateCode();
+        const code = { main: this.$.blockly.generateCode(), library: "", teacher: "" }
         debugger // TODO: Borrar
 
         try {
