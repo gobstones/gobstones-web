@@ -1,9 +1,6 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
-<link rel="import" href="../../bower_components/iron-icons/av-icons.html">
 <link rel="import" href="../../bower_components/ace-widget/ace-widget.html">
 <link rel="import" href="../../bower_components/iron-localstorage/iron-localstorage.html">
-<link rel="import" href="../../bower_components/gs-element-blockly/gs-element-blockly.html">
-<link rel="import" href="../../scripts/behaviors/localizationBehavior.html">
 <link rel="import" href="../../scripts/jquery.html">
 <link rel="import" href="../../scripts/stylist.html">
 
@@ -34,8 +31,7 @@
     <iron-localstorage name="last-code" value="{{code}}"></iron-localstorage>
     <iron-localstorage name="font-size" value="{{fontSize}}" on-iron-localstorage-load-empty="_initializeDefaultFontSize"></iron-localstorage>
 
-    <gs-element-blockly></gs-element-blockly>
-<!--     <ace-widget
+    <ace-widget
       id="ace"
       mode="ace/mode/gobstones"
       theme="ace/theme/chrome"
@@ -44,7 +40,7 @@
       minlines="30"
       maxlines="30"
       initial-focus
-    ></ace-widget> -->
+    ></ace-widget>
 
     <code-runner class="run-button" id="runner"></code-runner>
   </template>
@@ -53,14 +49,6 @@
 
     Polymer({
       is: "gobstones-editor",
-      behaviors: [
-        Polymer.LocalizationBehavior
-      ],
-      listeners: {
-        "ace.editor-ready": "onAceReady",
-        "ace.editor-content": "onContentChange",
-        "iron-localstorage-load": "onLastCodeLoaded"
-      },
       properties: {
         mode: { type: String, value: "main" },
         codeWasLoaded: { type: Boolean, value: false },
@@ -72,6 +60,11 @@
           type: Number,
           observer: "_fontSizeChanged"
         }
+      },
+      listeners: {
+        "ace.editor-ready": "onAceReady",
+        "ace.editor-content": "onContentChange",
+        "iron-localstorage-load": "onLastCodeLoaded"
       },
 
       ready: function() {

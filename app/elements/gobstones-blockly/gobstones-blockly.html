@@ -1,0 +1,142 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/gs-element-blockly/gs-element-blockly.html">
+<link rel="import" href="../../scripts/jquery.html">
+<link rel="import" href="../../scripts/stylist.html">
+
+<dom-module id="gobstones-blockly">
+  <template>
+
+    <style>
+      :host {
+        display: block;
+        height: 100vh;
+      }
+
+      .blockly {
+        height: 100%;
+      }
+
+      .run-button {
+        position: absolute;
+        bottom: 30px;
+        right: 24px;
+      }
+    </style>
+
+    <gs-element-blockly id="blockly" class="blockly"></gs-element-blockly>
+
+    <code-runner class="run-button" id="runner"></code-runner>
+  </template>
+
+  <script>
+
+    Polymer({
+      is: "gobstones-blockly",
+      properties: {
+        mode: { type: String, value: "main" },
+        code: {
+          type: Object,
+          observer: "_initializeCode"
+        }
+      },
+
+      ready: function() {
+        this._subscribeToBoards("initial-state", (eventInfo) => {
+          this._runCode(eventInfo.detail);
+        });
+
+        this.runner = this.$.runner;
+        this.runner.addEventListener("run", ({ detail }) => {
+          this._onRunRequest(detail)
+          // this.editor.readonly = true; // TODO: Desactivar todo
+        });
+        this.runner.addEventListener("cancel", () => {
+          this.fire("cancel-request");
+          // this.editor.readonly = false; // TODO: Desactivar todo
+        });
+        this.runner.addEventListener("end", () => {
+          // this.editor.readonly = false; // TODO: Desactivar todo
+        });
+
+        this.stylist = new Stylist();
+        $(window).resize(() => { /* // TODO: Por ahora no sé */ });
+      },
+
+      setCode: function(code, mode = "main") {
+        this.code[mode] = code;
+        //if (this.mode === mode) this.editor.setValue(code); // TODO: Set code
+      },
+
+      onContentChange: function(content) {
+        this.set(`code.${this.mode}`, content.detail.value);
+        this.setAsDirty(); // TODO: Suscribirse a cuando cambia
+      },
+
+      toggleMode: function() {
+        this._setMode(
+          this.mode === "main" ? "library" : "main"
+        );
+      },
+
+      setAsDirty: function() {
+        this.fire("editor-dirty");
+      },
+
+      reset: function() {
+        this._setMode("main");
+        this.setCode("", "main");
+        this.setCode("", "library");
+        this.setCode("", "teacher");
+      },
+
+      _onRunRequest: function(options) {
+        this._setMode("main");
+        this.fire("run-request", options);
+      },
+
+      _runCode: function(initialState) {
+        const code = this.code;
+        this.editor.getSession().clearAnnotations();
+
+        try {
+          this.runner.run(
+            { initialState, code },
+            (e) => {
+              this.fire("compilation-error", e.error); // TODO: mostrar el error en este caso
+            },
+            (state) => this._notify(state)
+          );
+        } catch (e) {
+          this.fire("unknown-error", e);
+          console.error("---UNKNOWN ERROR---");
+          throw e;
+        }
+      },
+
+      _notify: function(state) {
+        if (state.error) {
+          this.fire("execution-error", state.error.message);
+        } else
+          this.fire("execution-result", { board: state });
+      },
+
+      _setMode: function(mode) {
+        this.mode = mode;
+        this.fire("mode-change", this.mode);
+        //this.editor.setValue(this.code[this.mode]); // TODO: Cambiar modo
+        //this.editor.focus();
+      },
+
+      _subscribeToBoards: function(eventName, eventHandler) {
+        this.async(() => {
+          document.querySelector("#boards").addEventListener(eventName, eventHandler);
+        });
+      },
+
+      _initializeCode: function() {
+        if (!this.code) this.code = { main: "", library: "", teacher: "" };
+      }
+    });
+
+  </script>
+</dom-module>

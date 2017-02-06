@@ -8,7 +8,13 @@
       <div class="panel-left">
         <editor-toolbar></editor-toolbar>
 
-        <gobstones-editor id="editor" class="gobstones-editor"></gobstones-editor>
+        <template is="dom-if" if="{{isBlocksProject(projectType)}">
+          <gobstones-blockly class="gobstones-editor"></gobstones-blockly>
+        </template>
+
+        <template is="dom-if" if="{{isCodeProject(projectType)}">
+          <gobstones-editor class="gobstones-editor"></gobstones-editor>
+        </template>
       </div>
 
       <div class="panel-right">
@@ -26,6 +32,12 @@
         "show-code-changed": "_showCodeChanged",
         "show-boards-changed": "_showBoardsChanged"
       },
+      properties: {
+        projectType: String
+      },
+
+      isBlocksProject: function(projectType) { return projectType === 'blocks' },
+      isCodeProject: function(projectType) { return projectType === 'code' },
 
       buttonCssClass: function(show) {
         return !show ? "button-disabled" : "";
