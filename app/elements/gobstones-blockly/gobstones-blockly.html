@@ -12,10 +12,6 @@
         height: 100vh;
       }
 
-      .blockly {
-        height: 100%;
-      }
-
       .run-button {
         position: absolute;
         bottom: 30px;
@@ -64,7 +60,19 @@
         });
 
         this.stylist = new Stylist();
-        $(window).resize(() => { /* // TODO: Por ahora no sé */ });
+
+        // TODO: Refactorear y arreglar el resize
+        this.async(() => {
+          $("#blocklyDiv").css("width", $(".panel-left").width() + "px");
+          $("#blocklyDiv").css("height", $(".panel-left").height() - 64 + "px");
+        });
+        $(window).resize(() => {
+          let width = $(".panel-left").width()
+          let height = $(".panel-left").height() - 64;
+
+          $("#blocklyDiv").css("width", width + "px");
+          $("#blocklyDiv").css("height", height + "px");
+        });
       },
 
       setCode: function(code, mode = "main") {
