@@ -51,7 +51,7 @@
           // this.editor.readonly = true; // TODO: Desactivar todo
         });
         this.runner.addEventListener("cancel", () => {
-          this.fire("cancel-request");
+          window.BUS.fire("cancel-request");
           // this.editor.readonly = false; // TODO: Desactivar todo
         });
         this.runner.addEventListener("end", () => {
@@ -79,7 +79,7 @@
       },
 
       setAsDirty: function() {
-        this.fire("editor-dirty");
+        window.BUS.fire("editor-dirty");
       },
 
       reset: function() {
@@ -91,23 +91,23 @@
 
       _onRunRequest: function(options) {
         this._setMode("main");
-        this.fire("run-request", options);
+        window.BUS.fire("run-request", options);
       },
 
       _runCode: function(initialState) {
-        const code = this.code;
-        this.editor.getSession().clearAnnotations();
+        const code = this.$.blockly.generateCode();
+        debugger // TODO: Borrar
 
         try {
           this.runner.run(
             { initialState, code },
             (e) => {
-              this.fire("compilation-error", e.error); // TODO: mostrar el error en este caso
+              window.BUS.fire("compilation-error", e.error); // TODO: mostrar el error en este caso
             },
             (state) => this._notify(state)
           );
         } catch (e) {
-          this.fire("unknown-error", e);
+          window.BUS.fire("unknown-error", e);
           console.error("---UNKNOWN ERROR---");
           throw e;
         }
@@ -115,21 +115,21 @@
 
       _notify: function(state) {
         if (state.error) {
-          this.fire("execution-error", state.error.message);
+          window.BUS.fire("execution-error", state.error.message);
         } else
-          this.fire("execution-result", { board: state });
+          window.BUS.fire("execution-result", { board: state });
       },
 
       _setMode: function(mode) {
         this.mode = mode;
-        this.fire("mode-change", this.mode);
+        window.BUS.fire("mode-change", this.mode);
         //this.editor.setValue(this.code[this.mode]); // TODO: Cambiar modo
         //this.editor.focus();
       },
 
       _subscribeToBoards: function(eventName, eventHandler) {
         this.async(() => {
-          document.querySelector("#boards").addEventListener(eventName, eventHandler);
+          window.BUS.addEventListener(eventName, eventHandler);
         });
       },
 

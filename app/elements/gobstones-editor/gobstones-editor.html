@@ -82,7 +82,7 @@
           this.editor.readonly = true;
         });
         this.runner.addEventListener("cancel", () => {
-          this.fire("cancel-request");
+          window.BUS.fire("cancel-request");
           this.editor.readonly = false;
         });
         this.runner.addEventListener("end", () => {
@@ -133,7 +133,7 @@
 
       setAsDirty: function() {
         this.editor.getSession().setAnnotations([]);
-        this.fire("editor-dirty");
+        window.BUS.fire("editor-dirty");
       },
 
       reset: function() {
@@ -145,7 +145,7 @@
 
       _onRunRequest: function(options) {
         this._setMode("main");
-        this.fire("run-request", options);
+        window.BUS.fire("run-request", options);
       },
 
       _initializeDefaultFontSize: function() {
@@ -171,12 +171,12 @@
             { initialState, code },
             (e) => {
               this._reportError(e, "error");
-              this.fire("compilation-error", e.error);
+              window.BUS.fire("compilation-error", e.error);
             },
             (state) => this._notify(state)
           );
         } catch (e) {
-          this.fire("unknown-error", e);
+          window.BUS.fire("unknown-error", e);
           console.error("---UNKNOWN ERROR---");
           throw e;
         }
@@ -185,9 +185,9 @@
       _notify: function(state) {
         if (state.error) {
           this._reportError(state.error, "info");
-          this.fire("execution-error", state.error.message);
+          window.BUS.fire("execution-error", state.error.message);
         } else
-          this.fire("execution-result", { board: state });
+          window.BUS.fire("execution-result", { board: state });
       },
 
       _reportError: function(error, type) {
@@ -203,7 +203,7 @@
 
       _setMode: function(mode) {
         this.mode = mode;
-        this.fire("mode-change", this.mode);
+        window.BUS.fire("mode-change", this.mode);
         this.editor.setValue(this.code[this.mode]);
         this.editor.focus();
       },
@@ -214,7 +214,7 @@
 
       _subscribeToBoards: function(eventName, eventHandler) {
         this.async(() => {
-          document.querySelector("#boards").addEventListener(eventName, eventHandler);
+          window.BUS.addEventListener(eventName, eventHandler);
         });
       },
 

@@ -8,12 +8,12 @@
       <div class="panel-left">
         <editor-toolbar></editor-toolbar>
 
-        <template is="dom-if" if="{{isBlocksProject(projectType)}">
-          <gobstones-blockly class="gobstones-editor"></gobstones-blockly>
+        <template is="dom-if" if="{{isBlocksProject(projectType)}}">
+          <gobstones-blockly id="editor"></gobstones-blockly>
         </template>
 
-        <template is="dom-if" if="{{isCodeProject(projectType)}">
-          <gobstones-editor class="gobstones-editor"></gobstones-editor>
+        <template is="dom-if" if="{{isCodeProject(projectType)}}">
+          <gobstones-editor id="editor"></gobstones-editor>
         </template>
       </div>
 
@@ -36,8 +36,8 @@
         projectType: String
       },
 
-      isBlocksProject: function(projectType) { return projectType === 'blocks' },
-      isCodeProject: function(projectType) { return projectType === 'code' },
+      isBlocksProject: function(projectType) { return projectType === 'blocks'; },
+      isCodeProject: function(projectType) { return projectType === 'code'; },
 
       buttonCssClass: function(show) {
         return !show ? "button-disabled" : "";

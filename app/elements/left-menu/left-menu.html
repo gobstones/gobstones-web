@@ -102,12 +102,12 @@
 
         ["Project", "Code", "Library", "InitialBoard", "Attire"].forEach(item => {
           this[`save${item}`] = () => {
-            if (IS_RUNNING) return;
+            if (window.IS_RUNNING) return;
             this.loaders[item].save(this._context());
           };
 
           this[`load${item}`] = () => {
-            if (IS_RUNNING) return;
+            if (window.IS_RUNNING) return;
             $(`#${item}`).click();
           };
 
@@ -120,7 +120,7 @@
       },
 
       newProject: function() {
-        if (IS_RUNNING) return;
+        if (window.IS_RUNNING) return;
         if (!confirm(this.localize("new-project-confirm"))) return;
 
         const context = this._context();

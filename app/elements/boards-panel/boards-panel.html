@@ -436,7 +436,7 @@
         if (options.useRandomBoard)
           this.selectedInitialState = _.random(0, this.availableInitialStates.length - 1);
 
-        this.fire("initial-state", {
+        window.BUS.fire("initial-state", {
           header: this.initialState.header,
           table: this._adapter.adaptToParser(this.initialState.table),
           size: this.size
@@ -506,7 +506,7 @@
       _subscribeToEditor: function(eventName, eventHandler) {
         const handler = (event) => eventHandler(event.detail);
         this.async(() => {
-          document.querySelector("#editor").addEventListener(eventName, handler);
+          window.BUS.addEventListener(eventName, handler);
         });
         return this;
       },
@@ -553,7 +553,7 @@
       },
 
       _protectSelectedTab: function() {
-        if (IS_RUNNING) this.selectedTab = 1;
+        if (window.IS_RUNNING) this.selectedTab = 1;
       },
 
       boardSizeCss: function(selectedTab, showAttire) {

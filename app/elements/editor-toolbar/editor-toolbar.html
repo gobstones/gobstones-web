@@ -95,7 +95,7 @@
         if (this.empty) return;
 
         this.async(() => {
-          this._editor().addEventListener("mode-change", ({ detail }) => {
+          window.BUS.addEventListener("mode-change", ({ detail }) => {
             this.showLibrary = detail === "library";
           });
         });
