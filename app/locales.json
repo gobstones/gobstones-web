@@ -13,7 +13,7 @@
     "library": "Biblioteca",
     "new-blocks-project": "Nuevo proyecto de bloques",
     "new-code-project": "Nuevo proyecto de código",
-    "new-project-confirm": "¿Está seguro que desea crear un nuevo proyecto? Se perderá todo el progreso no guardado.",
+    "new-project-confirm": "¿Estás seguro que deseas crear un nuevo proyecto? Se perderá todo el progreso no guardado.",
     "open": "Abrir",
     "open-project": "Abrir proyecto",
     "project": "Proyecto",
@@ -28,6 +28,6 @@
     "unknown-interpreter-error": "Error desconocido",
     "using-random-false": "Tablero: Seleccionado",
     "using-random-true": "Tablero: Aleatorio",
-    "what-do-you-want": "¿Qué desea hacer?"
+    "what-do-you-want": "¿Qué deseas hacer?"
   }
 }
