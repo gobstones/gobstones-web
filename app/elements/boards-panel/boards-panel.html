@@ -452,8 +452,12 @@
         });
       },
 
-      _onCompilationError: function(error) {
-        this.showToast(this.localize("the-program-has-errors"));
+      _onCompilationError: function(report) {
+        this.showToast(
+          report
+            ? `[${report.line}] ${report.error.message}`
+            : this.localize("the-program-has-errors")
+        );
       },
 
       _onExecutionError: function(error) {

@@ -23,7 +23,7 @@
       }
     </style>
 
-    <gs-element-blockly id="blockly" class="blockly"></gs-element-blockly>
+    <gs-element-blockly id="blockly" class="blockly" workspace-XML="{{workspaceXml}}"></gs-element-blockly>
 
     <code-runner class="run-button" id="runner"></code-runner>
   </template>
@@ -36,7 +36,12 @@
         mode: { type: String, value: "main" },
         code: {
           type: Object,
-          observer: "_initializeCode"
+          value: { main: "", library: "", teacher: "" },
+          observer: "setAsDirty"
+        },
+        workspaceXml: {
+          type: String,
+          observer: "_updateCode"
         }
       },
 
@@ -67,11 +72,6 @@
         //if (this.mode === mode) this.editor.setValue(code); // TODO: Set code
       },
 
-      onContentChange: function(content) {
-        this.set(`code.${this.mode}`, content.detail.value);
-        this.setAsDirty(); // TODO: Suscribirse a cuando cambia
-      },
-
       toggleMode: function() {
         this._setMode(
           this.mode === "main" ? "library" : "main"
@@ -95,14 +95,14 @@
       },
 
       _runCode: function(initialState) {
-        const code = { main: this.$.blockly.generateCode(), library: "", teacher: "" }
-        debugger // TODO: Borrar
+        const code = { main: this.$.blockly.generateCode(), library: "", teacher: ""}; // TODO: this.code cuando ande workspaceXML
 
         try {
           this.runner.run(
             { initialState, code },
-            (e) => {
-              window.BUS.fire("compilation-error", e.error); // TODO: mostrar el error en este caso
+            (error, code) => {
+              let line = _.trim(code[error.location.mode].split("\n")[error.location.line]);
+              window.BUS.fire("compilation-error", { error, line });
             },
             (state) => this._notify(state)
           );
@@ -133,8 +133,9 @@
         });
       },
 
-      _initializeCode: function() {
-        if (!this.code) this.code = { main: "", library: "", teacher: "" };
+      _updateCode: function() {
+        this.code[this.mode] = this.$.blockly.generateCode()
+        // TODO: Esto no se está llamando. workspaceXML no está implementada
       }
     });
 

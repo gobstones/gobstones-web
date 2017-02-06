@@ -171,7 +171,7 @@
             { initialState, code },
             (e) => {
               this._reportError(e, "error");
-              window.BUS.fire("compilation-error", e.error);
+              window.BUS.fire("compilation-error");
             },
             (state) => this._notify(state)
           );

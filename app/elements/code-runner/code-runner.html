@@ -81,9 +81,9 @@
         this.isRunning = true;
 
         const code = request.code;
-        const itBroke = (err) => {
+        const itBroke = (err, code) => {
           this.stop();
-          onCompilationError(err);
+          onCompilationError(err, code);
         };
 
         try {
@@ -162,7 +162,7 @@
 
         this.parser.parse(sourceCode, (e) => {
           e.location = this._getErrorLineAndMode(e, code, fixMainErrorLines);
-          return onError(e);
+          return onError(e, code);
         }, onSuccess);
       },
 
