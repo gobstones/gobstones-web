@@ -47,6 +47,19 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <!-- Configure your routes here -->
 <link rel="import" href="routing.html">
 
+<!-- Configure temporal event bus -->
+<script>
+  var Bus = function() {
+    this.events = [];
+  }
+
+  Bus.prototype.addEventListener = function(event, handler) {
+    this.events.push({ event: event, handler: handler });
+  };
+
+  window.BUS = new Bus();
+</script>
+
 <!-- Add your elements here -->
 <link rel="import" href="../bower_components/ace-widget/ace-widget.html">
 <link rel="import" href="../styles/app-theme.html">
