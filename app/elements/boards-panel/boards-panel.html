@@ -139,11 +139,11 @@
 
     <paper-toast class="toast" id="toast"></paper-toast>
 
-    <paper-button class="clear-button" on-click="cleanBoard"><iron-icon class$="{{boardButtonCss(selectedTab, showAttire)}}" icon="icons:delete-forever"></iron-icon></paper-button>
+    <paper-button class="clear-button" on-click="cleanBoard"><iron-icon class$="{{boardButtonCss(selectedTab, showAttire, permissions)}}" icon="icons:delete-forever"></iron-icon></paper-button>
 
-    <paper-button class="add-button" on-click="addBoard"><iron-icon class$="{{boardButtonCss(selectedTab, showAttire)}}" icon="icons:add"></iron-icon></paper-button>
+    <paper-button class="add-button" on-click="addBoard"><iron-icon class$="{{boardButtonCss(selectedTab, showAttire, permissions)}}" icon="icons:add"></iron-icon></paper-button>
 
-    <paper-button class="remove-button" on-click="removeCurrentBoard"><iron-icon class$="{{boardButtonCss(selectedTab, showAttire)}}" icon="icons:remove"></iron-icon></paper-button>
+    <paper-button class="remove-button" on-click="removeCurrentBoard"><iron-icon class$="{{boardButtonCss(selectedTab, showAttire, permissions)}}" icon="icons:remove"></iron-icon></paper-button>
 
     <div class="boards-button">
       <paper-menu-button class$="{{boardToolbarCss(selectedTab, showAttire)}}">
@@ -158,15 +158,15 @@
 
     <div class="boards-panel">
       <div class="size-bar">
-        <div class$="{{boardSizeCss(selectedTab, showAttire)}}">
+        <div class$="{{boardSizeCss(selectedTab, showAttire, permissions)}}">
           <form>
             <div class="size-container">
               <strong>[[localize("size")]]:</strong>
-              <paper-input class="size-input" value="{{sizeX}}" type="number" min="1" max="30" disabled$="{{isInitialBoardNotEditable(selectedTab, showAttire)}}"></paper-input>
+              <paper-input class="size-input" value="{{sizeX}}" type="number" min="1" max="30" disabled$="{{isInitialBoardNotEditable(selectedTab, showAttire, permissions)}}"></paper-input>
             </div>
             <div class="size-container">
               <span>[[localize("columns")]] <strong>[[localize("by")]]</strong></span>
-              <paper-input class="size-input" value="{{sizeY}}" type="number" min="1" max="30" disabled$="{{isInitialBoardNotEditable(selectedTab, showAttire)}}"></paper-input>
+              <paper-input class="size-input" value="{{sizeY}}" type="number" min="1" max="30" disabled$="{{isInitialBoardNotEditable(selectedTab, showAttire, permissions)}}"></paper-input>
               <span>[[localize("rows")]]</span>
             </div>
           </form>
@@ -355,7 +355,7 @@
       isInitialBoardSelected: (selectedTab) => selectedTab === 0,
       isFinalBoardSelected: (selectedTab) => selectedTab === 1,
       isFinalBoardVisible: (finalState, error) => finalState || error,
-      isInitialBoardNotEditable: (selectedTab, showAttire) => selectedTab === 1 || showAttire,
+      isInitialBoardNotEditable: (selectedTab, showAttire, permissions) => selectedTab === 1 || showAttire || !permissions.can_change_board,
 
       addOrSetAttire: function(attire) {
         if (this.setAttire(attire.name)) return;
@@ -569,16 +569,16 @@
         if (window.GBS_IS_RUNNING) this.selectedTab = 1;
       },
 
-      boardSizeCss: function(selectedTab, showAttire) {
-        return this.isInitialBoardNotEditable(selectedTab, showAttire) ? "gray" : "";
+      boardSizeCss: function(selectedTab, showAttire, permissions) {
+        return this.isInitialBoardNotEditable(selectedTab, showAttire, permissions) ? "gray" : "";
       },
 
-      boardButtonCss: function(selectedTab, showAttire) {
-        return this.boardToolbarCss(selectedTab, showAttire, "black-button");
+      boardButtonCss: function(selectedTab, showAttire, permissions) {
+        return this.boardToolbarCss(selectedTab, showAttire, permissions, "black-button");
       },
 
-      boardToolbarCss: function(selectedTab, showAttire, extra = "") {
-        return extra + (this.isInitialBoardNotEditable(selectedTab, showAttire) ? " hidden" : "");
+      boardToolbarCss: function(selectedTab, showAttire, permissions, extra = "") {
+        return extra + (this.isInitialBoardNotEditable(selectedTab, showAttire, permissions) ? " hidden" : "");
       }
     });
 
