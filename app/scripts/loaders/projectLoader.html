@@ -51,12 +51,18 @@
         context.setProjectName(fileName);
         context.editor.setAsDirty();
 
-        let actions = [];
+        const filesToProcess = [];
         zip.forEach((relativePath, zipEntry) => {
-          actions.push(
-            this._loadComponent.bind(this, context, relativePath, zipEntry)
-          );
+          filesToProcess.push({
+            path: relativePath,
+            action: this._loadComponent.bind(this, context, relativePath, zipEntry)
+          });
         });
+
+        const actions = _(filesToProcess)
+          .sortBy("path")
+          .map("action")
+          .value();
 
         async.parallel(actions, () => {
           context.boards.removeFirstBoard();
