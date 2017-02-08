@@ -29,7 +29,6 @@
       }
     </style>
 
-    <iron-localstorage name="last-code" value="{{code}}"></iron-localstorage>
     <iron-localstorage name="font-size" value="{{fontSize}}" on-iron-localstorage-load-empty="_initializeDefaultFontSize"></iron-localstorage>
 
     <ace-widget
@@ -56,10 +55,9 @@
       ],
       properties: {
         mode: { type: String, value: "main" },
-        codeWasLoaded: { type: Boolean, value: false },
         code: {
           type: Object,
-          observer: "_initializeCode"
+          value: { main: "", library: "", teacher: "" }
         },
         fontSize: {
           type: Number,
@@ -69,8 +67,7 @@
       },
       listeners: {
         "ace.editor-ready": "onAceReady",
-        "ace.editor-content": "onContentChange",
-        "iron-localstorage-load": "onLastCodeLoaded"
+        "ace.editor-content": "onContentChange"
       },
 
       ready: function() {
@@ -115,12 +112,6 @@
       onContentChange: function(content) {
         this.set(`code.${this.mode}`, content.detail.value);
         this.setAsDirty();
-      },
-
-      onLastCodeLoaded: function() {
-        if (this.codeWasLoaded) return;
-        this.editor.setValue(this.code.main);
-        this.codeWasLoaded = true;
       },
 
       increaseFontSize: function() {
@@ -230,10 +221,6 @@
 
       _fixEditorHeight: function() {
         this.stylist.correctEditorHeight(this.editor);
-      },
-
-      _initializeCode: function() {
-        if (!this.code) this.code = { main: "", library: "", teacher: "" };
       }
     });
 
