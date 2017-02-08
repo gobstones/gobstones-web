@@ -102,12 +102,12 @@
 
         ["Project", "Code", "Library", "InitialBoard", "Attire"].forEach(item => {
           this[`save${item}`] = () => {
-            if (window.IS_RUNNING) return;
+            if (window.GBS_IS_RUNNING) return;
             this.loaders[item].save(this._context());
           };
 
           this[`load${item}`] = () => {
-            if (window.IS_RUNNING) return;
+            if (window.GBS_IS_RUNNING) return;
             $(`#${item}`).click();
           };
 
@@ -120,7 +120,7 @@
       },
 
       newProject: function() {
-        if (window.IS_RUNNING) return;
+        if (window.GBS_IS_RUNNING) return;
         if (!confirm(this.localize("new-project-confirm"))) return;
 
         const context = this._context();
@@ -138,6 +138,7 @@
         const query = (id) => document.querySelector(id);
 
         return {
+          ide: query("#gobstones-ide"),
           editor: query("#editor"),
           boards: query("#boards"),
           getProjectName: () => this.projectName,

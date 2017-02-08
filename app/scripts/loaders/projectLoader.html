@@ -1,4 +1,5 @@
 <link rel="import" href="loader.html">
+<link rel="import" href="components/metadataLoader.html">
 <link rel="import" href="components/codeLoader.html">
 <link rel="import" href="components/libraryLoader.html">
 <link rel="import" href="components/teacherLoader.html">
@@ -13,6 +14,7 @@
       super();
 
       this.loaders = [
+        new MetadataLoader,
         new CodeLoader,
         new LibraryLoader,
         new TeacherLoader,
