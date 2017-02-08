@@ -1,5 +1,6 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 <link rel="import" href="../../bower_components/gs-board/dist/components/gs-board.html">
+<link rel="import" href="../../scripts/behaviors/busListenerBehavior.html">
 <link rel="import" href="../../scripts/behaviors/localizationBehavior.html">
 <link rel="import" href="../../scripts/behaviors/expressionBehavior.html">
 <link rel="import" href="../../scripts/behaviors/toastBehavior.html">
@@ -220,6 +221,7 @@
     Polymer({
       is: 'boards-panel',
       behaviors: [
+        Polymer.BusListenerBehavior,
         Polymer.LocalizationBehavior,
         Polymer.ExpressionBehavior,
         Polymer.ToastBehavior
@@ -306,19 +308,19 @@
 
         this._adapter = new ParserAndBoardAdapter();
 
-        this._subscribeToEditor("run-request", (eventInfo) => {
+        this.subscribeTo("run-request", eventInfo => {
           this._onRunRequest(eventInfo);
-        })._subscribeToEditor("cancel-request", () => {
+        }).subscribeTo("cancel-request", () => {
           this._cleanState();
-        })._subscribeToEditor("execution-result", (eventInfo) => {
+        }).subscribeTo("execution-result", eventInfo => {
           this._onResult(eventInfo);
-        })._subscribeToEditor("compilation-error", (eventInfo) => {
+        }).subscribeTo("compilation-error", eventInfo => {
           this._onCompilationError(eventInfo);
-        })._subscribeToEditor("execution-error", (eventInfo) => {
+        }).subscribeTo("execution-error", eventInfo => {
           this._onExecutionError(eventInfo);
-        })._subscribeToEditor("unknown-error", (eventInfo) => {
+        }).subscribeTo("unknown-error", eventInfo => {
           this._onUnknownError(eventInfo);
-        })._subscribeToEditor("editor-dirty", () => {
+        }).subscribeTo("editor-dirty", () => {
           this._cleanState();
         });
 
@@ -379,6 +381,8 @@
         this.selectedInitialState = 0;
         this.selectedAttire = 0;
         this.showAttire = false;
+
+        window.BUS.fire("reset");
       },
 
       cleanBoard: function() {
@@ -509,14 +513,6 @@
         this.finalState = null;
         this.error = null;
         this.selectedTab = 0;
-      },
-
-      _subscribeToEditor: function(eventName, eventHandler) {
-        const handler = (event) => eventHandler(event.detail);
-        this.async(() => {
-          window.BUS.addEventListener(eventName, handler);
-        });
-        return this;
       },
 
       _showCodeDirection: function(value) {

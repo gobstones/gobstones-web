@@ -1,5 +1,6 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 <link rel="import" href="../../bower_components/gs-element-blockly/gs-element-blockly.html">
+<link rel="import" href="../../scripts/behaviors/busListenerBehavior.html">
 <link rel="import" href="../../scripts/jquery.html">
 <link rel="import" href="../../scripts/stylist.html">
 
@@ -28,6 +29,9 @@
 
     Polymer({
       is: "gobstones-blockly",
+      behaviors: [
+        Polymer.BusListenerBehavior
+      ],
       properties: {
         mode: { type: String, value: "main" },
         code: {
@@ -42,8 +46,8 @@
       },
 
       ready: function() {
-        this._subscribeToBoards("initial-state", (eventInfo) => {
-          this._runCode(eventInfo.detail);
+        this.subscribeTo("initial-state", event => {
+          this._runCode(event);
         });
 
         this.runner = this.$.runner;
@@ -134,12 +138,6 @@
         window.BUS.fire("mode-change", this.mode);
         //this.editor.setValue(this.code[this.mode]); // TODO: Cambiar modo
         //this.editor.focus();
-      },
-
-      _subscribeToBoards: function(eventName, eventHandler) {
-        this.async(() => {
-          window.BUS.addEventListener(eventName, eventHandler);
-        });
       },
 
       _updateCode: function() {

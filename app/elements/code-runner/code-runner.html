@@ -1,5 +1,6 @@
 <link rel="import" href="../../bower_components/iron-icons/av-icons.html">
 <link rel="import" href="../../scripts/parser.html">
+<link rel="import" href="../../scripts/behaviors/busListenerBehavior.html">
 <link rel="import" href="../../scripts/behaviors/localizationBehavior.html">
 <link rel="import" href="../../scripts/behaviors/toastBehavior.html">
 
@@ -43,6 +44,7 @@
     Polymer({
       is: 'code-runner',
       behaviors: [
+        Polymer.BusListenerBehavior,
         Polymer.LocalizationBehavior,
         Polymer.ToastBehavior
       ],
@@ -77,6 +79,8 @@
       ready: function() {
         this.parser = new Parser();
         this.handles = [];
+
+        this.subscribeTo("reset", () => this.reset());
       },
 
       run: function(request, onCompilationError, onResult) {
@@ -89,8 +93,8 @@
         };
 
         try {
-          this._checkAndGetTeacherAst(code, itBroke, (teacherAst) => {
-            this._parse(code, itBroke, (ast) => {
+          this._checkAndGetTeacherAst(code, itBroke, teacherAst => {
+            this._parse(code, itBroke, ast => {
               const states = this._interpret(ast.program, teacherAst, request);
               this._notifyResults(states, onResult)
             }, true);
@@ -102,19 +106,16 @@
       },
 
       requestRun: function() {
-        this.clear();
+        this._clear();
         this.fire("run", { useRandomBoard: this.useRandomBoard });
       },
 
       stop: function(eventToFire = "cancel") {
-        this.clear();
+        this._clear();
         this.isRunning = false;
-        this.fire(eventToFire);
-      },
-
-      clear: function() {
-        this.handles.forEach(clearInterval);
-        this.handles = [];
+        this.async(() => {
+          this.fire(eventToFire);
+        });
       },
 
       onButtonClick: function() {
@@ -126,6 +127,16 @@
       toggleRandom: function() {
         this.useRandomBoard = !this.useRandomBoard;
         this.showToast(this.localize(`using-random-${this.useRandomBoard}`));
+      },
+
+      reset: function() {
+        this.speed = 4;
+        this.useRandomBoard = false;
+      },
+
+      _clear: function() {
+        this.handles.forEach(clearInterval);
+        this.handles = [];
       },
 
       _notifyResults: function(states, onResult) {
@@ -162,7 +173,7 @@
         if (_.trim(sourceCode) === "")
           return onSuccess({ declarations: [] });
 
-        this.parser.parse(sourceCode, (e) => {
+        this.parser.parse(sourceCode, e => {
           e.location = this._getErrorLineAndMode(e, code, fixMainErrorLines);
           return onError(e, code);
         }, onSuccess);

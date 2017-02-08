@@ -1,0 +1,11 @@
+<script>
+  Polymer.BusListenerBehavior = {
+      subscribeTo: function(eventName, eventHandler) {
+        const handler = (event) => eventHandler(event.detail);
+        this.async(() => {
+          window.BUS.addEventListener(eventName, handler);
+        });
+        return this;
+      }
+  };
+</script>

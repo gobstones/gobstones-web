@@ -111,7 +111,7 @@
             $(`#${item}`).click();
           };
 
-          this[`onLoaded${item}`] = (event) => {
+          this[`onLoaded${item}`] = event => {
             this.loaders[item].read(this._context(), event, () => {
               this._closePanel();
             });

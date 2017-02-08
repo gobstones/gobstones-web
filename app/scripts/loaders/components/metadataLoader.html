@@ -8,7 +8,7 @@
       _.defaults(this, SingleFileComponent);
 
       this.SUFFIX = ".json";
-      this.shouldHandle = (path) => {
+      this.shouldHandle = path => {
         return !_.includes(path, "/") && _.endsWith(path, this.SUFFIX);
       };
 
@@ -62,10 +62,11 @@
       const speed = this.SPEED_NAMES.indexOf(metadata.execution_speed.active) + 1;
       context.editor.runner.speed = speed === 0 ? 4 : speed;
 
-      context.boards.setAttire(metadata.attire.active);
-      context.boards.showAttire = metadata.attire.visible;
-
-      // TODO: Ver que al mostrar no quede en blanco toda la vestimenta
+      setTimeout(() => {
+        // wait for gs-board to fire "board-changed" and update the model
+        context.boards.setAttire(metadata.attire.active);
+        context.boards.showAttire = metadata.attire.visible;
+      }, 0);
     }
   }
 </script>

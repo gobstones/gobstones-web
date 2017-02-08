@@ -1,7 +1,7 @@
 <link rel="import" href="../../../async.html">
 
 <script>
-  const toBinary = (base64) => {
+  const toBinary = base64 => {
     const raw = atob(base64);
     const rawLength = raw.length;
     const array = new Uint8Array(new ArrayBuffer(rawLength));
@@ -43,20 +43,20 @@
     }
 
     _processAttire(context, zipEntry, zip, pathPrefix, callback) {
-      const findImage = (path) => {
+      const findImage = path => {
         const imageZipEntry = zip.files[pathPrefix + path];
         if (!imageZipEntry) throw new Error("Missing file in attire: " + path);
         return imageZipEntry;
       };
 
-      zipEntry.async("string").then((json) => {
+      zipEntry.async("string").then(json => {
         const attire = this._deserialize(json);
         if (!attire || !attire.name || !attire.rules) return;
 
-        attire.rules.forEach((rule) => {
+        attire.rules.forEach(rule => {
           rule.fileName = rule.image;
 
-          findImage(rule.fileName).async("binarystring").then((content) => {
+          findImage(rule.fileName).async("binarystring").then(content => {
             const imageBase64 = btoa(content);
             rule.image = this.BASE64_PREFIX + imageBase64;
             rule.loaded = true;
@@ -86,7 +86,7 @@
 
     _transform(attire) {
       const copy = _.cloneDeep(attire);
-      copy.rules.forEach((rule) => {
+      copy.rules.forEach(rule => {
         rule.image = rule.fileName;
         delete rule.fileName;
         delete rule.loaded;

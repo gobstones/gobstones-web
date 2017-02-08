@@ -1,6 +1,7 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 <link rel="import" href="../../bower_components/ace-widget/ace-widget.html">
 <link rel="import" href="../../bower_components/iron-localstorage/iron-localstorage.html">
+<link rel="import" href="../../scripts/behaviors/busListenerBehavior.html">
 <link rel="import" href="../../scripts/jquery.html">
 <link rel="import" href="../../scripts/stylist.html">
 
@@ -39,6 +40,7 @@
       tab-size="4"
       minlines="30"
       maxlines="30"
+      readonly="{{readonly}}"
       initial-focus
     ></ace-widget>
 
@@ -49,6 +51,9 @@
 
     Polymer({
       is: "gobstones-editor",
+      behaviors: [
+        Polymer.BusListenerBehavior
+      ],
       properties: {
         mode: { type: String, value: "main" },
         codeWasLoaded: { type: Boolean, value: false },
@@ -59,7 +64,8 @@
         fontSize: {
           type: Number,
           observer: "_fontSizeChanged"
-        }
+        },
+        readonly: Boolean
       },
       listeners: {
         "ace.editor-ready": "onAceReady",
@@ -72,21 +78,21 @@
         this.DEFAULT_FONT_SIZE = 17;
         this.HOP_SIZE = 3;
 
-        this._subscribeToBoards("initial-state", (eventInfo) => {
-          this._runCode(eventInfo.detail);
+        this.subscribeTo("initial-state", event => {
+          this._runCode(event);
         });
 
         this.runner = this.$.runner;
         this.runner.addEventListener("run", ({ detail }) => {
           this._onRunRequest(detail)
-          this.$.ace.readonly = true;
+          this.readonly = true;
         });
         this.runner.addEventListener("cancel", () => {
           window.BUS.fire("cancel-request");
-          this.$.ace.readonly = false;
+          this.readonly = false;
         });
         this.runner.addEventListener("end", () => {
-          this.$.ace.readonly = false;
+          this.readonly = false;
         });
 
         this.editor = this.$.ace.editor;
@@ -210,12 +216,6 @@
 
       _removePrintMarginColumn: function() {
         this.editor.setShowPrintMargin(false);
-      },
-
-      _subscribeToBoards: function(eventName, eventHandler) {
-        this.async(() => {
-          window.BUS.addEventListener(eventName, eventHandler);
-        });
       },
 
       _setFatalities: function() {
