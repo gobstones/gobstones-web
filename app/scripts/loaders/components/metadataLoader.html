@@ -21,32 +21,32 @@
       return JSON.stringify({
         name: context.getProjectName(),
         type: context.ide.projectType,
-        library: {
-          visible: true // TODO: Deshardcodear
-        },
+        // library: {
+        //   visible: true // TODO: Deshardcodear
+        // },
         board: {
           active: context.boards.selectedInitialState + 1,
           initial_board_source: context.editor.runner.useRandomBoard ? this.RANDOM_SOURCE : this.SELECTED_SOURCE,
           //visible_edition: true, // TODO: Hacer esto (posibilidad de ocultar parte de edición de tableros)
-          user_permissions: { // TODO: Deshardcodear
-            can_change_source: true,
-            can_edit_board: true
-          }
+          // user_permissions: { // TODO: Deshardcodear
+          //   can_change_source: true,
+          //   can_edit_board: true
+          // }
         },
         execution_speed: {
           active: this.SPEED_NAMES[context.editor.runner.speed - 1],
-          user_permissions: {
-            can_change_speed: true // TODO: Deshardcodear
-          }
+          // user_permissions: {
+          //   can_change_speed: true // TODO: Deshardcodear
+          // }
         },
         attire: {
           active: context.boards.attire != null
             ? context.boards.attire.name
             : null,
           visible: context.boards.showAttire,
-          user_permissions: {
-            can_toggle_visibility: true // TODO: Deshardcodear
-          }
+          // user_permissions: {
+          //   can_toggle_visibility: true // TODO: Deshardcodear
+          // }
         }
       }, null, 2);
     }
