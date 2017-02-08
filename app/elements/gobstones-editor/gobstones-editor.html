@@ -79,14 +79,14 @@
         this.runner = this.$.runner;
         this.runner.addEventListener("run", ({ detail }) => {
           this._onRunRequest(detail)
-          this.editor.readonly = true;
+          this.$.ace.readonly = true;
         });
         this.runner.addEventListener("cancel", () => {
           window.BUS.fire("cancel-request");
-          this.editor.readonly = false;
+          this.$.ace.readonly = false;
         });
         this.runner.addEventListener("end", () => {
-          this.editor.readonly = false;
+          this.$.ace.readonly = false;
         });
 
         this.editor = this.$.ace.editor;

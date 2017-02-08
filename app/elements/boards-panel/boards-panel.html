@@ -347,13 +347,17 @@
       isInitialBoardNotEditable: (selectedTab, showAttire) => selectedTab === 1 || showAttire,
 
       addOrSetAttire: function(attire) {
-        var availableAttire = _.find(this.availableAttires, { name: attire.name });
+        if (this.setAttire(attire.name)) return;
 
-        if (!availableAttire) {
-          this.push("availableAttires", attire);
-          this.selectedAttire = this.availableAttires.length - 1;
-        } else
+        this.push("availableAttires", attire);
+        this.selectedAttire = this.availableAttires.length - 1;
+      },
+
+      setAttire: function(name) {
+        var availableAttire = _.find(this.availableAttires, { name });
+        if (availableAttire)
           this.selectedAttire = this.availableAttires.indexOf(availableAttire);
+        return availableAttire;
       },
 
       addInitialState: function(initialState) {

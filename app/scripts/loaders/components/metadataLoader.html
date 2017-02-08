@@ -13,6 +13,8 @@
       };
 
       this.SPEED_NAMES = ["low", "medium", "high", "instantaneous"];
+      this.RANDOM_SOURCE = "random";
+      this.SELECTED_SOURCE = "selected";
     }
 
     buildContent(context) {
@@ -24,7 +26,7 @@
         },
         board: {
           active: context.boards.selectedInitialState + 1,
-          initial_board_source: context.editor.runner.useRandomBoard ? "random" : "selected",
+          initial_board_source: context.editor.runner.useRandomBoard ? this.RANDOM_SOURCE : this.SELECTED_SOURCE,
           //visible_edition: true, // TODO: Hacer esto (posibilidad de ocultar parte de edición de tableros)
           user_permissions: { // TODO: Deshardcodear
             can_change_source: true,
@@ -51,10 +53,19 @@
 
     readContent(context, content, fileName) {
       const metadata = JSON.parse(content);
+      // TODO: Leer las cosas que faltan
 
       context.setProjectName(metadata.name);
-      // TODO: Redireccionar según type
-      // TODO: Leer library visible
+      context.boards.selectedInitialState = metadata.board.active - 1;
+      context.editor.runner.useRandomBoard = metadata.board.initial_board_source === this.RANDOM_SOURCE;
+
+      const speed = this.SPEED_NAMES.indexOf(metadata.execution_speed.active) + 1;
+      context.editor.runner.speed = speed === 0 ? 4 : speed;
+
+      context.boards.setAttire(metadata.attire.active);
+      context.boards.showAttire = metadata.attire.visible;
+
+      // TODO: Ver que al mostrar no quede en blanco toda la vestimenta
     }
   }
 </script>

@@ -36,7 +36,7 @@
                on-click="onButtonClick"
     ></paper-fab>
     <paper-button class="random-toggle" on-click="toggleRandom"><iron-icon class$="{{toggleRandomCss(useRandomBoard)}}" icon="av:shuffle"></iron-icon></paper-button>
-    <paper-slider style="z-index: 10" class="speed-slider" snaps min="1" max="4" max-markers="4" step="1" immediate-value="{{speed}}" value="4"></paper-slider>
+    <paper-slider style="z-index: 10" class="speed-slider" snaps min="1" max="4" max-markers="4" step="1" value="{{speed}}" immediate-value="{{immediateSpeed}}" value="4"></paper-slider>
   </template>
 
   <script>
@@ -63,7 +63,11 @@
 
         throttle: {
           type: Number,
-          value: 0
+          computed: "_computeThrottle(speed)"
+        },
+        immediateSpeed: {
+          type: Number,
+          value: 4
         }
       },
       listeners: {
@@ -71,8 +75,6 @@
       },
 
       ready: function() {
-        this.SPEED_MULTIPLIER = 300
-
         this.parser = new Parser();
         this.handles = [];
       },
@@ -209,8 +211,11 @@
       },
 
       _onSpeedChange: function() {
-        this.showToast(this.localize(`speed-${this.speed}`));
-        this.throttle = -(this.speed - 4) * this.SPEED_MULTIPLIER;
+        this.showToast(this.localize(`speed-${this.immediateSpeed}`));
+      },
+
+      _computeThrottle: function(speed) {
+        return -(this.speed - 4) * 300;
       },
 
       _update: function() {

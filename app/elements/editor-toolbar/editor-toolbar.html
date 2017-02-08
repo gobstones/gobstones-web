@@ -111,6 +111,7 @@
       },
 
       toggleLibrary: function() {
+        if (window.GBS_IS_RUNNING) return;
         this._editor().toggleMode();
       },
 
