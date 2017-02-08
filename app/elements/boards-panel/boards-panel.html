@@ -289,6 +289,15 @@
           type: Boolean,
           value: false,
           observer: "_updateAttire"
+        },
+
+        permissions: { // TODO: Resettear
+          type: Object,
+          value: {
+            can_view_edition_panel: true, // TODO: Implementar
+            can_edit_board: true, // TODO: Implementar
+            can_toggle_attire_visibility: true // TODO: Implementar
+          }
         }
       },
       listeners: {
