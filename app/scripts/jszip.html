@@ -1,1 +1,14 @@
 <script src="../bower_components/jszip/dist/jszip.min.js"></script>
+
+<script>
+class ZipUtils {
+  static readAlphabetically(zip) {
+      const files = [];
+      zip.forEach((relativePath, zipEntry) => {
+        files.push({ relativePath, zipEntry });
+      });
+
+      return _.sortBy(files, "relativePath");
+  }
+}
+</script>

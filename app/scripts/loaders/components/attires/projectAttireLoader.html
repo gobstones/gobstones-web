@@ -16,8 +16,8 @@
       });
     }
 
-    readFromZip(context, zip) {
-      this.reader.readFromZip(context, zip, _.noop);
+    readFromZip(context, zip, callback) {
+      this.reader.readFromZip(context, zip, callback);
     }
   }
 </script>

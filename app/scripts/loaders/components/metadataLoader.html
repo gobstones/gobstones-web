@@ -50,7 +50,11 @@
     }
 
     readContent(context, content, fileName) {
-      // TODO: Cargar metadata
+      const metadata = JSON.parse(content);
+
+      context.setProjectName(metadata.name);
+      // TODO: Redireccionar según type
+      // TODO: Leer library visible
     }
   }
 </script>

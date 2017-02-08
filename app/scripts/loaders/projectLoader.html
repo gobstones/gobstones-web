@@ -14,7 +14,6 @@
       super();
 
       this.loaders = [
-        new MetadataLoader,
         new CodeLoader,
         new LibraryLoader,
         new TeacherLoader,
@@ -26,10 +25,12 @@
       // readProjectContent(context, content);
 
       this.attireLoader = new ProjectAttireLoader("attires/");
+      this.metadataLoader = new MetadataLoader()
     }
 
     save(context) {
-      const files = _.flatMap(this.loaders, loader => loader.getFiles(context));
+      const loaders = this.loaders.concat(this.metadataLoader);
+      const files = _.flatMap(loaders, loader => loader.getFiles(context));
 
       const zip = new JSZip();
       files.forEach(file => {
@@ -51,32 +52,29 @@
         context.setProjectName(fileName);
         context.editor.setAsDirty();
 
-        const filesToProcess = [];
-        zip.forEach((relativePath, zipEntry) => {
-          filesToProcess.push({
-            path: relativePath,
-            action: this._loadComponent.bind(this, context, relativePath, zipEntry)
-          });
-        });
-
-        const actions = _(filesToProcess)
-          .sortBy("path")
-          .map("action")
-          .value();
-
-        async.parallel(actions, () => {
+        this._loadFilesWithLoaders(context, zip, this.loaders, () => {
           context.boards.removeFirstBoard();
-          this.attireLoader.readFromZip(context, zip);
-          callback();
+
+          this.attireLoader.readFromZip(context, zip, () => {
+            this._loadFilesWithLoaders(context, zip, [this.metadataLoader], callback);
+          });
         });
       });
     }
 
-    _loadComponent(context, path, zipEntry, callback) {
+    _loadFilesWithLoaders(context, zip, loaders, callback) {
+      const actions = ZipUtils.readAlphabetically(zip).map(aFile => {
+        return this._loadComponent.bind(this, context, loaders, aFile);
+      });
+
+      async.series(actions, callback);
+    }
+
+    _loadComponent(context, loaders, { relativePath, zipEntry }, callback) {
       let handled = false;
-      this.loaders.forEach(loader => {
+      loaders.forEach(loader => {
         const getContent = () => zipEntry.async("string");
-        if (!loader.shouldHandle(path)) return;
+        if (!loader.shouldHandle(relativePath)) return;
 
         handled = true;
         getContent().then(content => {

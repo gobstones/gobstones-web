@@ -1,3 +1,5 @@
+<link rel="import" href="../../../async.html">
+
 <script>
   const toBinary = (base64) => {
     const raw = atob(base64);
@@ -30,12 +32,14 @@
     }
 
     readFromZip(context, zip, callback) {
-      zip.forEach((relativePath, zipEntry) => {
-        if (this.isAnAttire(relativePath)) {
-          const directory = relativePath.getPath();
-          this._processAttire(context, zipEntry, zip, directory, callback);
-        }
+      const actions = ZipUtils.readAlphabetically(zip).filter(aFile => {
+        return this.isAnAttire(aFile.relativePath);
+      }).map(aFile => {
+        const directory = aFile.relativePath.getPath();
+        return this._processAttire.bind(this, context, aFile.zipEntry, zip, directory);
       });
+
+      async.series(actions, callback);
     }
 
     _processAttire(context, zipEntry, zip, pathPrefix, callback) {
