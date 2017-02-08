@@ -140,53 +140,57 @@
 
     <paper-toast class="toast" id="toast"></paper-toast>
 
-    <paper-button class="clear-button" on-click="cleanBoard"><iron-icon class$="{{boardButtonCss(selectedTab, showAttire, permissions)}}" icon="icons:delete-forever"></iron-icon></paper-button>
+    <template is="dom-if" if="{{hasPermission(permissions.*, 'can_view_edition_panel')}}">
+      <paper-button class="clear-button" on-click="cleanBoard"><iron-icon class$="{{boardButtonCss(selectedTab, showAttire, permissions.*)}}" icon="icons:delete-forever"></iron-icon></paper-button>
 
-    <paper-button class="add-button" on-click="addBoard"><iron-icon class$="{{boardButtonCss(selectedTab, showAttire, permissions)}}" icon="icons:add"></iron-icon></paper-button>
+      <paper-button class="add-button" on-click="addBoard"><iron-icon class$="{{boardButtonCss(selectedTab, showAttire, permissions.*)}}" icon="icons:add"></iron-icon></paper-button>
 
-    <paper-button class="remove-button" on-click="removeCurrentBoard"><iron-icon class$="{{boardButtonCss(selectedTab, showAttire, permissions)}}" icon="icons:remove"></iron-icon></paper-button>
+      <paper-button class="remove-button" on-click="removeCurrentBoard"><iron-icon class$="{{boardButtonCss(selectedTab, showAttire, permissions.*)}}" icon="icons:remove"></iron-icon></paper-button>
 
-    <div class="boards-button">
-      <paper-menu-button class$="{{boardChangeButtonCss(selectedTab)}}">
-        <paper-icon-button icon="menu" class="dropdown-trigger"></paper-icon-button>
-        <paper-menu class="dropdown-content" selected="{{ selectedInitialState }}">
-          <template is="dom-repeat" items="{{ availableInitialStates }}">
-            <paper-item>[[localize("initial-board")]] [[toOneBased(index)]]</paper-item>
-          </template>
-        </paper-menu>
-      </paper-menu-button>
-    </div>
+      <div class="boards-button">
+        <paper-menu-button class$="{{boardChangeButtonCss(selectedTab, permissions.*)}}">
+          <paper-icon-button icon="menu" class="dropdown-trigger"></paper-icon-button>
+          <paper-menu class="dropdown-content" selected="{{ selectedInitialState }}">
+            <template is="dom-repeat" items="{{ availableInitialStates }}">
+              <paper-item>[[localize("initial-board")]] [[toOneBased(index)]]</paper-item>
+            </template>
+          </paper-menu>
+        </paper-menu-button>
+      </div>
+    </template>
 
     <div class="boards-panel">
-      <div class="size-bar">
-        <div class$="{{boardSizeCss(selectedTab, showAttire, permissions)}}">
-          <form>
-            <div class="size-container">
-              <strong>[[localize("size")]]:</strong>
-              <paper-input class="size-input" value="{{sizeX}}" type="number" min="1" max="30" disabled$="{{isInitialBoardNotEditable(selectedTab, showAttire, permissions)}}"></paper-input>
-            </div>
-            <div class="size-container">
-              <span>[[localize("columns")]] <strong>[[localize("by")]]</strong></span>
-              <paper-input class="size-input" value="{{sizeY}}" type="number" min="1" max="30" disabled$="{{isInitialBoardNotEditable(selectedTab, showAttire, permissions)}}"></paper-input>
-              <span>[[localize("rows")]]</span>
-            </div>
-          </form>
+      <template is="dom-if" if="{{hasPermission(permissions.*, 'can_view_edition_panel')}}">
+        <div class="size-bar">
+          <div class$="{{boardSizeCss(selectedTab, showAttire, permissions.*)}}">
+            <form>
+              <div class="size-container">
+                <strong>[[localize("size")]]:</strong>
+                <paper-input class="size-input" value="{{sizeX}}" type="number" min="1" max="30" disabled$="{{isInitialBoardNotEditable(selectedTab, showAttire, permissions.*)}}"></paper-input>
+              </div>
+              <div class="size-container">
+                <span>[[localize("columns")]] <strong>[[localize("by")]]</strong></span>
+                <paper-input class="size-input" value="{{sizeY}}" type="number" min="1" max="30" disabled$="{{isInitialBoardNotEditable(selectedTab, showAttire, permissions.*)}}"></paper-input>
+                <span>[[localize("rows")]]</span>
+              </div>
+            </form>
+          </div>
         </div>
-      </div>
 
-      <div class="attire-container">
-        <template is="dom-if" if="{{hasPermission(permissions.*, 'can_toggle_attire_visibility')}}">
-          <paper-button on-click="toggleShowAttire"><iron-icon class="black-button" icon="icons:visibility"></iron-icon></paper-button>
-        </template>
-        <strong>[[localize("attire")]]:</strong>
-        <paper-dropdown-menu no-animations no-label-float vertical-align="bottom" horizontal-align="right" disabled="{{!showAttire}}">
-          <paper-listbox class="dropdown-content" selected="{{selectedAttire}}">
-            <template is="dom-repeat" items="{{ availableAttires }}">
-              <paper-item>{{item.name}}</paper-item>
-            </template>
-          </paper-listbox>
-        </paper-dropdown-menu>
-      </div>
+        <div class="attire-container">
+          <template is="dom-if" if="{{hasPermission(permissions.*, 'can_toggle_attire_visibility')}}">
+            <paper-button on-click="toggleShowAttire"><iron-icon class="black-button" icon="icons:visibility"></iron-icon></paper-button>
+          </template>
+          <strong>[[localize("attire")]]:</strong>
+          <paper-dropdown-menu no-animations no-label-float vertical-align="bottom" horizontal-align="right" disabled="{{!showAttire}}">
+            <paper-listbox class="dropdown-content" selected="{{selectedAttire}}">
+              <template is="dom-repeat" items="{{ availableAttires }}">
+                <paper-item>{{item.name}}</paper-item>
+              </template>
+            </paper-listbox>
+          </paper-dropdown-menu>
+        </div>
+      </template>
 
       <div class="theBoardContainer" style="position: relative;">
         <div class="theBoard" style="position: absolute; left: 0; right: 0;">
@@ -298,7 +302,7 @@
         permissions: {
           type: Object,
           value: {
-            can_view_edition_panel: true, // TODO: Implementar
+            can_view_edition_panel: true,
             can_edit_board: true,
             can_toggle_attire_visibility: true
           }
@@ -307,6 +311,9 @@
       listeners: {
         "board-changed": "_onBoardChanged"
       },
+      observers: [
+        "_onToolboxViewPermissionChange(permissions.can_view_edition_panel)"
+      ],
 
       ready: function() {
         this.DEFAULT_SIZE_X = 4;
@@ -387,6 +394,8 @@
         this.set("permissions.can_view_edition_panel", true);
         this.set("permissions.can_edit_board", true);
         this.set("permissions.can_toggle_attire_visibility", true);
+        this.stylist.toolboxVisible = true;
+        $(window).trigger("resize");
 
         this.sizeX = this.DEFAULT_SIZE_X;
         this.sizeY = this.DEFAULT_SIZE_Y;
@@ -577,6 +586,11 @@
 
       _protectSelectedTab: function() {
         if (window.GBS_IS_RUNNING) this.selectedTab = 1;
+      },
+
+      _onToolboxViewPermissionChange: function(visible) {
+        if (this.stylist) this.stylist.toolboxVisible = visible;
+        $(window).trigger("resize");
       },
 
       boardSizeCss: function(selectedTab, showAttire, permissions) {
