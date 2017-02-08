@@ -1,6 +1,7 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 <link rel="import" href="../../bower_components/gs-board/dist/components/gs-board.html">
 <link rel="import" href="../../scripts/behaviors/busListenerBehavior.html">
+<link rel="import" href="../../scripts/behaviors/permissionsBehavior.html">
 <link rel="import" href="../../scripts/behaviors/localizationBehavior.html">
 <link rel="import" href="../../scripts/behaviors/expressionBehavior.html">
 <link rel="import" href="../../scripts/behaviors/toastBehavior.html">
@@ -174,7 +175,9 @@
       </div>
 
       <div class="attire-container">
-        <paper-button on-click="toggleShowAttire"><iron-icon class="black-button" icon="icons:visibility"></iron-icon></paper-button>
+        <template is="dom-if" if="{{hasPermission(permissions.*, 'can_toggle_attire_visibility')}}">
+          <paper-button on-click="toggleShowAttire"><iron-icon class="black-button" icon="icons:visibility"></iron-icon></paper-button>
+        </template>
         <strong>[[localize("attire")]]:</strong>
         <paper-dropdown-menu no-animations no-label-float vertical-align="bottom" horizontal-align="right" disabled="{{!showAttire}}">
           <paper-listbox class="dropdown-content" selected="{{selectedAttire}}">
@@ -222,6 +225,7 @@
       is: 'boards-panel',
       behaviors: [
         Polymer.BusListenerBehavior,
+        Polymer.PermissionsBehavior,
         Polymer.LocalizationBehavior,
         Polymer.ExpressionBehavior,
         Polymer.ToastBehavior
@@ -293,10 +297,10 @@
 
         permissions: {
           type: Object,
-          value: { // TODO: Resettear
+          value: {
             can_view_edition_panel: true, // TODO: Implementar
-            can_edit_board: true, // TODO: Implementar
-            can_toggle_attire_visibility: true // TODO: Implementar
+            can_edit_board: true,
+            can_toggle_attire_visibility: true
           }
         }
       },
@@ -379,6 +383,11 @@
       },
 
       reset: function() {
+        this.showAttire = false;
+        this.set("permissions.can_view_edition_panel", true);
+        this.set("permissions.can_edit_board", true);
+        this.set("permissions.can_toggle_attire_visibility", true);
+
         this.sizeX = this.DEFAULT_SIZE_X;
         this.sizeY = this.DEFAULT_SIZE_Y;
 
@@ -391,7 +400,6 @@
         this._cleanState();
         this.selectedInitialState = 0;
         this.selectedAttire = 0;
-        this.showAttire = false;
 
         window.BUS.fire("reset");
       },
@@ -581,11 +589,6 @@
 
       boardButtonCss: function(selectedTab, showAttire, permissions) {
         return "black-button" + (this.isInitialBoardNotEditable(selectedTab, showAttire, permissions) ? " hidden" : "");
-      },
-
-      hasPermission: function(permissions, name) {
-        const permission = (permissions || {})[name];
-        return _.isUndefined(permission) ? true : permission;
       }
     });
 
