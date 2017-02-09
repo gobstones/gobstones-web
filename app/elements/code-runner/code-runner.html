@@ -36,8 +36,10 @@
                title="{{localize('execute')}}"
                on-click="onButtonClick"
     ></paper-fab>
-    <paper-button class="random-toggle" on-click="toggleRandom"><iron-icon class$="{{toggleRandomCss(useRandomBoard)}}" icon="av:shuffle"></iron-icon></paper-button>
-    <paper-slider style="z-index: 10" class="speed-slider" snaps min="1" max="4" max-markers="4" step="1" value="{{speed}}" immediate-value="{{immediateSpeed}}" value="4"></paper-slider>
+    <template is="dom-if" if="{{permissions.can_change_source}}">
+      <paper-button class="random-toggle" on-click="toggleRandom"><iron-icon class$="{{toggleRandomCss(useRandomBoard)}}" icon="av:shuffle"></iron-icon></paper-button>
+    </template>
+    <paper-slider style="z-index: 10" class="speed-slider" snaps min="1" max="4" max-markers="4" step="1" value="{{speed}}" immediate-value="{{immediateSpeed}}" value="4", disabled="{{!permissions.can_change_speed}}"></paper-slider>
   </template>
 
   <script>
@@ -72,11 +74,11 @@
           value: 4
         },
 
-        permissions: { // TODO: Resettear
+        permissions: {
           type: Object,
           value: {
-            can_change_source: true, // TODO: Implementar
-            can_change_speed: true // TODO: Implementar
+            can_change_source: true,
+            can_change_speed: true
           }
         }
       },
@@ -140,6 +142,9 @@
       reset: function() {
         this.speed = 4;
         this.useRandomBoard = false;
+
+        this.set("permissions.can_change_source", true);
+        this.set("permissions.can_change_speed", true);
       },
 
       _clear: function() {
