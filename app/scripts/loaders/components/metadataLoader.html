@@ -53,7 +53,6 @@
 
     readContent(context, content, fileName) {
       const metadata = JSON.parse(content);
-      // TODO: Redireccionar según type
 
       // name
       context.setProjectName(metadata.name);
@@ -80,6 +79,8 @@
         context.boards.setAttire(metadata.attire.active);
         context.boards.showAttire = metadata.attire.visible;
       }, 0);
+
+      // TODO: Pasar toolbox de blockly
     }
   }
 </script>

@@ -1,0 +1,14 @@
+<link rel="import" href="libraryLoader.html">
+
+<script>
+  class LibraryBlocksLoader extends LibraryLoader {
+    constructor() {
+      super();
+      this.SUFFIX = ".gbjl";
+    }
+
+    buildContent(context) {
+      return context.editor.workspace.library;
+    }
+  }
+</script>

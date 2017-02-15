@@ -2,9 +2,9 @@
 <link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
 <link rel="import" href="../../scripts/behaviors/leftMenuBehavior.html">
 <link rel="import" href="../../scripts/behaviors/localizationBehavior.html">
-<link rel="import" href="../../scripts/loaders/projectLoader.html">
-<link rel="import" href="../../scripts/loaders/components/codeLoader.html">
-<link rel="import" href="../../scripts/loaders/components/libraryLoader.html">
+<link rel="import" href="../../scripts/loaders/projectBlocksLoader.html">
+<link rel="import" href="../../scripts/loaders/components/codeBlocksLoader.html">
+<link rel="import" href="../../scripts/loaders/components/libraryBlocksLoader.html">
 <link rel="import" href="../../scripts/loaders/components/initialBoardLoader.html">
 <link rel="import" href="../../scripts/loaders/components/attires/individualAttireLoader.html">
 
@@ -48,7 +48,7 @@
     <div class="items">
       <ul>
         <li class="action">
-          <span>[[localize("code")]]</span>
+          <span>[[localize("blocks")]]</span>
           <save-and-load on-save="saveCode" on-load="loadCode"></save-and-load>
         </li>
         <li class="action">
@@ -73,17 +73,17 @@
         </li>
       </ul>
 
-      <input id="Project" type="file" accept=".gbj" on-change="onLoadedProject" style="visibility: hidden;" />
+      <input id="Project" type="file" accept=".gbjp" on-change="onLoadedProject" style="visibility: hidden;" />
 
-      <input id="Code" type="file" accept=".xml" on-change="onLoadedCode" style="visibility: hidden;" />
+      <input id="Code" type="file" accept=".gbjs" on-change="onLoadedCode" style="visibility: hidden;" />
 
-      <input id="Library" type="file" accept=".xml" on-change="onLoadedLibrary" style="visibility: hidden;" />
+      <input id="Library" type="file" accept=".gbjl" on-change="onLoadedLibrary" style="visibility: hidden;" />
 
       <input id="InitialBoard" type="file" accept=".gbb" on-change="onLoadedInitialBoard" style="visibility: hidden;" />
 
       <input id="Attire" type="file" accept=".zip" on-change="onLoadedAttire" style="visibility: hidden;" />
 
-      <input id="Blocks" type="file" accept=".xml" on-change="onLoadedBlocks" style="visibility: hidden;" />
+      <input id="Blocks" type="file" accept=".gbjs|.gbjl" on-change="onLoadedBlocks" style="visibility: hidden;" /> <!-- // TODO: Hacer append blocks -->
     </div>
   </template>
 
@@ -98,9 +98,9 @@
 
       attached: function() {
         this.setUpLoaders({
-          Project: new ProjectLoader,
-          Code: new CodeLoader,
-          Library: new LibraryLoader,
+          Project: new ProjectBlocksLoader,
+          Code: new CodeBlocksLoader,
+          Library: new LibraryBlocksLoader,
           InitialBoard: new InitialBoardLoader,
           Attire: new IndividualAttireLoader
         });

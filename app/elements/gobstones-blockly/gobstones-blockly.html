@@ -83,9 +83,10 @@
         });
       },
 
-      setBlocks: function(xml, mode = "main") {
+      setCode: function(xml, mode = "main") {
         this.workspace[mode] = xml;
         this.code[mode] = this._xmlToCode(xml);
+        if (this.mode === mode) this.workspaceXml = xml;
       },
 
       toggleMode: function() {
@@ -99,10 +100,10 @@
       },
 
       reset: function() {
-        this.setBlocks(this.EMPTY_WORKSPACE, "main");
-        this.setBlocks("", "library");
-        this.setBlocks("", "teacher");
-        this._setMode("main");
+        this.setMode("main");
+        this.setCode(this.EMPTY_WORKSPACE, "main");
+        this.setCode("", "library");
+        this.setCode("", "teacher");
       },
 
       _onRunRequest: function(options) {

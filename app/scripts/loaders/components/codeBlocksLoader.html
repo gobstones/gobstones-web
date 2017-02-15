@@ -1,0 +1,14 @@
+<link rel="import" href="codeLoader.html">
+
+<script>
+  class CodeBlocksLoader extends CodeLoader {
+    constructor() {
+      super();
+      this.SUFFIX = ".gbjs";
+    }
+
+    buildContent(context) {
+      return context.editor.workspace.main;
+    }
+  }
+</script>
