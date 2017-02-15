@@ -49,7 +49,7 @@
     </style>
 
     <paper-toolbar class="main-toolbar" style="z-index: 10;">
-      <template is="dom-if" if="{{!empty}}">
+      <template is="dom-if" if="{{isNotEmpty(tools)}}">
         <paper-icon-button icon="menu" paper-drawer-toggle on-click="togglePanel"></paper-icon-button>
       </template>
 
@@ -60,10 +60,12 @@
         <img class="app-logo" src="../../images/logo.png" />
         <div class="app-name" style="width: 90%">Gobstones</div>
 
-        <template is="dom-if" if="{{!empty}}">
+        <template is="dom-if" if="{{isNotEmpty(tools)}}">
           <div class="buttons">
-            <paper-button on-click="increaseEditorFontSize"><iron-icon class="button" icon="icons:zoom-in"></iron-icon></paper-button>
-            <paper-button on-click="decreaseEditorFontSize"><iron-icon class="button" icon="icons:zoom-out"></iron-icon></paper-button>
+            <template is="dom-if" if="{{showZoom(tools)}}">
+              <paper-button on-click="increaseEditorFontSize"><iron-icon class="button" icon="icons:zoom-in"></iron-icon></paper-button>
+              <paper-button on-click="decreaseEditorFontSize"><iron-icon class="button" icon="icons:zoom-out"></iron-icon></paper-button>
+            </template>
             <template is="dom-if" if="{{permissions.can_use_library}}">
               <paper-button on-click="toggleLibrary"><iron-icon class$="button {{buttonCssClass(showLibrary)}}" icon="icons:chrome-reader-mode"></iron-icon></paper-button>
             </template>
@@ -83,9 +85,9 @@
         Polymer.BusListenerBehavior
       ],
       properties: {
-        empty: {
-          type: Boolean,
-          value: false
+        tools: {
+          type: String,
+          value: "none"
         },
         showBoards: {
           type: Boolean,
@@ -136,6 +138,14 @@
 
       decreaseEditorFontSize: function() {
         this._editor().decreaseFontSize();
+      },
+
+      showZoom: function(tools) {
+        return tools === "code";
+      },
+
+      isNotEmpty: function(tools) {
+        return tools !== "none";
       },
 
       _editor: function() {

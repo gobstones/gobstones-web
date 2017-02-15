@@ -6,7 +6,7 @@
 
     <div class="panel-container">
       <div class="panel-left">
-        <editor-toolbar id="toolbar"></editor-toolbar>
+        <editor-toolbar tools="[[projectType]]" id="toolbar"></editor-toolbar>
 
         <template is="dom-if" if="{{isBlocksProject(projectType)}}">
           <gobstones-blockly id="editor"></gobstones-blockly>
