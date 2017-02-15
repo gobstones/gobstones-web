@@ -37,8 +37,7 @@
       properties: {
         mode: {
           type: String,
-          value: "main",
-          observer: "_onModeChange"
+          value: "main"
         },
         code: {
           type: Object,
@@ -100,10 +99,10 @@
       },
 
       reset: function() {
-        this._setMode("main");
-        this.setBlocks("", "main");
+        this.setBlocks(this.EMPTY_WORKSPACE, "main");
         this.setBlocks("", "library");
         this.setBlocks("", "teacher");
+        this._setMode("main");
       },
 
       _onRunRequest: function(options) {
@@ -140,13 +139,13 @@
       _setMode: function(mode) {
         this.mode = mode;
         window.BUS.fire("mode-change", this.mode);
-      },
-
-      _onModeChange: function() {
         this.workspaceXml = this._getWorkspace()[this.mode];
       },
 
       _updateCode: function() {
+        if (!this.EMPTY_WORKSPACE)
+          this.EMPTY_WORKSPACE = this.workspaceXml;
+
         if (this.runner) this.runner.stop()
         this._getWorkspace()[this.mode] = this.workspaceXml;
         this.code[this.mode] = this.$.blockly.generateCode();
