@@ -1,0 +1,62 @@
+<link rel="import" href"../jquery.html">
+
+<script>
+  Polymer.LeftMenuBehavior = {
+    properties: {
+      projectName: {
+        type: String,
+        value: "Program"
+      }
+    },
+
+    setUpLoaders: function(loaders) {
+      this.loaders = loaders;
+
+      _.keys(this.loaders).forEach(item => {
+        this[`save${item}`] = () => {
+          if (window.GBS_IS_RUNNING) return;
+          this.loaders[item].save(this._context());
+        };
+
+        this[`load${item}`] = () => {
+          if (window.GBS_IS_RUNNING) return;
+          $(`#${item}`).click();
+        };
+
+        this[`onLoaded${item}`] = event => {
+          this.loaders[item].read(this._context(), event, () => {
+            this._closePanel();
+          });
+        };
+      });
+    },
+
+    newProject: function() {
+      if (window.GBS_IS_RUNNING) return;
+      if (!confirm(this.localize("new-project-confirm"))) return;
+
+      const context = this._context();
+      context.setProjectName("Program");
+      context.editor.reset();
+      context.boards.reset();
+      this._closePanel();
+    },
+
+    _closePanel: function() {
+      $("paper-drawer-panel")[0].togglePanel();
+    },
+
+    _context: function() {
+      const query = (id) => document.querySelector(id);
+
+      return {
+        ide: query("#gobstones-ide"),
+        toolbar: query("#toolbar"),
+        editor: query("#editor"),
+        boards: query("#boards"),
+        getProjectName: () => this.projectName,
+        setProjectName: (name) => this.projectName = name
+      };
+    }
+  };
+</script>

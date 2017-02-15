@@ -1,6 +1,6 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 <link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
-<link rel="import" href="../../scripts/jquery.html">
+<link rel="import" href="../../scripts/behaviors/leftMenuBehavior.html">
 <link rel="import" href="../../scripts/behaviors/localizationBehavior.html">
 <link rel="import" href="../../scripts/loaders/projectLoader.html">
 <link rel="import" href="../../scripts/loaders/components/codeLoader.html">
@@ -8,7 +8,7 @@
 <link rel="import" href="../../scripts/loaders/components/initialBoardLoader.html">
 <link rel="import" href="../../scripts/loaders/components/attires/individualAttireLoader.html">
 
-<dom-module id="left-menu">
+<dom-module id="left-menu-blocks">
   <template>
 
     <style>
@@ -63,90 +63,48 @@
           <span>[[localize("attire")]]</span>
           <save-and-load on-save="saveAttire" on-load="loadAttire"></save-and-load>
         </li>
+        <li class="action">
+          <span>[[localize("add-blocks")]]</span>
+          <paper-button on-click="loadBlocks">
+            <span class="clickable action">
+              <iron-icon icon="icons:extension"></iron-icon>
+            </span>
+          </paper-button>
+        </li>
       </ul>
 
-      <input id="Project" type="file" accept=".gbp" on-change="onLoadedProject" style="visibility: hidden;" />
+      <input id="Project" type="file" accept=".gbj" on-change="onLoadedProject" style="visibility: hidden;" />
 
-      <input id="Code" type="file" accept=".gbs" on-change="onLoadedCode" style="visibility: hidden;" />
+      <input id="Code" type="file" accept=".xml" on-change="onLoadedCode" style="visibility: hidden;" />
 
-      <input id="Library" type="file" accept=".gbl" on-change="onLoadedLibrary" style="visibility: hidden;" />
+      <input id="Library" type="file" accept=".xml" on-change="onLoadedLibrary" style="visibility: hidden;" />
 
       <input id="InitialBoard" type="file" accept=".gbb" on-change="onLoadedInitialBoard" style="visibility: hidden;" />
 
       <input id="Attire" type="file" accept=".zip" on-change="onLoadedAttire" style="visibility: hidden;" />
+
+      <input id="Blocks" type="file" accept=".xml" on-change="onLoadedBlocks" style="visibility: hidden;" />
     </div>
   </template>
 
   <script>
 
     Polymer({
-      is: 'left-menu',
+      is: 'left-menu-blocks',
       behaviors: [
-        Polymer.LocalizationBehavior
+        Polymer.LocalizationBehavior,
+        Polymer.LeftMenuBehavior
       ],
-      properties: {
-        projectName: {
-          type: String,
-          value: "Program"
-        },
-        projectType: String
-      },
 
       attached: function() {
-        this.loaders = {
+        this.setUpLoaders({
           Project: new ProjectLoader,
           Code: new CodeLoader,
           Library: new LibraryLoader,
           InitialBoard: new InitialBoardLoader,
           Attire: new IndividualAttireLoader
-        };
-
-        ["Project", "Code", "Library", "InitialBoard", "Attire"].forEach(item => {
-          this[`save${item}`] = () => {
-            if (window.GBS_IS_RUNNING) return;
-            this.loaders[item].save(this._context());
-          };
-
-          this[`load${item}`] = () => {
-            if (window.GBS_IS_RUNNING) return;
-            $(`#${item}`).click();
-          };
-
-          this[`onLoaded${item}`] = event => {
-            this.loaders[item].read(this._context(), event, () => {
-              this._closePanel();
-            });
-          };
         });
-      },
-
-      newProject: function() {
-        if (window.GBS_IS_RUNNING) return;
-        if (!confirm(this.localize("new-project-confirm"))) return;
-
-        const context = this._context();
-        context.setProjectName("Program");
-        context.editor.reset();
-        context.boards.reset();
-        this._closePanel();
-      },
-
-      _closePanel: function() {
-        $("paper-drawer-panel")[0].togglePanel();
-      },
-
-      _context: function() {
-        const query = (id) => document.querySelector(id);
-
-        return {
-          ide: query("#gobstones-ide"),
-          toolbar: query("#toolbar"),
-          editor: query("#editor"),
-          boards: query("#boards"),
-          getProjectName: () => this.projectName,
-          setProjectName: (name) => this.projectName = name
-        };
-      },
+      }
     });
 
   </script>

@@ -1,0 +1,101 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../scripts/behaviors/leftMenuBehavior.html">
+<link rel="import" href="../../scripts/behaviors/localizationBehavior.html">
+<link rel="import" href="../../scripts/loaders/projectLoader.html">
+<link rel="import" href="../../scripts/loaders/components/codeLoader.html">
+<link rel="import" href="../../scripts/loaders/components/libraryLoader.html">
+<link rel="import" href="../../scripts/loaders/components/initialBoardLoader.html">
+<link rel="import" href="../../scripts/loaders/components/attires/individualAttireLoader.html">
+
+<dom-module id="left-menu-code">
+  <template>
+
+    <style>
+      .title {
+        margin: 3px;
+      }
+
+      .project-title {
+        margin: -20px 30px;
+      }
+
+      .items {
+        margin-top: 40px;
+      }
+
+      .action-text {
+        vertical-align: middle;
+      }
+
+      .action {
+        margin: 10px 0;
+      }
+    </style>
+
+    <div>
+      <paper-button on-click="newProject">
+        <span class="clickable action">
+          <iron-icon icon="icons:description"></iron-icon>
+        </span>
+      </paper-button>
+
+      <save-and-load on-save="saveProject" on-load="loadProject"></save-and-load>
+    </div>
+    <h1 class="title">[[localize("project")]]</h1>
+    <paper-input class="project-title" value="{{projectName}}"></paper-input>
+
+    <div class="items">
+      <ul>
+        <li class="action">
+          <span>[[localize("code")]]</span>
+          <save-and-load on-save="saveCode" on-load="loadCode"></save-and-load>
+        </li>
+        <li class="action">
+          <span>[[localize("library")]]</span>
+          <save-and-load on-save="saveLibrary" on-load="loadLibrary"></save-and-load>
+        </li>
+        <li class="action">
+          <span>[[localize("initial-board")]]</span>
+          <save-and-load on-save="saveInitialBoard" on-load="loadInitialBoard"></save-and-load>
+        </li>
+        <li class="action">
+          <span>[[localize("attire")]]</span>
+          <save-and-load on-save="saveAttire" on-load="loadAttire"></save-and-load>
+        </li>
+      </ul>
+
+      <input id="Project" type="file" accept=".gbp" on-change="onLoadedProject" style="visibility: hidden;" />
+
+      <input id="Code" type="file" accept=".gbs" on-change="onLoadedCode" style="visibility: hidden;" />
+
+      <input id="Library" type="file" accept=".gbl" on-change="onLoadedLibrary" style="visibility: hidden;" />
+
+      <input id="InitialBoard" type="file" accept=".gbb" on-change="onLoadedInitialBoard" style="visibility: hidden;" />
+
+      <input id="Attire" type="file" accept=".zip" on-change="onLoadedAttire" style="visibility: hidden;" />
+    </div>
+  </template>
+
+  <script>
+
+    Polymer({
+      is: 'left-menu-code',
+      behaviors: [
+        Polymer.LocalizationBehavior,
+        Polymer.LeftMenuBehavior
+      ],
+
+      attached: function() {
+        this.setUpLoaders({
+          Project: new ProjectLoader,
+          Code: new CodeLoader,
+          Library: new LibraryLoader,
+          InitialBoard: new InitialBoardLoader,
+          Attire: new IndividualAttireLoader
+        });
+      }
+    });
+
+  </script>
+</dom-module>
