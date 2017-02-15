@@ -4,6 +4,8 @@
 <link rel="import" href="../../scripts/jquery.html">
 <link rel="import" href="../../scripts/stylist.html">
 
+<!-- // TODO: El bower.json quedó apuntando a mi fork de gs-element-blockly -->
+
 <dom-module id="gobstones-blockly">
   <template>
 
@@ -20,7 +22,7 @@
       }
     </style>
 
-    <gs-element-blockly id="blockly" class="blockly" workspace-XML="{{workspaceXml}}"></gs-element-blockly>
+    <gs-element-blockly id="blockly" class="blockly" workspace-xml="{{workspaceXml}}"></gs-element-blockly>
 
     <code-runner class="run-button" id="runner"></code-runner>
   </template>
@@ -33,11 +35,19 @@
         Polymer.BusListenerBehavior
       ],
       properties: {
-        mode: { type: String, value: "main" },
+        mode: {
+          type: String,
+          value: "main",
+          observer: "_onModeChange"
+        },
         code: {
           type: Object,
           value: { main: "", library: "", teacher: "" },
           observer: "setAsDirty"
+        },
+        workspace: {
+          type: Object,
+          value: { main: "", library: "" }
         },
         workspaceXml: {
           type: String,
@@ -53,14 +63,9 @@
         this.runner = this.$.runner;
         this.runner.addEventListener("run", ({ detail }) => {
           this._onRunRequest(detail)
-          // this.editor.readonly = true; // TODO: Desactivar todo
         });
         this.runner.addEventListener("cancel", () => {
           window.BUS.fire("cancel-request");
-          // this.editor.readonly = false; // TODO: Desactivar todo
-        });
-        this.runner.addEventListener("end", () => {
-          // this.editor.readonly = false; // TODO: Desactivar todo
         });
 
         this.stylist = new Stylist();
@@ -79,13 +84,12 @@
         });
       },
 
-      setCode: function(code, mode = "main") {
-        this.code[mode] = code;
-        //if (this.mode === mode) this.editor.setValue(code); // TODO: Set code
+      setBlocks: function(xml, mode = "main") {
+        this.workspace[mode] = xml;
+        // TODO: Cómo compilo esto hacia code. Cambiar de modo y compilarlo es una mala idea. Tal vez tenga que sí o sí usar dos blocklys.
       },
 
       toggleMode: function() {
-        return alert("COMING SOON");
         this._setMode(
           this.mode === "main" ? "library" : "main"
         );
@@ -97,9 +101,9 @@
 
       reset: function() {
         this._setMode("main");
-        this.setCode("", "main");
-        this.setCode("", "library");
-        this.setCode("", "teacher");
+        this.setBlocks("", "main");
+        this.setBlocks("", "library");
+        this.setBlocks("", "teacher");
       },
 
       _onRunRequest: function(options) {
@@ -108,7 +112,7 @@
       },
 
       _runCode: function(initialState) {
-        const code = { main: this.$.blockly.generateCode(), library: "", teacher: ""}; // TODO: this.code cuando ande workspaceXML
+        const code = this.code;
 
         try {
           this.runner.run(
@@ -136,13 +140,20 @@
       _setMode: function(mode) {
         this.mode = mode;
         window.BUS.fire("mode-change", this.mode);
-        //this.editor.setValue(this.code[this.mode]); // TODO: Cambiar modo
-        //this.editor.focus();
+      },
+
+      _onModeChange: function() {
+        this.workspaceXml = this._getWorkspace()[this.mode];
       },
 
       _updateCode: function() {
-        this.code[this.mode] = this.$.blockly.generateCode()
-        // TODO: Esto no se está llamando. workspaceXML no está implementada
+        if (this.runner) this.runner.stop()
+        this._getWorkspace()[this.mode] = this.workspaceXml;
+        this.code[this.mode] = this.$.blockly.generateCode();
+      },
+
+      _getWorkspace: function() {
+        return this.workspace || {};
       }
     });
 
