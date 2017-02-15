@@ -23,6 +23,7 @@
     </style>
 
     <gs-element-blockly id="blockly" class="blockly" workspace-xml="{{workspaceXml}}"></gs-element-blockly>
+    <gs-element-blockly id="blocklytmp"></gs-element-blockly>
 
     <code-runner class="run-button" id="runner"></code-runner>
   </template>
@@ -86,7 +87,7 @@
 
       setBlocks: function(xml, mode = "main") {
         this.workspace[mode] = xml;
-        // TODO: Cómo compilo esto hacia code. Cambiar de modo y compilarlo es una mala idea. Tal vez tenga que sí o sí usar dos blocklys.
+        this.code[mode] = this._xmlToCode(xml);
       },
 
       toggleMode: function() {
@@ -154,6 +155,11 @@
 
       _getWorkspace: function() {
         return this.workspace || {};
+      },
+
+      _xmlToCode: function(xml) {
+        this.$.blocklytmp.workspaceXml = xml;
+        return this.$.blocklytmp.generateCode();
       }
     });
 
