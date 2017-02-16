@@ -1,5 +1,7 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 <link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../bower_components/paper-item/paper-item-body.html">
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
 <link rel="import" href="../../scripts/behaviors/leftMenuBehavior.html">
 <link rel="import" href="../../scripts/behaviors/localizationBehavior.html">
 <link rel="import" href="../../scripts/loaders/projectLoader.html">
@@ -31,29 +33,68 @@
       .action {
         margin: 10px 0;
       }
+
+      .menu-header-gobstones {
+        background-color: white;
+        padding-top: 7px;
+        padding-bottom: 8px;
+        margin-left: 20px;
+      }
+
+      paper-item-body {
+        font-weight: 500;
+      }
+
+      .line-separator {
+        border-bottom: 1px solid #d9d9d9;
+        margin-bottom: 20px;
+      }
+
     </style>
 
-    <div>
-    <div class="items">
-      <ul>
-        <li class="action">
-          <span>[[localize("code")]]</span>
-          <save-and-load on-save="saveCode" on-load="loadCode"></save-and-load>
-        </li>
-        <li class="action">
-          <span>[[localize("library")]]</span>
-          <save-and-load on-save="saveLibrary" on-load="loadLibrary"></save-and-load>
-        </li>
-        <li class="action">
-          <span>[[localize("initial-board")]]</span>
-          <save-and-load on-save="saveInitialBoard" on-load="loadInitialBoard"></save-and-load>
-        </li>
-        <li class="action">
-          <span>[[localize("attire")]]</span>
-          <save-and-load on-save="saveAttire" on-load="loadAttire"></save-and-load>
-        </li>
-      </ul>
+    <paper-item center-justified flex class="menu-header-gobstones">
+      <img class="app-logo" src="../../images/logo.png" />
+      <div class="app-name">Gobstones</div>
+    </paper-item>
 
+    <div class="line-separator"></div>
+
+    <div role="listbox">
+      <paper-item>
+        <paper-item-body>
+          <div>[[localize("code")]]</div>
+        </paper-item-body>
+        <paper-icon-button on-click="saveCode" icon="icons:save" alt="save code"> </paper-icon-button>
+        <paper-icon-button on-click="loadCode" icon="icons:folder-open" alt="open code"> </paper-icon-button>
+      </paper-item>
+
+      <paper-item>
+        <paper-item-body>
+          <div>[[localize("library")]]</div>
+        </paper-item-body>
+        <paper-icon-button on-click="saveLibrary" icon="icons:save" alt="save code"> </paper-icon-button>
+        <paper-icon-button on-click="loadLibrary" icon="icons:folder-open" alt="open code"> </paper-icon-button>
+      </paper-item>
+
+      <paper-item>
+        <paper-item-body>
+          <div>[[localize("initial-board")]]</div>
+        </paper-item-body>
+        <paper-icon-button on-click="saveInitialBoard" icon="icons:save" alt="save code"> </paper-icon-button>
+        <paper-icon-button on-click="loadInitialBoard" icon="icons:folder-open" alt="open code"> </paper-icon-button>
+      </paper-item>
+
+      <paper-item>
+        <paper-item-body>
+          <div>[[localize("attire")]]</div>
+        </paper-item-body>
+        <paper-icon-button on-click="saveAttire" icon="icons:save" alt="save code"> </paper-icon-button>
+        <paper-icon-button on-click="loadAttire" icon="icons:folder-open" alt="open code"> </paper-icon-button>
+      </paper-item>
+    </div>
+
+
+    <div class="items">
       <input id="Code" type="file" accept=".gbs" on-change="onLoadedCode" style="visibility: hidden;" />
 
       <input id="Library" type="file" accept=".gbl" on-change="onLoadedLibrary" style="visibility: hidden;" />
