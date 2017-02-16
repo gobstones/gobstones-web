@@ -58,6 +58,10 @@
         libraryFunctions: Array
       },
 
+      observers: [
+        '_onTeacherLibraryChange(code.teacher)'
+      ],
+
       ready: function() {
         this.subscribeTo("initial-state", event => {
           this._runCode(event);
@@ -149,9 +153,8 @@
         window.BUS.fire("mode-change", this.mode);
         this.workspaceXml = this._getWorkspace()[this.mode];
         this.$.blockly.primitiveProcedures = mode === "main" ? this.libraryProcedures : [];
-        // TODO: Enviar a otro lugar que no sea primitiveProcedures
-        // TODO: Enviar las function names
-        // TODO: Enviar los del teacher también
+        // TODO: Enviar a libraryProcedures
+        // TODO: Enviar las libraryFunctions también
       },
 
       _updateCode: function() {
@@ -165,26 +168,42 @@
         if (this.mode === "library") this._updateLibraryActions();
       },
 
+      _onTeacherLibraryChange: function(teacher) {
+        try {
+          const actions = this._getActionNames(teacher);
+
+          // TODO: Descomentar cuando esto ande
+          // this.$.blockly.primitiveProcedures = actions.procedureNames;
+          // this.$.blockly.primitiveFunctions = actions.functionNames;
+        } catch(e) {
+          alert("The teacher's library has errors. This is bad.");
+        }
+      },
+
       _updateLibraryActions: function() {
         try {
           const getName = (it) => it.name + _.repeat("_", it.parameters.length);
 
-          const declarations = new Parser().parse(this.code.library).declarations;
-          const procedureNames = declarations.filter(it => it.alias === "procedureDeclaration").map(getName);
-          const functionNames = declarations.filter(it => it.alias === "functionDeclaration").map(getName);
+          const actions = this._getActionNames(this.code.library);
+          const procedureNames = actions.procedureNames.map(getName);
+          const functionNames = actions.functionNames.map(getName);
 
           this.libraryProcedures = procedureNames;
           this.libraryFunctions = functionNames;
           this.libraryHasErrors = false;
         } catch(e) {
-          if (this.code.library === "") {
-            this.libraryHasErrors = false;
-            return;
-          }
-
           // it does not compile
           this.libraryHasErrors = true;
         }
+      },
+
+      _getActionNames: function(sourceCode) {
+        const declarations = new Parser().parse(sourceCode).declarations;
+
+        const procedureNames = declarations.filter(it => it.alias === "procedureDeclaration");
+        const functionNames = declarations.filter(it => it.alias === "functionDeclaration");
+
+        return { procedureNames, functionNames };
       },
 
       _getWorkspace: function() {

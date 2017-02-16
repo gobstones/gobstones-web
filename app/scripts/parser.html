@@ -12,6 +12,8 @@
     }
 
     parse(sourceCode, onError = () => {}, onSuccess = (it) => it) {
+      if (_.trim(sourceCode) === "") return onSuccess({ declarations: [] });
+
       try {
         return onSuccess(this.gsParser.parse(sourceCode));
       } catch (e) {

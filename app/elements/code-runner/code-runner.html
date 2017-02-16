@@ -183,9 +183,6 @@
       _parse: function(code, onError, onSuccess, fixMainErrorLines) {
         const sourceCode = code.library + "\n" + code.main + "\n" + code.teacher;
 
-        if (_.trim(sourceCode) === "")
-          return onSuccess({ declarations: [] });
-
         this.parser.parse(sourceCode, e => {
           e.location = this._getErrorLineAndMode(e, code, fixMainErrorLines);
           return onError(e, code);
