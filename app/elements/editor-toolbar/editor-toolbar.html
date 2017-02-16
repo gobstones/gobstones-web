@@ -35,9 +35,10 @@
       </template>
 
       <img class="app-logo" src="../../images/logo.png" />
-      <paper-input value="Acá va un nombre que describe qué es este proyecto" class="navbar-project-title" no-label-float>
-        <paper-icon-button suffix icon="save"></paper-icon-button>
-        <paper-icon-button suffix icon="folder-open"></paper-icon-button>
+      <paper-input value="{{projectName}}" class="navbar-project-title" no-label-float>
+        <paper-icon-button suffix icon="description" on-click="newProject"></paper-icon-button>
+        <paper-icon-button suffix icon="folder-open" on-click="loadProject"></paper-icon-button>
+        <paper-icon-button suffix icon="save" on-click="saveProject"></paper-icon-button>
       </paper-input>
 
       <div class="title"></div>
@@ -56,14 +57,15 @@
       </template>
     </paper-toolbar>
 
+    <input id="Project" type="file" accept=".gbp" on-change="onLoadedProject" style="display:none;" />
   </template>
-
   <script>
 
     Polymer({
       is: 'editor-toolbar',
       behaviors: [
         Polymer.BusListenerBehavior,
+        Polymer.LocalizationBehavior,
         Polymer.LeftMenuBehavior
       ],
       properties: {
