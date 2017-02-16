@@ -30,20 +30,18 @@
     </style>
 
     <paper-toolbar class="main-toolbar">
-      <template is="dom-if" if="{{isNotEmpty(tools)}}">
-        <paper-icon-button icon="menu" paper-drawer-toggle on-click="togglePanel"></paper-icon-button>
-      </template>
-
+      <paper-icon-button icon="menu" paper-drawer-toggle on-click="togglePanel"></paper-icon-button>
       <img class="app-logo" src="../../images/logo.png" />
-      <paper-input value="{{projectName}}" class="navbar-project-title" no-label-float>
-        <paper-icon-button suffix icon="description" on-click="newProject"></paper-icon-button>
-        <paper-icon-button suffix icon="folder-open" on-click="loadProject"></paper-icon-button>
-        <paper-icon-button suffix icon="save" on-click="saveProject"></paper-icon-button>
-      </paper-input>
-
-      <div class="title"></div>
 
       <template is="dom-if" if="{{isNotEmpty(tools)}}">
+        <paper-input value="{{projectName}}" class="navbar-project-title" no-label-float>
+          <paper-icon-button suffix icon="description" on-click="newProject"></paper-icon-button>
+          <paper-icon-button suffix icon="folder-open" on-click="loadProject"></paper-icon-button>
+          <paper-icon-button suffix icon="save" on-click="saveProject"></paper-icon-button>
+        </paper-input>
+
+        <div class="title"></div>
+
         <div class="buttons">
           <template is="dom-if" if="{{showZoom(tools)}}">
             <paper-button on-click="increaseEditorFontSize"><iron-icon class="button" icon="icons:zoom-in"></iron-icon></paper-button>
