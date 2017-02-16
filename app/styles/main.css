@@ -29,6 +29,9 @@ body {
 
 .app-logo {
   height: 30px;
+  background-color: white;
+  border-radius: 20px;
+  padding: 4px 6px 4px 6px;
 }
 
 .panel-container {
