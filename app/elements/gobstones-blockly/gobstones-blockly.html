@@ -1,5 +1,6 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 <link rel="import" href="../../bower_components/gs-element-blockly/gs-element-blockly.html">
+<link rel="import" href="../../scripts/parser.html">
 <link rel="import" href="../../scripts/behaviors/busListenerBehavior.html">
 <link rel="import" href="../../scripts/jquery.html">
 <link rel="import" href="../../scripts/stylist.html">
@@ -51,7 +52,10 @@
         workspaceXml: {
           type: String,
           observer: "_updateCode"
-        }
+        },
+
+        libraryProcedures: Array,
+        libraryFunctions: Array
       },
 
       ready: function() {
@@ -90,6 +94,9 @@
       },
 
       toggleMode: function() {
+        if (this.mode === "library" && this.libraryHasErrors)
+          window.BUS.fire("compilation-error", { libraryHasErrors: true });
+
         this._setMode(
           this.mode === "main" ? "library" : "main"
         );
@@ -141,6 +148,10 @@
         this.mode = mode;
         window.BUS.fire("mode-change", this.mode);
         this.workspaceXml = this._getWorkspace()[this.mode];
+        this.$.blockly.primitiveProcedures = mode === "main" ? this.libraryProcedures : [];
+        // TODO: Enviar a otro lugar que no sea primitiveProcedures
+        // TODO: Enviar las function names
+        // TODO: Enviar los del teacher también
       },
 
       _updateCode: function() {
@@ -150,6 +161,30 @@
         if (this.runner) this.runner.stop()
         this._getWorkspace()[this.mode] = this.workspaceXml;
         this.code[this.mode] = this.$.blockly.generateCode();
+
+        if (this.mode === "library") this._updateLibraryActions();
+      },
+
+      _updateLibraryActions: function() {
+        try {
+          const getName = (it) => it.name + _.repeat("_", it.parameters.length);
+
+          const declarations = new Parser().parse(this.code.library).declarations;
+          const procedureNames = declarations.filter(it => it.alias === "procedureDeclaration").map(getName);
+          const functionNames = declarations.filter(it => it.alias === "functionDeclaration").map(getName);
+
+          this.libraryProcedures = procedureNames;
+          this.libraryFunctions = functionNames;
+          this.libraryHasErrors = false;
+        } catch(e) {
+          if (this.code.library === "") {
+            this.libraryHasErrors = false;
+            return;
+          }
+
+          // it does not compile
+          this.libraryHasErrors = true;
+        }
       },
 
       _getWorkspace: function() {

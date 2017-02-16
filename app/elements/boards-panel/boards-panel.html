@@ -480,7 +480,11 @@
         this.showToast(
           report.line
             ? `[${report.line}] ${report.error.message}`
-            : this.localize("the-program-has-errors")
+            : this.localize(
+              report.libraryHasErrors
+                ? "the-library-has-errors"
+                : "the-program-has-errors"
+            )
         );
       },
 
