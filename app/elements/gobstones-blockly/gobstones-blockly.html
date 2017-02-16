@@ -22,7 +22,7 @@
       }
     </style>
 
-    <gs-element-blockly id="blockly" class="blockly" workspace-xml="{{workspaceXml}}"></gs-element-blockly>
+    <gs-element-blockly id="blockly" class="blockly" workspace-xml="{{workspaceXml}}" toolbox="{{toolbox}}"></gs-element-blockly>
     <gs-element-blockly id="blocklytmp"></gs-element-blockly>
 
     <code-runner class="run-button" id="runner"></code-runner>
@@ -45,6 +45,7 @@
           value: { main: "", library: "", teacher: "" },
           observer: "setAsDirty"
         },
+        toolbox: Object,
         workspace: {
           type: Object,
           value: { main: "", library: "" }

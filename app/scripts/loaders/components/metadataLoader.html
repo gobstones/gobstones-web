@@ -80,7 +80,8 @@
         context.boards.showAttire = metadata.attire.visible;
       }, 0);
 
-      // TODO: Pasar toolbox de blockly
+      if (metadata.type === "blocks" && metadata.toolbox)
+        context.editor.toolbox = toolbox;
     }
   }
 </script>
