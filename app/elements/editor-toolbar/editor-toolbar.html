@@ -16,35 +16,8 @@
         user-select: none;
       }
 
-      .main-toolbar.tall .app-name {
-        font-size: 40px;
-        font-weight: 300;
-        -webkit-transform-origin: left center;
-        transform-origin: left center;
-      }
-
-      .main-toolbar .middle-container,
-      .main-toolbar .bottom-container {
-        @apply(--layout-horizontal);
-        @apply(--layout-center);
-      }
-
-      .main-toolbar .middle-container  {
-        height: 100%;
-        margin-left: 48px;
-      }
-
-      .main-toolbar:not(.tall) .middle-container {
-        font-size: 18px;
-        padding-bottom: 0;
-      }
-
-      .main-toolbar .bottom-container {
-        @apply(--paper-font-subhead);
-
-        margin-left: 48px;
-        -webkit-transform-origin: left center;
-        transform-origin: left center;
+      .main-toolbar {
+        z-index: 10;
       }
 
       .navbar-project-title {
@@ -56,7 +29,7 @@
       }
     </style>
 
-    <paper-toolbar class="main-toolbar" style="z-index: 10;">
+    <paper-toolbar class="main-toolbar">
       <template is="dom-if" if="{{isNotEmpty(tools)}}">
         <paper-icon-button icon="menu" paper-drawer-toggle on-click="togglePanel"></paper-icon-button>
       </template>
@@ -90,7 +63,8 @@
     Polymer({
       is: 'editor-toolbar',
       behaviors: [
-        Polymer.BusListenerBehavior
+        Polymer.BusListenerBehavior,
+        Polymer.LeftMenuBehavior
       ],
       properties: {
         tools: {
@@ -118,6 +92,12 @@
           this.showLibrary = mode === "library";
         }).subscribeTo("reset", () => {
           this.set("permissions.can_use_library", true);
+        });
+      },
+
+      attached: function() {
+        this.setUpLoaders({
+          Project: new ProjectLoader
         });
       },
 
