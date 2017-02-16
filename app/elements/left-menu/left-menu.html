@@ -4,13 +4,14 @@
 <link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
 <link rel="import" href="../../scripts/behaviors/leftMenuBehavior.html">
 <link rel="import" href="../../scripts/behaviors/localizationBehavior.html">
-<link rel="import" href="../../scripts/loaders/projectLoader.html">
 <link rel="import" href="../../scripts/loaders/components/codeLoader.html">
 <link rel="import" href="../../scripts/loaders/components/libraryLoader.html">
+<link rel="import" href="../../scripts/loaders/components/codeBlocksLoader.html">
+<link rel="import" href="../../scripts/loaders/components/libraryBlocksLoader.html">
 <link rel="import" href="../../scripts/loaders/components/initialBoardLoader.html">
 <link rel="import" href="../../scripts/loaders/components/attires/individualAttireLoader.html">
 
-<dom-module id="left-menu-code">
+<dom-module id="left-menu">
   <template>
 
     <style>
@@ -60,13 +61,25 @@
     <div class="line-separator"></div>
 
     <div role="listbox">
-      <paper-item>
-        <paper-item-body>
-          <div>[[localize("code")]]</div>
-        </paper-item-body>
-        <paper-icon-button on-click="loadCode" icon="icons:folder-open" alt="open code"> </paper-icon-button>
-        <paper-icon-button on-click="saveCode" icon="icons:save" alt="save code"> </paper-icon-button>
-      </paper-item>
+      <template is="dom-if" if="{{_isCodeProject(projectType)}}">
+        <paper-item>
+          <paper-item-body>
+            <div>[[localize("code")]]</div>
+          </paper-item-body>
+          <paper-icon-button on-click="loadCode" icon="icons:folder-open" alt="open code"> </paper-icon-button>
+          <paper-icon-button on-click="saveCode" icon="icons:save" alt="save code"> </paper-icon-button>
+        </paper-item>
+      </template>
+
+      <template is="dom-if" if="{{!_isCodeProject(projectType)}}">
+        <paper-item>
+          <paper-item-body>
+            <div>[[localize("blocks")]]</div>
+          </paper-item-body>
+          <paper-icon-button on-click="loadCode" icon="icons:folder-open" alt="open code"> </paper-icon-button>
+          <paper-icon-button on-click="saveCode" icon="icons:save" alt="save code"> </paper-icon-button>
+        </paper-item>
+      </template>
 
       <paper-item>
         <paper-item-body>
@@ -93,11 +106,18 @@
       </paper-item>
     </div>
 
-
     <div class="items">
-      <input id="Code" type="file" accept=".gbs" on-change="onLoadedCode" style="visibility: hidden;" />
+      <template is="dom-if" if="{{_isCodeProject(projectType)}}">
+        <input id="Code" type="file" accept=".gbs" on-change="onLoadedCode" style="visibility: hidden;" />
 
-      <input id="Library" type="file" accept=".gbl" on-change="onLoadedLibrary" style="visibility: hidden;" />
+        <input id="Library" type="file" accept=".gbl" on-change="onLoadedLibrary" style="visibility: hidden;" />
+      </template>
+
+      <template is="dom-if" if="{{!_isCodeProject(projectType)}}">
+        <input id="Code" type="file" accept=".gbjs" on-change="onLoadedCode" style="visibility: hidden;" />
+
+        <input id="Library" type="file" accept=".gbjl" on-change="onLoadedLibrary" style="visibility: hidden;" />
+      </template>
 
       <input id="InitialBoard" type="file" accept=".gbb" on-change="onLoadedInitialBoard" style="visibility: hidden;" />
 
@@ -108,19 +128,34 @@
   <script>
 
     Polymer({
-      is: 'left-menu-code',
+      is: 'left-menu',
       behaviors: [
         Polymer.LocalizationBehavior,
         Polymer.LeftMenuBehavior
       ],
+      properties: {
+        projectType: String
+      },
 
       attached: function() {
-        this.setUpLoaders({
-          Code: new CodeLoader,
-          Library: new LibraryLoader,
-          InitialBoard: new InitialBoardLoader,
-          Attire: new IndividualAttireLoader
-        });
+        this.setUpLoaders(
+          this._isCodeProject(this.projectType)
+            ? {
+              Code: new CodeLoader,
+              Library: new LibraryLoader,
+              InitialBoard: new InitialBoardLoader,
+              Attire: new IndividualAttireLoader
+            } : {
+              Code: new CodeBlocksLoader,
+              Library: new LibraryBlocksLoader,
+              InitialBoard: new InitialBoardLoader,
+              Attire: new IndividualAttireLoader
+            }
+        ); // ;(
+      },
+
+      _isCodeProject: function(projectType) {
+        return projectType === "code";
       }
     });
 

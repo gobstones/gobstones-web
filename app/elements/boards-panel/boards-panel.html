@@ -358,18 +358,6 @@
         this.showAttire = !this.showAttire;
       },
 
-      buttonCssClass: function(element) {
-        if (!this.domHost) return;
-        return this.domHost.buttonCssClass(element);
-      },
-
-      isInitialBoardSelected: (selectedTab) => selectedTab === 0,
-      isFinalBoardSelected: (selectedTab) => selectedTab === 1,
-      isFinalBoardVisible: (finalState, error) => finalState || error,
-      isInitialBoardNotEditable: function(selectedTab, showAttire, permissions) {
-        return selectedTab === 1 || showAttire || !this.hasPermission(permissions, "can_edit_board");
-      },
-
       addOrSetAttire: function(attire) {
         if (this.setAttire(attire.name)) return;
 
@@ -591,6 +579,18 @@
       _onToolboxViewPermissionChange: function(visible) {
         if (this.stylist) this.stylist.toolboxVisible = visible;
         $(window).trigger("resize");
+      },
+
+      isInitialBoardSelected: (selectedTab) => selectedTab === 0,
+      isFinalBoardSelected: (selectedTab) => selectedTab === 1,
+      isFinalBoardVisible: (finalState, error) => finalState || error,
+      isInitialBoardNotEditable: function(selectedTab, showAttire, permissions) {
+        return selectedTab === 1 || showAttire || !this.hasPermission(permissions, "can_edit_board");
+      },
+
+      buttonCssClass: function(element) {
+        if (!this.domHost) return;
+        return this.domHost.buttonCssClass(element);
       },
 
       boardSizeCss: function(selectedTab, showAttire, permissions) {

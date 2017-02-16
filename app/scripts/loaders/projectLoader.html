@@ -41,7 +41,7 @@
       this.attireLoader.writeToZip(context, zip);
 
       zip.generateAsync({ type: "blob" }).then(content => {
-        this._saveBlob(content, `${context.getProjectName()}.${this.EXTENSION}`);
+        this._saveBlob(content, `${context.getProjectName()}${this.EXTENSION}`);
       });
     }
 

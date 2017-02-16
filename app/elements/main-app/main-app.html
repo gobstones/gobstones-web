@@ -8,12 +8,7 @@
     <paper-drawer-panel left-drawer id="paperDrawerPanel" drawer-width="250px" force-narrow disable-edge-swipe>
       <!-- LEFT MENU -->
       <paper-header-panel drawer>
-        <template is="dom-if" if="{{isBlocks(projectType)}}">
-          <left-menu-blocks></left-menu-blocks>
-        </template>
-        <template is="dom-if" if="{{isCode(projectType)}}">
-          <left-menu-code></left-menu-code>
-        </template>
+        <left-menu project-type="[[projectType]]"></left-menu>
       </paper-header-panel>
 
       <!-- Main Area -->
@@ -37,14 +32,6 @@
       is: 'main-app',
       properties: {
         projectType: { value: "code" }
-      },
-
-      isBlocks: function(projectType) {
-        return projectType === "blocks";
-      },
-
-      isCode: function(projectType) {
-        return projectType === "code";
       }
     });
 

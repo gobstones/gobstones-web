@@ -1,6 +1,8 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 <link rel="import" href="../../bower_components/iron-icons/maps-icons.html">
 <link rel="import" href="../../scripts/behaviors/busListenerBehavior.html">
+<link rel="import" href="../../scripts/loaders/projectLoader.html">
+<link rel="import" href="../../scripts/loaders/projectBlocksLoader.html">
 <link rel="import" href="../../scripts/jquery.html">
 
 <dom-module id="editor-toolbar">
@@ -33,7 +35,7 @@
       <paper-icon-button icon="menu" paper-drawer-toggle on-click="togglePanel"></paper-icon-button>
       <img class="app-logo" src="../../images/logo.png" />
 
-      <template is="dom-if" if="{{isNotEmpty(tools)}}">
+      <template is="dom-if" if="{{_areToolsVisible(projectType)}}">
         <paper-input value="{{projectName}}" class="navbar-project-title" no-label-float>
           <paper-icon-button suffix icon="description" on-click="newProject"></paper-icon-button>
           <paper-icon-button suffix icon="folder-open" on-click="loadProject"></paper-icon-button>
@@ -43,7 +45,7 @@
         <div class="title"></div>
 
         <div class="buttons">
-          <template is="dom-if" if="{{showZoom(tools)}}">
+          <template is="dom-if" if="{{_isCodeProject(projectType)}}">
             <paper-button on-click="increaseEditorFontSize"><iron-icon class="button" icon="icons:zoom-in"></iron-icon></paper-button>
             <paper-button on-click="decreaseEditorFontSize"><iron-icon class="button" icon="icons:zoom-out"></iron-icon></paper-button>
           </template>
@@ -55,7 +57,7 @@
       </template>
     </paper-toolbar>
 
-    <input id="Project" type="file" accept$="[[_projectExtension(tools)]]" on-change="onLoadedProject" style="display:none;" />
+    <input id="Project" type="file" accept$="[[_projectExtension(projectType)]]" on-change="onLoadedProject" style="display:none;" />
   </template>
   <script>
 
@@ -67,7 +69,7 @@
         Polymer.LeftMenuBehavior
       ],
       properties: {
-        tools: {
+        projectType: {
           type: String,
           value: "none"
         },
@@ -95,7 +97,7 @@
         });
 
         this.setUpLoaders({
-          Project: this._projectLoader(this.tools)
+          Project: this._projectLoader(this.projectType)
         });
       },
 
@@ -113,11 +115,6 @@
         this._editor().toggleMode();
       },
 
-      buttonCssClass: function(element) {
-        if (!this.domHost) return;
-        return this.domHost.buttonCssClass(element);
-      },
-
       increaseEditorFontSize: function() {
         this._editor().increaseFontSize();
       },
@@ -126,12 +123,12 @@
         this._editor().decreaseFontSize();
       },
 
-      showZoom: function(tools) {
-        return tools === "code";
+      _isCodeProject: function(projectType) {
+        return projectType === "code";
       },
 
-      isNotEmpty: function(tools) {
-        return tools !== "none";
+      _areToolsVisible: function(projectType) {
+        return projectType !== "none";
       },
 
       _editor: function() {
@@ -139,16 +136,21 @@
       },
 
       _showBoardsDirection: function(value) {
-        return value ? 'right' : 'left';
+        return value ? "right" : "left";
       },
 
-      _projectLoader: function(tools) {
-        return tools === 'code' ? new ProjectLoader : new ProjectBlocksLoader;
+      _projectLoader: function(projectType) {
+        return this._isCodeProject(projectType) ? new ProjectLoader : new ProjectBlocksLoader;
       },
 
-      _projectExtension: function(tools) {
-        return this._projectLoader(tools).EXTENSION;
-      }
+      _projectExtension: function(projectType) {
+        return this._projectLoader(projectType).EXTENSION;
+      },
+
+      buttonCssClass: function(element) {
+        if (!this.domHost) return;
+        return this.domHost.buttonCssClass(element);
+      },
     });
 
   </script>

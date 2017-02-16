@@ -25,7 +25,7 @@
 
         this[`onLoaded${item}`] = event => {
           this.loaders[item].read(this._context(), event, () => {
-            this._closePanel();
+            if (item !== "Project") this._closePanel();
           });
         };
       });
@@ -39,7 +39,6 @@
       context.setProjectName(this.localize("new-project"));
       context.editor.reset();
       context.boards.reset();
-      this._closePanel();
     },
 
     _closePanel: function() {
