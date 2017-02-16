@@ -46,6 +46,14 @@
         -webkit-transform-origin: left center;
         transform-origin: left center;
       }
+
+      .navbar-project-title {
+        --paper-input-container-input-color: #FFFFFF;
+        --paper-input-container-color: #FF5B81;
+        --paper-input-container-focus-color: #FF5B81;
+        width: 70%;
+        margin-left: 15px;
+      }
     </style>
 
     <paper-toolbar class="main-toolbar" style="z-index: 10;">
@@ -58,7 +66,10 @@
       <div class="middle middle-container" style="width: 100%;">
         <!-- Application name -->
         <img class="app-logo" src="../../images/logo.png" />
-        <div class="app-name" style="width: 90%">Gobstones</div>
+        <paper-input value="Acá va un nombre que describe qué es este proyecto" class="navbar-project-title" no-label-float>
+          <paper-icon-button suffix icon="save"></paper-icon-button>
+          <paper-icon-button suffix icon="folder-open"></paper-icon-button>
+        </paper-input>
 
         <template is="dom-if" if="{{isNotEmpty(tools)}}">
           <div class="buttons">
