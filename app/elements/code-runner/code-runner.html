@@ -226,7 +226,8 @@
         return context.board()
           .snapshots
           .filter(snapshot => {
-            const hasToIgnoreIt = _.includes(teacherTools, snapshot.name);
+            const contextName = snapshot.name.split("-")[0];
+            const hasToIgnoreIt = _.includes(teacherTools, contextName);
             const isTheFirstOcurrence = previousContext !== snapshot.name;
 
             previousContext = snapshot.name;
