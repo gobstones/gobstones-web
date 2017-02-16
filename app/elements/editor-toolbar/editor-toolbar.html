@@ -93,11 +93,9 @@
         }).subscribeTo("reset", () => {
           this.set("permissions.can_use_library", true);
         });
-      },
 
-      attached: function() {
         this.setUpLoaders({
-          Project: new ProjectLoader
+          Project: this._projectLoader(this.tools)
         });
       },
 
