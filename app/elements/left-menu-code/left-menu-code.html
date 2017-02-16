@@ -34,17 +34,6 @@
     </style>
 
     <div>
-      <paper-button on-click="newProject">
-        <span class="clickable action">
-          <iron-icon icon="icons:description"></iron-icon>
-        </span>
-      </paper-button>
-
-      <save-and-load on-save="saveProject" on-load="loadProject"></save-and-load>
-    </div>
-    <h1 class="title">[[localize("project")]]</h1>
-    <paper-input class="project-title" value="{{projectName}}"></paper-input>
-
     <div class="items">
       <ul>
         <li class="action">
@@ -64,8 +53,6 @@
           <save-and-load on-save="saveAttire" on-load="loadAttire"></save-and-load>
         </li>
       </ul>
-
-      <input id="Project" type="file" accept=".gbp" on-change="onLoadedProject" style="visibility: hidden;" />
 
       <input id="Code" type="file" accept=".gbs" on-change="onLoadedCode" style="visibility: hidden;" />
 
@@ -88,7 +75,6 @@
 
       attached: function() {
         this.setUpLoaders({
-          Project: new ProjectLoader,
           Code: new CodeLoader,
           Library: new LibraryLoader,
           InitialBoard: new InitialBoardLoader,

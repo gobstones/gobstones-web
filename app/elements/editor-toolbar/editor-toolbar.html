@@ -16,73 +16,55 @@
         user-select: none;
       }
 
-      .main-toolbar.tall .app-name {
-        font-size: 40px;
-        font-weight: 300;
-        -webkit-transform-origin: left center;
-        transform-origin: left center;
+      .main-toolbar {
+        z-index: 10;
       }
 
-      .main-toolbar .middle-container,
-      .main-toolbar .bottom-container {
-        @apply(--layout-horizontal);
-        @apply(--layout-center);
-      }
-
-      .main-toolbar .middle-container  {
-        height: 100%;
-        margin-left: 48px;
-      }
-
-      .main-toolbar:not(.tall) .middle-container {
-        font-size: 18px;
-        padding-bottom: 0;
-      }
-
-      .main-toolbar .bottom-container {
-        @apply(--paper-font-subhead);
-
-        margin-left: 48px;
-        -webkit-transform-origin: left center;
-        transform-origin: left center;
+      .navbar-project-title {
+        --paper-input-container-input-color: #FFFFFF;
+        --paper-input-container-color: #FF5B81;
+        --paper-input-container-focus-color: #FF5B81;
+        width: 70%;
+        margin-left: 15px;
       }
     </style>
 
-    <paper-toolbar class="main-toolbar" style="z-index: 10;">
+    <paper-toolbar class="main-toolbar">
+      <paper-icon-button icon="menu" paper-drawer-toggle on-click="togglePanel"></paper-icon-button>
+      <img class="app-logo" src="../../images/logo.png" />
+
       <template is="dom-if" if="{{isNotEmpty(tools)}}">
-        <paper-icon-button icon="menu" paper-drawer-toggle on-click="togglePanel"></paper-icon-button>
+        <paper-input value="{{projectName}}" class="navbar-project-title" no-label-float>
+          <paper-icon-button suffix icon="description" on-click="newProject"></paper-icon-button>
+          <paper-icon-button suffix icon="folder-open" on-click="loadProject"></paper-icon-button>
+          <paper-icon-button suffix icon="save" on-click="saveProject"></paper-icon-button>
+        </paper-input>
+
+        <div class="title"></div>
+
+        <div class="buttons">
+          <template is="dom-if" if="{{showZoom(tools)}}">
+            <paper-button on-click="increaseEditorFontSize"><iron-icon class="button" icon="icons:zoom-in"></iron-icon></paper-button>
+            <paper-button on-click="decreaseEditorFontSize"><iron-icon class="button" icon="icons:zoom-out"></iron-icon></paper-button>
+          </template>
+          <template is="dom-if" if="{{permissions.can_use_library}}">
+            <paper-button on-click="toggleLibrary"><iron-icon class$="button {{buttonCssClass(showLibrary)}}" icon="icons:chrome-reader-mode"></iron-icon></paper-button>
+          </template>
+          <paper-button on-click="toggleShowBoards"><iron-icon class="button" icon$="icons:chevron-{{_showBoardsDirection(showBoards)}}"></iron-icon></paper-button>
+        </div>
       </template>
-
-      <span class="space"></span>
-
-      <div class="middle middle-container" style="width: 100%;">
-        <!-- Application name -->
-        <img class="app-logo" src="../../images/logo.png" />
-        <div class="app-name" style="width: 90%">Gobstones</div>
-
-        <template is="dom-if" if="{{isNotEmpty(tools)}}">
-          <div class="buttons">
-            <template is="dom-if" if="{{showZoom(tools)}}">
-              <paper-button on-click="increaseEditorFontSize"><iron-icon class="button" icon="icons:zoom-in"></iron-icon></paper-button>
-              <paper-button on-click="decreaseEditorFontSize"><iron-icon class="button" icon="icons:zoom-out"></iron-icon></paper-button>
-            </template>
-            <template is="dom-if" if="{{permissions.can_use_library}}">
-              <paper-button on-click="toggleLibrary"><iron-icon class$="button {{buttonCssClass(showLibrary)}}" icon="icons:chrome-reader-mode"></iron-icon></paper-button>
-            </template>
-            <paper-button on-click="toggleShowBoards"><iron-icon class="button" icon$="icons:chevron-{{_showBoardsDirection(showBoards)}}"></iron-icon></paper-button>
-          </div>
-        </template>
-      </div>
     </paper-toolbar>
 
+    <input id="Project" type="file" accept$="[[_projectExtension(tools)]]" on-change="onLoadedProject" style="display:none;" />
   </template>
-
   <script>
 
     Polymer({
       is: 'editor-toolbar',
       behaviors: [
-        Polymer.BusListenerBehavior
+        Polymer.BusListenerBehavior,
+        Polymer.LocalizationBehavior,
+        Polymer.LeftMenuBehavior
       ],
       properties: {
         tools: {
@@ -110,6 +92,10 @@
           this.showLibrary = mode === "library";
         }).subscribeTo("reset", () => {
           this.set("permissions.can_use_library", true);
+        });
+
+        this.setUpLoaders({
+          Project: this._projectLoader(this.tools)
         });
       },
 
@@ -154,6 +140,14 @@
 
       _showBoardsDirection: function(value) {
         return value ? 'right' : 'left';
+      },
+
+      _projectLoader: function(tools) {
+        return tools === 'code' ? new ProjectLoader : new ProjectBlocksLoader;
+      },
+
+      _projectExtension: function(tools) {
+        return this._projectLoader(tools).EXTENSION;
       }
     });
 
