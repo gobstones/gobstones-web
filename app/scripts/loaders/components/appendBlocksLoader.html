@@ -1,0 +1,20 @@
+<link rel="import" href="../textLoader.html">
+<link rel="import" href="mixins/singleFileComponent.html">
+
+<script>
+  class AppendBlocksLoader extends TextLoader {
+    constructor() {
+      super();
+      _.defaults(this, SingleFileComponent);
+      this.SUFFIX = "---";
+    }
+
+    buildContent(context) {
+      throw new Error("This method should not be called (read-only loader)");
+    }
+
+    readContent(context, content, fileName) {
+      context.editor.addCode(content);
+    }
+  }
+</script>

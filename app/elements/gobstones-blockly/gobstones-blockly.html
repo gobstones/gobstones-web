@@ -92,6 +92,10 @@
         });
       },
 
+      addCode: function(xml) {
+        this.$.blockly.appendBlocksToWorkspace(xml);
+      },
+
       setCode: function(xml, mode = "main") {
         this.workspace[mode] = xml;
         this.code[mode] = this._xmlToCode(xml);
