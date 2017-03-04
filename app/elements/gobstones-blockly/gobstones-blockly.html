@@ -129,6 +129,7 @@
 
       _runCode: function(initialState) {
         const code = this.code;
+        this._onTeacherLibraryChange(code.teacher);
 
         try {
           this.runner.run(
