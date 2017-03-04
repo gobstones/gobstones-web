@@ -179,7 +179,7 @@
           const actions = this._getActionNames(teacher);
 
           if (! _.isEmpty(actions.procedureNames)) {
-            this.$.blockly.primitiveProcedures = _.map(actions.procedureNames, "name");
+            this.$.blockly.primitiveProcedures =  actions.procedureNames;
           }
         } catch(e) {
           alert("The teacher's library has errors. This is bad.");
@@ -206,10 +206,17 @@
       _getActionNames: function(sourceCode) {
         const declarations = new Parser().parse(sourceCode).declarations;
 
-        const procedureNames = declarations.filter(it => it.alias === "procedureDeclaration");
-        const functionNames = declarations.filter(it => it.alias === "functionDeclaration");
+        const withAlias = (alias) => (declaration) => declaration.alias === `${alias}Declaration`;
+        const isAuxiliaryDeclaration = (declaration) => declaration.name.toLowerCase().startsWith("aux");
 
-        return { procedureNames, functionNames };
+        const computeDeclarations = (alias) =>
+          _(declarations)
+          .filter(withAlias(alias))
+          .reject(isAuxiliaryDeclaration)
+          .map("name")
+          .value();
+
+        return { procedureNames: computeDeclarations("procedure"), functionNames: computeDeclarations("function") };
       },
 
       _getWorkspace: function() {
