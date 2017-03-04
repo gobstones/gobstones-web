@@ -96,10 +96,10 @@
         this.$.blockly.appendBlocksToWorkspace(xml);
       },
 
-      setCode: function(xml, mode = "main") {
-        this.workspace[mode] = xml;
-        this.code[mode] = this._xmlToCode(xml);
-        if (this.mode === mode) this.workspaceXml = xml;
+      setCode: function(code, mode = "main") {
+        this.workspace[mode] = code;
+        this.code[mode] = mode === "teacher" ? code : this._xmlToCode(code);
+        if (this.mode === mode) this.workspaceXml = code;
       },
 
       toggleMode: function() {
