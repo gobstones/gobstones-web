@@ -59,10 +59,6 @@
         libraryFunctions: Array
       },
 
-      observers: [
-        '_onTeacherLibraryChange(code.teacher)'
-      ],
-
       ready: function() {
         this.subscribeTo("initial-state", event => {
           this._runCode(event);
@@ -100,6 +96,10 @@
         this.workspace[mode] = code;
         this.code[mode] = mode === "teacher" ? code : this._xmlToCode(code);
         if (this.mode === mode) this.workspaceXml = code;
+
+        if (mode === "teacher") {
+          this._onTeacherLibraryChange(code);
+        }
       },
 
       toggleMode: function() {
