@@ -177,9 +177,9 @@
         try {
           const actions = this._getActionNames(teacher);
 
-          // TODO: Descomentar cuando esto ande
-          // this.$.blockly.primitiveProcedures = actions.procedureNames;
-          // this.$.blockly.primitiveFunctions = actions.functionNames;
+          if (! _.isEmpty(actions.procedureNames)) {
+            this.$.blockly.primitiveProcedures = _.map(actions.procedureNames, "name");
+          }
         } catch(e) {
           alert("The teacher's library has errors. This is bad.");
         }
