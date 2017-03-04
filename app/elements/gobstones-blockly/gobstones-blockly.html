@@ -190,9 +190,9 @@
         try {
           const getName = (it) => it.name + _.repeat("_", it.parameters.length);
 
-          const actions = this._getActionNames(this.code.library);
-          const procedureNames = actions.procedureNames.map(getName);
-          const functionNames = actions.functionNames.map(getName);
+          const actions = this._getActions(this.code.library);
+          const procedureNames = actions.procedureDeclarations.map(getName);
+          const functionNames = actions.functionDeclarations.map(getName);
 
           this.libraryProcedures = procedureNames;
           this.libraryFunctions = functionNames;
@@ -203,15 +203,24 @@
         }
       },
 
-      _getActionNames: function(sourceCode) {
+      _getActions: function(sourceCode) {
         const declarations = new Parser().parse(sourceCode).declarations;
-
         const withAlias = (alias) => (declaration) => declaration.alias === `${alias}Declaration`;
-        const isAuxiliaryDeclaration = (declaration) => declaration.name.toLowerCase().startsWith("aux");
 
         const computeDeclarations = (alias) =>
           _(declarations)
           .filter(withAlias(alias))
+          .value();
+
+        return { procedureDeclarations: computeDeclarations("procedure"), functionDeclarations: computeDeclarations("function") };
+      },
+
+      _getActionNames: function(sourceCode) {
+        const declarations = this._getActions(sourceCode);
+        const isAuxiliaryDeclaration = (declaration) => declaration.name.toLowerCase().startsWith("aux");
+
+        const computeDeclarations = (type) =>
+          _(declarations[`${type}Declarations`])
           .reject(isAuxiliaryDeclaration)
           .map("name")
           .value();
