@@ -59,10 +59,6 @@
         libraryFunctions: Array
       },
 
-      observers: [
-        '_onTeacherLibraryChange(code.teacher)'
-      ],
-
       ready: function() {
         this.subscribeTo("initial-state", event => {
           this._runCode(event);
@@ -96,10 +92,14 @@
         this.$.blockly.appendBlocksToWorkspace(xml);
       },
 
-      setCode: function(xml, mode = "main") {
-        this.workspace[mode] = xml;
-        this.code[mode] = this._xmlToCode(xml);
-        if (this.mode === mode) this.workspaceXml = xml;
+      setCode: function(code, mode = "main") {
+        this.workspace[mode] = code;
+        this.code[mode] = mode === "teacher" ? code : this._xmlToCode(code);
+        if (this.mode === mode) this.workspaceXml = code;
+
+        if (mode === "teacher") {
+          this._onTeacherLibraryChange(code);
+        }
       },
 
       toggleMode: function() {
@@ -177,9 +177,9 @@
         try {
           const actions = this._getActionNames(teacher);
 
-          // TODO: Descomentar cuando esto ande
-          // this.$.blockly.primitiveProcedures = actions.procedureNames;
-          // this.$.blockly.primitiveFunctions = actions.functionNames;
+          if (! _.isEmpty(actions.procedureNames)) {
+            this.$.blockly.primitiveProcedures = _.map(actions.procedureNames, "name");
+          }
         } catch(e) {
           alert("The teacher's library has errors. This is bad.");
         }
