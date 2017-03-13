@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/gobstones/gobstones-web.svg?branch=master)](https://travis-ci.org/gobstones/gobstones-web)
+
 # gobstones-web
 
 This is a web IDE of the language [Gobstones](http://gobstones.github.io).
@@ -29,6 +31,8 @@ export TRAVIS_PULL_REQUEST=false
 bash travis-runner.sh
 ```
 ## desktop/offline version
+
+Gobstones Web uses HTML5 App Cache. This means that after the first time you visit the app, the next session will be cached and offline-ready.
 
 ### with simple python server
 
