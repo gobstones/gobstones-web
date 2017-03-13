@@ -3,7 +3,6 @@ CACHE MANIFEST
 index.html
 styles/main.css
 bower_components/webcomponentsjs/webcomponents-lite.min.js
-bower_components/polymer/polymer.html
 elements/elements.html
 scripts/lodash.html
 scripts/app.js
