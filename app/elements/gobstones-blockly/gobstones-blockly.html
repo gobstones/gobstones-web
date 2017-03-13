@@ -5,7 +5,6 @@
 <link rel="import" href="../../scripts/jquery.html">
 <link rel="import" href="../../scripts/stylist.html">
 
-<!-- // TODO: El bower.json quedó apuntando a mi fork de gs-element-blockly -->
 <dom-module id="gobstones-blockly">
   <template>
 
@@ -158,9 +157,12 @@
         this.mode = mode;
         window.BUS.fire("mode-change", this.mode);
         this.workspaceXml = this._getWorkspace()[this.mode];
-        this.$.blockly.primitiveProcedures = mode === "main" ? this.libraryProcedures : [];
-        // TODO: Enviar a libraryProcedures
-        // TODO: Enviar las libraryFunctions también
+
+        // TODO: Enviar a libraryProcedures y libraryFunctions
+        // Ver bien en qué formato mandarlos. Propuesta: "PonerBolitasEn(color,direccion)" https://github.com/Program-AR/gs-element-blockly/issues/50#issuecomment-280254981
+
+        // this.$.blockly.primitiveProcedures = mode === "main" ? this.libraryProcedures : [];
+        // this.$.blockly.primitiveProcedures = mode === "main" ? this.libraryFunctions : [];
       },
 
       _updateCode: function() {
@@ -178,8 +180,9 @@
         try {
           const actions = this._getActionNames(teacher);
 
-          if (! _.isEmpty(actions.procedureNames)) {
-            this.$.blockly.primitiveProcedures =  actions.procedureNames;
+          if (!_.isEmpty(actions.procedureNames)) {
+            this.$.blockly.primitiveProcedures = actions.procedureNames;
+            this.$.blockly.primitiveFunctions = actions.functionNames;
           }
         } catch(e) {
           alert("The teacher's library has errors. This is bad.");
@@ -188,14 +191,10 @@
 
       _updateLibraryActions: function() {
         try {
-          const getName = (it) => it.name + _.repeat("_", it.parameters.length);
-
           const actions = this._getActions(this.code.library);
-          const procedureNames = actions.procedureDeclarations.map(getName);
-          const functionNames = actions.functionDeclarations.map(getName);
 
-          this.libraryProcedures = procedureNames;
-          this.libraryFunctions = functionNames;
+          this.libraryProcedures = actions.procedureDeclarations;
+          this.libraryFunctions = actions.functionDeclarations;
           this.libraryHasErrors = false;
         } catch(e) {
           // it does not compile
@@ -207,12 +206,12 @@
         const declarations = new Parser().parse(sourceCode).declarations;
         const withAlias = (alias) => (declaration) => declaration.alias === `${alias}Declaration`;
 
-        const computeDeclarations = (alias) =>
-          _(declarations)
-          .filter(withAlias(alias))
-          .value();
+        const computeDeclarations = (alias) => _.filter(declarations, withAlias(alias))
 
-        return { procedureDeclarations: computeDeclarations("procedure"), functionDeclarations: computeDeclarations("function") };
+        return {
+          procedureDeclarations: computeDeclarations("procedure"),
+          functionDeclarations: computeDeclarations("function")
+        };
       },
 
       _getActionNames: function(sourceCode) {
@@ -225,7 +224,10 @@
           .map("name")
           .value();
 
-        return { procedureNames: computeDeclarations("procedure"), functionNames: computeDeclarations("function") };
+        return {
+          procedureNames: computeDeclarations("procedure"),
+          functionNames: computeDeclarations("function")
+        };
       },
 
       _getWorkspace: function() {
