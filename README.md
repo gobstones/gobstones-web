@@ -28,9 +28,26 @@ export TRAVIS_BRANCH=master
 export TRAVIS_PULL_REQUEST=false
 bash travis-runner.sh
 ```
-## offline version (node-webkit)
+## desktop/offline version
 
-### run locally
+### with simple python server
+
+#### build
+```bash
+git clone --depth 1 https://github.com/gobstones/gobstones-web -b gh-pages
+sed -i '$ d' index.js
+zip -r gobstones-web.zip *
+```
+
+#### install and run
+```bash
+unzip gobstones-web.zip -d gobstones-web
+./gobstones-web/start-desktop.sh
+```
+
+### with nw.js
+
+#### run locally
 ```bash
 # (1) install node-webkit
 sudo npm install -g nw
@@ -55,11 +72,17 @@ git checkout -- index.js
 rm gobstones-web.nw
 ```
 
-### generate native distributable binaries
+#### generate native distributable binaries
 The previous steps (1), (2), and (3) are pre-conditions.
 ```bash
 ./node_modules/nw-builder/bin/nwbuild --platforms win32,win64,linux32,linux64 .
 # the output is in /build
+```
+
+Single-file packages can be generated using [winrar](https://www.winrar.es/) (windows) and [makeself](https://github.com/megastep/makeself) (linux)
+
+```bash
+makeself build/gobstones-web/linux64 gobstones-web.run "Gobstones Web" ./gobstones-web
 ```
 
 ## more docs
