@@ -3,8 +3,8 @@ set -o pipefail
 
 if [ "$TRAVIS_BRANCH" = "master" ] && [ "$TRAVIS_PULL_REQUEST" = "false" ]
 then
-  git config --global user.email "travis@gmail.com"
-  git config --global user.name "auto deployer"
+  #git config --global user.email "travis@gmail.com"
+  #git config --global user.name "auto deployer"
 
   # Stamp index.html with the date and time of PSK's deploying
   date_value=`date`

@@ -32,7 +32,7 @@ bash travis-runner.sh
 ```
 ## desktop/offline version
 
-Gobstones Web uses HTML5 App Cache. This means that after the first time you visit the app, the next session will be cached and offline-ready.
+Gobstones Web uses HTML5 App Cache. This means that after the first time you visit the app, the next session will be cached and offline-ready. To clear cache, go to `chrome://appcache-internals/`
 
 ### with simple python server
 
