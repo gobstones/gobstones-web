@@ -39,7 +39,10 @@ Gobstones Web uses HTML5 App Cache. This means that after the first time you vis
 #### build
 ```bash
 git clone --depth 1 https://github.com/gobstones/gobstones-web -b gh-pages
+cd gobstones-web
+rm -rf .git
 sed -i '$ d' index.js
+cp app/start-desktop.sh ./start-desktop.sh
 zip -r gobstones-web.zip *
 ```
 
