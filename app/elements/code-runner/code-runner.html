@@ -223,12 +223,19 @@
         return context.board()
           .snapshots
           .filter(snapshot => {
-            const contextName = snapshot.name.split("-")[0];
-            const hasToIgnoreIt = _.includes(teacherTools, contextName);
-            const isTheFirstOcurrence = previousContext !== snapshot.name;
+            const toName = (it) => it.split("-")[0];
+            const prevNames = _.take(snapshot.names, snapshot.names.length - 1).map(toName);
+            const lastName = _.last(snapshot.names)
+            const contextName = toName(lastName);
 
-            previousContext = snapshot.name;
-            return !hasToIgnoreIt || isTheFirstOcurrence;
+            const hasToIgnoreIt = _.includes(teacherTools, contextName);
+            const isTheFirstOcurrence = previousContext !== lastName;
+            const isCallFromIgnoredFunction = _.some(prevNames, name =>
+              _.includes(teacherTools, name)
+            );
+
+            previousContext = lastName;
+            return (!hasToIgnoreIt || isTheFirstOcurrence) && !isCallFromIgnoredFunction;
           }).map(snapshot => snapshot.board).concat(lastState);
       },
 
