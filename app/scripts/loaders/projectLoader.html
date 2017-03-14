@@ -49,6 +49,7 @@
       const { file, fileName } = this._readLocalFile(event);
 
       JSZip.loadAsync(file).then(zip => {
+        context.editor.reset();
         context.boards.reset();
         context.setProjectName(fileName);
         context.editor.setAsDirty();
