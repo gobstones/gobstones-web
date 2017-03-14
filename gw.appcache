@@ -6,9 +6,8 @@ https://gobstones.github.io/gobstones-web/index.html
 https://gobstones.github.io/gobstones-web/index.js
 https://gobstones.github.io/gobstones-web/locales.json
 
-# [!] External fonts
-https://fonts.googleapis.com/css?family=Roboto:400,300,300italic,400italic,500,500italic,700,700italic
-https://fonts.googleapis.com/css?family=Roboto+Mono:400,700
+# Font
+https://gobstones.github.io/gobstones-web/bower_components/font-roboto/roboto.html
 
 # Styles and images
 https://gobstones.github.io/gobstones-web/theme-chrome.js
