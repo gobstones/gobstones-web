@@ -7,7 +7,13 @@
       is: 'event-bus',
 
       ready: function() {
-        if (window.BUS && window.BUS.events) window.BUS.events.forEach(event => this.addEventListener(event.name, event.handler));
+        if (window.BUS) {
+          const eventsToListen = window.BUS.eventsToListen || [];
+
+          eventsToListen.forEach(event =>
+            this.addEventListener(event.name, event.handler)
+          );
+        }
 
         window.BUS = this;
       }

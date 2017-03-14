@@ -114,6 +114,12 @@
         margin-top: 2px;
       }
 
+      .run-button {
+        position: absolute;
+        bottom: 30px;
+        right: 24px;
+      }
+
       paper-tab {
         --paper-tab-content-unselected: {
           opacity: 0.5;
@@ -221,6 +227,7 @@
       </template>
     </div>
 
+    <code-runner class="run-button" id="runner"></code-runner>
   </template>
 
   <script>

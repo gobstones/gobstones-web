@@ -13,18 +13,10 @@
         display: block;
         height: 100vh;
       }
-
-      .run-button {
-        position: absolute;
-        bottom: 30px;
-        right: 24px;
-      }
     </style>
 
     <gs-element-blockly id="blockly" class="blockly" workspace-xml="{{workspaceXml}}" toolbox="{{toolbox}}"></gs-element-blockly>
     <gs-element-blockly id="blocklytmp"></gs-element-blockly>
-
-    <code-runner class="run-button" id="runner"></code-runner>
   </template>
 
   <script>
@@ -59,16 +51,19 @@
       },
 
       ready: function() {
+        const boardsPanel = document.getElementById("boards");
+        if (boardsPanel) {
+          this.runner = boardsPanel.$.runner;
+          this.runner.addEventListener("run", ({ detail }) => {
+            this._onRunRequest(detail)
+          });
+          this.runner.addEventListener("cancel", () => {
+            window.BUS.fire("cancel-request");
+          });
+        }
+
         this.subscribeTo("initial-state", event => {
           this._runCode(event);
-        });
-
-        this.runner = this.$.runner;
-        this.runner.addEventListener("run", ({ detail }) => {
-          this._onRunRequest(detail)
-        });
-        this.runner.addEventListener("cancel", () => {
-          window.BUS.fire("cancel-request");
         });
 
         this.stylist = new Stylist();

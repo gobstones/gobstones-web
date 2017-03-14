@@ -52,11 +52,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <!-- Configure temporal event bus -->
 <script>
   var Bus = function() {
-    this.events = [];
+    this.eventsToListen = [];
   }
 
-  Bus.prototype.addEventListener = function(event, handler) {
-    this.events.push({ event: event, handler: handler });
+  Bus.prototype.addEventListener = function(name, handler) {
+    this.eventsToListen.push({ name: name, handler: handler });
   };
 
   window.BUS = new Bus();

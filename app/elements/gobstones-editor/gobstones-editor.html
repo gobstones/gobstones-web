@@ -21,12 +21,6 @@
           @apply(--gobstones-editor);
         }
       }
-
-      .run-button {
-        position: absolute;
-        bottom: 30px;
-        right: 24px;
-      }
     </style>
 
     <iron-localstorage name="font-size" value="{{fontSize}}" on-iron-localstorage-load-empty="_initializeDefaultFontSize"></iron-localstorage>
@@ -42,8 +36,6 @@
       readonly="{{readonly}}"
       initial-focus
     ></ace-widget>
-
-    <code-runner class="run-button" id="runner"></code-runner>
   </template>
 
   <script>
@@ -75,21 +67,24 @@
         this.DEFAULT_FONT_SIZE = 17;
         this.HOP_SIZE = 3;
 
+        const boardsPanel = document.getElementById("boards");
+        if (boardsPanel) {
+          this.runner = boardsPanel.$.runner;
+          this.runner.addEventListener("run", ({ detail }) => {
+            this._onRunRequest(detail)
+            this.readonly = true;
+          });
+          this.runner.addEventListener("cancel", () => {
+            window.BUS.fire("cancel-request");
+            this.readonly = false;
+          });
+          this.runner.addEventListener("end", () => {
+            this.readonly = false;
+          });
+        }
+
         this.subscribeTo("initial-state", event => {
           this._runCode(event);
-        });
-
-        this.runner = this.$.runner;
-        this.runner.addEventListener("run", ({ detail }) => {
-          this._onRunRequest(detail)
-          this.readonly = true;
-        });
-        this.runner.addEventListener("cancel", () => {
-          window.BUS.fire("cancel-request");
-          this.readonly = false;
-        });
-        this.runner.addEventListener("end", () => {
-          this.readonly = false;
         });
 
         this.editor = this.$.ace.editor;
