@@ -34,22 +34,20 @@ bash travis-runner.sh
 
 Gobstones Web uses HTML5 App Cache. This means that after the first time you visit the app, the next session will be cached and offline-ready. To clear cache, go to `chrome://appcache-internals/`
 
-### with simple python server
+### with simple python server (recommended)
 
 #### build
 ```bash
 git clone --depth 1 https://github.com/gobstones/gobstones-web -b gh-pages
 cd gobstones-web
-rm -rf .git
+rm -rf .git gw.appcache
 sed -i '$ d' index.js
-cp app/start-desktop.sh ./start-desktop.sh
-zip -r gobstones-web.zip *
+makeself . gobstones-web.run "Gobstones Web" ./start-desktop.sh
 ```
 
-#### install and run
+#### run
 ```bash
-unzip gobstones-web.zip -d gobstones-web
-./gobstones-web/start-desktop.sh
+./gobstones-web.run
 ```
 
 ### with nw.js
