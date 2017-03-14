@@ -80,8 +80,8 @@
         context.boards.showAttire = metadata.attire.visible;
       }, 0);
 
-      if (metadata.type === "blocks" && metadata.toolbox)
-        context.editor.toolbox = toolbox;
+      if (metadata.type === "blocks" && metadata.blocks)
+        context.editor.toolbox = metadata.blocks;
     }
   }
 </script>
