@@ -200,7 +200,7 @@
       },
 
       _getErrorLineAndMode: function(e, code, forceIsInMainCode) {
-        const libraryLines = code.library.split("\n").length;
+        const libraryLines = code.library.split("\n").length - 1;
 
         try {
           const isInMainCode = forceIsInMainCode || e.on.range.start.row > libraryLines;
