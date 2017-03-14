@@ -6,9 +6,6 @@ https://gobstones.github.io/gobstones-web/index.html
 https://gobstones.github.io/gobstones-web/index.js
 https://gobstones.github.io/gobstones-web/locales.json
 
-# Font
-https://gobstones.github.io/gobstones-web/bower_components/font-roboto/roboto.html
-
 # Styles and images
 https://gobstones.github.io/gobstones-web/theme-chrome.js
 https://gobstones.github.io/gobstones-web/styles/main.css
@@ -114,3 +111,6 @@ https://gobstones.github.io/gobstones-web/scripts/loaders/projectLoader.html
 https://gobstones.github.io/gobstones-web/scripts/loaders/projectLoader.js
 https://gobstones.github.io/gobstones-web/scripts/loaders/textLoader.html
 https://gobstones.github.io/gobstones-web/scripts/loaders/textLoader.js
+
+NETWORK:
+https://fonts.gstatic.com/*
