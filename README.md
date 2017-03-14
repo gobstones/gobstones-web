@@ -25,6 +25,7 @@ This is hosted at Github Pages in http://gobstones.github.io/gobstones-web
 
 To deploy manually:
 ```bash
+# increase version in gw.appcache
 rm -rf .tmp .publish dist
 export TRAVIS_BRANCH=master
 export TRAVIS_PULL_REQUEST=false
