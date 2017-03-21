@@ -81,6 +81,13 @@
           $("#blocklyDiv").css("width", width + "px");
           $("#blocklyDiv").css("height", height + "px");
         });
+
+        setTimeout(() => {
+          if (window.LOAD_PENDING_PROJECT) {
+            window.LOAD_PENDING_PROJECT()
+            window.LOAD_PENDING_PROJECT = undefined;
+          }
+        }, 0);
       },
 
       addCode: function(xml) {

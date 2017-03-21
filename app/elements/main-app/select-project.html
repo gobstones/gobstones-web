@@ -1,5 +1,8 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 <link rel="import" href="../../scripts/behaviors/localizationBehavior.html">
+l">
+<link rel="import" href="../../scripts/behaviors/leftMenuBehavior.html">
+<link rel="import" href="../../scripts/loaders/projectBlocksLoader.html">
 
 <dom-module id="select-project">
   <style>
@@ -36,25 +39,42 @@
   <template>
     <editor-toolbar tools="none"></editor-toolbar>
     <div class="content">
-      <paper-icon-button class="button button-blocks" on-click="newBlocksProject" icon="icons:extension" alt="use blocks"> </paper-icon-button>
+      <paper-icon-button class="button button-blocks" on-click="useBlocks" icon="icons:extension" alt="use blocks"> </paper-icon-button>
 
-      <paper-icon-button class="button button-code" on-click="newCodeProject" icon="icons:code" alt="use code"> </paper-icon-button>
+      <paper-icon-button class="button button-code" on-click="useCode" icon="icons:code" alt="use code"> </paper-icon-button>
     </div>
+
+    <input id="InitialBlocksProject" type="file" accept=".gbjp" on-change="onInitialProjectLoad" style="display:none;" />
   </template>
 
   <script>
     Polymer({
       is: 'select-project',
       behaviors: [
-        Polymer.LocalizationBehavior
+        Polymer.LocalizationBehavior,
+        Polymer.LeftMenuBehavior
       ],
 
-      newBlocksProject: function() {
-        this._goTo("/blocks");
+      ready: function() {
+        this.setUpLoaders({
+          InitialBlocksProject: new ProjectBlocksLoader
+        });
       },
 
-      newCodeProject: function() {
+      useBlocks: function() {
+        this.loadInitialBlocksProject();
+      },
+
+      useCode: function() {
         this._goTo("/code");
+      },
+
+      onInitialProjectLoad: function(event) {
+        this._goTo("/blocks");
+
+        window.LOAD_PENDING_PROJECT = () => {
+          this.onLoadedInitialBlocksProject(event);
+        };
       },
 
       _goTo: function(route) {
