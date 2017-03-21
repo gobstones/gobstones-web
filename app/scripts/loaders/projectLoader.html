@@ -80,7 +80,11 @@
 
         handled = true;
         getContent().then(content => {
-          loader.readProjectContent(context, content);
+          try {
+            loader.readProjectContent(context, content);
+          } catch(e) {
+            alert(`Hubo un error al cargar ${relativePath}`);
+          }
           callback();
         });
       });
