@@ -16,7 +16,7 @@
     </style>
 
     <gs-element-blockly id="blockly" class="blockly" workspace-xml="{{workspaceXml}}" toolbox="{{toolbox}}"></gs-element-blockly>
-    <gs-element-blockly id="blocklytmp"></gs-element-blockly>
+    <gs-element-blockly id="blocklytmp" style="visibility: hidden"></gs-element-blockly>
   </template>
 
   <script>
@@ -73,6 +73,7 @@
           $("#blocklyDiv").css("width", $(".panel-left").width() + "px");
           $("#blocklyDiv").css("height", $(".panel-left").height() - 64 + "px");
         });
+
         $(window).resize(() => {
           let width = $(".panel-left").width()
           let height = $(".panel-left").height() - 64;
