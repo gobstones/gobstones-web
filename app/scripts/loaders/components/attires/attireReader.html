@@ -22,12 +22,12 @@
     }
 
     writeToZip(attire, zip, pathPrefix = "") {
-      zip.file(pathPrefix + attire.name + this.FILE_EXTENSION, this._serialize(attire));
+      ZipUtils.add(zip, pathPrefix + attire.name + this.FILE_EXTENSION, this._serialize(attire));
 
       attire.rules.forEach(rule => {
         const imageBase64 = rule.image.replace(this.BASE64_PREFIX, "");
         const pngContent = toBinary(imageBase64);
-        zip.file(pathPrefix + rule.fileName, pngContent);
+        ZipUtils.add(zip, pathPrefix + rule.fileName, pngContent, { base64: false, binary: true });
       });
     }
 

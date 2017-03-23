@@ -10,5 +10,34 @@ class ZipUtils {
 
       return _.sortBy(files, "relativePath");
   }
+
+  static add(zip, pathToFile, content, options) {
+    if (!zip.$$folders) zip.$$folders = {};
+
+    const getOrCreateDir = function(path, create) {
+      console.log("Tengo que crear", path, zip.$$folders[path] ? "pero ya existe" : "creando");
+      return zip.$$folders[path] = zip.$$folders[path] || create();
+    };
+
+    const getDir = function getDir(path) {
+      console.log("LLAMANDO A GETDIR CON", path);
+      const parts = path.split("/");
+
+      const isTheFile = path === pathToFile;
+      if (parts.length === 1) {
+        return isTheFile ? zip : getOrCreateDir(path, () => zip.folder(path));
+      } else {
+        const parent = getDir(parts.slice(0, parts.length - 1).join("/"));
+        const current = _.last(parts);
+
+        return isTheFile
+          ? parent
+          : getOrCreateDir(path, () => parent.folder(current))
+      }
+    };
+
+    const fileName = _.last(pathToFile.split("/"));
+    getDir(pathToFile).file(fileName, content, options);
+  }
 }
 </script>

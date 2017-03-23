@@ -35,7 +35,7 @@
 
       const zip = new JSZip();
       files.forEach(file => {
-        zip.file(file.name, file.content);
+        ZipUtils.add(zip, file.name, file.content);
       });
 
       this.attireLoader.writeToZip(context, zip);
