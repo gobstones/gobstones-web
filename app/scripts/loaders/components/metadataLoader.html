@@ -47,7 +47,8 @@
           user_permissions: {
             can_toggle_visibility: context.boards.permissions.can_toggle_attire_visibility
           }
-        }
+        },
+        blocks: context.editor.toolbox
       }, null, 2);
     }
 
@@ -80,8 +81,7 @@
         context.boards.showAttire = metadata.attire.visible;
       }, 0);
 
-      if (metadata.type === "blocks" && metadata.blocks)
-        context.editor.toolbox = metadata.blocks;
+      if (metadata.blocks) context.editor.toolbox = metadata.blocks;
     }
   }
 </script>
