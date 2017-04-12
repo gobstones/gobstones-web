@@ -47,6 +47,17 @@
       this._beResponsive();
     }
 
+    setBlocklyResize() {
+      const resize = () => {
+        const panel = $(this.LEFT_PANEL_CSS_CLASS);
+        $("#blocklyDiv").css("width", panel.width() + "px");
+        $("#blocklyDiv").css("height", panel.height() - this.TOOLBAR_HEIGHT + "px");
+      };
+
+      setTimeout(resize, 0);
+      $(window).resize(resize);
+    }
+
     _beResponsive() {
       var percentage = this._keepAspectRatioOnWindowResize(this.LEFT_PANEL_CSS_CLASS);
       this._scaleAndCenterBoard(percentage);
