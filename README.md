@@ -73,6 +73,7 @@ git checkout gh-pages
 git pull
 git checkout -b electron
 sed -i '$ d' index.js
+sed -i -e "s/'\.'/'\.\/resources\/app'/g" start-electron.js
 electron-packager . gobstones-web --pĺatform linux --arch x64
 makeself ./gobstones-web-linux-x64 gobstones-web.run "Gobstones Web" ./gobstones-web
 ```
