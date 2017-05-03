@@ -25,15 +25,12 @@ This is hosted at Github Pages in http://gobstones.github.io/gobstones-web
 
 To deploy manually:
 ```bash
-# increase version in gw.appcache
 rm -rf .tmp .publish dist
 export TRAVIS_BRANCH=master
 export TRAVIS_PULL_REQUEST=false
 bash travis-runner.sh
 ```
 ## desktop/offline version
-
-Gobstones Web uses HTML5 App Cache. This means that after the first time you visit the app, the next session will be cached and offline-ready. To clear cache, go to `chrome://appcache-internals/`
 
 ### with simple python server (recommended)
 
