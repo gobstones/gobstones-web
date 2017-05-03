@@ -39,7 +39,7 @@
     "vulcanize": ">= 1.4.2",
     "web-component-tester": "^4.0.0"
   },
-  "main": "index.html",
+  "main": "start-electron.js",
   "window": {
     "title": "Gobstones Web",
     "width": 800,
