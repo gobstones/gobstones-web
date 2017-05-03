@@ -38,7 +38,6 @@ bash travis-runner.sh
 ```bash
 git clone --depth 1 https://github.com/gobstones/gobstones-web -b gh-pages
 cd gobstones-web
-rm -rf .git gw.appcache
 sed -i '$ d' index.js
 makeself . gobstones-web.run "Gobstones Web" ./start-desktop.sh
 ```
