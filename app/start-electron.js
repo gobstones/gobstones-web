@@ -24,7 +24,7 @@ freeport((err, port) => {
   let mainWindow;
 
   function createWindow() {
-    mainWindow = new BrowserWindow({width: 800, height: 600});
+    mainWindow = new BrowserWindow({ width: 1024, height: 800 });
     mainWindow.loadURL(`http://localhost:${port}`);
     mainWindow.on('closed', () => mainWindow = null);
   }
