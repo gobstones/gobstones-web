@@ -39,6 +39,7 @@ Gobstones Web uses HTML5 App Cache. This means that after the first time you vis
 
 #### build
 ```bash
+# requires makeself
 git clone --depth 1 https://github.com/gobstones/gobstones-web -b gh-pages
 cd gobstones-web
 rm -rf .git gw.appcache
@@ -51,38 +52,34 @@ makeself . gobstones-web.run "Gobstones Web" ./start-desktop.sh
 ./gobstones-web.run
 ```
 
-### with nw.js
+### with electron
 
 #### run locally
 ```bash
-# (1) install node-webkit
-sudo npm install -g nw
-
-# (2) create a branch from the #gh-pages code base
-git checkout -b nw
-git branch --set-upstream-to=origin/gh-pages nw
-git checkout nw
+# requires electron
+current_branch=$(git branch | grep \* | cut -d ' ' -f2)
+git branch -D electron
+git checkout gh-pages
 git pull
-
-# (3) remove enforce HTTPS feature
+git checkout -b electron
 sed -i '$ d' index.js
-
-# (4) pack the app
-zip -r gobstones-web.nw *
-
-# (4) run!
-nw gobstones-web.nw
-
-# (6) clean things
-git checkout -- index.js
-rm gobstones-web.nw
+electron .
+git checkout -f "$current_branch"
 ```
 
 #### generate native distributable binaries
-The previous steps (1), (2), and (3) are pre-conditions.
 ```bash
-./node_modules/nw-builder/bin/nwbuild --platforms win32,win64,linux32,linux64 .
-# the output is in /build
+# requires electron-packager
+current_branch=$(git branch | grep \* | cut -d ' ' -f2)
+git branch -D electron
+git checkout gh-pages
+git pull
+git checkout -b electron
+sed -i '$ d' index.js
+sed -i -e "s/'\.'/'\.\/resources\/app'/g" start-electron.js
+electron-packager . gobstones-web --pĺatform linux --arch x64
+makeself ./gobstones-web-linux-x64 gobstones-web.run "Gobstones Web" ./gobstones-web
+git checkout -f "$current_branch"
 ```
 
 Single-file packages can be generated using [winrar](https://www.winrar.es/) (windows) and [makeself](https://github.com/megastep/makeself) (linux)

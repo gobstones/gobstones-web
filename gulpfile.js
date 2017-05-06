@@ -122,7 +122,6 @@ gulp.task('images', function() {
 gulp.task('copy', function() {
   var app = gulp.src([
     'package.json',
-    'gw.appcache',
     'app/*',
     '!app/test',
     '!app/elements',
