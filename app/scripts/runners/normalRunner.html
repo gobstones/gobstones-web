@@ -1,0 +1,26 @@
+<script>
+  class NormalRunner {
+    constructor() {
+      this.handles = [];
+    }
+
+    run(states, throttle, onResult, onStop) {
+      if (throttle === 0) {
+        onResult(_.last(states));
+        return onStop("end");
+      }
+
+      this.handles = states.map((state, i) =>
+        setTimeout(() => {
+          onResult(state);
+          if (i === states.length - 1) onStop("end");
+        }, i * throttle)
+      );
+    }
+
+    clear() {
+      this.handles.forEach(clearInterval);
+      this.handles = [];
+    }
+  }
+</script>
