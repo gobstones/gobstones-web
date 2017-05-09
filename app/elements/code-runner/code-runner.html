@@ -106,6 +106,7 @@
           this._checkAndGetTeacherAst(code, itBroke, teacherAst => {
             this._parse(code, itBroke, ast => {
               const result = this._interpret(ast.program, teacherAst, request);
+              this._setRunner(result);
               this.runner.run(result, this.throttle, onResult, (eventToFire) => {
                 this.stop(eventToFire);
               });
@@ -149,6 +150,12 @@
         this.set("permissions.can_change_speed", true);
       },
 
+      _setRunner: function(result) {
+        this.runner = this._isInteractive(result)
+          ? new NormalRunner()
+          : new NormalRunner();
+      },
+
       _clear: function() {
         this.runner.clear();
       },
@@ -179,11 +186,16 @@
       _interpret: function(programAst, teacherAst, { initialState, code }) {
         try {
           var context = this.parser.interpret(programAst, initialState);
+          if (this._isInteractive(context)) return context;
           return this._getStates(context, teacherAst, context.board());
         } catch (e) {
           e.location = this._getErrorLineAndMode(e, code);
           return this._getStates(e.context, teacherAst, { error: e });
         }
+      },
+
+      _isInteractive: function(result) {
+        return context && context.program && context.program.alias === "interactiveProgram";
       },
 
       _getErrorLineAndMode: function(e, code, forceIsInMainCode) {
