@@ -4,20 +4,31 @@
       this.parser = parser;
     }
 
-    run() {
-      alert("TODAVÍA FALTA"); // TODO: Hacerlo
+    run({ ast, request, throttle, callbacks: { onResult, onStop } }) {
+      const controller = this._interpret(ast, request, request);
+
+      onResult(controller.context.board());
+
+      const result = controller.onKey("K_J");
+      if (!result.error) {
+        onResult(result.board());
+      } else {
+        this._handleError(result, request.code);
+        onStop();
+      }
     }
 
-    clear() { }
+    clear() {
 
-    _interpret(programAst, teacherAst, { initialState, code }) {
-      try {
-        return this.parser.interpret(programAst, initialState);
-      } catch (e) {
-        e.location = this.parser.getErrorLineAndMode(e, code);
-        alert("NO SÉ QUE HACER ACÁ PARÁ"); // TODO: Hacerlo
-        // return this._getStates(e.context, teacherAst, { error: e });
-      }
+    }
+
+    _interpret({ program }, { initialState, code }) {
+      return this.parser.interpret(program, initialState);
+    }
+
+    _handleError(e, code) {
+      e.error.location = this.parser.getErrorLineAndMode(e.error, code);
+      return [e];
     }
   }
 </script>
