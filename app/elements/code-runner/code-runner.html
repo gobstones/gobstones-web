@@ -1,6 +1,7 @@
 <link rel="import" href="../../bower_components/iron-icons/av-icons.html">
 <link rel="import" href="../../scripts/parser.html">
 <link rel="import" href="../../scripts/runners/normalRunner.html">
+<link rel="import" href="../../scripts/runners/interactiveRunner.html">
 <link rel="import" href="../../scripts/behaviors/busListenerBehavior.html">
 <link rel="import" href="../../scripts/behaviors/localizationBehavior.html">
 <link rel="import" href="../../scripts/behaviors/toastBehavior.html">
@@ -105,10 +106,19 @@
         try {
           this._checkAndGetTeacherAst(code, itBroke, teacherAst => {
             this._parse(code, itBroke, ast => {
-              const result = this._interpret(ast.program, teacherAst, request);
-              this._setRunner(result);
-              this.runner.run(result, this.throttle, onResult, (eventToFire) => {
-                this.stop(eventToFire);
+              this._setRunner(ast);
+
+              this.runner.run({
+                ast: {
+                  program: ast.program,
+                  teacher: teacherAst
+                },
+                request: request,
+                throttle: this.throttle,
+                callbacks: {
+                  onResult: onResult,
+                  onStop: (eventToFire) => this.stop(eventToFire)
+                }
               });
             }, true);
           });
@@ -150,10 +160,10 @@
         this.set("permissions.can_change_speed", true);
       },
 
-      _setRunner: function(result) {
-        this.runner = this._isInteractive(result)
-          ? new NormalRunner()
-          : new NormalRunner();
+      _setRunner: function(ast) {
+        this.runner = this._isInteractive(ast)
+          ? new InteractiveRunner(this.parser)
+          : new NormalRunner(this.parser);
       },
 
       _clear: function() {
@@ -178,64 +188,13 @@
         const sourceCode = code.library + "\n" + code.main + "\n" + code.teacher;
 
         this.parser.parse(sourceCode, e => {
-          e.location = this._getErrorLineAndMode(e, code, fixMainErrorLines);
+          e.location = this.parser.getErrorLineAndMode(e, code, fixMainErrorLines);
           return onError(e, code);
         }, onSuccess);
       },
 
-      _interpret: function(programAst, teacherAst, { initialState, code }) {
-        try {
-          var context = this.parser.interpret(programAst, initialState);
-          if (this._isInteractive(context)) return context;
-          return this._getStates(context, teacherAst, context.board());
-        } catch (e) {
-          e.location = this._getErrorLineAndMode(e, code);
-          return this._getStates(e.context, teacherAst, { error: e });
-        }
-      },
-
-      _isInteractive: function(result) {
-        return context && context.program && context.program.alias === "interactiveProgram";
-      },
-
-      _getErrorLineAndMode: function(e, code, forceIsInMainCode) {
-        const libraryLines = code.library.split("\n").length - 1;
-
-        try {
-          const isInMainCode = forceIsInMainCode || e.on.range.start.row > libraryLines;
-
-          return {
-            line: e.on.range.start.row - (isInMainCode ? libraryLines : 0),
-            mode: isInMainCode ? "main" : "library"
-          };
-        } catch(unknownError) {
-          throw e;
-        }
-      },
-
-      _getStates: function(context, teacherAst, lastState) {
-        var teacherTools = teacherAst.declarations
-          .filter(it => _.includes(["procedureDeclaration", "functionDeclaration"], it.alias))
-          .map(it => it.name);
-
-        var previousContext = "program";
-        return context.board()
-          .snapshots
-          .filter(snapshot => {
-            const toName = (it) => it.split("-")[0];
-            const prevNames = _.take(snapshot.names, snapshot.names.length - 1).map(toName);
-            const lastName = _.last(snapshot.names)
-            const contextName = toName(lastName);
-
-            const hasToIgnoreIt = _.includes(teacherTools, contextName);
-            const isTheFirstOcurrence = previousContext !== lastName;
-            const isCallFromIgnoredFunction = _.some(prevNames, name =>
-              _.includes(teacherTools, name)
-            );
-
-            previousContext = lastName;
-            return (!hasToIgnoreIt || isTheFirstOcurrence) && !isCallFromIgnoredFunction;
-          }).map(snapshot => snapshot.board).concat(lastState);
+      _isInteractive: function(ast) {
+        return ast && ast.program && ast.program.alias === "interactiveProgram";
       },
 
       _onSpeedChange: function() {

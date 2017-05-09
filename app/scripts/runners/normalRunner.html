@@ -1,10 +1,21 @@
 <script>
   class NormalRunner {
-    constructor() {
+    constructor(parser) {
+      this.parser = parser;
       this.handles = [];
     }
 
-    run(states, throttle, onResult, onStop) {
+    run({ ast, request, throttle, callbacks }) {
+      const states = this._interpret(ast, request);
+      this._runWithThrottle(states, throttle, callbacks);
+    }
+
+    clear() {
+      this.handles.forEach(clearInterval);
+      this.handles = [];
+    }
+
+    _runWithThrottle(states, throttle, { onResult, onStop }) {
       if (throttle === 0) {
         onResult(_.last(states));
         return onStop("end");
@@ -18,9 +29,39 @@
       );
     }
 
-    clear() {
-      this.handles.forEach(clearInterval);
-      this.handles = [];
+    _interpret(ast, { initialState, code }) {
+      try {
+        var context = this.parser.interpret(ast.program, initialState);
+        return this._getStates(context, ast.teacher, context.board());
+      } catch (e) {
+        e.location = this.parser.getErrorLineAndMode(e, code);
+        return this._getStates(e.context, ast.teacher, { error: e });
+      }
+    }
+
+    _getStates(context, teacherAst, lastState) {
+      var teacherTools = teacherAst.declarations
+        .filter(it => _.includes(["procedureDeclaration", "functionDeclaration"], it.alias))
+        .map(it => it.name);
+
+      var previousContext = "program";
+      return context.board()
+        .snapshots
+        .filter(snapshot => {
+          const toName = (it) => it.split("-")[0];
+          const prevNames = _.take(snapshot.names, snapshot.names.length - 1).map(toName);
+          const lastName = _.last(snapshot.names)
+          const contextName = toName(lastName);
+
+          const hasToIgnoreIt = _.includes(teacherTools, contextName);
+          const isTheFirstOcurrence = previousContext !== lastName;
+          const isCallFromIgnoredFunction = _.some(prevNames, name =>
+            _.includes(teacherTools, name)
+          );
+
+          previousContext = lastName;
+          return (!hasToIgnoreIt || isTheFirstOcurrence) && !isCallFromIgnoredFunction;
+        }).map(snapshot => snapshot.board).concat(lastState);
     }
   }
 </script>

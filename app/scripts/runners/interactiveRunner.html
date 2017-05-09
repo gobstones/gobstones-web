@@ -1,0 +1,23 @@
+<script>
+  class InteractiveRunner {
+    constructor(parser) {
+      this.parser = parser;
+    }
+
+    run() {
+      alert("TODAVÍA FALTA"); // TODO: Hacerlo
+    }
+
+    clear() { }
+
+    _interpret(programAst, teacherAst, { initialState, code }) {
+      try {
+        return this.parser.interpret(programAst, initialState);
+      } catch (e) {
+        e.location = this.parser.getErrorLineAndMode(e, code);
+        alert("NO SÉ QUE HACER ACÁ PARÁ"); // TODO: Hacerlo
+        // return this._getStates(e.context, teacherAst, { error: e });
+      }
+    }
+  }
+</script>
