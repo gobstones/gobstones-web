@@ -1,6 +1,8 @@
 <script>
   class KeyCodeAdapter {
     constructor() {
+      this.modifiers = ['CTRL_ALT_SHIFT_', 'ALT_SHIFT_', 'CTRL_ALT_', 'CTRL_SHIFT_', 'CTRL_', 'ALT_', 'SHIFT_'];
+
       this.names = {
         ARROW_LEFT: "left",
         ARROW_RIGHT: "right",
@@ -20,14 +22,18 @@
       };
     }
 
-    adapt(gobstonesKey) {
-      const parts = gobstonesKey.split("_");
+    adapt(keyDef) {
+      const modifierWithKey = keyDef.substring(2);
 
-      const modifier = parts.slice(1, -1).join("+");
-      const key = parts[parts.length - 1];
+      let modifier = _.find(this.modifiers, (it) => {
+        return _.startsWith(modifierWithKey, it);
+      });
+
+      const key = modifierWithKey.replace(modifier, '');
 
       return (
-        (modifier !== "" ? modifier + "+" : "") + this._adaptKey(key)
+        (modifier ? modifier.replace(/_/g, "+") : "") +
+        this._adaptKey(key)
       ).toLowerCase();
     }
 
