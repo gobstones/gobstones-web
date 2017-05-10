@@ -42,6 +42,21 @@
       return this.gbb.builder.build(board);
     }
 
+    getErrorLineAndMode(e, code, forceIsInMainCode) {
+      const libraryLines = code.library.split("\n").length - 1;
+
+      try {
+        const isInMainCode = forceIsInMainCode || e.on.range.start.row > libraryLines;
+
+        return {
+          line: e.on.range.start.row - (isInMainCode ? libraryLines : 0),
+          mode: isInMainCode ? "main" : "library"
+        };
+      } catch(unknownError) {
+        throw e;
+      }
+    }
+
     _createContext(initialState) {
       const context = new this.Context();
       context.board().sizeX = initialState.size.x;

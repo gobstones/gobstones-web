@@ -1,5 +1,7 @@
 <link rel="import" href="../../bower_components/iron-icons/av-icons.html">
 <link rel="import" href="../../scripts/parser.html">
+<link rel="import" href="../../scripts/runners/normalRunner.html">
+<link rel="import" href="../../scripts/runners/interactiveRunner.html">
 <link rel="import" href="../../scripts/behaviors/busListenerBehavior.html">
 <link rel="import" href="../../scripts/behaviors/localizationBehavior.html">
 <link rel="import" href="../../scripts/behaviors/toastBehavior.html">
@@ -88,8 +90,7 @@
 
       ready: function() {
         this.parser = new Parser();
-        this.handles = [];
-
+        this.runner = new NormalRunner(this.parser);
         this.subscribeTo("reset", () => this.reset());
       },
 
@@ -105,8 +106,20 @@
         try {
           this._checkAndGetTeacherAst(code, itBroke, teacherAst => {
             this._parse(code, itBroke, ast => {
-              const states = this._interpret(ast.program, teacherAst, request);
-              this._notifyResults(states, onResult)
+              this._setRunner(ast);
+
+              this.runner.run({
+                ast: {
+                  program: ast.program,
+                  teacher: teacherAst
+                },
+                request: request,
+                throttle: this.throttle,
+                callbacks: {
+                  onResult: onResult,
+                  onStop: (eventToFire) => this.stop(eventToFire)
+                }
+              });
             }, true);
           });
         } catch (e) {
@@ -121,6 +134,7 @@
       },
 
       stop: function(eventToFire = "cancel") {
+        window.BUS.fire("execution-stop");
         this._clear();
         this.isRunning = false;
         this.async(() => {
@@ -147,23 +161,14 @@
         this.set("permissions.can_change_speed", true);
       },
 
-      _clear: function() {
-        this.handles.forEach(clearInterval);
-        this.handles = [];
+      _setRunner: function(ast) {
+        this.runner = this._isInteractive(ast)
+          ? new InteractiveRunner(this.parser)
+          : new NormalRunner(this.parser);
       },
 
-      _notifyResults: function(states, onResult) {
-        if (this.throttle === 0) {
-          onResult(_.last(states));
-          return this.stop("end");
-        }
-
-        this.handles = states.map((state, i) =>
-          setTimeout(() => {
-            onResult(state);
-            if (i === states.length - 1) this.stop("end");
-          }, i * this.throttle)
-        );
+      _clear: function() {
+        this.runner.clear();
       },
 
       _checkAndGetTeacherAst: function(code, onError, onSuccess) {
@@ -184,59 +189,13 @@
         const sourceCode = code.library + "\n" + code.main + "\n" + code.teacher;
 
         this.parser.parse(sourceCode, e => {
-          e.location = this._getErrorLineAndMode(e, code, fixMainErrorLines);
+          e.location = this.parser.getErrorLineAndMode(e, code, fixMainErrorLines);
           return onError(e, code);
         }, onSuccess);
       },
 
-      _interpret: function(programAst, teacherAst, { initialState, code }) {
-        try {
-          var context = this.parser.interpret(programAst, initialState);
-          return this._getStates(context, teacherAst, context.board());
-        } catch (e) {
-          e.location = this._getErrorLineAndMode(e, code);
-          return this._getStates(e.context, teacherAst, { error: e });
-        }
-      },
-
-      _getErrorLineAndMode: function(e, code, forceIsInMainCode) {
-        const libraryLines = code.library.split("\n").length - 1;
-
-        try {
-          const isInMainCode = forceIsInMainCode || e.on.range.start.row > libraryLines;
-
-          return {
-            line: e.on.range.start.row - (isInMainCode ? libraryLines : 0),
-            mode: isInMainCode ? "main" : "library"
-          };
-        } catch(unknownError) {
-          throw e;
-        }
-      },
-
-      _getStates: function(context, teacherAst, lastState) {
-        var teacherTools = teacherAst.declarations
-          .filter(it => _.includes(["procedureDeclaration", "functionDeclaration"], it.alias))
-          .map(it => it.name);
-
-        var previousContext = "program";
-        return context.board()
-          .snapshots
-          .filter(snapshot => {
-            const toName = (it) => it.split("-")[0];
-            const prevNames = _.take(snapshot.names, snapshot.names.length - 1).map(toName);
-            const lastName = _.last(snapshot.names)
-            const contextName = toName(lastName);
-
-            const hasToIgnoreIt = _.includes(teacherTools, contextName);
-            const isTheFirstOcurrence = previousContext !== lastName;
-            const isCallFromIgnoredFunction = _.some(prevNames, name =>
-              _.includes(teacherTools, name)
-            );
-
-            previousContext = lastName;
-            return (!hasToIgnoreIt || isTheFirstOcurrence) && !isCallFromIgnoredFunction;
-          }).map(snapshot => snapshot.board).concat(lastState);
+      _isInteractive: function(ast) {
+        return ast && ast.program && ast.program.alias === "interactiveProgram";
       },
 
       _onSpeedChange: function() {

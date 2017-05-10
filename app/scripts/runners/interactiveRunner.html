@@ -1,0 +1,59 @@
+<link rel="import" href="keyCodeAdapter.html">
+<link rel="import" href="../keymaster.html">
+
+<script>
+  class InteractiveRunner {
+    constructor(parser) {
+      this.parser = parser;
+      this.adapter = new KeyCodeAdapter();
+      this.keys = [];
+
+      key.filter = function filter(event) {
+        var tagName = (event.target || event.srcElement).tagName;
+        // return !(tagName == 'INPUT' || tagName == 'SELECT' || tagName == 'TEXTAREA');
+        return true;
+      };
+    }
+
+    run({ ast, request, throttle, callbacks: { onResult, onStop } }) {
+      const controller = this._interpret(ast, request, request);
+
+      window.BUS.fire("interactive-run");
+
+      const handleKey = (key) => {
+        const result = controller.onKey(key);
+        if (!result.error) {
+          onResult(result.board());
+        } else {
+          onResult(this._handleError(result, request.code));
+          onStop("end");
+        }
+
+        return false;
+      };
+
+      onResult(controller.context.board());
+
+      const boundKeys = controller.keys;
+      boundKeys.forEach((it) => {
+        const newKey = this.adapter.adapt(it);
+        this.keys.push(newKey);
+        key(newKey, () => handleKey(it));
+      });
+    }
+
+    clear() {
+      this.keys.forEach(it => key.unbind(it));
+      this.keys = [];
+    }
+
+    _interpret({ program }, { initialState, code }) {
+      return this.parser.interpret(program, initialState);
+    }
+
+    _handleError(e, code) {
+      e.error.location = this.parser.getErrorLineAndMode(e.error, code);
+      return e;
+    }
+  }
+</script>

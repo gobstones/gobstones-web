@@ -186,7 +186,7 @@
         if (error.location.mode === "library") this._setMode("library");
 
         this.editor.getSession().setAnnotations([{
-          row: error.location.line,
+          row: error.location.line - 1,
           column: 0,
           text: error.message,
           type: type
