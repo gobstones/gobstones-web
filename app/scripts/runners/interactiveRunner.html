@@ -12,24 +12,24 @@
     run({ ast, request, throttle, callbacks: { onResult, onStop } }) {
       const controller = this._interpret(ast, request, request);
 
+      const handleKey = (key) => {
+        const result = controller.onKey(key);
+        if (!result.error) {
+          onResult(result.board());
+        } else {
+          onResult(this._handleError(result, request.code));
+          onStop("end");
+        }
+      };
+
       onResult(controller.context.board());
 
-      // ---
       const boundKeys = controller.keys;
       boundKeys.forEach((it) => {
         const newKey = this.adapter.adapt(it);
         this.keys.push(newKey);
-        key(newKey, (a) => console.log("Tocaron la", newKey));
+        key(newKey, () => handleKey(it));
       });
-      // ---
-
-      // const result = controller.onKey("K_J");
-      // if (!result.error) {
-      //   onResult(result.board());
-      // } else {
-      //   this._handleError(result, request.code);
-      //   onStop();
-      // }
     }
 
     clear() {
@@ -43,7 +43,7 @@
 
     _handleError(e, code) {
       e.error.location = this.parser.getErrorLineAndMode(e.error, code);
-      return [e];
+      return e;
     }
   }
 </script>
