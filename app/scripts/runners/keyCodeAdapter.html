@@ -1,0 +1,38 @@
+<script>
+  class KeyCodeAdapter {
+    constructor() {
+      this.names = {
+        ARROW_LEFT: "left",
+        ARROW_RIGHT: "right",
+        ARROW_UP: "up",
+        ARROW_DOWN: "down",
+        PLUS: "+",
+        MINUS: "-",
+        ASTERISK: "*",
+        SLASH: "/",
+        EQUALS: "=",
+        L_PARENT: "(",
+        R_PARENT: ")",
+        L_BRACKET: "{",
+        R_BRACKET: "}",
+        L_ANGLEBR: "<",
+        R_ANGLEBR: ">"
+      };
+    }
+
+    adapt(gobstonesKey) {
+      const parts = gobstonesKey.split("_");
+
+      const modifier = parts.slice(1, -1).join("+");
+      const key = parts[parts.length - 1];
+
+      return (
+        (modifier !== "" ? modifier + "+" : "") + this._adaptKey(key)
+      ).toLowerCase();
+    }
+
+    _adaptKey(key) {
+      return this.names[key] || key;
+    }
+  }
+</script>

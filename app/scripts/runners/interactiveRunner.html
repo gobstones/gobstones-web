@@ -1,7 +1,12 @@
+<link rel="import" href="keyCodeAdapter.html">
+<link rel="import" href="../keymaster.html">
+
 <script>
   class InteractiveRunner {
     constructor(parser) {
       this.parser = parser;
+      this.adapter = new KeyCodeAdapter();
+      this.keys = [];
     }
 
     run({ ast, request, throttle, callbacks: { onResult, onStop } }) {
@@ -9,17 +14,27 @@
 
       onResult(controller.context.board());
 
-      const result = controller.onKey("K_J");
-      if (!result.error) {
-        onResult(result.board());
-      } else {
-        this._handleError(result, request.code);
-        onStop();
-      }
+      // ---
+      const boundKeys = controller.keys;
+      boundKeys.forEach((it) => {
+        const newKey = this.adapter.adapt(it);
+        this.keys.push(newKey);
+        key(newKey, (a) => console.log("Tocaron la", newKey));
+      });
+      // ---
+
+      // const result = controller.onKey("K_J");
+      // if (!result.error) {
+      //   onResult(result.board());
+      // } else {
+      //   this._handleError(result, request.code);
+      //   onStop();
+      // }
     }
 
     clear() {
-
+      this.keys.forEach(it => key.unbind(it));
+      this.keys = [];
     }
 
     _interpret({ program }, { initialState, code }) {
