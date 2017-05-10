@@ -20,31 +20,46 @@
 
       window.BUS.fire("interactive-run");
 
-      const handleKey = (key) => {
-        const result = controller.onKey(key);
+      const render = (result) => {
         if (!result.error) {
           onResult(result.board());
         } else {
           onResult(this._handleError(result, request.code));
           onStop("end");
         }
-
-        return false;
       };
 
-      onResult(controller.context.board());
+      const renderTimeout = () => render(controller.onTimeout());
+
+      const configureTimeout = () => {
+        clearInterval(this.timeout);
+        if (controller.timeout)
+          this.timeout = setInterval(renderTimeout, controller.timeout);
+      }
+
+      render(controller.onInit());
 
       const boundKeys = controller.keys;
       boundKeys.forEach((it) => {
         const newKey = this.adapter.adapt(it);
         this.keys.push(newKey);
-        key(newKey, () => handleKey(it));
+
+        key(newKey, () => {
+          configureTimeout();
+          const result = controller.onKey(it);
+          render(result);
+          return false;
+        });
       });
+
+      configureTimeout();
     }
 
     clear() {
       this.keys.forEach(it => key.unbind(it));
       this.keys = [];
+
+      clearInterval(this.timeout);
     }
 
     _interpret({ program }, { initialState, code }) {
