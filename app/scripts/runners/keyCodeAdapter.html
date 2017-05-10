@@ -28,7 +28,7 @@
     adapt(keyDef) {
       const modifierWithKey = keyDef.substring(2);
 
-      let modifier = _.find(this.modifiers, (it) => {
+      const modifier = _.find(this.modifiers, (it) => {
         return _.startsWith(modifierWithKey, it);
       });
 

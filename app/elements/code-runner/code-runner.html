@@ -90,7 +90,7 @@
 
       ready: function() {
         this.parser = new Parser();
-        this.runner = new NormalRunner();
+        this.runner = new NormalRunner(this.parser);
         this.subscribeTo("reset", () => this.reset());
       },
 
@@ -134,6 +134,7 @@
       },
 
       stop: function(eventToFire = "cancel") {
+        window.BUS.fire("execution-stop");
         this._clear();
         this.isRunning = false;
         this.async(() => {

@@ -7,10 +7,18 @@
       this.parser = parser;
       this.adapter = new KeyCodeAdapter();
       this.keys = [];
+
+      key.filter = function filter(event) {
+        var tagName = (event.target || event.srcElement).tagName;
+        // return !(tagName == 'INPUT' || tagName == 'SELECT' || tagName == 'TEXTAREA');
+        return true;
+      };
     }
 
     run({ ast, request, throttle, callbacks: { onResult, onStop } }) {
       const controller = this._interpret(ast, request, request);
+
+      window.BUS.fire("interactive-run");
 
       const handleKey = (key) => {
         const result = controller.onKey(key);
@@ -20,6 +28,8 @@
           onResult(this._handleError(result, request.code));
           onStop("end");
         }
+
+        return false;
       };
 
       onResult(controller.context.board());

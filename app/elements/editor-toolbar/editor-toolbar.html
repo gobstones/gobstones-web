@@ -95,6 +95,8 @@
           this.showLibrary = mode === "library";
         }).subscribeTo("reset", () => {
           this.set("permissions.can_use_library", true);
+        }).subscribeTo("interactive-run", () => {
+          this.showBoards = true;
         });
 
         this.setUpLoaders({
