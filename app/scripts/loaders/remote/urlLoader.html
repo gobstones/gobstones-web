@@ -4,17 +4,20 @@
 <script>
   class UrlLoader {
     constructor(projectType) {
-      this.projectType = projectType;
+      this.loader = projectType === "code" ? new ProjectLoader : new ProjectBlocksLoader;
     }
 
-    load(url) {
+    load(url, getContext) {
       return $
         .ajax({
           url: url,
           type: "GET",
+          dataType: "binary",
+          processData: false,
+          responseType: "arraybuffer",
           crossDomain: true
         }).then(content => {
-          console.log("LEYENDO", content);
+          this.loader.readRaw(getContext(), content, _.noop);
         });
     }
   }

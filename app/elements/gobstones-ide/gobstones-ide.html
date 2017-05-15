@@ -1,5 +1,6 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 <link rel="import" href="../../scripts/behaviors/localizationBehavior.html">
+<link rel="import" href="../../scripts/behaviors/leftMenuBehavior.html">
 <link rel="import" href="../../scripts/jquery.html">
 <link rel="import" href="../../scripts/loaders/remote/urlLoader.html">
 
@@ -46,19 +47,20 @@
         "show-boards-changed": "_showBoardsChanged"
       },
       behaviors: [
-        Polymer.LocalizationBehavior
+        Polymer.LocalizationBehavior,
+        Polymer.LeftMenuBehavior,
       ],
       properties: {
         projectType: String
       },
 
       ready: function() {
+        const getContext = this._context.bind(this);
         const projectUrl = getParameterByName("url");
-
         if (projectUrl) {
           window.LOAD_PENDING_PROJECT = () => {
             new UrlLoader(this.projectType)
-              .load(projectUrl)
+              .load(projectUrl, getContext)
               .catch(() => {
                 alert(this.localize("error-loading-project-from-url"));
               });
