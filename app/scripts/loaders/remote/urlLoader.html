@@ -1,0 +1,18 @@
+<link rel="import" href="../projectLoader.html">
+<link rel="import" href="../projectBlocksLoader.html">
+
+<script>
+  class UrlLoader {
+    constructor(projectType) {
+      this.projectType = projectType;
+    }
+
+    load(url) {
+      return $
+        .get(url)
+        .then(content => {
+          console.log("PIOLA");
+        });
+    }
+  }
+</script>

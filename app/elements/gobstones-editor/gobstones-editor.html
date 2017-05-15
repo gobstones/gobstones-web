@@ -93,6 +93,14 @@
         this.stylist = new Stylist();
         this._removePrintMarginColumn();
         $(window).resize(() => { this._fixEditorHeight(); });
+
+
+        setTimeout(() => {
+          if (window.LOAD_PENDING_PROJECT) {
+            window.LOAD_PENDING_PROJECT()
+            window.LOAD_PENDING_PROJECT = undefined;
+          }
+        }, 0);
       },
 
       setCode: function(code, mode = "main") {

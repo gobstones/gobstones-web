@@ -1,5 +1,7 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../scripts/behaviors/localizationBehavior.html">
 <link rel="import" href="../../scripts/jquery.html">
+<link rel="import" href="../../scripts/loaders/remote/urlLoader.html">
 
 <dom-module id="gobstones-ide">
   <template>
@@ -26,14 +28,42 @@
 
   <script>
 
+    // http://stackoverflow.com/questions/901115/how-can-i-get-query-string-values-in-javascript
+    function getParameterByName(name, url) {
+      if (!url) url = window.location.href;
+      name = name.replace(/[\[\]]/g, "\\$&");
+      var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+          results = regex.exec(url);
+      if (!results) return null;
+      if (!results[2]) return '';
+      return decodeURIComponent(results[2].replace(/\+/g, " "));
+    }
+
     Polymer({
       is: 'gobstones-ide',
       listeners: {
         "show-code-changed": "_showCodeChanged",
         "show-boards-changed": "_showBoardsChanged"
       },
+      behaviors: [
+        Polymer.LocalizationBehavior
+      ],
       properties: {
         projectType: String
+      },
+
+      ready: function() {
+        const projectUrl = getParameterByName("url");
+
+        if (projectUrl) {
+          window.LOAD_PENDING_PROJECT = () => {
+            new UrlLoader(this.projectType)
+              .load(projectUrl)
+              .catch(() => {
+                alert(this.localize("error-loading-project-from-url"));
+              });
+          };
+        }
       },
 
       isBlocksProject: function(projectType) { return projectType === 'blocks'; },
