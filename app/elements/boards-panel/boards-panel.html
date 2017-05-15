@@ -448,6 +448,10 @@
         return { x: table[0].length, y: table.length };
       },
 
+      finishLoadingBoards: function() {
+        this._selecting = false;
+      },
+
       _bootstrap: function(sizeX = this.sizeX, sizeY = this.sizeY) {
         this.addInitialState({
           header: { x: 0, y: 0 },
@@ -542,7 +546,7 @@
         this.sizeY = size.y;
 
         this._fillTable();
-        this._selecting = false;
+        this.finishLoadingBoards();
       },
 
       _fillTable: function() {

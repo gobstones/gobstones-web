@@ -55,6 +55,8 @@
     readContent(context, content, fileName) {
       const metadata = JSON.parse(content);
 
+      context.boards.finishLoadingBoards();
+
       // name
       context.setProjectName(metadata.name);
 
