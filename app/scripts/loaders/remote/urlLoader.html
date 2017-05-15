@@ -9,9 +9,12 @@
 
     load(url) {
       return $
-        .get(url)
-        .then(content => {
-          console.log("PIOLA");
+        .ajax({
+          url: url,
+          type: "GET",
+          crossDomain: true
+        }).then(content => {
+          console.log("LEYENDO", content);
         });
     }
   }
