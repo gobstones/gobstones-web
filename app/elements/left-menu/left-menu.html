@@ -2,7 +2,7 @@
 <link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
 <link rel="import" href="../../bower_components/paper-item/paper-item-body.html">
 <link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
-<link rel="import" href="../../scripts/behaviors/leftMenuBehavior.html">
+<link rel="import" href="../../scripts/behaviors/loaderBehavior.html">
 <link rel="import" href="../../scripts/behaviors/localizationBehavior.html">
 <link rel="import" href="../../scripts/loaders/components/codeLoader.html">
 <link rel="import" href="../../scripts/loaders/components/libraryLoader.html">
@@ -142,7 +142,7 @@
       is: 'left-menu',
       behaviors: [
         Polymer.LocalizationBehavior,
-        Polymer.LeftMenuBehavior
+        Polymer.LoaderBehavior
       ],
       properties: {
         projectType: String

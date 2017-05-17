@@ -54,6 +54,7 @@
 
     readContent(context, content, fileName) {
       const metadata = JSON.parse(content);
+      console.log("LEYENDO METADATA", metadata);
 
       context.boards.finishLoadingBoards();
 

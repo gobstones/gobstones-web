@@ -1,7 +1,7 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 <link rel="import" href="../../scripts/behaviors/localizationBehavior.html">
 l">
-<link rel="import" href="../../scripts/behaviors/leftMenuBehavior.html">
+<link rel="import" href="../../scripts/behaviors/loaderBehavior.html">
 <link rel="import" href="../../scripts/loaders/projectBlocksLoader.html">
 
 <dom-module id="select-project">
@@ -52,7 +52,7 @@ l">
       is: 'select-project',
       behaviors: [
         Polymer.LocalizationBehavior,
-        Polymer.LeftMenuBehavior
+        Polymer.LoaderBehavior
       ],
 
       ready: function() {

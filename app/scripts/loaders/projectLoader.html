@@ -89,6 +89,7 @@
           try {
             loader.readProjectContent(context, content);
           } catch(e) {
+            console.error(loader, e);
             alert(`Hubo un error al cargar ${relativePath}`);
           }
           callback();

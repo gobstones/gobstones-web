@@ -1,14 +1,7 @@
 <link rel="import" href"../jquery.html">
 
 <script>
-  Polymer.LeftMenuBehavior = {
-    properties: {
-      projectName: {
-        type: String,
-        value: "Nuevo proyecto"
-      }
-    },
-
+  Polymer.LoaderBehavior = {
     setUpLoaders: function(loaders) {
       this.loaders = loaders;
 
@@ -47,14 +40,15 @@
 
     _context: function() {
       const query = (id) => document.querySelector(id);
+      const toolbar = query("#toolbar");
 
       return {
         ide: query("#gobstones-ide"),
-        toolbar: query("#toolbar"),
+        toolbar: toolbar,
         editor: query("#editor"),
         boards: query("#boards"),
-        getProjectName: () => this.projectName,
-        setProjectName: (name) => this.projectName = name
+        getProjectName: () => toolbar.projectName,
+        setProjectName: (name) => toolbar.projectName = name
       };
     }
   };
