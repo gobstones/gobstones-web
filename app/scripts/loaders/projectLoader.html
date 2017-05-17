@@ -47,7 +47,7 @@
 
     read(context, event, callback) {
       const { file } = this._readLocalFile(event);
-      this.readRaw(context, file, callback);
+      this.readRawZip(context, file, callback);
     }
 
     readRawZip(context, file, callback) {
