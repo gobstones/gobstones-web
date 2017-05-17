@@ -5,24 +5,39 @@
 <link rel="import" href="../../scripts/loaders/remote/urlLoader.html">
 
 <dom-module id="gobstones-ide">
+  <style>
+    .loading {
+      text-align: center;
+      width: 100%;
+      font-weight: bold;
+      font-size: xx-large;
+    }
+  </style>
+
   <template>
 
     <div class="panel-container">
-      <div class="panel-left">
-        <editor-toolbar project-type="[[projectType]]" id="toolbar"></editor-toolbar>
+      <template is="dom-if" if="{{isLoading}}">
+        <div class="loading">[[localize("loading-project")]]</div>
+      </template>
 
-        <template is="dom-if" if="{{isBlocksProject(projectType)}}">
-          <gobstones-blockly id="editor"></gobstones-blockly>
-        </template>
+      <template is="dom-if" if="{{!isLoading}}">
+        <div class="panel-left">
+          <editor-toolbar project-type="[[projectType]]" id="toolbar"></editor-toolbar>
 
-        <template is="dom-if" if="{{isCodeProject(projectType)}}">
-          <gobstones-editor id="editor"></gobstones-editor>
-        </template>
-      </div>
+          <template is="dom-if" if="{{isBlocksProject(projectType)}}">
+            <gobstones-blockly id="editor"></gobstones-blockly>
+          </template>
 
-      <div class="panel-right">
-        <boards-panel id="boards"></boards-panel>
-      </div>
+          <template is="dom-if" if="{{isCodeProject(projectType)}}">
+            <gobstones-editor id="editor"></gobstones-editor>
+          </template>
+        </div>
+
+        <div class="panel-right">
+          <boards-panel id="boards"></boards-panel>
+        </div>
+      </template>
     </div>
 
   </template>
@@ -51,7 +66,11 @@
         Polymer.LeftMenuBehavior,
       ],
       properties: {
-        projectType: String
+        projectType: String,
+        isLoading: {
+          type: Boolean,
+          value: false
+        }
       },
 
       ready: function() {
@@ -59,10 +78,14 @@
         const projectUrl = getParameterByName("url");
         if (projectUrl) {
           window.LOAD_PENDING_PROJECT = () => {
+            this.isLoading = true;
+
             new UrlLoader(this.projectType)
               .load(projectUrl, getContext)
               .catch(() => {
                 alert(this.localize("error-loading-project-from-url"));
+              }).always(() => {
+                this.isLoading = false;
               });
           };
         }
