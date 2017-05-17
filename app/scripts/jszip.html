@@ -8,7 +8,14 @@
           files.push({ relativePath, zipEntry });
         });
 
-        return _.sortBy(files, "relativePath");
+        const priorityFiles = function(file) {
+          return !(
+            _.endsWith(file.relativePath, ".gbt") ||
+            _.endsWith(file.relativePath, ".gbl")
+          );
+        };
+
+        return _.sortBy(files, [priorityFiles, "relativePath"]);
     }
   }
 </script>
