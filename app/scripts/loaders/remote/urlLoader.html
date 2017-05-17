@@ -8,17 +8,9 @@
     }
 
     load(url, getContext) {
-      return $
-        .ajax({
-          url: url,
-          type: "GET",
-          dataType: "binary",
-          processData: false,
-          responseType: "arraybuffer",
-          crossDomain: true
-        }).then(content => {
-          this.loader.readRaw(getContext(), content, _.noop);
-        });
+      return $.getBinary(url).then(content => {
+        this.loader.readRawZip(getContext(), content, _.noop);
+      });
     }
   }
 </script>

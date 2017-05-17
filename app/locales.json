@@ -9,7 +9,7 @@
     "columns": "columnas",
     "disable": "Desactivar",
     "enable": "Activar",
-    "error-loading-project-from-url": "No se ha podido descargar el proyecto desde la url",
+    "error-loading-project": "No se ha podido descargar el proyecto",
     "execute": "Ejecutar",
     "final-board": "Resultados",
     "generated-code": "Generar código",

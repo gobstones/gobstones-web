@@ -26,7 +26,7 @@
       // readProjectContent(context, content);
 
       this.attireLoader = new ProjectAttireLoader("attires/");
-      this.metadataLoader = new MetadataLoader()
+      this.metadataLoader = new MetadataLoader();
     }
 
     save(context) {
@@ -50,18 +50,22 @@
       this.readRaw(context, file, callback);
     }
 
-    readRaw(context, file, callback) {
+    readRawZip(context, file, callback) {
       JSZip.loadAsync(file).then(zip => {
-        context.editor.reset();
-        context.boards.reset();
-        context.editor.setAsDirty();
+        this.readRaw(context, zip, callback);
+      });
+    }
 
-        this._loadFilesWithLoaders(context, zip, this.loaders, () => {
-          context.boards.removeFirstBoard();
+    readRaw(context, zip, callback) {
+      context.editor.reset();
+      context.boards.reset();
+      context.editor.setAsDirty();
 
-          this.attireLoader.readFromZip(context, zip, () => {
-            this._loadFilesWithLoaders(context, zip, [this.metadataLoader], callback);
-          });
+      this._loadFilesWithLoaders(context, zip, this.loaders, () => {
+        context.boards.removeFirstBoard();
+
+        this.attireLoader.readFromZip(context, zip, () => {
+          this._loadFilesWithLoaders(context, zip, [this.metadataLoader], callback);
         });
       });
     }

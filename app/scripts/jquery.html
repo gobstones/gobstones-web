@@ -39,4 +39,16 @@
       };
     }
   });
+
+  $.getBinary = function(url) {
+    return $
+      .ajax({
+        url: url,
+        type: "GET",
+        dataType: "binary",
+        processData: false,
+        responseType: "arraybuffer",
+        crossDomain: true
+      });
+  };
 </script>

@@ -3,6 +3,7 @@
 <link rel="import" href="../../scripts/behaviors/leftMenuBehavior.html">
 <link rel="import" href="../../scripts/jquery.html">
 <link rel="import" href="../../scripts/loaders/remote/urlLoader.html">
+<link rel="import" href="../../scripts/loaders/remote/gitHubLoader.html">
 
 <dom-module id="gobstones-ide">
   <style>
@@ -74,21 +75,7 @@
       },
 
       ready: function() {
-        const getContext = this._context.bind(this);
-        const projectUrl = getParameterByName("url");
-        if (projectUrl) {
-          window.LOAD_PENDING_PROJECT = () => {
-            this.isLoading = true;
-
-            new UrlLoader(this.projectType)
-              .load(projectUrl, getContext)
-              .catch(() => {
-                alert(this.localize("error-loading-project-from-url"));
-              }).always(() => {
-                this.isLoading = false;
-              });
-          };
-        }
+        this._setUpLoaders();
       },
 
       isBlocksProject: function(projectType) { return projectType === 'blocks'; },
@@ -111,6 +98,33 @@
           show ? $(document).width() * 0.6 : size
         );
         $(window).trigger("resize");
+      },
+
+      _setUpLoaders: function() {
+        const getContext = this._context.bind(this);
+
+        const projectUrl = getParameterByName("url");
+        if (projectUrl)
+          return this._setUpLoader(UrlLoader, projectUrl, getContext);
+
+        const gitHubSlug = getParameterByName("github");
+        if (gitHubSlug)
+          return this._setUpLoader(GitHubLoader, gitHubSlug, getContext);
+      },
+
+      _setUpLoader: function(Loader, url, getContext) {
+        window.LOAD_PENDING_PROJECT = () => {
+          this.isLoading = true;
+
+          new Loader(this.projectType)
+            .load(url, getContext)
+            .catch((e) => {
+              console.error(e);
+              alert(this.localize("error-loading-project"));
+            }).always(() => {
+              this.isLoading = false;
+            });
+        };
       }
     });
 
