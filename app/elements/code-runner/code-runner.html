@@ -161,6 +161,11 @@
         this.set("permissions.can_change_speed", true);
       },
 
+      reportTeacherLibraryErrors: function(e) {
+        alert("The teacher's library has errors. See the developer console.");
+        throw e;
+      },
+
       _setRunner: function(ast) {
         this.runner = this._isInteractive(ast)
           ? new InteractiveRunner(this.parser)
@@ -173,11 +178,11 @@
 
       _checkAndGetTeacherAst: function(code, onError, onSuccess) {
         this._checkLibraryCompiles(code.library, onError, () => {
-          return this._checkLibraryCompiles(code.teacher, () => {
-            const message = "The teacher's library has errors. This is bad.";
-            alert(message);
-            throw new Error(message);
-          }, onSuccess);
+          return this._checkLibraryCompiles(
+            code.teacher,
+            this.reportTeacherLibraryErrors,
+            onSuccess
+          );
         });
       },
 

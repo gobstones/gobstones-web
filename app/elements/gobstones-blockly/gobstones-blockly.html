@@ -178,7 +178,7 @@
             this.$.blockly.primitiveFunctions = actions.functionNames;
           }
         } catch(e) {
-          alert("The teacher's library has errors. This is bad.");
+          this.runner.reportTeacherLibraryErrors(e);
         }
       },
 
