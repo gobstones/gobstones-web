@@ -6,7 +6,7 @@
       const { Context, Board, getParser, gbb } = window.gsWeblangCore;
 
       this.Context = Context;
-      this.gsParser = getParser();
+      this.gsParser = getParser;
       this.gbb = gbb;
       this.Board = Board;
     }
@@ -15,7 +15,7 @@
       if (_.trim(sourceCode) === "") return onSuccess({ declarations: [] });
 
       try {
-        return onSuccess(this.gsParser.parse(sourceCode));
+        return onSuccess(this.gsParser().parse(sourceCode));
       } catch (e) {
         if (e.error) {
           e.message = e.error;
