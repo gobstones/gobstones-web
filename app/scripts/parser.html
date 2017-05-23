@@ -17,9 +17,7 @@
       try {
         return onSuccess(this.gsParser().parse(sourceCode));
       } catch (e) {
-        if (e.error) {
-          e.message = e.error;
-          delete e.error;
+        if (e.reason) {
           onError(e); // known errors
         }
         else throw e; // unknown errors
