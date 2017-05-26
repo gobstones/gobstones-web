@@ -38,6 +38,19 @@
         <div class="panel-right">
           <boards-panel id="boards"></boards-panel>
         </div>
+
+        <paper-dialog id="modal">
+          <h2>Header</h2>
+
+          <paper-dialog-scrollable>
+            [[modalText]]
+          </paper-dialog-scrollable>
+
+          <div class="buttons">
+            <paper-button dialog-dismiss>Cancel</paper-button>
+            <paper-button dialog-confirm autofocus>Accept</paper-button>
+          </div>
+        </paper-dialog>
       </template>
     </div>
 
@@ -71,11 +84,21 @@
         isLoading: {
           type: Boolean,
           value: false
-        }
+        },
+        modalText: String,
       },
 
       ready: function() {
         this._setUpLoaders();
+      },
+
+      setModal: function(text) {
+        this.modalText = text;
+        this.toggleModal();
+      },
+
+      toggleModal: function() {
+        document.querySelector("#modal").toggle();
       },
 
       isBlocksProject: function(projectType) { return projectType === 'blocks'; },
