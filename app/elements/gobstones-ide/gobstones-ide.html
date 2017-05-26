@@ -14,6 +14,14 @@
       font-weight: bold;
       font-size: xx-large;
     }
+
+    .description {
+      min-width: 500px;
+    }
+
+    .accept {
+      cursor: pointer;
+    }
   </style>
 
   <template>
@@ -40,13 +48,13 @@
           <boards-panel id="boards"></boards-panel>
         </div>
 
-        <paper-dialog id="modal">
+        <paper-dialog id="modal" class="description">
           <paper-dialog-scrollable>
             <div inner-h-t-m-l="[[compileMd(modalContent)]]"></div>
           </paper-dialog-scrollable>
 
           <div class="buttons">
-            <paper-button dialog-confirm autofocus>[[localize("accept")]]</paper-button>
+            <paper-button class="accept" dialog-confirm autofocus>[[localize("accept")]]</paper-button>
           </div>
         </paper-dialog>
       </template>
