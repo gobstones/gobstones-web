@@ -91,7 +91,10 @@
           type: Boolean,
           value: false
         },
-        modalContent: String
+        modalContent: {
+          type: String,
+          value: ""
+        }
       },
 
       ready: function() {
@@ -100,7 +103,7 @@
 
       setModal: function(markdown) {
         this.modalContent = markdown;
-        this.toggleModal();
+        window.BUS.fire("has-description", markdown !== "");
       },
 
       toggleModal: function() {

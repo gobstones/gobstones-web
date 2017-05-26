@@ -19,8 +19,7 @@
         new TeacherLoader,
         new LibraryLoader,
         new CodeLoader,
-        new InitialBoardLoader,
-        new DescriptionLoader
+        new InitialBoardLoader
       ];
 
       // Loaders must understand:
@@ -29,6 +28,7 @@
 
       this.attireLoader = new ProjectAttireLoader("attires/");
       this.metadataLoader = new MetadataLoader();
+      this.descriptionLoader = new DescriptionLoader();
     }
 
     save(context) {
@@ -67,7 +67,7 @@
         context.boards.removeFirstBoard();
 
         this.attireLoader.readFromZip(context, zip, () => {
-          this._loadFilesWithLoaders(context, zip, [this.metadataLoader], callback);
+          this._loadFilesWithLoaders(context, zip, [this.metadataLoader, this.descriptionLoader], callback);
         });
       });
     }

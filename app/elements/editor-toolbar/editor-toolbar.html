@@ -49,6 +49,9 @@
           <template is="dom-if" if="{{_isCodeProject(projectType)}}">
             <paper-button on-click="increaseEditorFontSize"><iron-icon class="button" icon="icons:zoom-in"></iron-icon></paper-button>
             <paper-button on-click="decreaseEditorFontSize"><iron-icon class="button" icon="icons:zoom-out"></iron-icon></paper-button>
+            <template is="dom-if" if="{{showInfo}}">
+              <paper-button on-click="showDescription"><iron-icon class="button" icon="icons:info"></iron-icon></paper-button>
+            </template>
           </template>
           <template is="dom-if" if="{{permissions.can_use_library}}">
             <paper-button on-click="toggleLibrary"><iron-icon class$="button {{buttonCssClass(showLibrary)}}" icon="icons:chrome-reader-mode"></iron-icon></paper-button>
@@ -86,6 +89,10 @@
           type: Boolean,
           value: false
         },
+        showInfo: {
+          type: Boolean,
+          value: false
+        },
         permissions: {
           type: Object,
           value: { can_use_library: true }
@@ -101,6 +108,8 @@
           this.set("permissions.can_use_library", true);
         }).subscribeTo("interactive-run", () => {
           this.showBoards = true;
+        }).subscribeTo("has-description", (hasDescription) => {
+          this.showInfo = hasDescription;
         });
 
         this.setUpLoaders({
@@ -120,6 +129,10 @@
       toggleLibrary: function() {
         if (window.GBS_IS_RUNNING) return;
         this._editor().toggleMode();
+      },
+
+      showDescription: function() {
+        this.domHost.toggleModal();
       },
 
       increaseEditorFontSize: function() {
