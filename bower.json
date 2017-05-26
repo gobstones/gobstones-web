@@ -21,7 +21,8 @@
     "app-router": "2.7.2",
     "async": "2.1.4",
     "gs-element-blockly": "Program-AR/gs-element-blockly#0.2.12",
-    "keymaster": "~1.6.3"
+    "keymaster": "~1.6.3",
+    "showdown": "^1.6.4"
   },
   "devDependencies": {
     "web-component-tester": "^4.0.0",

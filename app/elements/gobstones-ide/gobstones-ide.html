@@ -2,6 +2,7 @@
 <link rel="import" href="../../scripts/behaviors/localizationBehavior.html">
 <link rel="import" href="../../scripts/behaviors/loaderBehavior.html">
 <link rel="import" href="../../scripts/jquery.html">
+<link rel="import" href="../../scripts/showdown.html">
 <link rel="import" href="../../scripts/loaders/remote/urlLoader.html">
 <link rel="import" href="../../scripts/loaders/remote/gitHubLoader.html">
 
@@ -40,15 +41,12 @@
         </div>
 
         <paper-dialog id="modal">
-          <h2>Header</h2>
-
           <paper-dialog-scrollable>
-            [[modalText]]
+            <div inner-h-t-m-l="[[compileMd(modalContent)]]"></div>
           </paper-dialog-scrollable>
 
           <div class="buttons">
-            <paper-button dialog-dismiss>Cancel</paper-button>
-            <paper-button dialog-confirm autofocus>Accept</paper-button>
+            <paper-button dialog-confirm autofocus>[[localize("accept")]]</paper-button>
           </div>
         </paper-dialog>
       </template>
@@ -85,15 +83,15 @@
           type: Boolean,
           value: false
         },
-        modalText: String,
+        modalContent: String
       },
 
       ready: function() {
         this._setUpLoaders();
       },
 
-      setModal: function(text) {
-        this.modalText = text;
+      setModal: function(markdown) {
+        this.modalContent = markdown;
         this.toggleModal();
       },
 
@@ -103,6 +101,10 @@
 
       isBlocksProject: function(projectType) { return projectType === 'blocks'; },
       isCodeProject: function(projectType) { return projectType === 'code'; },
+
+      compileMd: function(markdown) {
+        return new showdown.Converter().makeHtml(markdown);
+      },
 
       buttonCssClass: function(show) {
         return !show ? "button-disabled" : "";
