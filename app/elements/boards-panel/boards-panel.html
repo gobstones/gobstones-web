@@ -610,12 +610,17 @@
       },
 
       _updateSize: function() {
+        $(".theBoardContainer").css("opacity", 0);
         if (!this._selecting) this._fillTable();
-        if (this.stylist) this.stylist.updateBoardSize(this.size);
+        setTimeout(() => {
+          if (this.stylist) this.stylist.refresh();
+          $(".theBoardContainer").css("opacity", 1);
+        }, 1);
       },
 
       _updateAttire: function() {
         this.set("attire.enabled", this.showAttire);
+        if (this.stylist) this.stylist.refresh();
       },
 
       _protectSelectedTab: function() {
