@@ -87,7 +87,6 @@
       const middleY = this._getRightPanelHeight() / 2;
       const offsetY = this._getBoardHeight() / 2;
       $(this.BOARD_CSS_CLASS).css("margin-top", `${middleY - offsetY}px`);
-      console.log("totalY", middleY - offsetY, "(", middleY, "-", offsetY, ")", " - scale", scale, "- height", this._getBoardHeight())
 
       // center horizontally
       $(".theBoardContainer").width(0); // avoid increasing container width
@@ -96,7 +95,6 @@
       const offsetX = this._getBoardWidth() / 2;
 
       this._getBoard().css("margin-left", `${middleX - offsetX}px`);
-      console.log("totalX", middleX - offsetX, "(", middleX, "-", offsetX, ")", " - scale", scale, "- width", this._getBoardWidth())
     }
 
     _makeResizable() {
@@ -134,8 +132,6 @@
       const panelHeight = this._getRightPanelHeight();
       const scaleY = panelHeight / this._getBoardHeight();
 
-      console.log("panelHeight / boardHeight =", panelHeight, "/", this._getBoardHeight())
-      console.log("scaleX", scaleX, "scaleY", scaleY);
       return Math.max(Math.min(scaleX, scaleY) * this.SCALE, 0);
     }
 
