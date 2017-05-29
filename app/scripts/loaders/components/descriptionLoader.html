@@ -1,0 +1,21 @@
+<link rel="import" href="../textLoader.html">
+<link rel="import" href="mixins/singleFileComponent.html">
+
+<script>
+  class DescriptionLoader extends TextLoader {
+    constructor() {
+      super();
+      _.defaults(this, SingleFileComponent);
+      this.SUFFIX = ".md";
+    }
+
+    buildContent(context) {
+      return context.ide.modalContent;
+    }
+
+    readContent(context, content) {
+      context.ide.setModal(content);
+      context.ide.toggleModal();
+    }
+  }
+</script>

@@ -29,6 +29,7 @@
       if (!confirm(this.localize("new-project-confirm"))) return;
 
       const context = this._context();
+      context.ide.setModal("");
       context.setProjectName(this.localize("new-project"));
       context.editor.reset();
       context.boards.reset();

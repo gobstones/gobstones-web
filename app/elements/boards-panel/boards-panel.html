@@ -209,7 +209,7 @@
 
           <!-- Final board -->
           <template is="dom-if" if="{{isFinalBoardSelected(selectedTab)}}">
-            <template is="dom-if" if="{{!error}}">
+            <template is="dom-if" if="{{!isBoom(error)}}">
               <template is="dom-if" if="{{finalState}}" restamp="true">
                 <gs-board table="{{finalState.table}}" header="{{finalState.header}}" attire="{{attire}}"></gs-board>
               </template>
@@ -219,7 +219,7 @@
       </div>
 
       <template is="dom-if" if="{{isFinalBoardSelected(selectedTab)}}">
-        <template is="dom-if" if="{{error}}">
+        <template is="dom-if" if="{{isBoom(error)}}">
           <div class="boom-container">
             <img src="../../images/boom.png" />
             <h2>[[localize("boom")]]</h2>
@@ -632,6 +632,7 @@
         $(window).trigger("resize");
       },
 
+      isBoom: (error) => error !== undefined && error !== null,
       isInitialBoardSelected: (selectedTab) => selectedTab === 0,
       isFinalBoardSelected: (selectedTab) => selectedTab === 1,
       isFinalBoardVisible: (finalState, error) => finalState || error,

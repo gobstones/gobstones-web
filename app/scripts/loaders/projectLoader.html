@@ -4,6 +4,7 @@
 <link rel="import" href="components/libraryLoader.html">
 <link rel="import" href="components/teacherLoader.html">
 <link rel="import" href="components/initialBoardLoader.html">
+<link rel="import" href="components/descriptionLoader.html">
 <link rel="import" href="components/attires/projectAttireLoader.html">
 <link rel="import" href="../jszip.html">
 <link rel="import" href="../async.html">
@@ -27,6 +28,7 @@
 
       this.attireLoader = new ProjectAttireLoader("attires/");
       this.metadataLoader = new MetadataLoader();
+      this.descriptionLoader = new DescriptionLoader();
     }
 
     save(context) {
@@ -65,7 +67,7 @@
         context.boards.removeFirstBoard();
 
         this.attireLoader.readFromZip(context, zip, () => {
-          this._loadFilesWithLoaders(context, zip, [this.metadataLoader], callback);
+          this._loadFilesWithLoaders(context, zip, [this.metadataLoader, this.descriptionLoader], callback);
         });
       });
     }
