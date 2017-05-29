@@ -6,6 +6,7 @@
     constructor() {
       this.toolboxVisible = true;
 
+      this.SCALE = 0.8;
       this.DEFAULT_PERCENTAGE = 0.6;
       this.TOOLBAR_HEIGHT = 64;
       this.TOOLBOX_HEIGHT = 86;
@@ -135,7 +136,7 @@
 
       console.log("panelHeight / boardHeight =", panelHeight, "/", this._getBoardHeight())
       console.log("scaleX", scaleX, "scaleY", scaleY);
-      return Math.max(Math.min(scaleX, scaleY), 0);
+      return Math.max(Math.min(scaleX, scaleY) * this.SCALE, 0);
     }
 
     _getBoard() {
