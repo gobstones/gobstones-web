@@ -5,6 +5,7 @@
   class Stylist {
     constructor() {
       this.toolboxVisible = true;
+      this.selectedTab = 0;
 
       this.SCALE = 0.8;
       this.DEFAULT_PERCENTAGE = 0.6;
@@ -15,6 +16,16 @@
       this.BOARD_CSS_CLASS = ".theBoard";
       this.BOARD_CONTAINER_CSS_CLASS = ".theBoardContainer";
       this.LEFT_PANEL_CSS_CLASS = ".panel-left";
+    }
+
+    setSelectedTab(tab) {
+      this.selectedTab = tab;
+      this.refresh();
+    }
+
+    reset() {
+      this.toolboxVisible = true;
+      this.setSelectedTab(0);
     }
 
     correctEditorHeight(editor) {
@@ -136,7 +147,10 @@
     }
 
     _getBoard() {
-      return $(".theBoardContainer").find(".gbs_board").first();
+      const boards = $(".theBoardContainer").find(".gbs_board");
+      return this.selectedTab === 0
+        ? boards.first()
+        : boards.last();
     }
   }
 
