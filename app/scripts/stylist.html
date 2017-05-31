@@ -6,6 +6,7 @@
     constructor() {
       this.toolboxVisible = true;
       this.selectedTab = 0;
+      this.currentFinalState = 0;
 
       this.SCALE = 0.8;
       this.DEFAULT_PERCENTAGE = 0.6;
@@ -25,6 +26,7 @@
 
     reset() {
       this.toolboxVisible = true;
+      this.currentFinalState = 0;
       this.setSelectedTab(0);
     }
 
@@ -87,10 +89,10 @@
     _scaleAndCenterBoard(percentage) {
       const board = this._getBoard();
 
-      board.css({ opacity: 0, transform: "scale(1)" });
+      board.css({ transform: "scale(1)" });
       const scale = this._getScale(percentage);
       this._centerBoard(percentage, scale);
-      board.css({ opacity: 1, transform: `scale(${scale})` });
+      board.css({ transform: `scale(${scale})` });
     }
 
     _centerBoard(percentage, scale) {
@@ -150,7 +152,7 @@
       const boards = $(".theBoardContainer").find(".gbs_board");
       return this.selectedTab === 0
         ? boards.first()
-        : boards.last();
+        : $(boards[this.currentFinalState + 1]);
     }
   }
 

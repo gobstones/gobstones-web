@@ -120,6 +120,14 @@
         right: 24px;
       }
 
+      .invisible {
+        opacity: 0;
+      }
+
+      .visible {
+        opacity: 1;
+      }
+
       paper-tab {
         --paper-tab-content-unselected: {
           opacity: 0.5;
@@ -136,7 +144,7 @@
       <div style="width: 90%">
         <paper-tabs no-bar selected="{{selectedTab}}" class="bottom self-end">
           <paper-tab>[[localize("initial-board")]] [[toOneBased(selectedInitialState)]]</paper-tab>
-          <template is="dom-if" if="{{isFinalBoardVisible(finalState, error)}}">
+          <template is="dom-if" if="{{isFinalBoardVisible(finalState0, finalState1, error)}}">
             <paper-tab>[[localize("final-board")]]</paper-tab>
           </template>
         </paper-tabs>
@@ -210,8 +218,25 @@
           <!-- Final board -->
           <template is="dom-if" if="{{isFinalBoardSelected(selectedTab)}}">
             <template is="dom-if" if="{{!isBoom(error)}}">
-              <template is="dom-if" if="{{finalState}}" restamp="true">
-                <gs-board id="finalStateEditor" table="{{finalState.table}}" header="{{finalState.header}}" attire="{{attire}}"></gs-board>
+              <template is="dom-if" if="{{finalState0}}" restamp="true">
+                <gs-board
+                  id="finalStateEditor0"
+                  class$="{{finalState0Css(currentFinalState)}}"
+                  style="position: absolute; left: 0; right: 0;"
+                  table="{{finalState0.table}}"
+                  header="{{finalState0.header}}"
+                  attire="{{attire}}"
+                ></gs-board>
+              </template>
+              <template is="dom-if" if="{{finalState1}}" restamp="true">
+                <gs-board
+                  id="finalStateEditor1"
+                  class$="{{finalState1Css(currentFinalState)}}"
+                  style="position: absolute; left: 0; right: 0;"
+                  table="{{finalState1.table}}"
+                  header="{{finalState1.header}}"
+                  attire="{{attire}}"
+                ></gs-board>
               </template>
             </template>
           </template>
@@ -280,7 +305,13 @@
           computed: "_computeInitialBoardOptions(selectedTab, showAttire, permissions)"
         },
 
-        finalState: Object,
+        finalState0: Object,
+        finalState1: Object,
+        currentFinalState: {
+          type: Number,
+          value: 0,
+          observer: "_updateFinalState"
+        },
         error: Object,
 
         availableInitialStates: {
@@ -289,7 +320,7 @@
         },
         initialState: {
           type: Object,
-          computed: "_computeInitialState(selectedInitialState)",
+          computed: "_computeInitialState(selectedInitialState, i)",
           observer: "_onBoardSelected"
         },
         selectedInitialState: {
@@ -322,6 +353,11 @@
             can_edit_board: true,
             can_toggle_attire_visibility: true
           }
+        },
+
+        i: {
+          type: Number,
+          value: 0
         }
       },
       listeners: {
@@ -415,6 +451,7 @@
         this._fillTable();
         this._cleanState();
         this.selectedInitialState = 0;
+        this.i++; // ^ to force computed update
         this.selectedAttire = 0;
 
         window.BUS.fire("reset");
@@ -521,11 +558,23 @@
       },
 
       _setFinalState: function(finalState) {
-        this.finalState = null;
+        const useShadow = this.selectedTab === 1;
+        const shadowFinalState = +!this.currentFinalState;
+        if (useShadow) this.stylist.currentFinalState = shadowFinalState;
+
+        const finalStateName = useShadow
+          ? this._getShadowFinalStateName()
+          : this._getCurrentFinalStateName();
+
+        this[finalStateName] = null;
         this.async(function() {
-          this.finalState = finalState;
-          this.selectedTab = 1;
-          this._updateBoardStyles();
+          this[finalStateName] = finalState;
+          if (!useShadow) this.selectedTab = 1;
+
+          setTimeout(() => {
+            this._updateBoardStyles(useShadow ? shadowFinalState : this.currentFinalState);
+            if (useShadow) this.currentFinalState = shadowFinalState;
+          }, 1);
         });
       },
 
@@ -554,7 +603,9 @@
       },
 
       _cleanState: function() {
-        this.finalState = null;
+        this.finalState0 = null;
+        this.finalState1 = null;
+        this.currentFinalState = 0;
         this.error = null;
         this.selectedTab = 0;
       },
@@ -615,7 +666,7 @@
       },
 
       _updateSelectedTab: function() {
-        this._updateBoardStyles();
+        this._updateStylist(() => this._updateBoardStyles(this.currentFinalState));
         if (window.GBS_IS_RUNNING) this.selectedTab = 1;
       },
 
@@ -632,15 +683,13 @@
         });
       },
 
-      _updateBoardStyles: function() {
-        this._updateStylist(() => {
-          this.stylist.setSelectedTab(this.selectedTab);
-          var finalBoard = this.$$("#finalStateEditor");
-          if (finalBoard) {
-            finalBoard._updateStyles({ base: this.attire });
-            this.stylist.refresh();
-          }
-        });
+      _updateBoardStyles: function(currentFinalState) {
+        if (this.stylist) this.stylist.setSelectedTab(this.selectedTab);
+        const finalBoard = this._getFinalStateEditor(currentFinalState);
+        if (finalBoard) {
+          finalBoard._updateStyles({ base: this.attire });
+          this.stylist.refresh();
+        }
       },
 
       _updateStylist: function(action, init = _.noop) {
@@ -652,10 +701,24 @@
         }, 1);
       },
 
+      _updateFinalState: function() {
+        if (this.stylist) this.stylist.currentFinalState = this.currentFinalState;
+      },
+
+      _getCurrentFinalStateName: function() {
+        return `finalState${this.currentFinalState}`;
+      },
+      _getShadowFinalStateName: function() {
+        return `finalState${+!this.currentFinalState}`;
+      },
+      _getFinalStateEditor: function(current) {
+        return this.$$(`finalStateEditor${current}`);
+      },
+
       isBoom: (error) => error !== undefined && error !== null,
       isInitialBoardSelected: (selectedTab) => selectedTab === 0,
       isFinalBoardSelected: (selectedTab) => selectedTab === 1,
-      isFinalBoardVisible: (finalState, error) => finalState || error,
+      isFinalBoardVisible: (finalState0, finalState1, error) => finalState0 || finalState1 || error,
       isInitialBoardNotEditable: function(selectedTab, showAttire, permissions) {
         return selectedTab === 1 || showAttire || !this.hasPermission(permissions, "can_edit_board");
       },
@@ -675,6 +738,14 @@
 
       boardButtonCss: function(selectedTab, showAttire, permissions) {
         return "black-button" + (this.isInitialBoardNotEditable(selectedTab, showAttire, permissions) ? " hidden" : "");
+      },
+
+      finalState0Css: function(currentFinalState) {
+        return currentFinalState === 0 ? "visible" : "invisible";
+      },
+
+      finalState1Css: function(currentFinalState) {
+        return currentFinalState === 1 ? "visible" : "invisible";
       }
     });
 
