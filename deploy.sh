@@ -27,12 +27,10 @@ echo "Deploying to gobstones-web$SUFFIX (remote $REMOTE)..."
 
 # push to gh pages
 current_branch=$(git branch | grep \* | cut -d ' ' -f2)
-echo "Deleting temporary branches..."
+echo "Deleting temporary things..."
 git branch -D deploy
 git branch -D tmp-deploy
-echo "Adding remote..."
 git remote remove staging
-git remote add staging "https://github.com/gobstones/gobstones-web$SUFFIX.git"
 echo "Creating deploy commit..."
 try git checkout -b deploy
 try git add -Af dist/
@@ -40,5 +38,6 @@ try git commit -m "Deploy @ $(date +'%d/%m/%Y')"
 echo "Creating deploy subtree commit..."
 try git subtree split --prefix dist deploy -b tmp-deploy
 echo "Pushing to remote..."
+try git remote add staging "https://github.com/gobstones/gobstones-web$SUFFIX.git"
 try git push -f $REMOTE tmp-deploy:gh-pages
-try git checkout "$current_branch"
+git checkout "$current_branch"
