@@ -12,13 +12,13 @@ before_deploy:
 deploy:
   - provider: script
     skip_cleanup: true
-    script: deploy.sh staging
+    script: ./deploy.sh staging
     on:
       branch: master
 
   - provider: script
     skip_cleanup: true
-    script: deploy.sh production
+    script: ./deploy.sh production
     on:
       tags: true
 env:
