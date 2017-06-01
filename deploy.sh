@@ -11,6 +11,7 @@ function try {
 }
 
 # build
+rm -rf .tmp dist
 try gulp
 
 # config
@@ -31,7 +32,7 @@ git branch -D deploy
 git branch -D tmp-deploy
 echo "Adding remote..."
 git remote remove staging
-git remote add staging "https://$GH_TOKEN@github.com/gobstones/gobstones-web$SUFFIX.git"
+git remote add staging "https://github.com/gobstones/gobstones-web$SUFFIX.git"
 echo "Creating deploy commit..."
 try git checkout -b deploy
 try git add -Af dist/

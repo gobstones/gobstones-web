@@ -29,10 +29,9 @@ Pushing to `master` will deploy to **staging** and creating new tags will deploy
 
 To deploy manually:
 ```bash
-rm -rf .tmp dist
 export GH_TOKEN="{your_username}:{your_password}"
-bash deploy.sh staging
-# or bash deploy.sh production
+./deploy.sh staging
+# or ./deploy.sh production
 ```
 ## desktop/offline version
 

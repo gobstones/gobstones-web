@@ -9,16 +9,18 @@ before_deploy:
   - npm i -g bower@1.7.1 gulp@3.9.0
   - rm -rf .tmp dist
   - bower install
+  - gulp
 deploy:
-  - provider: script
+  - provider: pages
     skip_cleanup: true
-    script: ./deploy.sh staging
+    github_token: $GH_TOKEN
+    repo: gobstones/gobstones-web-staging
     on:
       branch: master
 
-  - provider: script
+  - provider: pages
     skip_cleanup: true
-    script: ./deploy.sh production
+    github_token: $GH_TOKEN
     on:
       tags: true
 env:
