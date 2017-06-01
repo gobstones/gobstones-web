@@ -21,14 +21,18 @@ gulp jasmine
 ```
 
 ## deploy
-This is hosted at Github Pages in http://gobstones.github.io/gobstones-web
+This is hosted at Github Pages in:
+- **staging**: http://gobstones.github.io/gobstones-web-staging
+- **production**: http://gobstones.github.io/gobstones-web
+
+Pushing to `master` will deploy to **staging** and creating new tags will deploy to **production**.
 
 To deploy manually:
 ```bash
-rm -rf .tmp .publish dist
-export TRAVIS_BRANCH=master
-export TRAVIS_PULL_REQUEST=false
-bash travis-runner.sh
+rm -rf .tmp dist
+export GH_TOKEN="{your_username}:{your_password}"
+bash deploy.sh staging
+# or bash deploy.sh production
 ```
 ## desktop/offline version
 
