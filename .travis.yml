@@ -11,11 +11,13 @@ before_deploy:
   - bower install
 deploy:
   - provider: script
+    skip_cleanup: true
     script: deploy.sh staging
     on:
       branch: master
 
   - provider: script
+    skip_cleanup: true
     script: deploy.sh production
     on:
       tags: true
