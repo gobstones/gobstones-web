@@ -713,7 +713,7 @@
         return `finalState${+!this.currentFinalState}`;
       },
       _getFinalStateEditor: function(current) {
-        return this.$$(`finalStateEditor${current}`);
+        return $(`#finalStateEditor${current}`)[0];
       },
 
       isBoom: (error) => error !== undefined && error !== null,
