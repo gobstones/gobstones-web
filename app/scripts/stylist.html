@@ -5,29 +5,17 @@
   class Stylist {
     constructor() {
       this.toolboxVisible = true;
-      this.selectedTab = 0;
-      this.currentFinalState = 0;
 
-      this.SCALE = 0.8;
       this.DEFAULT_PERCENTAGE = 0.6;
       this.TOOLBAR_HEIGHT = 64;
-      this.TOOLBOX_HEIGHT = 86;
+      this.TOOLBOX_HEIGHT = 156;
       this.TOOLBAR_AND_TOOLBOX_HEIGHT = () => this.TOOLBAR_HEIGHT + (this.toolboxVisible ? this.TOOLBOX_HEIGHT : 0);
-
+      this.CELL_SIZE = 59;
       this.BOARD_CSS_CLASS = ".theBoard";
       this.BOARD_CONTAINER_CSS_CLASS = ".theBoardContainer";
+      this.BOARD_CONTAINER_OFFSET = 8;
+      this.BOARD_CONTAINER_VERTICAL_MARGIN = 50;
       this.LEFT_PANEL_CSS_CLASS = ".panel-left";
-    }
-
-    setSelectedTab(tab) {
-      this.selectedTab = tab;
-      this.refresh();
-    }
-
-    reset() {
-      this.toolboxVisible = true;
-      this.currentFinalState = 0;
-      this.setSelectedTab(0);
     }
 
     correctEditorHeight(editor) {
@@ -45,13 +33,18 @@
           $(`${this.LEFT_PANEL_CSS_CLASS} .ui-resizable-s`).hide();
           $(`${this.LEFT_PANEL_CSS_CLASS} .ui-resizable-se`).hide();
 
-          this.refresh();
+          this.updateBoardSize(boardDimensions);
         }, 0);
       });
 
       $(window).resize(() => {
-        this.refresh();
+        this._beResponsive();
       });
+    }
+
+    updateBoardSize(boardDimensions) {
+      this._saveBoardSize(boardDimensions);
+      this._beResponsive();
     }
 
     setBlocklyResize() {
@@ -65,7 +58,7 @@
       $(window).resize(resize);
     }
 
-    refresh() {
+    _beResponsive() {
       var percentage = this._keepAspectRatioOnWindowResize(this.LEFT_PANEL_CSS_CLASS);
       this._scaleAndCenterBoard(percentage);
     }
@@ -87,33 +80,46 @@
     }
 
     _scaleAndCenterBoard(percentage) {
-      const board = this._getBoard();
-
-      board.css({ transform: "scale(1)" });
       const scale = this._getScale(percentage);
+      $(this.BOARD_CSS_CLASS).css("transform", `scale(${scale})`);
       this._centerBoard(percentage, scale);
-      board.css({ transform: `scale(${scale})` });
     }
 
     _centerBoard(percentage, scale) {
+      const applyMargin = (x, m, b) => - (m*x + b) * this.CELL_SIZE * scale;
+
       // center vertically
-      const middleY = this._getRightPanelHeight() / 2;
-      const offsetY = this._getBoardHeight() / 2;
+      const middleY = (this._getRightPanelHeight()) / 2;
+      const offsetY = this.currentBoardHeight / 2 + applyMargin(this.boardDimensions.y, 0.111561862, -0.111561862);
       $(this.BOARD_CSS_CLASS).css("margin-top", `${middleY - offsetY}px`);
 
       // center horizontally
       $(".theBoardContainer").width(0); // avoid increasing container width
       const panelWidth = this._getRightPanelWidth(percentage);
       const middleX = panelWidth / 2;
-      const offsetX = this._getBoardWidth() / 2;
+      const offsetX = this.BOARD_CONTAINER_OFFSET + (this.currentBoardWidth * scale) / 2 + applyMargin(this.boardDimensions.x, -0.000975862, 0.131475862);
 
-      this._getBoard().css("margin-left", `${middleX - offsetX}px`);
+      $(this.BOARD_CONTAINER_CSS_CLASS).css("margin-left", `${middleX - offsetX}px`);
     }
 
     _makeResizable() {
       $(this.LEFT_PANEL_CSS_CLASS).resizable({
         resizeHeight: false
       });
+    }
+
+    _saveBoardSize(boardDimensions) {
+      const boardSize = this._getBoardSize(boardDimensions);
+      this.currentBoardWidth = boardSize.width;
+      this.currentBoardHeight = boardSize.height;
+      this.boardDimensions = boardDimensions;
+    }
+
+    _getBoardSize(boardDimensions) {
+      return {
+        width: 39 + boardDimensions.x * this.CELL_SIZE,
+        height: 39 + boardDimensions.y * this.CELL_SIZE
+      };
     }
 
     _getPercentage() {
@@ -126,33 +132,17 @@
     }
 
     _getRightPanelHeight() {
-      return $(document).height() - this.TOOLBAR_AND_TOOLBOX_HEIGHT();
-    }
-
-
-    _getBoardWidth() {
-      return this._getBoard().width();
-    }
-
-    _getBoardHeight() {
-      return this._getBoard().height();
+      return $(document).height() - this.TOOLBAR_AND_TOOLBOX_HEIGHT() - this.BOARD_CONTAINER_VERTICAL_MARGIN;
     }
 
     _getScale(percentage) {
       const panelWidth = this._getRightPanelWidth(percentage);
-      const scaleX = panelWidth / this._getBoardWidth();
+      const scaleX = panelWidth / this.currentBoardWidth;
 
       const panelHeight = this._getRightPanelHeight();
-      const scaleY = panelHeight / this._getBoardHeight();
+      const scaleY = panelHeight / this.currentBoardHeight;
 
-      return Math.max(Math.min(scaleX, scaleY) * this.SCALE, 0);
-    }
-
-    _getBoard() {
-      const boards = $(".theBoardContainer").find(".gbs_board");
-      return this.selectedTab === 0
-        ? boards.first()
-        : $(boards[this.currentFinalState + 1]);
+      return Math.max(Math.min(scaleX, scaleY), 0);
     }
   }
 
