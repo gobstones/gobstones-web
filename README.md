@@ -23,7 +23,7 @@ gulp jasmine
 ## deploy
 This is hosted at Github Pages in:
 - **staging**: http://gobstones.github.io/gobstones-web-staging
-- **staging**: http://gobstones.github.io/gobstones-web
+- **production**: http://gobstones.github.io/gobstones-web
 
 Pushing to `master` will deploy to **staging** and creating new tags will deploy to **production**.
 
