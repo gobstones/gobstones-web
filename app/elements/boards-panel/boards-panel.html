@@ -120,15 +120,6 @@
         right: 24px;
       }
 
-      .invisible {
-        opacity: 0;
-        /* opacity: .5; filter: sepia(100%); */
-      }
-
-      .visible {
-        opacity: 1;
-      }
-
       paper-tab {
         --paper-tab-content-unselected: {
           opacity: 0.5;
@@ -145,7 +136,7 @@
       <div style="width: 90%">
         <paper-tabs no-bar selected="{{selectedTab}}" class="bottom self-end">
           <paper-tab>[[localize("initial-board")]] [[toOneBased(selectedInitialState)]]</paper-tab>
-          <template is="dom-if" if="{{isFinalBoardVisible(finalState0, finalState1, error)}}">
+          <template is="dom-if" if="{{isFinalBoardVisible(finalState, error)}}">
             <paper-tab>[[localize("final-board")]]</paper-tab>
           </template>
         </paper-tabs>
@@ -219,25 +210,8 @@
           <!-- Final board -->
           <template is="dom-if" if="{{isFinalBoardSelected(selectedTab)}}">
             <template is="dom-if" if="{{!isBoom(error)}}">
-              <template is="dom-if" if="{{finalState0}}" restamp="true">
-                <gs-board
-                  id="finalStateEditor0"
-                  class$="{{finalState0Css(currentFinalState)}}"
-                  style="position: absolute; left: 0; right: 0;"
-                  table="{{finalState0.table}}"
-                  header="{{finalState0.header}}"
-                  attire="{{attire}}"
-                ></gs-board>
-              </template>
-              <template is="dom-if" if="{{finalState1}}" restamp="true">
-                <gs-board
-                  id="finalStateEditor1"
-                  class$="{{finalState1Css(currentFinalState)}}"
-                  style="position: absolute; left: 0; right: 0;"
-                  table="{{finalState1.table}}"
-                  header="{{finalState1.header}}"
-                  attire="{{attire}}"
-                ></gs-board>
+              <template is="dom-if" if="{{finalState}}">
+                <gs-board id="finalStateEditor" attire="{{attire}}"></gs-board>
               </template>
             </template>
           </template>
@@ -306,13 +280,7 @@
           computed: "_computeInitialBoardOptions(selectedTab, showAttire, permissions)"
         },
 
-        finalState0: Object,
-        finalState1: Object,
-        currentFinalState: {
-          type: Number,
-          value: 0,
-          observer: "_updateFinalState"
-        },
+        finalState: Object,
         error: Object,
 
         availableInitialStates: {
@@ -321,7 +289,7 @@
         },
         initialState: {
           type: Object,
-          computed: "_computeInitialState(selectedInitialState, i)",
+          computed: "_computeInitialState(selectedInitialState)",
           observer: "_onBoardSelected"
         },
         selectedInitialState: {
@@ -559,27 +527,20 @@
       },
 
       _setFinalState: function(finalState) {
-        const useShadow = this.selectedTab === 1;
-        const shadowFinalState = +!this.currentFinalState;
-        if (useShadow) this.stylist.currentFinalState = shadowFinalState;
+        const firstTime = !this.finalState;
+        this.set("finalState", finalState);
+        this.selectedTab = 1;
 
-        const finalStateName = useShadow
-          ? this._getShadowFinalStateName()
-          : this._getCurrentFinalStateName();
-
-        this[finalStateName] = null;
-        this.async(function() {
-          this[finalStateName] = finalState;
-          if (!useShadow) this.selectedTab = 1;
-
-          setTimeout(() => {
-            this._updateBoardStyles(useShadow ? shadowFinalState : this.currentFinalState);
-            if (useShadow) this.currentFinalState = shadowFinalState;
-          }, 1);
-        });
+        setTimeout(() => {
+          this.$$("#finalStateEditor").update(finalState.table, finalState.header);
+          if (firstTime) this._updateBoardStyles();
+        }, 1);
       },
 
-      _onBoardChanged: function() {
+      _onBoardChanged: function(event) {
+        const isFromInitialState = event.path.some(it => it === this.initialStateEditor);
+        if (!isFromInitialState) return;
+
         const initialState = this.availableInitialStates[this.selectedInitialState];
         // ^ Use this and not `this.initialState`! The listeners execute before computed properties.
 
@@ -604,9 +565,7 @@
       },
 
       _cleanState: function() {
-        this.finalState0 = null;
-        this.finalState1 = null;
-        this.currentFinalState = 0;
+        this.finalState = null;
         this.error = null;
         this.selectedTab = 0;
       },
@@ -667,7 +626,7 @@
       },
 
       _updateSelectedTab: function() {
-        this._updateStylist(() => this._updateBoardStyles(this.currentFinalState));
+        this._updateBoardStyles();
         if (window.GBS_IS_RUNNING) this.selectedTab = 1;
       },
 
@@ -684,13 +643,15 @@
         });
       },
 
-      _updateBoardStyles: function(currentFinalState) {
-        if (this.stylist) this.stylist.setSelectedTab(this.selectedTab);
-        const finalBoard = this._getFinalStateEditor(currentFinalState);
-        if (finalBoard) {
-          finalBoard._updateStyles({ base: this.attire });
-          this.stylist.refresh();
-        }
+      _updateBoardStyles: function() {
+        this._updateStylist(() => {
+          this.stylist.setSelectedTab(this.selectedTab);
+          var finalBoard = this.$$("#finalStateEditor");
+          if (finalBoard) {
+            finalBoard._updateStyles({ base: this.attire });
+            this.stylist.refresh();
+          }
+        });
       },
 
       _updateStylist: function(action, init = _.noop) {
@@ -702,24 +663,10 @@
         }, 1);
       },
 
-      _updateFinalState: function() {
-        if (this.stylist) this.stylist.currentFinalState = this.currentFinalState;
-      },
-
-      _getCurrentFinalStateName: function() {
-        return `finalState${this.currentFinalState}`;
-      },
-      _getShadowFinalStateName: function() {
-        return `finalState${+!this.currentFinalState}`;
-      },
-      _getFinalStateEditor: function(current) {
-        return $(`#finalStateEditor${current}`)[0];
-      },
-
       isBoom: (error) => error !== undefined && error !== null,
       isInitialBoardSelected: (selectedTab) => selectedTab === 0,
       isFinalBoardSelected: (selectedTab) => selectedTab === 1,
-      isFinalBoardVisible: (finalState0, finalState1, error) => finalState0 || finalState1 || error,
+      isFinalBoardVisible: (finalState, error) => finalState || error,
       isInitialBoardNotEditable: function(selectedTab, showAttire, permissions) {
         return selectedTab === 1 || showAttire || !this.hasPermission(permissions, "can_edit_board");
       },
@@ -739,14 +686,6 @@
 
       boardButtonCss: function(selectedTab, showAttire, permissions) {
         return "black-button" + (this.isInitialBoardNotEditable(selectedTab, showAttire, permissions) ? " hidden" : "");
-      },
-
-      finalState0Css: function(currentFinalState) {
-        return currentFinalState === 0 ? "visible" : "invisible";
-      },
-
-      finalState1Css: function(currentFinalState) {
-        return currentFinalState === 1 ? "visible" : "invisible";
       }
     });
 
