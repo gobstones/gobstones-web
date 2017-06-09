@@ -24,6 +24,9 @@
         library: {
           visible: context.toolbar.permissions.can_use_library
         },
+        source: {
+          visible: context.boards.showCode
+        },
         board: {
           active: context.boards.selectedInitialState + 1,
           initial_board_source: context.editor.runner.useRandomBoard ? this.RANDOM_SOURCE : this.SELECTED_SOURCE,
@@ -57,12 +60,16 @@
 
       context.boards.finishLoadingBoards();
 
+      // defaults
+      if (!metadata.source) metadata.source = { visible: true };
+
       // name
       context.setProjectName(metadata.name);
 
       // board
       context.boards.selectedInitialState = metadata.board.active - 1;
       context.editor.runner.useRandomBoard = metadata.board.initial_board_source === this.RANDOM_SOURCE;
+      context.boards.setShowCode(metadata.source.visible);
 
       // execution_speed
       const speed = this.SPEED_NAMES.indexOf(metadata.execution_speed.active) + 1;
