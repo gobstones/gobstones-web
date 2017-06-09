@@ -655,11 +655,12 @@
       },
 
       _updateStylist: function(action, init = _.noop) {
+        $(".theBoardContainer").stop(true);
         $(".theBoardContainer").css("opacity", 0);
         init();
         setTimeout(() => {
           if (this.stylist) action();
-          $(".theBoardContainer").css("opacity", 1);
+          $(".theBoardContainer").fadeTo(300, 1);
         }, 1);
       },
 

@@ -57,6 +57,10 @@
         const panel = $(this.LEFT_PANEL_CSS_CLASS);
         $("#blocklyDiv").css("width", panel.width() + "px");
         $("#blocklyDiv").css("height", panel.height() - this.TOOLBAR_HEIGHT + "px");
+
+        // fix for white overlay in procedure comments:
+        $("#blocklyDiv").unbind("click");
+        $("#blocklyDiv").click(() => $(".blocklyMinimalBody").height("100%"));
       };
 
       setTimeout(resize, 0);
