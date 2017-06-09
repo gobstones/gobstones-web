@@ -96,6 +96,21 @@
         margin-top: -13px;
       }
 
+      .help-button {
+        position: absolute;
+        cursor: pointer;
+        left: calc(100% - 24px);
+      }
+
+      .help-tooltip {
+        font-size: 15px;
+      }
+
+      .shortcut {
+        color: var(--paper-blue-grey-200);
+        font-weight: bold;
+      }
+
       .clear-button {
         position: absolute;
         margin-left: 28px;
@@ -165,6 +180,21 @@
           </paper-menu>
         </paper-menu-button>
       </div>
+
+      <paper-button id="help" class="help-button"><iron-icon icon="icons:help"></iron-icon></paper-button>
+      <paper-tooltip for="help" position="left" animation-config="{{tooltipAnimation}}">
+        <div class="help-tooltip">
+          <div>
+            <span class="shortcut">[[localize("shortcut-add-stones")]]</span>: [[localize("shortcut-add-stones-description")]]
+          </div>
+          <div>
+            <span class="shortcut">[[localize("shortcut-remove-stones")]]</span>: [[localize("shortcut-remove-stones-description")]]
+          </div>
+          <div>
+            <span class="shortcut">[[localize("shortcut-set-header")]]</span>: [[localize("shortcut-set-header-description")]]
+          </div>
+        </div>
+      </paper-tooltip>
     </template>
 
     <div class="boards-panel">
@@ -327,7 +357,8 @@
         i: {
           type: Number,
           value: 0
-        }
+        },
+        tooltipAnimation: Object
       },
       listeners: {
         "board-changed": "_onBoardChanged"
@@ -371,6 +402,11 @@
 
         if (this.availableInitialStates.length > 0) return;
         this._bootstrap();
+
+        this.tooltipAnimation = {
+          "entry": [{"name": "fade-in-animation", "timing": {"delay": 1000}}],
+          "exit": [{"name": "fade-out-animation"}]
+        };
       },
 
       toggleShowCode: function() {
