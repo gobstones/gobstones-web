@@ -75,6 +75,8 @@
             window.LOAD_PENDING_PROJECT = undefined;
           }
         }, 0);
+
+        window.blockly = this.$.blockly; // TODO: Es para debuggear
       },
 
       addCode: function(xml) {
