@@ -7,12 +7,6 @@
       this.parser = parser;
       this.adapter = new KeyCodeAdapter();
       this.keys = [];
-
-      key.filter = function filter(event) {
-        var tagName = (event.target || event.srcElement).tagName;
-        // return !(tagName == 'INPUT' || tagName == 'SELECT' || tagName == 'TEXTAREA');
-        return true;
-      };
     }
 
     run({ ast, request, throttle, callbacks: { onResult, onStop } }) {

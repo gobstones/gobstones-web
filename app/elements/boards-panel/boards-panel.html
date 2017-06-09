@@ -606,6 +606,7 @@
         this.interactive.wasShowingCode = this.showCode;
         if (this.showCode) this.toggleShowCode();
         this.set("interactive.running", true);
+        setTimeout(() => { try { $(".ace_text-input")[0].blur() } catch (e) {} }, 0);
       },
 
       _restoreInteractive: function() {
@@ -614,6 +615,7 @@
         this.set("interactive.running", false);
         if (this.interactive.wasShowingCode !== this.showCode)
           this.toggleShowCode();
+        setTimeout(() => { try { $(".ace_text-input")[0].focus() } catch (e) {} }, 0);
       },
 
       _limitSize: function(n) {
