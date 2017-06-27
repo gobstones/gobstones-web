@@ -114,11 +114,15 @@
       isCodeProject: function(projectType) { return projectType === 'code'; },
 
       compileMd: function(markdown) {
-        return new showdown.Converter().makeHtml(markdown);
+        return new showdown.Converter(this._markdownOptions()).makeHtml(markdown);
       },
 
       buttonCssClass: function(show) {
         return !show ? "button-disabled" : "";
+      },
+      
+      _markdownOptions: function() {
+        return {tables: true};
       },
 
       _showCodeChanged: function({ detail }) {
