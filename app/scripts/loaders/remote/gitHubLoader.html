@@ -10,11 +10,11 @@
       this.CLIENT_SECRET = "f40981be76b00e35d4437d71184f42a70d08f3a6";
     }
 
-    load(slug, getContext) {
+    load(slug, getContext, callback) {
       const [ username, repoName ] = slug.split("/");
 
       return this._loadDir(username, repoName).then(files => {
-        this.loader.readRaw(getContext(), this._createZip(files), _.noop);
+        this.loader.readRaw(getContext(), this._createZip(files), callback);
       });
     }
 

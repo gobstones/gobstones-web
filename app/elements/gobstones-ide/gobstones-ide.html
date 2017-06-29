@@ -9,10 +9,21 @@
 <dom-module id="gobstones-ide">
   <style>
     .loading {
+      z-index: 999;
+      position: absolute;
       text-align: center;
-      width: 100%;
       font-weight: bold;
       font-size: xx-large;
+      width: 300px;
+      height: 100px;
+      margin-top: -50px;
+      margin-left: -150px;
+      top: 50%;
+      left: 50%;
+    }
+
+    .gray {
+      filter: grayscale(100%);
     }
 
     .description {
@@ -26,38 +37,36 @@
 
   <template>
 
-    <div class="panel-container">
+    <div class$="panel-container {{ideCss(isLoading)}}">
       <template is="dom-if" if="{{isLoading}}">
         <div class="loading">[[localize("loading-project")]]</div>
       </template>
 
-      <template is="dom-if" if="{{!isLoading}}">
-        <div class="panel-left">
-          <editor-toolbar project-type="[[projectType]]" id="toolbar"></editor-toolbar>
+      <div class="panel-left">
+        <editor-toolbar project-type="[[projectType]]" id="toolbar"></editor-toolbar>
 
-          <template is="dom-if" if="{{isBlocksProject(projectType)}}">
-            <gobstones-blockly id="editor"></gobstones-blockly>
-          </template>
+        <template is="dom-if" if="{{isBlocksProject(projectType)}}">
+          <gobstones-blockly id="editor"></gobstones-blockly>
+        </template>
 
-          <template is="dom-if" if="{{isCodeProject(projectType)}}">
-            <gobstones-editor id="editor"></gobstones-editor>
-          </template>
+        <template is="dom-if" if="{{isCodeProject(projectType)}}">
+          <gobstones-editor id="editor"></gobstones-editor>
+        </template>
+      </div>
+
+      <div class="panel-right">
+        <boards-panel id="boards"></boards-panel>
+      </div>
+
+      <paper-dialog id="modal" class="description">
+        <paper-dialog-scrollable>
+          <div inner-h-t-m-l="[[compileMd(modalContent)]]"></div>
+        </paper-dialog-scrollable>
+
+        <div class="buttons">
+          <paper-button class="accept" dialog-confirm autofocus>[[localize("accept")]]</paper-button>
         </div>
-
-        <div class="panel-right">
-          <boards-panel id="boards"></boards-panel>
-        </div>
-
-        <paper-dialog id="modal" class="description">
-          <paper-dialog-scrollable>
-            <div inner-h-t-m-l="[[compileMd(modalContent)]]"></div>
-          </paper-dialog-scrollable>
-
-          <div class="buttons">
-            <paper-button class="accept" dialog-confirm autofocus>[[localize("accept")]]</paper-button>
-          </div>
-        </paper-dialog>
-      </template>
+      </paper-dialog>
     </div>
 
   </template>
@@ -120,7 +129,7 @@
       buttonCssClass: function(show) {
         return !show ? "button-disabled" : "";
       },
-      
+
       _markdownOptions: function() {
         return {tables: true};
       },
@@ -155,16 +164,20 @@
       _setUpLoader: function(Loader, url, getContext) {
         window.LOAD_PENDING_PROJECT = () => {
           this.isLoading = true;
+          var finish = () => { this.isLoading = false; };
 
           new Loader(this.projectType)
-            .load(url, getContext)
+            .load(url, getContext, finish)
             .catch((e) => {
               console.error(e);
               alert(this.localize("error-loading-project"));
-            }).always(() => {
-              this.isLoading = false;
+              finish()
             });
         };
+      },
+
+      ideCss: function(isLoading) {
+        return isLoading ? "gray" : "";
       }
     });
 

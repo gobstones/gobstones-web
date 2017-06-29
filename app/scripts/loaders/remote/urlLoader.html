@@ -7,9 +7,9 @@
       this.loader = projectType === "code" ? new ProjectLoader : new ProjectBlocksLoader;
     }
 
-    load(url, getContext) {
+    load(url, getContext, callback) {
       return $.getBinary(url).then(content => {
-        this.loader.readRawZip(getContext(), content, _.noop);
+        this.loader.readRawZip(getContext(), content, callback);
       });
     }
   }
