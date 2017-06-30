@@ -51,7 +51,7 @@
   },
   "scripts": {
     "start": "gulp serve",
-    "test": "gulp test:local"
+    "test": "echo 'Oops, no tests here... :('"
   },
   "engines": {
     "node": ">=0.10.0"
