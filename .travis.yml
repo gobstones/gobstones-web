@@ -4,8 +4,6 @@ node_js:
 cache:
   directories:
     - node_modules  
-script:
-  - echo "hey"
 before_deploy:
   - npm i -g bower@1.7.1 gulp@3.9.0
   - rm -rf .tmp dist
