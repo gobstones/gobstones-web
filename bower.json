@@ -22,7 +22,8 @@
     "async": "2.1.4",
     "gs-element-blockly": "Program-AR/gs-element-blockly#0.3.2",
     "keymaster": "~1.6.3",
-    "showdown": "^1.6.4"
+    "showdown": "^1.6.4",
+    "js-emoji": "^3.2.2"
   },
   "devDependencies": {
     "web-component-tester": "^4.0.0",

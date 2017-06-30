@@ -3,6 +3,7 @@
 <link rel="import" href="../../scripts/behaviors/loaderBehavior.html">
 <link rel="import" href="../../scripts/jquery.html">
 <link rel="import" href="../../scripts/showdown.html">
+<link rel="import" href="../../scripts/js-emoji.html">
 <link rel="import" href="../../scripts/loaders/remote/urlLoader.html">
 <link rel="import" href="../../scripts/loaders/remote/gitHubLoader.html">
 
@@ -123,15 +124,23 @@
       isCodeProject: function(projectType) { return projectType === 'code'; },
 
       compileMd: function(markdown) {
-        return new showdown.Converter(this._markdownOptions()).makeHtml(markdown);
+        return this._renderMarkdown(this._renderEmojis(markdown));
       },
 
       buttonCssClass: function(show) {
         return !show ? "button-disabled" : "";
       },
 
-      _markdownOptions: function() {
-        return {tables: true};
+      _renderMarkdown: function(markdown) {
+        return new showdown.Converter({tables: true}).makeHtml(markdown);
+      },
+
+      _renderEmojis: function(markdown) {
+        const emoji = new EmojiConvertor();
+        emoji.img_sets.apple.path = '/images/emojis/img-apple-64/';
+        emoji.img_sets.apple.sheet = '/images/emojis/sheet_apple_64.png';
+
+        return emoji.replace_colons(markdown);
       },
 
       _showCodeChanged: function({ detail }) {
