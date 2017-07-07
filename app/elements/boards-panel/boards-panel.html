@@ -307,7 +307,7 @@
         },
         initialBoardOptions: {
           type: Object,
-          computed: "_computeInitialBoardOptions(selectedTab, showAttire, permissions)"
+          value: { editable: true }
         },
 
         finalState: Object,
@@ -364,7 +364,8 @@
         "board-changed": "_onBoardChanged"
       },
       observers: [
-        "_onToolboxViewPermissionChange(permissions.can_view_edition_panel)"
+        "_onToolboxViewPermissionChange(permissions.can_view_edition_panel)",
+        "_onInitialBoardOptionsChange(selectedTab, showAttire, permissions.*)"
       ],
 
       ready: function() {
@@ -645,8 +646,8 @@
         return this.availableInitialStates[selectedInitialState];
       },
 
-      _computeInitialBoardOptions: function(selectedTab, showAttire, permissions) {
-        return { editable: !this.isInitialBoardNotEditable(selectedTab, showAttire, permissions) };
+      _onInitialBoardOptionsChange: function(selectedTab, showAttire, { base }) {
+        this.set("initialBoardOptions.editable", !this.isInitialBoardNotEditable(selectedTab, showAttire, base));
       },
 
       _saveInteractive: function() {
