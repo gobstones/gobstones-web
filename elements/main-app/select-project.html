@@ -1,0 +1,51 @@
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../scripts/behaviors/localizationBehavior.html">
+</head><body>l"&gt;
+<link rel="import" href="../../scripts/behaviors/loaderBehavior.html">
+<link rel="import" href="../../scripts/loaders/projectBlocksLoader.html">
+
+<dom-module id="select-project">
+  <style>
+    .content {
+      text-align: center;
+    }
+
+    .button {
+      position: relative;
+      width: 300px;
+      height: 300px;
+      margin: 40px 40px;
+      color: black;
+    }
+
+    .button:after {
+      position: absolute;
+      font-family: monospace;
+      font-size: 150%;
+      left: 50%;
+      top: -30px;
+      transform: translate(-50%, 0);
+    }
+
+    .button-blocks:after {
+      content: 'Usar bloques';
+    }
+
+    .button-code:after {
+      content: 'Usar código';
+    }
+  </style>
+
+  <template>
+    <editor-toolbar tools="none"></editor-toolbar>
+    <div class="content">
+      <paper-icon-button class="button button-blocks" on-click="useBlocks" icon="icons:extension" alt="use blocks"> </paper-icon-button>
+
+      <paper-icon-button class="button button-code" on-click="useCode" icon="icons:code" alt="use code"> </paper-icon-button>
+    </div>
+
+    <input id="InitialBlocksProject" type="file" accept=".gbp" on-change="onInitialProjectLoad" style="display:none;">
+  </template>
+
+  </dom-module>
+<script src="select-project.js"></script></body></html>

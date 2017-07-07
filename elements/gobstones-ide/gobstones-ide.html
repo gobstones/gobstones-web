@@ -1,0 +1,76 @@
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../scripts/behaviors/localizationBehavior.html">
+<link rel="import" href="../../scripts/behaviors/loaderBehavior.html">
+<link rel="import" href="../../scripts/jquery.html">
+<link rel="import" href="../../scripts/showdown.html">
+<link rel="import" href="../../scripts/js-emoji.html">
+<link rel="import" href="../../scripts/loaders/remote/urlLoader.html">
+<link rel="import" href="../../scripts/loaders/remote/gitHubLoader.html">
+
+</head><body><dom-module id="gobstones-ide">
+  <style>
+    .loading {
+      z-index: 999;
+      position: absolute;
+      text-align: center;
+      font-weight: bold;
+      font-size: xx-large;
+      width: 300px;
+      height: 100px;
+      margin-top: -50px;
+      margin-left: -150px;
+      top: 50%;
+      left: 50%;
+    }
+
+    .gray {
+      filter: grayscale(100%);
+    }
+
+    .description {
+      min-width: 500px;
+    }
+
+    .accept {
+      cursor: pointer;
+    }
+  </style>
+
+  <template>
+
+    <div class$="panel-container {{ideCss(isLoading)}}">
+      <template is="dom-if" if="{{isLoading}}">
+        <div class="loading">[[localize("loading-project")]]</div>
+      </template>
+
+      <div class="panel-left">
+        <editor-toolbar project-type="[[projectType]]" id="toolbar"></editor-toolbar>
+
+        <template is="dom-if" if="{{isBlocksProject(projectType)}}">
+          <gobstones-blockly id="editor"></gobstones-blockly>
+        </template>
+
+        <template is="dom-if" if="{{isCodeProject(projectType)}}">
+          <gobstones-editor id="editor"></gobstones-editor>
+        </template>
+      </div>
+
+      <div class="panel-right">
+        <boards-panel id="boards"></boards-panel>
+      </div>
+
+      <paper-dialog id="modal" class="description">
+        <paper-dialog-scrollable>
+          <div inner-h-t-m-l="[[compileMd(modalContent)]]"></div>
+        </paper-dialog-scrollable>
+
+        <div class="buttons">
+          <paper-button class="accept" dialog-confirm="" autofocus="">[[localize("accept")]]</paper-button>
+        </div>
+      </paper-dialog>
+    </div>
+
+  </template>
+
+  </dom-module>
+<script src="gobstones-ide.js"></script></body></html>

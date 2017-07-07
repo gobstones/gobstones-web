@@ -1,0 +1,151 @@
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../bower_components/paper-item/paper-item-body.html">
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../scripts/behaviors/loaderBehavior.html">
+<link rel="import" href="../../scripts/behaviors/localizationBehavior.html">
+<link rel="import" href="../../scripts/loaders/components/codeLoader.html">
+<link rel="import" href="../../scripts/loaders/components/libraryLoader.html">
+<link rel="import" href="../../scripts/loaders/components/codeBlocksLoader.html">
+<link rel="import" href="../../scripts/loaders/components/libraryBlocksLoader.html">
+<link rel="import" href="../../scripts/loaders/components/appendBlocksLoader.html" <link="">
+<link rel="import" href="../../scripts/loaders/components/attires/individualAttireLoader.html">
+
+</head><body><dom-module id="left-menu">
+  <template>
+
+    <style>
+      .title {
+        margin: 3px;
+      }
+
+      .project-title {
+        margin: -20px 30px;
+      }
+
+      .items {
+        margin-top: 40px;
+      }
+
+      .menu-header-gobstones {
+        background-color: white;
+        padding-top: 7px;
+        padding-bottom: 8px;
+        margin-left: 20px;
+      }
+
+      paper-item-body {
+        font-weight: 500;
+      }
+
+      .line-separator {
+        border-bottom: 1px solid #d9d9d9;
+        margin-bottom: 20px;
+      }
+
+      .about {
+        margin-top: 20px;
+        text-align: center;
+      }
+
+      .about > a {
+        color: #00004f;
+      }
+    </style>
+
+    <paper-item center-justified="" flex="" class="menu-header-gobstones">
+      <img class="app-logo" src="../../images/logo.png">
+      <div class="app-name">Gobstones</div>
+    </paper-item>
+
+    <div class="line-separator"></div>
+
+    <div role="listbox">
+      <template is="dom-if" if="{{_isCodeProject(projectType)}}">
+        <paper-item>
+          <paper-item-body>
+            <div>[[localize("code")]]</div>
+          </paper-item-body>
+          <paper-icon-button on-click="loadCode" icon="icons:folder-open" alt="open"> </paper-icon-button>
+          <paper-icon-button on-click="saveCode" icon="icons:save" alt="save"> </paper-icon-button>
+        </paper-item>
+      </template>
+
+      <template is="dom-if" if="{{!_isCodeProject(projectType)}}">
+        <paper-item>
+          <paper-item-body>
+            <div>[[localize("blocks")]]</div>
+          </paper-item-body>
+          <paper-icon-button on-click="loadCode" icon="icons:folder-open" alt="open"> </paper-icon-button>
+          <paper-icon-button on-click="saveCode" icon="icons:save" alt="save"> </paper-icon-button>
+        </paper-item>
+      </template>
+
+      <paper-item>
+        <paper-item-body>
+          <div>[[localize("library")]]</div>
+        </paper-item-body>
+        <paper-icon-button on-click="loadLibrary" icon="icons:folder-open" alt="open"> </paper-icon-button>
+        <paper-icon-button on-click="saveLibrary" icon="icons:save" alt="save"> </paper-icon-button>
+      </paper-item>
+
+      <paper-item>
+        <paper-item-body>
+          <div>[[localize("initial-board")]]</div>
+        </paper-item-body>
+        <paper-icon-button on-click="loadInitialBoard" icon="icons:folder-open" alt="open"> </paper-icon-button>
+        <paper-icon-button on-click="saveInitialBoard" icon="icons:save" alt="save"> </paper-icon-button>
+      </paper-item>
+
+      <paper-item>
+        <paper-item-body>
+          <div>[[localize("attire")]]</div>
+        </paper-item-body>
+        <paper-icon-button on-click="loadAttire" icon="icons:folder-open" alt="open"> </paper-icon-button>
+        <paper-icon-button on-click="saveAttire" icon="icons:save" alt="save"> </paper-icon-button>
+      </paper-item>
+
+      <template is="dom-if" if="{{!_isCodeProject(projectType)}}">
+        <paper-item>
+          <paper-item-body>
+            <div>[[localize("add-blocks")]]</div>
+          </paper-item-body>
+          <paper-icon-button on-click="loadAppendBlocks" icon="icons:folder-open" alt="open"> </paper-icon-button>
+        </paper-item>
+
+        <paper-item>
+          <paper-item-body>
+            <div>[[localize("generated-code")]]</div>
+          </paper-item-body>
+          <paper-icon-button on-click="saveGeneratedCode" icon="icons:save" alt="save"> </paper-icon-button>
+        </paper-item>
+      </template>
+    </div>
+
+    <div class="about">
+      <a href="https://github.com/gobstones/gobstones-web/wiki/Acerca-de-Gobstones-Web" target="_blank">[[localize("about-gobstones-web")]]</a>
+    </div>
+
+    <div class="items">
+      <template is="dom-if" if="{{_isCodeProject(projectType)}}">
+        <input id="Code" type="file" accept=".gbs" on-change="onLoadedCode" style="visibility: hidden;">
+
+        <input id="Library" type="file" accept=".gbl" on-change="onLoadedLibrary" style="visibility: hidden;">
+      </template>
+
+      <template is="dom-if" if="{{!_isCodeProject(projectType)}}">
+        <input id="Code" type="file" accept=".gbjs" on-change="onLoadedCode" style="visibility: hidden;">
+
+        <input id="Library" type="file" accept=".gbjl" on-change="onLoadedLibrary" style="visibility: hidden;">
+
+        <input id="AppendBlocks" type="file" accept=".gbjs,.gbjl" on-change="onLoadedAppendBlocks" style="visibility: hidden;">
+      </template>
+
+      <input id="InitialBoard" type="file" accept=".gbb" on-change="onLoadedInitialBoard" style="visibility: hidden;">
+
+      <input id="Attire" type="file" accept=".zip" on-change="onLoadedAttire" style="visibility: hidden;">
+    </div>
+  </template>
+
+  </dom-module>
+<script src="left-menu.js"></script></body></html>

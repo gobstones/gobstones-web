@@ -1,0 +1,53 @@
+<dom-module id="key-tracker">
+  <template>
+    <style>
+      
+
+      /*# sourceMappingURL=style.css.map */
+
+    </style>
+
+
+  </template>
+  <script>
+    Polymer({
+      is: 'key-tracker',
+      ready: function() {
+        this._pressedKeys = [];
+        this._listenTo("keydown", (function(_this) {
+          return function(ev) {
+            var key;
+            key = ev.key || ev.keyIdentifier;
+            if (!_this.isPressed(key)) {
+              return _this._pressedKeys.push(key);
+            }
+          };
+        })(this));
+        this._listenTo("keyup", (function(_this) {
+          return function(ev) {
+            var key;
+            key = ev.key || ev.keyIdentifier;
+            if (_this.isPressed(key)) {
+              return _this._pressedKeys.splice(_this._indexOf(key), 1);
+            }
+          };
+        })(this));
+        return window.addEventListener("blur", (function(_this) {
+          return function() {
+            return _this._pressedKeys = [];
+          };
+        })(this));
+      },
+      isPressed: function(key) {
+        return this._indexOf(key) !== -1;
+      },
+      _indexOf: function(key) {
+        return this._pressedKeys.indexOf(key);
+      },
+      _listenTo: function(eventName, handler) {
+        return window.addEventListener(eventName, handler);
+      }
+    });
+
+  </script>
+</dom-module>

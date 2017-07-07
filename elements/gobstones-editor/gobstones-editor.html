@@ -1,0 +1,32 @@
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/ace-widget/ace-widget.html">
+<link rel="import" href="../../bower_components/iron-localstorage/iron-localstorage.html">
+<link rel="import" href="../../scripts/behaviors/busListenerBehavior.html">
+<link rel="import" href="../../scripts/jquery.html">
+<link rel="import" href="../../scripts/stylist.html">
+
+</head><body><dom-module id="gobstones-editor">
+  <template>
+
+    <style>
+      :host {
+        display: block;
+        height: 100vh;
+      }
+
+      ace-widget {
+        height: 100%;
+        --ace-widget-editor: {
+          font: var(--editor-size)/normal 'Monaco', 'Menlo', 'Ubuntu Mono', 'Consolas', 'source-code-pro', monospace !important;
+          @apply(--gobstones-editor);
+        }
+      }
+    </style>
+
+    <iron-localstorage name="font-size" value="{{fontSize}}" on-iron-localstorage-load-empty="_initializeDefaultFontSize"></iron-localstorage>
+
+    <ace-widget id="ace" mode="ace/mode/gobstones" theme="ace/theme/chrome" font-size="5" tab-size="4" minlines="30" maxlines="30" readonly="{{readonly}}" initial-focus=""></ace-widget>
+  </template>
+
+  </dom-module>
+<script src="gobstones-editor.js"></script></body></html>

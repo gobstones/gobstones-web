@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg id="svg2" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://www.w3.org/2000/svg" height="50mm" width="50mm" version="1.1" xmlns:cc="http://creativecommons.org/ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" viewBox="0 0 177.16535 177.16535">
+ <metadata id="metadata4">
+  <rdf:RDF>
+   <cc:Work rdf:about="">
+    <dc:format>image/svg+xml</dc:format>
+    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+    <dc:title/>
+   </cc:Work>
+  </rdf:RDF>
+ </metadata>
+ <ellipse id="ellipse8" rx="88.184" ry="88.715" cy="88.64" cx="88.641" fill="#292929"/>
+ <path id="path10" d="m171.5 59.51c3.8341 9.671 5.9385 20.183 5.9385 31.178 0 47.861-39.767 86.675-88.804 86.675-49.035 0-88.802-38.814-88.802-86.675 0-11.546 2.321-22.563 6.5203-32.638 0.65931 1.4104 1.2522 2.2175 2.3526 3.2916 0.35416 1.0386 0.78421 1.6358 1.3755 2.1681-7.3662 20.277-6.1393 43.028 3.4436 62.435 54.759-46.096 78.905 15.358 153.35-15.895 5.0041-18.979 7.0041-31.152-1.2712-50.54h5.8942z" fill="#202020"/>
+ <ellipse id="ellipse12" rx="7.2374" ry="7.2809" cy="40.65" cx="55.881" fill="#fff"/>
+ <ellipse id="ellipse14" rx="4.0266" ry="4.0508" cy="31.7" cx="60.102" fill="#fff"/>
+ <path id="path16" d="m170.51 94.27c-0.7628 4.8812-1.991 9.9925-3.5039 15.73-22.254 9.3418-40.012 10.398-55.438 8.5215a61.964 57.5 0 0 0 -11.02 32.707 61.964 57.5 0 0 0 5.9121 24.359c38.986-7.6985 68.715-40.328 70.965-80.098a61.964 57.5 0 0 0 -6.916 -1.2207z" fill="#131313"/>
+</svg>

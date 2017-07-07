@@ -1,0 +1,5 @@
+{
+  "name": "gs-cell",
+  "imports": ["gs-stone.html", "cell-dresser.html"],
+  "require": []
+}

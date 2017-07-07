@@ -1,0 +1,666 @@
+<!--
+@license
+Copyright (c) 2015 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+
+<link rel="import" href="../polymer/polymer.html">
+
+<!--
+An element providing a solution to no problem in particular.
+
+Example:
+
+    <gs-element-blockly></gs-element-blockly>
+
+Example:
+
+    <gs-element-blockly>
+      <h2>Hello gs-element-blockly</h2>
+    </gs-element-blockly>
+
+@demo demo/index.html
+@hero hero.svg
+-->
+
+<dom-module id="gs-element-blockly">
+  <template>
+    <style>
+    </style>
+
+    <content></content>
+    <div id="blocklyDiv" style="height: 400px; width: 800px;"></div>
+
+    <xml id="toolbox" style="display: none">
+      <category name="Comandos">
+        <category name="Comandos primitivos">
+          <block type="Poner"></block>
+          <block type="Sacar"></block>
+          <block type="Mover"></block>
+          <block type="IrAlBorde"></block>
+          <block type="VaciarTablero"></block>
+          <block type="BOOM"></block>
+        </category>
+        <category name="Procedimientos primitivos">
+        </category>
+        <category name="Procedimientos" custom="PROCEDURE">
+        </category>
+        <category name="Alternativas">
+          <block type="AlternativaSimple"></block>
+          <block type="AlternativaCompleta"></block>
+        </category>
+        <category name="Repeticiones">
+          <block type="RepeticionSimple"></block>
+          <block type="RepeticionCondicional"></block>
+        </category>
+        <category name="Asignación">
+          <block type="Asignacion"></block>
+        </category>
+      </category>
+      <category name="Expresiones">
+        <category name="Literales">
+          <block type="math_number"></block>
+          <block type="ColorSelector"></block>
+          <block type="DireccionSelector"></block>
+					<block type="BoolSelector"></block>
+        </category>
+        <category name="Expresiones primitivas">
+          <block type="hayBolitas"></block>
+          <block type="puedeMover"></block>
+          <block type="nroBolitas"></block>
+        </category>
+        <category name="Funciones primitivas">
+        </category>
+        <category name="Operadores">
+          <block type="OperadorNumerico"></block>
+          <block type="OperadorDeComparacion"></block>
+          <block type="OperadorLogico"></block>
+          <block type="not"></block>
+					<block type="siguiente"></block>
+					<block type="previo"></block>
+					<block type="opuesto"></block>
+        </category>
+      </category>
+    </xml>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'gs-element-blockly',
+
+      properties: {
+        /*
+         * `primitiveProcedures` lista de definiciones de procedimientos primitivos.
+         * Ej: ["Poner_FloresAl_"] Se transormara en un bloque con dos inputs inline, cuyo
+         * codigo sera Poner_FloresAl_(arg1, arg2).
+         */
+        primitiveProcedures:  {
+          type: Array,
+          observer: '_onPrimitiveProceduresChange'
+        },
+
+        /*
+         * `primitiveFunctions` lista de definiciones de funciones primitivas.
+         * Ej: ["cantidadDeFlores_en_"] Se transormara en un bloque con dos inputs inline, cuyo
+         * codigo sera cantidadDeFlores_en_(arg1, arg2).
+         */
+        primitiveFunctions:  {
+          type: Array,
+          observer: '_onPrimitiveFunctionsChange'
+        },
+
+        /*
+         * `toolbox` Definicion de visibilidad y habilitación de los bloques en el toolbox.
+         * Pueden nombrarse bloques individuales o categorias.
+         *
+         * Ej:
+         *
+         * ```json
+         * {
+         *  "visible": ["Comandos primitivos", "Literales", "Expresiones"],
+         *  "disabled": ["Poner", "hayBolitas", "Literales"]
+         * }
+         * ```
+         *
+         * Los IDs de los bloques a utilizar pueden consultarse [en la wiki](https://github.com/Program-AR/gs-element-blockly/wiki/Block-IDs-for-toolbox)
+         *
+         * Nota: Los bloques de primitiveProcedures siempre aparecen en el toolbox, aunque no figuren
+         * en esta propiedad.
+         */
+        toolbox: {
+          type: Object,
+          observer: '_onUpdateToolbox'
+        },
+
+        /*
+         * `workspaceXml` Código XML de los bloques en el workspace.
+         */
+        workspaceXml: {
+          type: String,
+          observer: '_onWorkspaceUpdate',
+          notify: true
+        },
+
+        /*
+         * `workspaceCanEdit` Indica si el usuario puede modificar el workspace.
+         */
+        workspaceCanEdit: {
+          type: Boolean,
+        },
+
+        /*
+         * `width` Ancho del elemento.
+         */
+        width: {
+          type: Number,
+          observer: '_fixSize'
+        },
+
+        /*
+         * `height` Alto del elemento.
+         */
+        height: {
+          type: Number,
+          observer: '_fixSize'
+        },
+
+        /*
+         * `media` path a media de blockly.
+         */
+        media: {
+          type: String,
+          value: "../bower_components/blockly-package/media/"
+        },
+      },
+
+      _onPrimitiveProceduresChange: function() {
+        if(typeof this.primitiveProcedures == 'string') {
+          this.primitiveProcedures = JSON.parse(this.primitiveProcedures);
+          return;
+        }
+        this._definePrimitiveProcedures();
+        this._onUpdateToolbox();
+      },
+
+      _onPrimitiveFunctionsChange: function() {
+        if(typeof this.primitiveFunctions == 'string') {
+          this.primitiveFunctions = JSON.parse(this.primitiveFunctions);
+          return;
+        }
+        this._definePrimitiveFunctions();
+        this._onUpdateToolbox();
+      },
+
+      _onUpdateToolbox: function() {
+        if(typeof this.toolbox == 'string') {
+          if(this.toolbox == '') {
+            this.toolbox = undefined;
+          }
+          else {
+            this.toolbox = JSON.parse(this.toolbox);
+          }
+          return;
+        }
+        let toolbox = this._createToolbox();
+        this.workspace.updateToolbox(toolbox);
+      },
+
+      /**
+       * Retorna el arbol por defecto de bloques y categorias
+       */
+      _defaultToolboxTree : function() {
+        let tree = []
+        let toolboxDefault = this.$$('#toolbox');
+        let toolboxDefaultLines = toolboxDefault.innerHTML.split("\n");
+        let ignore_last = false;
+        let parent = tree;
+        let stack = [];
+        for(var i in toolboxDefaultLines) {
+          let line = toolboxDefaultLines[i];
+          if(line.indexOf('<block') >= 0) {
+            let m = line.match('type="([^"]*)"')
+            if(m.length == 2) {
+              parent.push({
+                type: 'block',
+                name: m[1],
+              });
+            }
+          }
+          else if(line.indexOf('<category') >= 0) {
+            let m = line.match('name="([^"]*)"')
+            if(m.length == 2 && (
+              (m[1] == 'Procedimientos primitivos' && this.primitiveProcedures && this.primitiveProcedures.length > 0) ||
+              (m[1] == 'Funciones primitivas' && this.primitiveFunctions && this.primitiveFunctions.length > 0) ||
+              (m[1] != 'Procedimientos primitivos' && m[1] != 'Funciones primitivas'))) {
+              parent.push({
+                type: 'category',
+                name: m[1],
+                child: [],
+                xml: line
+              });
+              stack.push(parent);
+              parent = parent[parent.length - 1].child;
+              if(m[1] == 'Procedimientos primitivos')
+              {
+                for(var i in this.primitiveProcedures) {
+                  parent.push({
+                    type: 'block',
+                    name: this.primitiveProcedures[i],
+                  });
+                }
+              }
+              if(m[1] == 'Funciones primitivas')
+              {
+                for(var i in this.primitiveFunctions) {
+                  parent.push({
+                    type: 'block',
+                    name: this.primitiveFunctions[i],
+                  });
+                }
+              }
+            }
+            else {
+              ignore_last = true;
+            }
+          }
+          else if(line.indexOf('</category') >= 0) {
+            if(ignore_last) {
+              ignore_last = false;
+            }
+            else {
+              parent = stack.pop();
+            }
+          }
+        }
+
+        return tree;
+      },
+
+      /**
+       * Sirve para manejar los alias de los ID que vengan por la interfaz.
+       * Recibe una lista que puede ser de IDs de bloques ó de categorías.
+       * Devuelve una lista similar, intercambiando los alias por los ids "oficiales".
+       * Mi idea acá también es que a futuro se haga la internacionalización de ids.
+      */
+      _homogenizeIDs: function(ids){
+        return ids ? ids.map(id => Blockly.GobstonesLanguage.aliasForBlockID(id)) : [];
+      },
+
+      /**
+       * Crea el toolbox a partir de la propiedad blocks, bloques visibles, y
+       * customblocks.
+       *
+       * Funciona podando el toolbox por defecto.
+       */
+      _createToolbox: function() {
+        let tree = this._defaultToolboxTree();
+        let toolbox = [];
+
+        //Habilito las funciones si son necesarias ¡TODO: FEO! ¡PARCHE!
+        Blockly.Blocks.procedures_defreturn =
+         !this.toolbox || this.toolbox.visible.indexOf("Funciones") >= 0 ? Blockly.Blocks.procedures_defreturn_bkp : undefined;
+        //TODO: falta resolver el disabled de las funciones
+
+        if(this.toolbox) {
+          let visibles = this._homogenizeIDs(this.toolbox.visible);
+          let disabled = this._homogenizeIDs(this.toolbox.disabled);
+          if(visibles.length > 0) {
+            visibles = visibles.concat(disabled);
+            if(this.primitiveProcedures) {
+              visibles = visibles.concat(this.primitiveProcedures);
+            }
+            if(this.primitiveFunctions) {
+              visibles = visibles.concat(this.primitiveFunctions);
+            }
+          }
+
+          function filtrarToolboxTree(ttree) {
+            let tbox = [];
+            for(var i in ttree) {
+              if(visibles.length == 0 || visibles.indexOf(ttree[i].name) >= 0) {
+                tbox.push(ttree[i]);
+              }
+              else if(ttree[i].type == 'category') {
+                let tmp = filtrarToolboxTree(ttree[i].child);
+                if(tmp.length > 0) {
+                  ttree[i].child = tmp;
+                  tbox.push(ttree[i]);
+                }
+              }
+            }
+            return tbox;
+          }
+
+          toolbox = filtrarToolboxTree(tree);
+
+          // Marcar disabled
+          function marcarDisabled(tbox) {
+            for(var i in tbox) {
+              if(disabled.indexOf(tbox[i].name) >= 0) {
+                tbox[i].disabled = true;
+              }
+              if(tbox[i].child) {
+                marcarDisabled(tbox[i].child);
+              }
+            }
+          }
+          marcarDisabled(toolbox);
+
+        }
+        else {
+          toolbox = tree;
+        }
+
+        return this._toolboxTreeToXML(toolbox);
+      },
+
+      _toolboxBlockXML: function(blockDef, forceDisabled) {
+        let args = "";
+        if(blockDef.disabled || forceDisabled) {
+          args = 'disabled="true"';
+        }
+        let xml = `<block type="${blockDef.name}" ${args}></block>`;
+        return xml;
+      },
+
+      _toolboxTreeToXML : function(toolbox, noXmlTags, disabled) {
+        let xml = [];
+        if(!noXmlTags) {
+          xml.push('<xml>');
+        }
+        for(var i in toolbox) {
+          if(toolbox[i].type == 'block') {
+            xml.push(this._toolboxBlockXML(toolbox[i], disabled));
+          }
+          else if(toolbox[i].type == 'category') {
+            xml.push(toolbox[i].xml);
+            xml.push(this._toolboxTreeToXML(toolbox[i].child, true, toolbox[i].disabled || disabled));
+            xml.push('</category>');
+          }
+        }
+        if(!noXmlTags) {
+          xml.push('</xml>');
+        }
+        return xml.join('\n');
+      },
+
+      /**
+       * Define un bloque a partir de una definicion tipo Poner_En_
+       */
+      _definePrimitiveProcedure: function(def) {
+        let parts = def.replace(/([A-Z])/g, " $1").toLowerCase();
+        parts = parts[1].toUpperCase() + parts.substring(2);
+        parts = parts.split("_");
+
+        // Bloque
+        Blockly.Blocks[def] = {
+        	init: function () {
+            let argsIndex = 1;
+        		this.setColour(CommandColor);
+        		for(var i in parts) {
+              if(i == (parts.length - 1)) {
+    		        this.appendDummyInput().appendField(parts[i]);
+              }
+              else {
+                this.appendValueInput('arg' + argsIndex).appendField(parts[i]);
+                argsIndex++;
+              }
+            }
+        		this.setPreviousStatement(true);
+        		this.setNextStatement(true);
+        		this.setInputsInline(true);
+        	}
+        };
+        let argsList = [];
+        for(var i=1;i<parts.length;i++) {
+          argsList.push('arg' + i);
+        }
+        // Generator
+        Blockly.GobstonesLanguage[def] = procBlockCodeGenerator(def, argsList);
+      },
+
+      _definePrimitiveProcedures: function () {
+        if(!this.primitiveProcedures) {
+          return;
+        }
+
+        for(var i in this.primitiveProcedures) {
+          this._definePrimitiveProcedure(this.primitiveProcedures[i]);
+        }
+      },
+
+
+      /**
+       * Define un bloque a partir de una definicion de funcion primitiva tipo hayFlores_en_
+       */
+      _definePrimitiveFunction: function(def) {
+        let parts = def.replace(/([A-Z])/g, " $1").toLowerCase();
+        //let parts = def;
+        //parts = parts[1].toUpperCase() + parts.substring(2);
+        parts = parts.split("_");
+
+        // Bloque
+        Blockly.Blocks[def] = {
+          init: function () {
+            let argsIndex = 1;
+            this.setColour(CommandColor);
+            for(var i in parts) {
+              if(i == (parts.length - 1)) {
+                this.appendDummyInput().appendField(parts[i]);
+              }
+              else {
+                this.appendValueInput('arg' + argsIndex).appendField(parts[i]);
+                argsIndex++;
+              }
+            }
+            this.setPreviousStatement(false);
+            this.setNextStatement(false);
+            this.setInputsInline(true);
+            this.setOutput('var');
+          }
+        };
+        let argsList = [];
+        for(var i=1;i<parts.length;i++) {
+          argsList.push('arg' + i);
+        }
+        // Generator
+        Blockly.GobstonesLanguage[def] = functionBlockCodeGenerator(def, argsList);
+      },
+
+      _definePrimitiveFunctions: function () {
+        if(!this.primitiveFunctions) {
+          return;
+        }
+
+        for(var i in this.primitiveFunctions) {
+          this._definePrimitiveFunction(this.primitiveFunctions[i]);
+        }
+      },
+
+      _onBlocklyWorkspaceUpdate: function () {
+        let xml = Blockly.Xml.workspaceToDom(this.workspace);
+        this._blocklyWorkspaceXML = Blockly.Xml.domToText(xml);
+        this.workspaceXml = this._blocklyWorkspaceXML;
+      },
+
+      _onWorkspaceUpdate: function () {
+        if(this.workspaceXml != this._blocklyWorkspaceXML) {
+          this.workspace.clear();
+          let dom = Blockly.Xml.textToDom(this.workspaceXml);
+          try {
+            Blockly.Xml.domToWorkspace(dom, this.workspace);
+          } catch (e) {
+            if(e.message.includes("nextConnection is null")){
+              throw {
+                name: "BlockTypeError",
+                message: "There is at least one block type declared in the 'type' property of the block tag of the xml, which is incorrect or belongs to a block that is not in the Gobstones Language. Maybe you have forgotten any primitiveProcedure?",
+                toString: function(){ return this.name + ': ' + this.message; }
+              };
+            } else {
+              throw e;
+            }
+          }
+        }
+      },
+
+      /**
+       * Reinicializa el workspace, dejando solo el bloque programa
+       */
+      resetWorkspace: function() {
+        let xmlInicial = '<xml xmlns="http://www.w3.org/1999/xhtml"><block type="Program" x="30" y="30"></block></xml>';
+        this.workspaceXml = xmlInicial;
+      },
+
+      /**
+      * Retorna una lista de objetos, uno por cada categoría y bloque.
+      * Representa la jerarquía del toolbox.
+      *
+      * Para los bloques se indica:
+      *
+      * * `blockXMLID`: El ID del bloque que estará en el XML exportado por el método
+      * `generateCode`.
+      * * `blockAliases`: La lista de aliases que refieren a ese bloque, y que pueden
+      * ser usados para definir el toolbox mediante la propiedad `toolbox`.
+      *
+      * Para las categorías se indica:
+      *
+      * * `categoryName`: El nombre de la categoría que es visible en el toolbox.
+      * * `categoryAliases`: La lista de aliases que refieren a esa categoría, y que pueden
+      * ser usados para definir el toolbox mediante la propiedad `toolbox`.
+      * * `categoryContents`: La lista de objetos categoría/bloque dentro de esta categoría.
+      *
+      * @return {Array} Los objetos.
+      */
+      validToolboxIDs: function(){
+        return this._validToolboxIDsFrom(this._defaultToolboxTree());
+      },
+
+      /**
+       * Recursively defined. Gets a list of user-readable objects describing the
+       * toolboxTree hierarchy and aliases.
+       */
+      _validToolboxIDsFrom: function(toolboxTree) {
+        var myThis = this;
+        return this._mapToolboxTree(toolboxTree, function(toolboxElement){
+          if(toolboxElement.type === "category"){
+            return {
+              categoryName: toolboxElement.name,
+              categoryAliases: Blockly.GobstonesLanguage.aliasesFor(toolboxElement.name),
+              categoryContents: myThis._validToolboxIDsFrom(toolboxElement.child)
+            };
+          } else if(toolboxElement.type === "block") {
+            return {
+              blockXMLID: toolboxElement.name,
+              blockAliases: Blockly.GobstonesLanguage.aliasesFor(toolboxElement.name),
+            };
+          } else {
+            /*Do nothing for other types*/
+          }
+        });
+      },
+
+      _mapToolboxTree: function(toolboxTree, f){
+        var resultingList = [];
+        for (var i in toolboxTree){
+          resultingList.push(f(toolboxTree[i]));
+        }
+        return resultingList;
+      },
+
+      /**
+       * Reinicializa el estado del componente,
+       */
+      cleanup: function() {
+        this.primitiveProcedures = [];
+        this.primitiveFunctions = [];
+        this.toolbox = {};
+        this.resetWorkspace();
+      },
+
+      // Element Lifecycle
+      ready: function() {
+      },
+
+      attached: function() {
+        this._definePrimitiveProcedures();
+        this._definePrimitiveFunctions();
+        	// create workspace
+        var blocklyDiv = this.$$('#blocklyDiv');
+        this.blocklyDiv = blocklyDiv;
+        this._fixSize();
+				this.workspace = Blockly.inject(blocklyDiv, {
+          toolbox: this._createToolbox(),
+          media: this.get("media"),
+          toolboxPosition: "start",
+          scrollbars: true,
+          horizontalLayout: false,
+          collapse: false,
+          css: true,
+				});
+        var _this = this;
+        this.workspace.addChangeListener(function () { _this._onBlocklyWorkspaceUpdate(); });
+        this.resetWorkspace()
+        this._onresize();
+        if(window.jQuery !== undefined) {
+          $(window).resize(() => {
+            this._onresize();
+          });
+        }
+      },
+
+      _onresize() {
+        Blockly.svgResize(this.workspace);
+      },
+
+      _fixSize() {
+        let style = "";
+        if(this.width && this.height) {
+          style += "width:"+ this.width + "px;";
+          style += "height:"+ this.height + "px;";
+          this.blocklyDiv.style = style;
+          this._onresize();
+        }
+      },
+
+      detached: function() {
+        // The analog to `attached`, `detached` fires when the element has been
+        // removed from a document.
+        //
+        // Use this to clean up anything you did in `attached`.
+      },
+
+      // Element Behavior
+
+      /**
+       * Generate gobstones code from the blocks in the workspace.
+       *
+       * @return {string} The code.
+       */
+      generateCode: function() {
+        var lang = Blockly.GobstonesLanguage;
+        lang.addReservedWords('code');
+        var code = lang.workspaceToCode(this.workspace);
+        return code;
+      },
+
+      /**
+       * Append blocks to workspace. Se agrega al contenido actual del workspace
+       * los bloques especificados en el xml (descartando el program si es que viene).
+       *
+       */
+      appendBlocksToWorkspace: function(xml) {
+      },
+    });
+  </script>
+
+  <script src="../blockly-package/blockly_compressed.js"></script>
+  <script src="../blockly-package/blocks_compressed.js"></script>
+  <script src="../blockly-package/es.js"></script>
+  <script src="js/gobstones-blocks.js"></script>
+  <script src="js/gobstones-language-generator.js"></script>
+  <script src="js/block-aliases.js"></script>
+</dom-module>

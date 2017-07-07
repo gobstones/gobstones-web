@@ -1,0 +1,31 @@
+<key-tracker id="keyTracker"></key-tracker>
+
+<table class$="gbs_board ui-widget-content {{boomCssClass(boom)}}">
+  <tbody>
+    <tr>
+      <td class="lx top_left"></td>
+      <template is="dom-repeat" items="{{columnIndexes}}" as="columnIndex">
+        <td class="lh">{{columnIndex}}</td>
+      </template>
+      <td class="lx top_right"></td>
+    </tr>
+    <template is="dom-repeat" items="{{table}}" as="row" index-as="rowIndex">
+      <tr>
+        <td class="lv">{{getRowNumber(table, rowIndex)}}</td>
+        <template is="dom-repeat" items="{{row}}" as="cell" index-as="cellIndex">
+          <td>
+            <gs-cell cell-index="{{cellIndex}}" row-index="{{rowIndex}}" cell="{{cell}}" table="{{table}}" header="{{header}}" options="{{options}}" attire="{{attire}}" boom="{{boom}}"></gs-cell>
+          </td>
+        </template>
+        <td class="lv">{{getRowNumber(table, rowIndex)}}</td>
+      </tr>
+    </template>
+    <tr>
+      <td class="lx bottom_left"></td>
+      <template is="dom-repeat" items="{{columnIndexes}}" as="columnIndex">
+        <td class="lh">{{columnIndex}}</td>
+      </template>
+      <td class="lx bottom_right"></td>
+    </tr>
+  </tbody>
+</table>

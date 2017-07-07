@@ -1,0 +1,27 @@
+<cell-dresser id="dresser"></cell-dresser>
+
+<template is="dom-if" if="true">
+  <!-- // ^ (otherwise, the cssClass() does not refresh itself) -->
+  <div class$="gc {{cssClass(header)}}">
+    <table>
+      <tbody>
+        <tr>
+          <td>
+            <gs-stone color="blue" amount="{{cell.blue}}" options="{{options}}"></gs-stone>
+          </td>
+          <td>
+            <gs-stone color="black" amount="{{cell.black}}" options="{{options}}"></gs-stone>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <gs-stone color="red" amount="{{cell.red}}" options="{{options}}"></gs-stone>
+          </td>
+          <td>
+            <gs-stone color="green" amount="{{cell.green}}" options="{{options}}"></gs-stone>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</template>

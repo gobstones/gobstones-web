@@ -1,0 +1,34 @@
+@import '../../common/style';
+
+.gh { /* position of the header in the board */
+  background: rgba(221, 221, 136, 0.7);
+  outline: 3px solid #CC0000;
+}
+
+div.gc {
+  background-image: var(--background-url);
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+}
+
+table.gc { /* cell table */
+  border-style: none;
+  border: solid black 0px;
+}
+.gc tr {
+  border-style: none;
+  border: 0px;
+}
+.gc td {
+  visibility: var(--stones-visibility);
+  border-style: none;
+  border: solid black 0px;
+  width: 15px;
+  height: 15px;
+  text-align: center;
+  color: #F3F3E9;
+}
+.gc td div {
+  line-height: 2;
+}
