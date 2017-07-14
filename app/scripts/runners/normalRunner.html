@@ -53,11 +53,11 @@
           const prevNames = _.take(snapshot.names, snapshot.names.length - 1);
           const lastName = _.last(snapshot.names)
 
-          const hasToIgnoreIt = _.includes(teacherTools, toName(lastName));
-
           let topIgnoredName = _.find(prevNames, (it) =>
             _.includes(teacherTools, toName(it))
           ) || lastName;
+
+          const hasToIgnoreIt = _.includes(teacherTools, toName(topIgnoredName));
 
           const isTheLastOcurrence = _.every(snapshots.slice(i + 1), futureSnapshot =>
             !_.includes(futureSnapshot.names, topIgnoredName)
