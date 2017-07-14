@@ -44,7 +44,7 @@
         .filter(it => _.includes(["procedureDeclaration", "functionDeclaration"], it.alias))
         .map(it => it.name);
 
-      var previousContext = "program";
+      var previousContexts = { program: 1 };
       return context.board()
         .snapshots
         .filter(snapshot => {
@@ -54,12 +54,13 @@
           const contextName = toName(lastName);
 
           const hasToIgnoreIt = _.includes(teacherTools, contextName);
-          const isTheFirstOcurrence = previousContext !== lastName;
+          const isTheFirstOcurrence = previousContexts[lastName] !== 1
           const isCallFromIgnoredFunction = _.some(prevNames, name =>
             _.includes(teacherTools, name)
           );
 
-          previousContext = lastName;
+          previousContexts[lastName] = 1;
+
           return (!hasToIgnoreIt || isTheFirstOcurrence) && !isCallFromIgnoredFunction;
         }).map(snapshot => snapshot.board).concat(lastState);
     }
