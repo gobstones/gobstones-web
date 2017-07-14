@@ -40,28 +40,32 @@
     }
 
     _getStates(context, teacherAst, lastState) {
-      var teacherTools = teacherAst.declarations
+      const teacherTools = teacherAst.declarations
         .filter(it => _.includes(["procedureDeclaration", "functionDeclaration"], it.alias))
         .map(it => it.name);
 
-      var previousContexts = { program: 1 };
-      return context.board()
-        .snapshots
-        .filter(snapshot => {
-          const toName = (it) => it.split("-")[0];
-          const prevNames = _.take(snapshot.names, snapshot.names.length - 1).map(toName);
-          const lastName = _.last(snapshot.names)
-          const contextName = toName(lastName);
+      const snapshots = context.board().snapshots;
 
-          const hasToIgnoreIt = _.includes(teacherTools, contextName);
-          const isTheFirstOcurrence = previousContexts[lastName] !== 1
-          const isCallFromIgnoredFunction = _.some(prevNames, name =>
-            _.includes(teacherTools, name)
+      return snapshots
+        .filter((snapshot, i) => {
+          const toName = (it) => it.split("-")[0];
+
+          const prevNames = _.take(snapshot.names, snapshot.names.length - 1);
+          const lastName = _.last(snapshot.names)
+
+          const hasToIgnoreIt = _.includes(teacherTools, toName(lastName));
+
+          let topIgnoredName = _.find(prevNames, (it) =>
+            _.includes(teacherTools, toName(it))
+          ) || lastName;
+
+          const isTheLastOcurrence = _.every(snapshots.slice(i + 1), futureSnapshot =>
+            !_.includes(futureSnapshot.names, topIgnoredName)
           );
 
-          previousContexts[lastName] = 1;
+          const isShowable = !hasToIgnoreIt || isTheLastOcurrence;
 
-          return (!hasToIgnoreIt || isTheFirstOcurrence) && !isCallFromIgnoredFunction;
+          return isShowable;
         }).map(snapshot => snapshot.board).concat(lastState);
     }
   }
