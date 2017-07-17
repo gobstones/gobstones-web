@@ -19,6 +19,8 @@
         this[`onLoaded${item}`] = event => {
           const isProject = _.endsWith(item, "Project");
 
+          this._cleanQueryString();
+
           if (isProject) this._ide().isLoading = true;
           this.loaders[item].read(this._context(), event, () => {
             if (isProject) this._ide().isLoading = false;
@@ -31,6 +33,8 @@
     newProject: function() {
       if (window.GBS_IS_RUNNING) return;
       if (!confirm(this.localize("new-project-confirm"))) return;
+
+      this._cleanQueryString();
 
       const context = this._context();
       context.ide.setModal("");
@@ -59,6 +63,23 @@
 
     _ide: function() {
       return document.querySelector("#gobstones-ide");
+    },
+
+    _cleanQueryString: function() {
+      const queryStringStart = location.href.indexOf("?");
+      const hashStart = location.href.indexOf("/#/");
+
+      const domain = location.href.substring(
+        0,
+        hashStart > -1 ? hashStart : location.href.length
+      );
+
+      const newPath = location.href.substring(
+        0,
+        queryStringStart > -1 ? queryStringStart : location.href.length
+      ).replace(domain, "");
+
+      history.replaceState({}, '', newPath);
     }
   };
 </script>
