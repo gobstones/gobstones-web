@@ -239,7 +239,7 @@ gulp.task('serve', ['styles', 'js'], function() {
   gulp.watch(['app/**/*.html', '!app/bower_components/**/*.html'], ['js', reload]);
   gulp.watch(['app/styles/**/*.css'], ['styles', reload]);
   gulp.watch(['app/scripts/**/*.js'], reload);
-  gulp.watch(['app/images/**/*'], reload);
+  gulp.watch(['app/images/**/*', '!app/images/emojis/**/*'], reload);
 });
 
 // Build and serve the output from the dist build
