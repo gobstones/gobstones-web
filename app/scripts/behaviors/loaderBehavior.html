@@ -17,8 +17,12 @@
         };
 
         this[`onLoaded${item}`] = event => {
+          const isProject = _.endsWith(item, "Project");
+
+          if (isProject) this._ide().isLoading = true;
           this.loaders[item].read(this._context(), event, () => {
-            if (!_.endsWith(item, "Project")) this._closePanel();
+            if (isProject) this._ide().isLoading = false;
+            else this._closePanel();
           });
         };
       });
@@ -44,13 +48,17 @@
       const toolbar = query("#toolbar");
 
       return {
-        ide: query("#gobstones-ide"),
+        ide: this._ide(),
         toolbar: toolbar,
         editor: query("#editor"),
         boards: query("#boards"),
         getProjectName: () => toolbar.projectName,
         setProjectName: (name) => toolbar.projectName = name
       };
+    },
+
+    _ide: function() {
+      return document.querySelector("#gobstones-ide");
     }
   };
 </script>
