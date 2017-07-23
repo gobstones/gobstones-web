@@ -6,8 +6,11 @@
   class IndividualAttireLoader extends Loader {
     constructor() {
       super();
+
+      this.FILENAME = "config.yml";
+
       this.reader = new AttireReader(relativePath => {
-        return _.endsWith(relativePath, ".json");
+        return relativePath === this.FILENAME;
       });
     }
 

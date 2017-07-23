@@ -16,13 +16,13 @@
 
   class AttireReader {
     constructor(isAnAttire) {
-      this.FILE_EXTENSION = ".json";
+      this.FILENAME = "config.yml";
       this.BASE64_PREFIX = "data:image/png;base64,";
       this.isAnAttire = isAnAttire;
     }
 
     writeToZip(attire, zip, pathPrefix = "") {
-      zip.file(pathPrefix + attire.name + this.FILE_EXTENSION, this._serialize(attire));
+      zip.file(pathPrefix + this.FILENAME, this._serialize(attire));
 
       attire.rules.forEach(rule => {
         const imageBase64 = rule.image.replace(this.BASE64_PREFIX, "");

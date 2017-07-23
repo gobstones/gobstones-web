@@ -1,18 +1,18 @@
 <script>
   // <<abstract>>:
-  // SUFFIX;
+  // FILENAME;
   // buildContent(context);
   // readContent(context, content);
   window.SingleFileComponent = {
     getFiles: function(context) {
       return [{
         content: this.buildContent(context),
-        name: context.getProjectName() + this.SUFFIX
+        name: this.FILENAME
       }];
     },
 
     shouldHandle: function(path) {
-      return _.endsWith(path, this.SUFFIX);
+      return path === this.FILENAME;
     },
 
     readProjectContent: function(context, content) {
