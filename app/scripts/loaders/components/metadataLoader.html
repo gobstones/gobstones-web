@@ -1,5 +1,6 @@
 <link rel="import" href="../textLoader.html">
 <link rel="import" href="mixins/singleFileComponent.html">
+<link rel="import" href="../../js-yaml.html">
 
 <script>
   class MetadataLoader extends TextLoader {
@@ -15,7 +16,7 @@
     }
 
     buildContent(context) {
-      return JSON.stringify({
+      return jsyaml.safeDump({
         name: context.getProjectName(),
         type: context.ide.projectType,
         library: {
@@ -49,11 +50,11 @@
           }
         },
         blocks: context.editor.toolbox
-      }, null, 2);
+      });
     }
 
     readContent(context, content, fileName) {
-      const metadata = JSON.parse(content);
+      const metadata = jsyaml.safeLoad(content);
 
       context.boards.finishLoadingBoards();
 

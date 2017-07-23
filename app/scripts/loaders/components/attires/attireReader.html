@@ -1,4 +1,5 @@
 <link rel="import" href="../../../async.html">
+<link rel="import" href="../../../js-yaml.html">
 
 <script>
   const toBinary = base64 => {
@@ -77,11 +78,11 @@
     }
 
     _serialize(attire) {
-      return JSON.stringify(this._transform(attire), null, 2);
+      return jsyaml.safeDump(this._transform(attire));
     }
 
-    _deserialize(json) {
-      return JSON.parse(json);
+    _deserialize(attire) {
+      return jsyaml.safeLoad(attire);
     }
 
     _transform(attire) {
