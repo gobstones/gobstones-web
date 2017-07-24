@@ -34,13 +34,13 @@
       if (window.GBS_IS_RUNNING) return;
       if (!confirm(this.localize("new-project-confirm"))) return;
 
-      this._cleanQueryString();
-
       const context = this._context();
       context.ide.setModal("");
       context.setProjectName(this.localize("new-project"));
       context.editor.reset();
       context.boards.reset();
+
+      this._goTo("/" + this.projectType);
     },
 
     _closePanel: function() {
@@ -63,6 +63,10 @@
 
     _ide: function() {
       return document.querySelector("#gobstones-ide");
+    },
+
+    _goTo: function(route) {
+      return document.querySelector("app-router").go(route);
     },
 
     _cleanQueryString: function() {
