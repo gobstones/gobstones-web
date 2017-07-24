@@ -45,6 +45,7 @@
         this.loadGuide();
       },
 
+      // TODO: Deshardcodear guía
       loadGuide: function() {
         this.exercises = [];
         new GuideLoader("rodri042/gobstones-guide-test", "Proyectos/Cap.2").getExercises().then(exercises => {
