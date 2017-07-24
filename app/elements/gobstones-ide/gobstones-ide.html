@@ -6,6 +6,7 @@
 <link rel="import" href="../../scripts/js-emoji.html">
 <link rel="import" href="../../scripts/loaders/remote/urlLoader.html">
 <link rel="import" href="../../scripts/loaders/remote/gitHubLoader.html">
+<link rel="import" href="../project-selector/project-selector.html">
 
 <dom-module id="gobstones-ide">
   <style>
@@ -27,7 +28,7 @@
       filter: grayscale(100%);
     }
 
-    .description {
+    .ide-modal {
       min-width: 500px;
     }
 
@@ -62,14 +63,20 @@
         <boards-panel id="boards"></boards-panel>
       </div>
 
-      <paper-dialog id="modal" class="description">
+      <paper-dialog id="descriptionModal" class="ide-modal">
         <paper-dialog-scrollable>
-          <div inner-h-t-m-l="[[compileMd(modalContent)]]"></div>
+          <div inner-h-t-m-l="[[compileMd(description)]]"></div>
         </paper-dialog-scrollable>
 
         <div class="buttons">
           <paper-button class="accept" dialog-confirm autofocus>[[localize("accept")]]</paper-button>
         </div>
+      </paper-dialog>
+
+      <paper-dialog id="projectSelectorModal" class="ide-modal">
+        <paper-dialog-scrollable>
+          <project-selector></project-selector>
+        </paper-dialog-scrollable>
       </paper-dialog>
     </div>
 
@@ -104,7 +111,7 @@
           type: Boolean,
           value: false
         },
-        modalContent: {
+        description: {
           type: String,
           value: ""
         }
@@ -115,12 +122,16 @@
       },
 
       setModal: function(markdown) {
-        this.modalContent = markdown;
+        this.description = markdown;
         window.BUS.fire("has-description", markdown !== "");
       },
 
-      toggleModal: function() {
-        document.querySelector("#modal").toggle();
+      toggleDescriptionModal: function() {
+        this._toggle("descriptionModal");
+      },
+
+      toggleProjectSelectorModal: function() {
+        this._toggle("projectSelectorModal");
       },
 
       isBlocksProject: function(projectType) { return projectType === 'blocks'; },
@@ -191,6 +202,10 @@
               finish()
             });
         };
+      },
+
+      _toggle(id) {
+        document.querySelector(`#${id}`).toggle();
       },
 
       ideCss: function(isLoading) {

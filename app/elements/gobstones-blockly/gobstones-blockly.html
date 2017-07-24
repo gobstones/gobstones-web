@@ -74,6 +74,8 @@
             window.LOAD_PENDING_PROJECT()
             window.LOAD_PENDING_PROJECT = undefined;
           }
+
+          this._ide().toggleProjectSelectorModal();
         }, 0);
 
         window.blockly = this.$.blockly; // TODO: Es para debuggear
@@ -234,6 +236,10 @@
       _xmlToCode: function(xml) {
         this.$.blocklytmp.workspaceXml = xml;
         return this.$.blocklytmp.generateCode();
+      },
+
+      _ide: function() {
+        return document.querySelector("#gobstones-ide");
       }
     });
 
