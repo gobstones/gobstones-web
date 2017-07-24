@@ -1,0 +1,33 @@
+<link rel="import" href="./gitHubLoader.html">
+
+<script>
+  class GuideLoader {
+    constructor(slug, path = "") {
+      this.loader = new GitHubLoader("blocks", slug, path);
+
+      this.slug = slug;
+      this.path = path;
+    }
+
+    getExercises() {
+      return this.loader.scanDir().then(entries => {
+        return entries
+          .filter(it => it.type === "dir")
+          .map(it => {
+            return {
+              name: it.name,
+              imageUrl: this._makeImageUrl(it.name)
+            };
+          });
+      });
+    }
+
+    _makeImageUrl(exercise) {
+      const path = this.path !== ""
+        ? this.path + "/"
+        : this.path;
+
+      return `https://raw.githubusercontent.com/${this.slug}/master/${path}${exercise}/image.png`;
+    }
+  }
+</script>

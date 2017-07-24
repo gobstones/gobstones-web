@@ -1,15 +1,48 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../scripts/loaders/remote/guideLoader.html">
 
 <dom-module id="project-selector">
+  <style>
+    .exercise {
+      width: 300px;
+      height: 300px;
+      float: left;
+      margin: 20px;
+    }
+  </style>
+
   <template>
-    <div>HEEY</div>
+    <h1>[[localize("select-an-exercise")]]</h1>
+
+    <div class="container">
+      <template is="dom-repeat" items="[[exercises]]">
+        <div class="exercise">
+          <h3>[[item.name]]</h3>
+          <img width="250px" height="250px" src="{{item.imageUrl}}" />
+        </div>
+      </template>
+    </div>
   </template>
 
   <script>
 
     Polymer({
       is: 'project-selector',
+      behaviors: [
+        Polymer.LocalizationBehavior
+      ],
       properties: {
+        exercises: {
+          type: Array,
+          value: []
+        }
+      },
+
+      ready: function() {
+        new GuideLoader("rodri042/gobstones-guide-test", "Proyectos/Cap.2").getExercises().then(exercises => {
+          this.exercises = exercises;
+          document.querySelector("#projectSelectorModal").notifyResize();
+        });
       }
     });
 

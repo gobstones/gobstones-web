@@ -27,6 +27,7 @@
     "project": "Proyecto",
     "rows": "filas",
     "save": "Guardar",
+    "select-an-exercise": "Selecciona un ejercicio",
     "shortcut-add-stones": "Click izquierdo [+ Shift]",
     "shortcut-add-stones-description": "Agregar [muchas] bolitas",
     "shortcut-remove-stones": "Click derecho [+ Shift]",

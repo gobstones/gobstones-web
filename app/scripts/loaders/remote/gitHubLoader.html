@@ -14,9 +14,7 @@
     }
 
     load(getContext, callback) {
-      const [ username, repoName ] = this.slug.split("/");
-
-      return this._loadDir(username, repoName, this.initialPath).then(files => {
+      return this._loadDir(this.initialPath).then(files => {
         if (this.initialPath !== undefined)
           files.forEach(it => it.relativePath = it.relativePath.replaceAll(`${this.initialPath}/`, ""));
 
@@ -24,12 +22,18 @@
       });
     }
 
-    _loadDir(username, repoName, path = "") {
+    scanDir(path = this.initialPath || "") {
+      const [ username, repoName ] = this.slug.split("/");
+
       return $.get(
         `https://api.github.com/repos/${username}/${repoName}/contents/${path}?client_id=${this.CLIENT_ID}&client_secret=${this.CLIENT_SECRET}`
-      ).then(entries => {
+      );
+    }
+
+    _loadDir(path = "") {
+      return this.scanDir(path).then(entries => {
         const $files = entries.map(it =>
-          this._loadEntry(it, username, repoName, path)
+          this._loadEntry(it, path)
         );
 
         return $.when.apply($, $files).then(function() {
@@ -38,9 +42,9 @@
       });
     }
 
-    _loadEntry(entry, username, repoName, path) {
+    _loadEntry(entry, path) {
       return entry.type === "dir"
-        ? this._loadDir(username, repoName, `${path}/${entry.name}`)
+        ? this._loadDir(`${path}/${entry.name}`)
         : this._downloadFile(entry.download_url, entry.path);
     }
 
