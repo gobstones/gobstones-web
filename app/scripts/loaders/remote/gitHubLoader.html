@@ -3,24 +3,30 @@
 
 <script>
   class GitHubLoader {
-    constructor(projectType) {
+    constructor(projectType, slug, initialPath) {
       this.loader = projectType === "code" ? new ProjectLoader : new ProjectBlocksLoader;
 
       this.CLIENT_ID = "086085200026d5c54c19";
       this.CLIENT_SECRET = "f40981be76b00e35d4437d71184f42a70d08f3a6";
+
+      this.slug = slug;
+      this.initialPath = initialPath;
     }
 
-    load(slug, getContext, callback) {
-      const [ username, repoName ] = slug.split("/");
+    load(getContext, callback) {
+      const [ username, repoName ] = this.slug.split("/");
 
-      return this._loadDir(username, repoName).then(files => {
+      return this._loadDir(username, repoName, this.initialPath).then(files => {
+        if (this.initialPath !== undefined)
+          files.forEach(it => it.relativePath = it.relativePath.replaceAll(`${this.initialPath}/`, ""));
+
         this.loader.readRaw(getContext(), this._createZip(files), callback);
       });
     }
 
-    _loadDir(username, repoName, path = "/") {
+    _loadDir(username, repoName, path = "") {
       return $.get(
-        `https://api.github.com/repos/${username}/${repoName}/contents${path}?client_id=${this.CLIENT_ID}&client_secret=${this.CLIENT_SECRET}`
+        `https://api.github.com/repos/${username}/${repoName}/contents/${path}?client_id=${this.CLIENT_ID}&client_secret=${this.CLIENT_SECRET}`
       ).then(entries => {
         const $files = entries.map(it =>
           this._loadEntry(it, username, repoName, path)

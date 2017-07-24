@@ -83,7 +83,7 @@
       name = name.replace(/[\[\]]/g, "\\$&");
       var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
           results = regex.exec(url);
-      if (!results) return null;
+      if (!results) return undefined;
       if (!results[2]) return '';
       return decodeURIComponent(results[2].replace(/\+/g, " "));
     }
@@ -173,17 +173,18 @@
           return this._setUpLoader(UrlLoader, projectUrl, getContext);
 
         const gitHubSlug = getParameterByName("github");
+        const gitHubPath = getParameterByName("path");
         if (gitHubSlug)
-          return this._setUpLoader(GitHubLoader, gitHubSlug, getContext);
+          return this._setUpLoader(GitHubLoader, gitHubSlug, getContext, gitHubPath);
       },
 
-      _setUpLoader: function(Loader, url, getContext) {
+      _setUpLoader: function(Loader, resource, getContext, subresource) {
         window.LOAD_PENDING_PROJECT = () => {
           this.isLoading = true;
           var finish = () => { this.isLoading = false; };
 
-          new Loader(this.projectType)
-            .load(url, getContext, finish)
+          new Loader(this.projectType, resource, subresource)
+            .load(getContext, finish)
             .catch((e) => {
               console.error(e);
               alert(this.localize("error-loading-project"));
