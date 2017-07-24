@@ -4,7 +4,7 @@ l">
 <link rel="import" href="../../scripts/behaviors/loaderBehavior.html">
 <link rel="import" href="../../scripts/loaders/projectBlocksLoader.html">
 
-<dom-module id="select-project">
+<dom-module id="select-mode">
   <style>
     .content {
       text-align: center;
@@ -49,7 +49,7 @@ l">
 
   <script>
     Polymer({
-      is: 'select-project',
+      is: 'select-mode',
       behaviors: [
         Polymer.LocalizationBehavior,
         Polymer.LoaderBehavior
@@ -62,7 +62,8 @@ l">
       },
 
       useBlocks: function() {
-        this.loadInitialBlocksProject();
+        //this.loadInitialBlocksProject();
+        this._goTo("/blocks");
       },
 
       useCode: function() {

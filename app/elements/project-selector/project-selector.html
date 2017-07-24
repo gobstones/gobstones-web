@@ -4,6 +4,7 @@
 <dom-module id="project-selector">
   <style>
     .exercise {
+      cursor: pointer;
       width: 300px;
       height: 300px;
       float: left;
@@ -17,8 +18,10 @@
     <div class="container">
       <template is="dom-repeat" items="[[exercises]]">
         <div class="exercise">
-          <h3>[[item.name]]</h3>
-          <img width="250px" height="250px" src="{{item.imageUrl}}" />
+          <a on-tap="goToExercise">
+            <h3>[[item.name]]</h3>
+            <img width="250px" height="250px" src="{{item.imageUrl}}" />
+          </a>
         </div>
       </template>
     </div>
@@ -39,10 +42,37 @@
       },
 
       ready: function() {
+        this.loadGuide();
+      },
+
+      loadGuide: function() {
+        this.exercises = [];
         new GuideLoader("rodri042/gobstones-guide-test", "Proyectos/Cap.2").getExercises().then(exercises => {
           this.exercises = exercises;
-          document.querySelector("#projectSelectorModal").notifyResize();
+          this._resizePopup();
         });
+      },
+
+      goToExercise: function(event) {
+        this._ide().toggleProjectSelectorModal();
+
+        const exercise = event.model.item;
+
+        this._goTo(
+          `/blocks?github=rodri042/gobstones-guide-test&path=Proyectos/Cap.2/${exercise.name}`
+        );
+      },
+
+      _ide() {
+        return document.querySelector("#gobstones-ide");
+      },
+
+      _resizePopup() {
+        document.querySelector("#projectSelectorModal").notifyResize();
+      },
+
+      _goTo: function(route) {
+        return document.querySelector("app-router").go(route);
       }
     });
 
