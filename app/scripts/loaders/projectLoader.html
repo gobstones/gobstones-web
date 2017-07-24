@@ -62,6 +62,7 @@
       context.editor.reset();
       context.boards.reset();
       context.editor.setAsDirty();
+      context.ide.hideProjectSelectorModal();
 
       this._loadFilesWithLoaders(context, zip, this.loaders, () => {
         context.boards.removeFirstBoard();

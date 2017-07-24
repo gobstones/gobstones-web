@@ -21,9 +21,9 @@
 
           this._cleanQueryString();
 
-          if (isProject) this._ide().isLoading = true;
+          if (isProject) this._ide().startLoading();
           this.loaders[item].read(this._context(), event, () => {
-            if (isProject) this._ide().isLoading = false;
+            if (isProject) this._ide().stopLoading();
             else this._closePanel();
           });
         };

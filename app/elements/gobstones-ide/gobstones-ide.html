@@ -24,13 +24,6 @@
       left: 50%;
     }
 
-    .loading-overlay {
-      z-index: 998;
-      position: absolute;
-      width: 100%;
-      height: 100%;
-    }
-
     .gray {
       filter: grayscale(100%);
     }
@@ -52,7 +45,6 @@
 
     <div class$="panel-container {{ideCss(isLoading)}}">
       <template is="dom-if" if="{{isLoading}}">
-        <div class="loading-overlay"></div>
         <div class="loading">
           <paper-spinner active></paper-spinner>
           <span>[[localize("loading-project")]]</span>
@@ -139,11 +131,15 @@
       },
 
       toggleDescriptionModal: function() {
-        this._toggle("descriptionModal");
+        document.querySelector("#descriptionModal").toggle();
       },
 
-      toggleProjectSelectorModal: function() {
-        this._toggle("projectSelectorModal");
+      hideProjectSelectorModal: function() {
+        document.querySelector("#projectSelectorModal").close();
+      },
+
+      showProjectSelectorModal: function() {
+        document.querySelector("#projectSelectorModal").open();
       },
 
       isBlocksProject: function(projectType) { return projectType === 'blocks'; },
@@ -203,8 +199,8 @@
 
       _setUpLoader: function(Loader, resource, getContext, subresource) {
         window.LOAD_PENDING_PROJECT = () => {
-          this.isLoading = true;
-          var finish = () => { this.isLoading = false; };
+          this.startLoading();
+          var finish = () => { this.stopLoading(); };
 
           new Loader(this.projectType, resource, subresource)
             .load(getContext, finish)
@@ -216,8 +212,14 @@
         };
       },
 
-      _toggle(id) {
-        document.querySelector(`#${id}`).toggle();
+      startLoading() {
+        $("body").css("pointer-events", "none");
+        this.isLoading = true;
+      },
+
+      stopLoading() {
+        $("body").css("pointer-events", "auto");
+        this.isLoading = false;
       },
 
       ideCss: function(isLoading) {
