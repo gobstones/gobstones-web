@@ -49,6 +49,10 @@
         text-align: center;
       }
 
+      .language-selector {
+        margin-left: 13px;
+      }
+
       .about > a {
         color: #00004f;
       }
@@ -123,6 +127,18 @@
       </template>
     </div>
 
+    <div class="language-selector">
+      <div>
+        <paper-dropdown-menu id="languageSelector" no-animations no-label-float vertical-align="bottom" horizontal-align="right">
+          <paper-listbox class="dropdown-content" selected="{{selectedLanguage}}">
+            <template is="dom-repeat" items="{{languages}}">
+              <paper-item>[[localize(item)]]</paper-item>
+            </template>
+          </paper-listbox>
+        </paper-dropdown-menu>
+      </div>
+    </div>
+
     <div class="about">
       <a href="https://github.com/gobstones/gobstones-web/wiki/Acerca-de-Gobstones-Web" target="_blank">[[localize("about-gobstones-web")]]</a>
     </div>
@@ -157,10 +173,26 @@
         Polymer.LoaderBehavior
       ],
       properties: {
-        projectType: String
+        projectType: String,
+        languages: {
+          type: Array,
+          value: ["es", "en"]
+        },
+        selectedLanguage: Number
       },
+      observers: [
+        "_onSelectedLanguageChanged(selectedLanguage)"
+      ],
 
       attached: function() {
+        const language = localStorage.getItem("language") || "es";
+        const index = this.languages.indexOf(language);
+        this.selectedLanguage = index >= 0 ? index : 0;
+
+        setTimeout(() => {
+          this.$.languageSelector.label = this.localize(this.languages[this.selectedLanguage]);
+        }, 0);
+
         this.setUpLoaders(
           this._isCodeProject(this.projectType)
             ? {
@@ -176,7 +208,15 @@
               AppendBlocks: new AppendBlocksLoader,
               GeneratedCode: new CodeLoader
             }
-        ); // ;(
+        );
+      },
+
+      _onSelectedLanguageChanged: function(selectedLanguage) {
+        localStorage.setItem("language", this.languages[selectedLanguage]);
+
+        if (!this.localize) return;
+        if (!confirm(this.localize("language-updated-page-will-reload"))) return;
+        location.reload();
       },
 
       _isCodeProject: function(projectType) {
