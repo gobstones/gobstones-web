@@ -47,7 +47,7 @@
       <template is="dom-if" if="{{isLoading}}">
         <div class="loading">
           <paper-spinner active></paper-spinner>
-          <span>[[localize("loading-project")]]</span>
+          <span>[[localize("loading")]]</span>
         </div>
       </template>
 
@@ -123,6 +123,9 @@
 
       ready: function() {
         this._setUpLoaders();
+
+        if (this.projectType === "blocks")
+          this.startLoading();
       },
 
       setModal: function(markdown) {
@@ -140,6 +143,10 @@
 
       showProjectSelectorModal: function() {
         document.querySelector("#projectSelectorModal").open();
+      },
+
+      isProjectSelectorModalOpened: function() {
+        return document.querySelector("#projectSelectorModal").opened;
       },
 
       isBlocksProject: function(projectType) { return projectType === 'blocks'; },
