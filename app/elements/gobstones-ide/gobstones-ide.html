@@ -189,8 +189,10 @@
       },
 
       _resizeLeftPanel: function(show, size) {
+        const percentage = localStorage.getItem("code-panel-percentage") || 0.6;
+
         $(".panel-left").width(
-          show ? $(document).width() * 0.6 : size
+          show ? $(document).width() * percentage : size
         );
         $(window).trigger("resize");
       },

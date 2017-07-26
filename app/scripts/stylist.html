@@ -48,6 +48,12 @@
       });
 
       $(window).resize(() => {
+        const percentage = this._getPercentage();
+        const isBorder = Math.abs(1 - percentage) < 0.0001 || Math.abs(percentage) < 0.0001;
+
+        if (!isBorder)
+          localStorage.setItem("code-panel-percentage", this._getPercentage());
+
         this.refresh();
       });
     }
