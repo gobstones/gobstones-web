@@ -52,7 +52,7 @@
       </template>
 
       <div class="panel-left">
-        <editor-toolbar project-type="[[projectType]]" id="toolbar"></editor-toolbar>
+        <editor-toolbar id="toolbar" project-type="[[projectType]]" id="toolbar"></editor-toolbar>
 
         <template is="dom-if" if="{{isBlocksProject(projectType)}}">
           <gobstones-blockly id="editor"></gobstones-blockly>
@@ -67,7 +67,7 @@
         <boards-panel id="boards"></boards-panel>
       </div>
 
-      <paper-dialog id="descriptionModal" class="ide-modal">
+      <paper-dialog id="descriptionModal" on-iron-overlay-closed="_onCloseDescriptionModal" class="ide-modal">
         <paper-dialog-scrollable>
           <div inner-h-t-m-l="[[compileMd(description)]]"></div>
         </paper-dialog-scrollable>
@@ -170,6 +170,10 @@
         emoji.img_sets.apple.sheet = this._makeAppUrl('images/emojis/sheet_apple_64.png');
 
         return emoji.replace_colons(markdown);
+      },
+
+      _onCloseDescriptionModal() {
+        this.$.toolbar.showInfoHint();
       },
 
       _makeAppUrl: function(partialUrl) {

@@ -23,6 +23,14 @@
         z-index: 10;
       }
 
+      .info-hint {
+        position: absolute;
+        color: black;
+        margin-top: 22px;
+        margin-left: 14px;
+        transform: translateX(-100%);
+      }
+
       .navbar-project-title {
         --paper-input-container-input-color: #FFFFFF;
         --paper-input-container-color: #FF5B81;
@@ -52,6 +60,7 @@
           </template>
           <template is="dom-if" if="{{showInfo}}">
             <paper-button on-click="showDescription"><iron-icon class="button" icon="icons:info"></iron-icon></paper-button>
+            <div style="display: none" id="infoHint" class="info-hint">[[localize("click-to-open-description")]]</div>
           </template>
           <template is="dom-if" if="{{permissions.can_use_library}}">
             <paper-button on-click="toggleLibrary"><iron-icon class$="button {{buttonCssClass(showLibrary)}}" icon="icons:chrome-reader-mode"></iron-icon></paper-button>
@@ -141,6 +150,14 @@
 
       decreaseEditorFontSize: function() {
         this._editor().decreaseFontSize();
+      },
+
+      showInfoHint: function() {
+        if (this.infoHintShown) return;
+        this.infoHintShown = true;
+        $("#infoHint").fadeIn(250, function() {
+          $("#infoHint").fadeOut(5000);
+        });
       },
 
       _isCodeProject: function(projectType) {
