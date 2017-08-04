@@ -1,5 +1,8 @@
 [![Build Status](https://travis-ci.org/gobstones/gobstones-web.svg?branch=master)](https://travis-ci.org/gobstones/gobstones-web)
 
+# how to start
+[See the wiki!](https://github.com/gobstones/gobstones-web/wiki/Manual-t%C3%A9cnico)
+
 # gobstones-web
 
 This is a web IDE of the language [Gobstones](http://gobstones.github.io).
