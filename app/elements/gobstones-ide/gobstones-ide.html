@@ -257,7 +257,8 @@
       },
 
       _showTour: function() {
-        if (window.GBS_TOUR_ENDED) return;
+        let shouldNotShow = localStorage.getItem("show-tutorial") === "false";
+        if (window.GBS_TOUR_ENDED || shouldNotShow) return;
         window.GBS_TOUR_ON = true;
 
         $.walk([

@@ -38,6 +38,7 @@
     "shortcut-remove-stones-description": "Sacar [muchas] bolitas",
     "shortcut-set-header": "Ctrl + Click izquierdo",
     "shortcut-set-header-description": "Posicionar cabezal",
+    "show-tutorial": "Mostrar tutorial",
     "size": "Tamaño",
     "speed-1": "Velocidad: lenta",
     "speed-2": "Velocidad: media",
@@ -94,6 +95,7 @@
     "shortcut-remove-stones-description": "Withdraw [many] stones",
     "shortcut-set-header": "Ctrl + Left click",
     "shortcut-set-header-description": "Set header",
+    "show-tutorial": "Show tutorial",
     "size": "Size",
     "speed-1": "Speed: slow",
     "speed-2": "Speed: medium",
@@ -101,14 +103,14 @@
     "speed-4": "Speed: instantaneous",
     "the-library-has-errors": "Warning: The library has errors",
     "the-program-has-errors": "The program has errors",
-    "unknown-interpreter-error": "Unknown error",
-    "using-random-false": "Board: Selected",
-    "using-random-true": "Board: Random",
     "tutorial-0": "(Press ESC to cancel the tutorial)",
     "tutorial-1": "In the <strong>code section</strong> you can edit your program's code.",
     "tutorial-2": "In the <strong>boards section</strong> you can see the obtained results.",
     "tutorial-3": "Click this button when you want to run your solution.",
     "tutorial-4": "You can change the current exercise, save your project, or see the exercise's description using the top bar.",
-    "tutorial-5": "To disable this tutorial, go to the options menu."
+    "tutorial-5": "To disable this tutorial, go to the options menu.",
+    "unknown-interpreter-error": "Unknown error",
+    "using-random-false": "Board: Selected",
+    "using-random-true": "Board: Random"
   }
 }

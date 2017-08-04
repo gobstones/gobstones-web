@@ -139,6 +139,13 @@
       </div>
     </div>
 
+    <paper-item>
+      <paper-item-body>
+        <div>[[localize("show-tutorial")]]</div>
+      </paper-item-body>
+      <paper-toggle-button checked="{{showTutorial}}" on-change="_onShowTutorialChanged"></paper-toggle-button>
+    </paper-item>
+
     <div class="about">
       <a href="https://github.com/gobstones/gobstones-web/wiki/Acerca-de-Gobstones-Web" target="_blank">[[localize("about-gobstones-web")]]</a>
     </div>
@@ -178,6 +185,10 @@
           type: Array,
           value: ["es", "en"]
         },
+        showTutorial: {
+          type: Boolean,
+          value: true
+        },
         selectedLanguage: Number
       },
       observers: [
@@ -188,6 +199,9 @@
         const language = localStorage.getItem("language") || "es";
         const index = this.languages.indexOf(language);
         this.selectedLanguage = index >= 0 ? index : 0;
+
+        const shouldNotShowTutorial = localStorage.getItem("show-tutorial") === "false";
+        this.showTutorial = !shouldNotShowTutorial;
 
         setTimeout(() => {
           this.$.languageSelector.label = this.localize(this.languages[this.selectedLanguage]);
@@ -217,6 +231,10 @@
         if (!this.localize) return;
         if (!confirm(this.localize("language-updated-page-will-reload"))) return;
         location.reload();
+      },
+
+      _onShowTutorialChanged: function() {
+        localStorage.setItem("show-tutorial", this.showTutorial);
       },
 
       _isCodeProject: function(projectType) {
