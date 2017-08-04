@@ -126,7 +126,7 @@
 
       ready: function() {
         window.extendJQuery();
-
+        this._setUpTourCancelation();
         this._setUpLoaders();
 
         if (this.projectType === "blocks")
@@ -179,6 +179,7 @@
 
       _onCloseDescriptionModal() {
         this.$.toolbar.showInfoHint();
+        this._showTour();
       },
 
       _makeAppUrl: function(partialUrl) {
@@ -242,6 +243,63 @@
 
       ideCss: function(isLoading) {
         return isLoading ? "gray" : "";
+      },
+
+      _setUpTourCancelation: function() {
+        $(document).keydown(function(e) {
+          if (e.keyCode == 27) { // ESC
+            if (window.GBS_IS_TOUR_ON) {
+              window.MATERIAL_WALKER_CLOSE();
+              window.GBS_TOUR_ON = false;
+              window.GBS_TOUR_ENDED = true;
+            }
+          }
+        });
+      },
+
+      _showTour: function() {
+        if (window.GBS_TOUR_ENDED) return;
+        window.GBS_TOUR_ON = true;
+
+        // TODO: Localizar
+        $.walk([
+            {
+              target: "#logo",
+              content: "Vamos a aprender algunas cosas de la interfaz :) (ESC para cancelar).",
+              color: '#0ddb0d',
+              acceptText: 'OK'
+            },
+            {
+              target: "#editor",
+              content: "En la <strong>sección código</strong> podrás editar el código de tu programa.",
+                  color: '#2e3aa1',
+                  acceptText: 'OK'
+            },
+            {
+              target: ".panel-right",
+              content: "En la <strong>sección tableros</strong> podrás visualizar los resultados obtenidos.",
+                  color: '#1b2577',
+                  acceptText: 'OK'
+            },
+            {
+              target: "#playButton",
+              content: "Pulsa este botón cuando quieras correr tu solución.",
+                  color: '#ff5b81',
+                  acceptText: 'OK'
+            },
+            {
+              target: "#toolbar",
+              content: "Puedes cambiar de ejercicio, guardar tu proyecto, o ver la consigna utilizando la barra superior.",
+              color: '#0b465d',
+              acceptText: 'OK'
+            },
+            {
+              target: "#options-button",
+              content: "Para desactivar este tutorial, ve a la sección de opciones.",
+              color: '#0b465d',
+              acceptText: 'OK'
+            }
+        ]);
       }
     });
 

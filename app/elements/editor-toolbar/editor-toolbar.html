@@ -41,8 +41,8 @@
     </style>
 
     <paper-toolbar class="main-toolbar">
-      <paper-icon-button icon="menu" paper-drawer-toggle on-click="togglePanel"></paper-icon-button>
-      <img class="app-logo" src="../../images/logo.png" />
+      <paper-icon-button icon="options-button" icon="menu" paper-drawer-toggle on-click="togglePanel"></paper-icon-button>
+      <img id="logo" class="app-logo" src="../../images/logo.png" />
 
       <template is="dom-if" if="{{_areToolsVisible(projectType)}}">
         <paper-input value="{{projectName}}" class="navbar-project-title" no-label-float>
