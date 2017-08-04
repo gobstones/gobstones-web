@@ -23,7 +23,8 @@
     "gs-element-blockly": "Program-AR/gs-element-blockly#0.3.4",
     "keymaster": "~1.6.3",
     "showdown": "^1.6.4",
-    "js-emoji": "^3.2.2"
+    "js-emoji": "^3.2.2",
+    "material-walkthrough": "rodri042/material-walkthrough#^0.0.2"
   },
   "devDependencies": {
     "web-component-tester": "^4.0.0",

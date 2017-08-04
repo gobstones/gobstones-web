@@ -23,14 +23,6 @@
         z-index: 10;
       }
 
-      .info-hint {
-        position: absolute;
-        color: black;
-        margin-top: 22px;
-        margin-left: 14px;
-        transform: translateX(-100%);
-      }
-
       .navbar-project-title {
         --paper-input-container-input-color: #FFFFFF;
         --paper-input-container-color: #FF5B81;
@@ -41,8 +33,8 @@
     </style>
 
     <paper-toolbar class="main-toolbar">
-      <paper-icon-button icon="menu" paper-drawer-toggle on-click="togglePanel"></paper-icon-button>
-      <img class="app-logo" src="../../images/logo.png" />
+      <paper-icon-button id="options-button" icon="menu" paper-drawer-toggle on-click="togglePanel"></paper-icon-button>
+      <img id="logo" class="app-logo" src="../../images/logo.png" />
 
       <template is="dom-if" if="{{_areToolsVisible(projectType)}}">
         <paper-input value="{{projectName}}" class="navbar-project-title" no-label-float>
@@ -60,7 +52,6 @@
           </template>
           <template is="dom-if" if="{{showInfo}}">
             <paper-button on-click="showDescription"><iron-icon class="button" icon="icons:info"></iron-icon></paper-button>
-            <div style="display: none" id="infoHint" class="info-hint">[[localize("click-to-open-description")]]</div>
           </template>
           <template is="dom-if" if="{{permissions.can_use_library}}">
             <paper-button on-click="toggleLibrary"><iron-icon class$="button {{buttonCssClass(showLibrary)}}" icon="icons:chrome-reader-mode"></iron-icon></paper-button>
@@ -150,14 +141,6 @@
 
       decreaseEditorFontSize: function() {
         this._editor().decreaseFontSize();
-      },
-
-      showInfoHint: function() {
-        if (this.infoHintShown) return;
-        this.infoHintShown = true;
-        $("#infoHint").fadeIn(250, function() {
-          $("#infoHint").fadeOut(5000);
-        });
       },
 
       _isCodeProject: function(projectType) {

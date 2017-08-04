@@ -2,11 +2,14 @@
 <link rel="import" href="../../scripts/behaviors/localizationBehavior.html">
 <link rel="import" href="../../scripts/behaviors/loaderBehavior.html">
 <link rel="import" href="../../scripts/jquery.html">
+<link rel="import" href="../../scripts/tour.html">
 <link rel="import" href="../../scripts/showdown.html">
 <link rel="import" href="../../scripts/js-emoji.html">
 <link rel="import" href="../../scripts/loaders/remote/urlLoader.html">
 <link rel="import" href="../../scripts/loaders/remote/gitHubLoader.html">
 <link rel="import" href="../project-selector/project-selector.html">
+
+<link rel="stylesheet" href="../../bower_components/material-walkthrough/dist/material-walkthrough.min.css">
 
 <dom-module id="gobstones-ide">
   <style>
@@ -122,6 +125,8 @@
       },
 
       ready: function() {
+        window.extendJQuery();
+        this._setUpTourCancelation();
         this._setUpLoaders();
 
         if (this.projectType === "blocks")
@@ -172,8 +177,8 @@
         return emoji.replace_colons(markdown);
       },
 
-      _onCloseDescriptionModal() {
-        this.$.toolbar.showInfoHint();
+      _onCloseDescriptionModal: function() {
+        this._showTour();
       },
 
       _makeAppUrl: function(partialUrl) {
@@ -237,6 +242,57 @@
 
       ideCss: function(isLoading) {
         return isLoading ? "gray" : "";
+      },
+
+      _setUpTourCancelation: function() {
+        $(document).keydown(function(e) {
+          if (e.keyCode == 27) { // ESC
+            if (window.GBS_TOUR_ON) {
+              window.MATERIAL_WALKER_CLOSE();
+              window.GBS_TOUR_ON = false;
+              window.GBS_TOUR_ENDED = true;
+            }
+          }
+        });
+      },
+
+      _showTour: function() {
+        let shouldNotShow = localStorage.getItem("show-tutorial") === "false";
+        if (window.GBS_TOUR_ENDED || shouldNotShow) return;
+        window.GBS_TOUR_ON = true;
+
+        $.walk([
+            {
+              target: "#editor",
+              content: '<span style="font-size: small; color: #dbdbdb;">' + this.localize("tutorial-0") + '</span><br>' + this.localize("tutorial-1"),
+              color: '#2e3aa1',
+              acceptText: 'OK'
+            },
+            {
+              target: ".panel-right",
+              content: this.localize("tutorial-2"),
+              color: '#1b2577',
+              acceptText: 'OK'
+            },
+            {
+              target: "#playButton",
+              content: this.localize("tutorial-3"),
+              color: '#ff5b81',
+              acceptText: 'OK'
+            },
+            {
+              target: "#toolbar",
+              content: this.localize("tutorial-4"),
+              color: '#0b465d',
+              acceptText: 'OK'
+            },
+            {
+              target: "#options-button",
+              content: this.localize("tutorial-5"),
+              color: '#0b465d',
+              acceptText: 'OK'
+            }
+        ]);
       }
     });
 
