@@ -42,6 +42,15 @@
     .accept {
       cursor: pointer;
     }
+
+    .code-placeholder {
+      position: absolute;
+      top: 25%;
+      left: 50%;
+      width: 300px;
+      height: 300px;
+      transform: translate(-25%, 0);
+    }
   </style>
 
   <template>
@@ -64,6 +73,8 @@
         <template is="dom-if" if="{{isCodeProject(projectType)}}">
           <gobstones-editor id="editor"></gobstones-editor>
         </template>
+
+        <div id="code-placeholder" class="code-placeholder"></div>
       </div>
 
       <div class="panel-right">
@@ -263,7 +274,7 @@
 
         $.walk([
             {
-              target: "#editor",
+              target: "#code-placeholder",
               content: '<span style="font-size: small; color: #dbdbdb;">' + this.localize("tutorial-0") + '</span><br>' + this.localize("tutorial-1"),
               color: '#2e3aa1',
               acceptText: 'OK'
