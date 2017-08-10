@@ -39,7 +39,7 @@
       <template is="dom-if" if="{{_areToolsVisible(projectType)}}">
         <paper-input value="{{projectName}}" class="navbar-project-title" no-label-float>
           <paper-icon-button suffix icon="description" on-click="newProject"></paper-icon-button>
-          <paper-icon-button suffix icon="folder-open" on-click="loadProject"></paper-icon-button>
+          <paper-icon-button suffix icon="folder-open" on-click="openProjectSelector"></paper-icon-button>
           <paper-icon-button suffix icon="save" on-click="saveProject"></paper-icon-button>
         </paper-input>
 
@@ -110,11 +110,17 @@
           this.showBoards = true;
         }).subscribeTo("has-description", (hasDescription) => {
           this.showInfo = hasDescription;
+        }).subscribeTo("load-project-from-file", () => {
+          this.loadProject();
         });
 
         this.setUpLoaders({
           Project: this._projectLoader(this.projectType)
         });
+      },
+
+      openProjectSelector: function() {
+        $("#projectSelectorModal")[0].open();
       },
 
       togglePanel: function() {

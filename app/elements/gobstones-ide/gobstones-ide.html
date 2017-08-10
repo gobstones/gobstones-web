@@ -51,11 +51,10 @@
 
     .code-placeholder {
       position: absolute;
-      top: 25%;
-      left: 50%;
+      top: 78px;
+      left: 100px;
       width: 300px;
       height: 300px;
-      transform: translate(-25%, 0);
     }
   </style>
 
@@ -103,7 +102,7 @@
         <paper-button class="accept close" dialog-confirm autofocus><iron-icon icon="icons:close"></iron-icon></paper-button>
 
         <paper-dialog-scrollable>
-          <project-selector></project-selector>
+          <project-selector projectType="[[projectType]]"></project-selector>
         </paper-dialog-scrollable>
       </paper-dialog>
     </div>
@@ -147,6 +146,7 @@
 
       ready: function() {
         window.extendJQuery();
+        window.GBS_PROJECT_TYPE = this.projectType;
         this._setUpTourCancelation();
         this._setUpLoaders();
 

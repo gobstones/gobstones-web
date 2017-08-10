@@ -14,7 +14,7 @@
   </style>
 
   <template>
-    <h1>[[localize("select-an-exercise")]]</h1>
+    <h1>[[localize("select-an-exercise")]] <paper-icon-button suffix icon="folder-open" on-click="loadFromFile"></paper-icon-button></h1>
 
     <paper-dropdown-menu no-animations no-label-float vertical-align="bottom" horizontal-align="right">
       <paper-listbox class="dropdown-content" selected="{{selectedGuide}}">
@@ -69,8 +69,12 @@
         const exercise = event.model.item;
 
         this._goTo(
-          `/blocks?github=${this.guide.repo}&path=${this.guide.path}/${exercise.name}`
+          `/${window.GBS_PROJECT_TYPE}?github=${this.guide.repo}&path=${this.guide.path}/${exercise.name}`
         );
+      },
+
+      loadFromFile: function() {
+        window.BUS.fire("load-project-from-file");
       },
 
       _loadCurrentGuide: function() {
