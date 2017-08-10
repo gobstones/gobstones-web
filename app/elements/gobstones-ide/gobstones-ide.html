@@ -39,6 +39,12 @@
       width: 1083px;
     }
 
+    .close {
+      position: absolute;
+      top: -25px;
+      right: -25px;
+    }
+
     .accept {
       cursor: pointer;
     }
@@ -82,6 +88,8 @@
       </div>
 
       <paper-dialog id="descriptionModal" on-iron-overlay-closed="_onCloseDescriptionModal" class="ide-modal">
+        <paper-button class="accept close" dialog-confirm autofocus><iron-icon icon="icons:close"></iron-icon></paper-button>
+
         <paper-dialog-scrollable>
           <div inner-h-t-m-l="[[compileMd(description)]]"></div>
         </paper-dialog-scrollable>
@@ -92,6 +100,8 @@
       </paper-dialog>
 
       <paper-dialog id="projectSelectorModal" class="project-selector-modal">
+        <paper-button class="accept close" dialog-confirm autofocus><iron-icon icon="icons:close"></iron-icon></paper-button>
+
         <paper-dialog-scrollable>
           <project-selector></project-selector>
         </paper-dialog-scrollable>
