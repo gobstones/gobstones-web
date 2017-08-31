@@ -49,6 +49,15 @@
       cursor: pointer;
     }
 
+    .toolbar-placeholder {
+      position: absolute;
+      top: -400px;
+      left: -40px;
+      width: 800px;
+      height: 300px;
+      pointer-events: none;
+    }
+
     .code-placeholder {
       position: absolute;
       top: 78px;
@@ -80,6 +89,7 @@
           <gobstones-editor id="editor"></gobstones-editor>
         </template>
 
+        <div id="toolbar-placeholder" class="toolbar-placeholder"></div>
         <div id="code-placeholder" class="code-placeholder"></div>
       </div>
 
@@ -294,25 +304,37 @@
             {
               target: ".panel-right",
               content: this.localize("tutorial-2"),
-              color: '#1b2577',
+              color: '#2e3aa1',
+              acceptText: 'OK'
+            },
+            {
+              target: "#theBoardsTab",
+              content: this.localize("tutorial-2.5"),
+              color: '#2e3aa1',
               acceptText: 'OK'
             },
             {
               target: "#playButton",
               content: this.localize("tutorial-3"),
-              color: '#ff5b81',
+              color: '#0b465d',
               acceptText: 'OK'
             },
             {
-              target: "#toolbar",
-              content: this.localize("tutorial-4"),
+              target: "#speedSlider",
+              content: this.localize("tutorial-3.5"),
               color: '#0b465d',
+              acceptText: 'OK'
+            },
+            {
+              target: "#toolbar-placeholder",
+              content: this.localize("tutorial-4"),
+              color: '#2e3aa1',
               acceptText: 'OK'
             },
             {
               target: "#options-button",
               content: this.localize("tutorial-5"),
-              color: '#0b465d',
+              color: '#2e3aa1',
               acceptText: 'OK'
             }
         ]);
