@@ -188,7 +188,8 @@
       },
 
       _renderMarkdown: function(markdown) {
-        return new showdown.Converter({tables: true}).makeHtml(markdown);
+        if (!window.showdown) return "";
+        return new window.showdown.Converter({tables: true}).makeHtml(markdown);
       },
 
       _renderEmojis: function(markdown) {
