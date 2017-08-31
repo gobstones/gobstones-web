@@ -11,6 +11,10 @@
       float: left;
       margin: 20px;
     }
+
+    .no-exercises {
+      margin-top: 40px;
+    }
   </style>
 
   <template>
@@ -32,6 +36,11 @@
             <img width="150px" height="150px" src="{{item.imageUrl}}" />
           </a>
         </div>
+      </template>
+      <template is="dom-if" if="[[_isEmpty(exercises)]]">
+        <h3 class="no-exercises">
+          [[localize("no-exercises")]]
+        </h3>
       </template>
     </div>
   </template>
@@ -110,6 +119,10 @@
 
       _goTo: function(route) {
         return document.querySelector("app-router").go(route);
+      },
+
+      _isEmpty: function(exercises) {
+        return exercises.length === 0;
       }
     });
 
