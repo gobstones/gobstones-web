@@ -70,8 +70,8 @@
 
   <template>
 
-    <div class$="panel-container {{ideCss(isLoading)}}">
-      <template is="dom-if" if="{{isLoading}}">
+    <div class$="panel-container {{ideCss(showIsLoading)}}">
+      <template is="dom-if" if="{{showIsLoading}}">
         <div class="loading">
           <paper-spinner active></paper-spinner>
           <span>[[localize("loading")]]</span>
@@ -145,7 +145,15 @@
       ],
       properties: {
         projectType: String,
+        showIsLoading: {
+          type: Boolean,
+          computed: "_computeShowIsLoading(isLoading, isLoadingProjects)",
+        },
         isLoading: {
+          type: Boolean,
+          value: false
+        },
+        isLoadingProjects: {
           type: Boolean,
           value: false
         },
@@ -160,9 +168,6 @@
         window.GBS_PROJECT_TYPE = this.projectType;
         this._setUpTourCancelation();
         this._setUpLoaders();
-
-        if (this.projectType === "blocks")
-          this.startLoading();
       },
 
       setModal: function(markdown) {
@@ -263,18 +268,22 @@
         };
       },
 
-      startLoading() {
+      startLoading(property = "isLoading") {
         $("body").css("pointer-events", "none");
-        this.isLoading = true;
+        this[property] = true;
       },
 
-      stopLoading() {
+      stopLoading(property = "isLoading") {
         $("body").css("pointer-events", "auto");
-        this.isLoading = false;
+        this[property] = false;
       },
 
-      ideCss: function(isLoading) {
-        return isLoading ? "gray" : "";
+      ideCss: function(showIsLoading) {
+        return showIsLoading ? "gray" : "";
+      },
+
+      _computeShowIsLoading: function(isLoading, isLoadingProjects) {
+        return isLoading || isLoadingProjects;
       },
 
       _setUpTourCancelation: function() {

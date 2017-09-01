@@ -73,7 +73,7 @@
         Guides.all().then((guides) => {
           this.guides = guides;
           this.selectedGuide = 0;
-        }).always(() => this._stopLoading());
+        }).catch(() => this._stopLoading());
       },
 
       goToExercise: function(event) {
@@ -112,13 +112,12 @@
 
       _startLoading: function() {
         const ide = this._ide();
-        if (ide) ide.startLoading();
+        if (ide) ide.startLoading("isLoadingProjects");
       },
 
       _stopLoading: function() {
         const ide = this._ide();
-        if (ide && ide.isProjectSelectorModalOpened())
-          ide.stopLoading();
+        if (ide) ide.stopLoading("isLoadingProjects");
       },
 
       _resizePopup: function() {
