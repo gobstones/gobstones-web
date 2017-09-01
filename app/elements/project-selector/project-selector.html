@@ -55,7 +55,7 @@
       properties: {
         guides: {
           type: Array,
-          value: Guides.all
+          value: []
         },
         guide: {
           type: Object,
@@ -64,12 +64,16 @@
         },
         selectedGuide: {
           type: Number,
-          value: 0
+          value: -1
         }
       },
 
       ready: function() {
-        this._loadCurrentGuide();
+        this._startLoading();
+        Guides.all().then((guides) => {
+          this.guides = guides;
+          this.selectedGuide = 0;
+        }).always(() => this._stopLoading());
       },
 
       goToExercise: function(event) {
@@ -93,9 +97,7 @@
           this.exercises = exercises;
           this._resizePopup();
         }).always(() => {
-          const ide = this._ide();
-          if (ide && ide.isProjectSelectorModalOpened())
-            ide.stopLoading();
+          this._stopLoading();
         });
       },
 
@@ -104,16 +106,22 @@
       },
 
       _onGuideChange: function() {
-        const ide = this._ide();
-        if (ide) ide.startLoading();
+        this._startLoading();
         this._loadCurrentGuide();
       },
 
-      _ide() {
-        return document.querySelector("#gobstones-ide");
+      _startLoading: function() {
+        const ide = this._ide();
+        if (ide) ide.startLoading();
       },
 
-      _resizePopup() {
+      _stopLoading: function() {
+        const ide = this._ide();
+        if (ide && ide.isProjectSelectorModalOpened())
+          ide.stopLoading();
+      },
+
+      _resizePopup: function() {
         document.querySelector("#projectSelectorModal").notifyResize();
       },
 
@@ -123,6 +131,10 @@
 
       _isEmpty: function(exercises) {
         return exercises.length === 0;
+      },
+
+      _ide() {
+        return document.querySelector("#gobstones-ide");
       }
     });
 
