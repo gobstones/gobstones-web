@@ -60,13 +60,9 @@ makeself . gobstones-web.run "Gobstones Web" ./start-desktop.sh
 #### run locally
 ```bash
 # requires electron
-git pull
-current_branch=$(git branch | grep \* | cut -d ' ' -f2)
-git branch -D electron
-git checkout origin/gh-pages
-git checkout -b electron
+gulp
+cd dist/
 electron .
-git checkout -f "$current_branch"
 ```
 
 #### generate native distributable binaries

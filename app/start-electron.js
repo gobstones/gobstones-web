@@ -24,12 +24,12 @@ freeport((err, port) => {
   let mainWindow;
 
   function createWindow() {
-    mainWindow = new BrowserWindow({ width: 1024, height: 800 });
     mainWindow = new BrowserWindow({
       width: 1024,
       height: 800,
       webPreferences: {
-        nodeIntegration: false
+        nodeIntegration: false,
+        preload: __dirname + "/start-electron-preload.js"
       }
     });
     mainWindow.loadURL(`http://localhost:${port}`);

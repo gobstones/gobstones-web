@@ -1,0 +1,76 @@
+<link rel="import" href="./fsLoader.html">
+<link rel="import" href="../../jquery.html">
+
+<script>
+  const promisify = (value) => {
+    const deferred = new $.Deferred();
+    deferred.resolve(value);
+    return deferred.promise();
+  };
+
+  const guidesPath = `${window.GBS_DIRNAME}/guides`;
+
+  class DesktopGuideLoader {
+    constructor({ path }) {
+      this.path = `${guidesPath}/${path}`;
+    }
+
+    static download() {
+      return $.getBinary("https://github.com/gobstones/proyectos-jr/archive/master.zip");
+    }
+
+    static all() {
+      try {
+        const json = window.GBS_REQUIRE("fs").readFileSync(
+          window.GBS_DIRNAME + "/guides.json"
+        );
+        const guides = JSON.parse(json);
+
+        return promisify(guides);
+      } catch(e) {
+        console.warn(e);
+        return promisify([]);
+      }
+    }
+
+    static makeUrlFor(guide, exercise) {
+      const path = `${guidesPath}/${guide.path}/${exercise.name}`;
+      return `/${window.GBS_PROJECT_TYPE}?fs=${path}`;
+    }
+
+    getExercises() {
+      try {
+        const fs = window.GBS_REQUIRE("fs");
+
+        return promisify(
+          fs
+            .readdirSync(this.path)
+            .filter(it => {
+              return fs.lstatSync(`${this.path}/${it}`).isDirectory();
+            })
+            .map(it => {
+              return {
+                name: it,
+                imageUrl: this._makeImageUrl(it)
+              }
+            })
+        );
+      } catch(e) {
+        console.warn(e);
+        return promisify([]);
+      }
+    }
+
+    _makeImageUrl(exercise) {
+      try {
+        const bitmap = window.GBS_REQUIRE("fs")
+          .readFileSync(`${this.path}/${exercise}/image.png`)
+        const base64 = new Buffer(bitmap).toString("base64");
+        return `data:image/png;base64,${base64}`;
+      } catch(e) {
+        console.warn(e);
+        return null;
+      }
+    }
+  }
+</script>

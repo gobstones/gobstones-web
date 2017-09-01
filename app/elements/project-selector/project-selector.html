@@ -1,6 +1,6 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
-<link rel="import" href="../../scripts/loaders/remote/guideLoader.html">
-<link rel="import" href="../../scripts/loaders/remote/guides.html">
+<link rel="import" href="../../scripts/loaders/remote/gitHubGuideLoader.html">
+<link rel="import" href="../../scripts/loaders/remote/desktopGuideLoader.html">
 
 <dom-module id="project-selector">
   <style>
@@ -70,7 +70,7 @@
 
       ready: function() {
         this._startLoading();
-        Guides.all().then((guides) => {
+        this._guideLoader().all().then((guides) => {
           this.guides = guides;
           this.selectedGuide = 0;
         }).catch(() => this._stopLoading());
@@ -82,7 +82,7 @@
         const exercise = event.model.item;
 
         this._goTo(
-          `/${window.GBS_PROJECT_TYPE}?github=${this.guide.repo}&path=${this.guide.path}/${exercise.name}`
+          this._guideLoader().makeUrlFor(this.guide, exercise)
         );
       },
 
@@ -91,9 +91,8 @@
       },
 
       _loadCurrentGuide: function() {
-        const { repo, path } = this.guide;
-
-        new GuideLoader(repo, path).getExercises().then(exercises => {
+        const TheGuideLoader = this._guideLoader();
+        new TheGuideLoader(this.guide).getExercises().then(exercises => {
           this.exercises = exercises;
           this._resizePopup();
         }).always(() => {
@@ -130,6 +129,12 @@
 
       _isEmpty: function(exercises) {
         return exercises.length === 0;
+      },
+
+      _guideLoader() {
+        return window.GBS_DESKTOP
+          ? DesktopGuideLoader
+          : GitHubGuideLoader;
       },
 
       _ide() {

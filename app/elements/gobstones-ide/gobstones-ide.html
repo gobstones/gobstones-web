@@ -7,6 +7,7 @@
 <link rel="import" href="../../scripts/js-emoji.html">
 <link rel="import" href="../../scripts/loaders/remote/urlLoader.html">
 <link rel="import" href="../../scripts/loaders/remote/gitHubLoader.html">
+<link rel="import" href="../../scripts/loaders/remote/fsLoader.html">
 <link rel="import" href="../project-selector/project-selector.html">
 
 <link rel="stylesheet" href="../../bower_components/material-walkthrough/dist/material-walkthrough.min.css">
@@ -251,6 +252,10 @@
         const gitHubPath = getParameterByName("path");
         if (gitHubSlug)
           return this._setUpLoader(GitHubLoader, gitHubSlug, getContext, gitHubPath);
+
+        const fsPath = getParameterByName("fs");
+        if (fsPath)
+          return this._setUpLoader(FsLoader, fsPath, getContext);
       },
 
       _setUpLoader: function(Loader, resource, getContext, subresource) {
