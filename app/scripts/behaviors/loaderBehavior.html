@@ -39,6 +39,7 @@
       context.setProjectName(this.localize("new-project"));
       context.editor.reset();
       context.boards.reset();
+      context.ide.setCurrentCode("");
 
       this._goTo("/" + this.projectType);
     },

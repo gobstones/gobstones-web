@@ -9,6 +9,7 @@
 <link rel="import" href="../../scripts/loaders/remote/gitHubLoader.html">
 <link rel="import" href="../../scripts/loaders/remote/fsLoader.html">
 <link rel="import" href="../project-selector/project-selector.html">
+<link rel="import" href="../code-viewer/code-viewer.html">
 
 <link rel="stylesheet" href="../../bower_components/material-walkthrough/dist/material-walkthrough.min.css">
 
@@ -117,6 +118,12 @@
           <project-selector projectType="[[projectType]]"></project-selector>
         </paper-dialog-scrollable>
       </paper-dialog>
+
+      <paper-dialog id="codeViewModal" class="code-view-modal">
+        <paper-button class="accept close" dialog-confirm autofocus><iron-icon icon="icons:close"></iron-icon></paper-button>
+
+        <code-viewer id="codeViewer" code="[[currentCode]]"></code-viwer>
+      </paper-dialog>
     </div>
 
   </template>
@@ -161,6 +168,10 @@
         description: {
           type: String,
           value: ""
+        },
+        currentCode: {
+          type: String,
+          value: ""
         }
       },
 
@@ -190,6 +201,14 @@
 
       isProjectSelectorModalOpened: function() {
         return document.querySelector("#projectSelectorModal").opened;
+      },
+
+      setCurrentCode: function(newCode) {
+        this.currentCode = newCode;
+      },
+
+      showCodeViewModal: function(newCode) {
+        document.querySelector("#codeViewModal").open();
       },
 
       isBlocksProject: function(projectType) { return projectType === 'blocks'; },

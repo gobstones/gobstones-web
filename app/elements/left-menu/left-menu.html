@@ -115,16 +115,16 @@
       <template is="dom-if" if="{{!_isCodeProject(projectType)}}">
         <paper-item>
           <paper-item-body>
+            <div>[[localize("generated-code")]]</div>
+          </paper-item-body>
+          <paper-icon-button on-click="seeGeneratedCode" icon="icons:code" alt="save"> </paper-icon-button>
+          <paper-icon-button on-click="saveGeneratedCode" icon="icons:save" alt="save"> </paper-icon-button>
+        </paper-item>
+        <paper-item>
+          <paper-item-body>
             <div>[[localize("add-blocks")]]</div>
           </paper-item-body>
           <paper-icon-button on-click="loadAppendBlocks" icon="icons:folder-open" alt="open"> </paper-icon-button>
-        </paper-item>
-
-        <paper-item>
-          <paper-item-body>
-            <div>[[localize("generated-code")]]</div>
-          </paper-item-body>
-          <paper-icon-button on-click="saveGeneratedCode" icon="icons:save" alt="save"> </paper-icon-button>
         </paper-item>
       </template>
     </div>
@@ -276,6 +276,11 @@
           this.isDownloadingExercises = false;
           this._tryReload();
         });
+      },
+
+      seeGeneratedCode: function() {
+        this._ide().setCurrentCode(this._context().editor.code.main);
+        this._ide().showCodeViewModal();
       },
 
       _onSelectedLanguageChanged: function(selectedLanguage) {
