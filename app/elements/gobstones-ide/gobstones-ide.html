@@ -223,7 +223,10 @@
       },
 
       _renderMarkdown: function(markdown) {
-        if (!window.showdown) return "";
+        if (!window.showdown && window.GBS_DESKTOP) {
+          window.showdown = window.GBS_REQUIRE("showdown");
+        }
+
         return new window.showdown.Converter({tables: true}).makeHtml(markdown);
       },
 

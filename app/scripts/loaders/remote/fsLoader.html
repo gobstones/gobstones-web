@@ -21,8 +21,17 @@
     }
 
     load(getContext, callback) {
-      const files = this._loadDir(this.path);
-      this.loader.readRaw(getContext(), this._createZip(files), callback);
+      const deferred = $.Deferred();
+
+      try {
+        const files = this._loadDir(this.path);
+        this.loader.readRaw(getContext(), this._createZip(files), callback);
+        deferred.resolve();
+      } catch(e) {
+        deferred.reject(e);
+      }
+
+      return deferred.promise();
     }
 
     _loadDir(path) {

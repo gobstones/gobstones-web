@@ -28,7 +28,7 @@ freeport((err, port) => {
       width: 1024,
       height: 800,
       webPreferences: {
-        nodeIntegration: false,
+        nodeIntegration: true,
         preload: __dirname + "/start-electron-preload.js",
         webSecurity: false
       }
