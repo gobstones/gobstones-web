@@ -10,6 +10,15 @@ l">
       text-align: center;
     }
 
+    .logo {
+      width: 150px;
+      height: 150px;
+    }
+
+    .title {
+      margin-bottom: 20px;
+    }
+
     .button {
       position: relative;
       width: 300px;
@@ -39,6 +48,11 @@ l">
   <template>
     <editor-toolbar tools="none"></editor-toolbar>
     <div class="content">
+      <div class="title">
+        <img class="logo" src="../../images/logo.png" />
+        <h1>Gobstones Web</h1>
+      </div>
+
       <paper-icon-button class="button button-blocks" on-click="useBlocks" icon="icons:extension" alt="use blocks"> </paper-icon-button>
 
       <paper-icon-button class="button button-code" on-click="useCode" icon="icons:code" alt="use code"> </paper-icon-button>
