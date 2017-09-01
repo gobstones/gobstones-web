@@ -29,7 +29,8 @@ freeport((err, port) => {
       height: 800,
       webPreferences: {
         nodeIntegration: false,
-        preload: __dirname + "/start-electron-preload.js"
+        preload: __dirname + "/start-electron-preload.js",
+        webSecurity: false
       }
     });
     mainWindow.loadURL(`http://localhost:${port}`);

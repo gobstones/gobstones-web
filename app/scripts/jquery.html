@@ -10,7 +10,7 @@
       if (window.FormData && ((options.dataType && (options.dataType == 'binary')) || (options.data && ((window.ArrayBuffer && options.data instanceof ArrayBuffer) || (window.Blob && options.data instanceof Blob))))) {
         return {
           send: function(headers, callback) {
-            var xhr = new XMLHttpRequest(),
+            var xhr = (options.xhr ? options.xhr() : new XMLHttpRequest()),
             url = options.url,
             type = options.type,
             async = options.async || true,
@@ -41,7 +41,7 @@
       }
     });
 
-    $.getBinary = function(url) {
+    $.getBinary = function(url, xhr) {
       return $
         .ajax({
           url: url,
@@ -49,7 +49,8 @@
           dataType: "binary",
           processData: false,
           responseType: "arraybuffer",
-          crossDomain: true
+          crossDomain: true,
+          xhr: xhr
         });
     };
   };

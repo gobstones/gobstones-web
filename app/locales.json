@@ -19,7 +19,6 @@
     "initial-board": "Tablero inicial",
     "es": "Español",
     "en": "Inglés",
-    "language-updated-page-will-reload": "Idioma actualizado. ¿Deseas reiniciar ahora? Se perderá todo el progreso no guardado.",
     "library": "Biblioteca",
     "loading": "Cargando...",
     "new-blocks-project": "Nuevo proyecto de bloques",
@@ -56,8 +55,11 @@
     "tutorial-4": "Puedes cambiar de ejercicio, guardar tu proyecto, o ver la consigna utilizando la barra superior.",
     "tutorial-5": "Para desactivar este tutorial, ve al menú de opciones.",
     "unknown-interpreter-error": "Error desconocido",
+    "update-exercises": "Actualizar ejercicios",
+    "updating": "Actualizando",
     "using-random-false": "Tablero: Seleccionado",
-    "using-random-true": "Tablero: Aleatorio"
+    "using-random-true": "Tablero: Aleatorio",
+    "you-must-reload": "¿Deseas reiniciar ahora para ver los cambios? Se perderá todo el progreso no guardado."
   },
   "en": {
     "about-gobstones-web": "About Gobstones Web",
@@ -79,7 +81,6 @@
     "initial-board": "Initial board",
     "es": "Spanish",
     "en": "English",
-    "language-updated-page-will-reload": "Language updated. ¿Do you want to restart now? Unsaved data will be lost.",
     "library": "Library",
     "loading": "Loading...",
     "new-blocks-project": "New blocks project",
@@ -116,7 +117,10 @@
     "tutorial-4": "You can change the current exercise, save your project, or see the exercise's description using the top bar.",
     "tutorial-5": "To disable this tutorial, go to the options menu.",
     "unknown-interpreter-error": "Unknown error",
+    "update-exercises": "Update exercises",
+    "updating": "Updating",
     "using-random-false": "Board: Selected",
-    "using-random-true": "Board: Random"
+    "using-random-true": "Board: Random",
+    "you-must-reload": "Do you want to restart now to see the changes? Unsaved data will be lost."
   }
 }

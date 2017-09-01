@@ -11,6 +11,7 @@
 <link rel="import" href="../../scripts/loaders/components/appendBlocksLoader.html"
 <link rel="import" href="../../scripts/loaders/components/initialBoardLoader.html">
 <link rel="import" href="../../scripts/loaders/components/attires/individualAttireLoader.html">
+<link rel="import" href="../../scripts/loaders/remote/desktopGuideLoader.html">
 
 <dom-module id="left-menu">
   <template>
@@ -45,11 +46,12 @@
       }
 
       .about {
-        margin-top: 20px;
+        margin-top: 10px;
         text-align: center;
       }
 
       .language-selector {
+        margin-top: 20px;
         margin-left: 13px;
       }
 
@@ -146,6 +148,26 @@
       <paper-toggle-button checked="{{showTutorial}}" on-change="_onShowTutorialChanged"></paper-toggle-button>
     </paper-item>
 
+    <template is="dom-if" if="{{_isDesktop()}}">
+      <paper-item style="text-align: center; margin-top: 20px">
+        <paper-item-body>
+          <template is="dom-if" if="{{!isDownloadingExercises}}">
+            <div>
+              [[localize("update-exercises")]]
+            </div>
+          </template>
+          <template is="dom-if" if="{{isDownloadingExercises}}">
+            <div style="font-size: small; color: gray">
+              [[localize("updating")]] ([[downloadProgress]] / [[downloadTotal]])
+            </div>
+          </template>
+        </paper-item-body>
+        <template is="dom-if" if="{{!isDownloadingExercises}}">
+          <paper-icon-button on-click="updateExercises" icon="icons:file-download" alt="refresh"> </paper-icon-button>
+        </template>
+      </paper-item>
+    </template>
+
     <div class="about">
       <a href="https://github.com/gobstones/gobstones-web/wiki/Acerca-de-Gobstones-Web" target="_blank">[[localize("about-gobstones-web")]]</a>
     </div>
@@ -189,7 +211,19 @@
           type: Boolean,
           value: true
         },
-        selectedLanguage: Number
+        selectedLanguage: Number,
+        isDownloadingExercises: {
+          type: Boolean,
+          value: false
+        },
+        downloadProgress: {
+          type: String,
+          value: "0"
+        },
+        downloadTotal: {
+          type: String,
+          value: "0"
+        }
       },
       observers: [
         "_onSelectedLanguageChanged(selectedLanguage)"
@@ -225,12 +259,30 @@
         );
       },
 
+      updateExercises: function() {
+        const bytes = window.GBS_REQUIRE("bytes");
+
+        this.isDownloadingExercises = true;
+        this.downloadProgress = "0";
+        this.downloadTotal = "0";
+
+        DesktopGuideLoader.download((loaded, total) => {
+          this.downloadProgress = bytes(loaded);
+          this.downloadTotal = bytes(total);
+        }).catch((e) => {
+          console.warn(e);
+        })
+        .always(() => {
+          this.isDownloadingExercises = false;
+          this._tryReload();
+        });
+      },
+
       _onSelectedLanguageChanged: function(selectedLanguage) {
         localStorage.setItem("language", this.languages[selectedLanguage]);
 
         if (!this.localize) return;
-        if (!confirm(this.localize("language-updated-page-will-reload"))) return;
-        location.reload();
+        this._tryReload();
       },
 
       _onShowTutorialChanged: function() {
@@ -239,6 +291,15 @@
 
       _isCodeProject: function(projectType) {
         return projectType === "code";
+      },
+
+      _tryReload: function() {
+        if (!confirm(this.localize("you-must-reload"))) return;
+        location.reload();
+      },
+
+      _isDesktop: function() {
+        return window.GBS_DESKTOP;
       }
     });
 

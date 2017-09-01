@@ -1,4 +1,5 @@
 <link rel="import" href="./fsLoader.html">
+<link rel="import" href="./gitHubGuideLoader.html">
 <link rel="import" href="../../jquery.html">
 
 <script>
@@ -9,20 +10,54 @@
   };
 
   const guidesPath = `${window.GBS_DIRNAME}/guides`;
-
+  const tmpPath = `${window.GBS_DIRNAME}/guides_tmp`;
+  const jsonPath = `${window.GBS_DIRNAME}/guides.json`;
   class DesktopGuideLoader {
     constructor({ path }) {
       this.path = `${guidesPath}/${path}`;
     }
 
-    static download() {
-      return $.getBinary("https://github.com/gobstones/proyectos-jr/archive/master.zip");
+    static download(onProgress) {
+      const url = "https://github.com/gobstones/proyectos-jr/archive/master.zip";
+
+      const fs = window.GBS_REQUIRE("fs");
+      const extract = window.GBS_REQUIRE("extract-zip");
+      window.GBS_REQUIRE("setimmediate");
+
+      return GitHubGuideLoader.all().then((guides) => {
+        fs.writeFileSync(jsonPath, JSON.stringify(guides, null, 2));
+
+        return $.getBinary(
+          url,
+          function() {
+            var xhr = $.ajaxSettings.xhr();
+            xhr.onprogress = function(e) {
+              if (e.lengthComputable) onProgress(e.loaded, e.total);
+            };
+            return xhr;
+          }
+        )
+        .then((file) => {
+          const zipPath = `${window.GBS_DIRNAME}/guides.zip`;
+          fs.writeFileSync(zipPath, new Buffer(file));
+          try { fs.rmdirSync(tmpPath); } catch (e) { }
+          try { fs.rmdirSync(guidesPath); } catch (e) { }
+          try { fs.mkdirSync(guidesPath); } catch (e) { }
+          const deferred = new $.Deferred();
+          extract(zipPath, { dir: tmpPath }, function(err) {
+            if (err) deferred.reject(err); else deferred.resolve();
+          });
+          return deferred.promise();
+        }).then(() => {
+          fs.renameSync(`${tmpPath}/proyectos-jr-master`, guidesPath);
+        });
+      });
     }
 
     static all() {
       try {
         const json = window.GBS_REQUIRE("fs").readFileSync(
-          window.GBS_DIRNAME + "/guides.json"
+          jsonPath
         );
         const guides = JSON.parse(json);
 
