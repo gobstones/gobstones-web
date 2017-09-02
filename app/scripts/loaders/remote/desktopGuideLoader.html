@@ -22,6 +22,7 @@
 
       const fs = window.GBS_REQUIRE("fs");
       const extract = window.GBS_REQUIRE("extract-zip");
+      const ncp = window.GBS_REQUIRE("ncp");
       window.GBS_REQUIRE("setimmediate");
 
       return $.getBinary(
@@ -46,7 +47,11 @@
         });
         return deferred.promise();
       }).then(() => {
-        fs.renameSync(`${tmpPath}/proyectos-jr-master`, guidesPath);
+        const deferred = $.Deferred();
+        ncp(`${tmpPath}/proyectos-jr-master`, guidesPath, function(err) {
+          if (err) deferred.reject(err); else deferred.resolve();
+        });
+        return deferred.promise();
       });
     }
 

@@ -61,6 +61,7 @@
     "extract-zip": "^1.6.5",
     "finalhandler": "^1.0.2",
     "freeport": "^1.0.5",
+    "ncp": "^2.0.0",
     "recursive-readdir-sync": "^1.0.6",
     "serve-static": "^1.12.2",
     "setimmediate": "^1.0.5",

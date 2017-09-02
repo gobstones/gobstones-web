@@ -38,7 +38,7 @@
       return window.GBS_REQUIRE("recursive-readdir-sync")(path)
         .map((it) => {
           return {
-            relativePath: it.replace(this.path + "/", ""),
+            relativePath: it.replace(/\\/g, "/").replace(this.path.replace(/\\/g, "/"), "").substring(1),
             content: toArrayBuffer(window.GBS_REQUIRE("fs").readFileSync(it))
           }
         });
