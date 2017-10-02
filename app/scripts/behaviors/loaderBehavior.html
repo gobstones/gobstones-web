@@ -71,20 +71,13 @@
     },
 
     _cleanQueryString: function() {
-      const queryStringStart = location.href.indexOf("?");
-      const hashStart = location.href.indexOf("/#/");
+      let url;
+      url = window.location.href;
+      url = url.replace(url.substring(url.indexOf("?")), "");
+      url = url.substring(url.indexOf("//") + 2);
+      url = url.substring(url.indexOf("/"));
 
-      const domain = location.href.substring(
-        0,
-        hashStart > -1 ? hashStart : location.href.length
-      );
-
-      const newPath = location.href.substring(
-        0,
-        queryStringStart > -1 ? queryStringStart : location.href.length
-      ).replace(domain, "");
-
-      history.replaceState({}, '', newPath);
+      history.replaceState({}, '', url);
     }
   };
 </script>
