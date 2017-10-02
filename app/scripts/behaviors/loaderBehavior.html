@@ -21,7 +21,11 @@
 
           this._cleanQueryString();
 
-          if (isProject) this._ide().startLoading();
+          if (isProject) {
+            this._ide().startLoading();
+            this._cleanAll();
+          }
+
           this.loaders[item].read(this._context(), event, () => {
             if (isProject) this._ide().stopLoading();
             else this._closePanel();
@@ -34,14 +38,20 @@
       if (window.GBS_IS_RUNNING) return;
       if (!confirm(this.localize("new-project-confirm"))) return;
 
+      this._cleanAll();
+
+      this._goTo("/" + this.projectType);
+    },
+
+    _cleanAll() {
       const context = this._context();
-      context.ide.setModal("");
+
+      context.ide.setDescription("");
+      context.ide.setCurrentCode("");
       context.setProjectName(this.localize("new-project"));
       context.editor.reset();
       context.boards.reset();
-      context.ide.setCurrentCode("");
-
-      this._goTo("/" + this.projectType);
+      context.ide.hideProjectSelectorModal();
     },
 
     _closePanel: function() {
