@@ -122,6 +122,7 @@
       },
 
       openProjectSelector: function() {
+        if (window.GBS_IS_RUNNING) return;
         $("#projectSelectorModal")[0].open();
       },
 
