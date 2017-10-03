@@ -123,7 +123,7 @@
 
       openProjectSelector: function() {
         if (window.GBS_IS_RUNNING) return;
-        $("#projectSelectorModal")[0].open();
+        this._ide().showProjectSelectorModal();
       },
 
       togglePanel: function() {
@@ -141,7 +141,7 @@
       },
 
       showDescription: function() {
-        this.domHost.toggleDescriptionModal();
+        this.domHost.showDescriptionModal();
       },
 
       increaseEditorFontSize: function() {
@@ -174,6 +174,10 @@
 
       _projectExtension: function(projectType) {
         return this._projectLoader(projectType).EXTENSION;
+      },
+
+      _ide: function() {
+        return document.querySelector("#gobstones-ide");
       },
 
       buttonCssClass: function(element) {

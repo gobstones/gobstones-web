@@ -187,8 +187,9 @@
         window.BUS.fire("has-description", markdown !== "");
       },
 
-      toggleDescriptionModal: function() {
-        document.querySelector("#descriptionModal").toggle();
+      showDescriptionModal: function() {
+        document.querySelector("#descriptionModal").open();
+        $("paper-drawer-panel")[0].closeDrawer();
       },
 
       hideProjectSelectorModal: function() {
@@ -197,6 +198,7 @@
 
       showProjectSelectorModal: function() {
         document.querySelector("#projectSelectorModal").open();
+        $("paper-drawer-panel")[0].closeDrawer();
       },
 
       isProjectSelectorModalOpened: function() {
