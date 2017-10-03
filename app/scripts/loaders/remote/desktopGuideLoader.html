@@ -1,0 +1,112 @@
+<link rel="import" href="./fsLoader.html">
+<link rel="import" href="./gitHubGuideLoader.html">
+<link rel="import" href="../../jquery.html">
+
+<script>
+  const promisify = (value) => {
+    const deferred = new $.Deferred();
+    deferred.resolve(value);
+    return deferred.promise();
+  };
+
+  const guidesPath = `${window.GBS_DIRNAME}/guides`;
+  const jsonPath = `${window.GBS_DIRNAME}/guides/guides.json`;
+  const tmpPath = `${window.GBS_DIRNAME}/guides_tmp`;
+  class DesktopGuideLoader {
+    constructor({ path }) {
+      this.path = `${guidesPath}/${path}`;
+    }
+
+    static download(onProgress) {
+      const url = "https://github.com/gobstones/proyectos-jr/archive/master.zip";
+
+      const fs = window.GBS_REQUIRE("fs");
+      const extract = window.GBS_REQUIRE("extract-zip");
+      const ncp = window.GBS_REQUIRE("ncp");
+      window.GBS_REQUIRE("setimmediate");
+
+      return $.getBinary(
+        url,
+        function() {
+          var xhr = $.ajaxSettings.xhr();
+          xhr.onprogress = function(e) {
+            if (e.lengthComputable) onProgress(e.loaded, e.total);
+          };
+          return xhr;
+        }
+      )
+      .then((file) => {
+        const zipPath = `${window.GBS_DIRNAME}/guides.zip`;
+        fs.writeFileSync(zipPath, new Buffer(file));
+        try { fs.rmdirSync(tmpPath); } catch (e) { }
+        try { fs.rmdirSync(guidesPath); } catch (e) { }
+        try { fs.mkdirSync(guidesPath); } catch (e) { }
+        const deferred = new $.Deferred();
+        extract(zipPath, { dir: tmpPath }, function(err) {
+          if (err) deferred.reject(err); else deferred.resolve();
+        });
+        return deferred.promise();
+      }).then(() => {
+        const deferred = $.Deferred();
+        ncp(`${tmpPath}/proyectos-jr-master`, guidesPath, function(err) {
+          if (err) deferred.reject(err); else deferred.resolve();
+        });
+        return deferred.promise();
+      });
+    }
+
+    static all() {
+      try {
+        const json = window.GBS_REQUIRE("fs").readFileSync(
+          jsonPath
+        );
+        const guides = JSON.parse(json);
+
+        return promisify(guides);
+      } catch(e) {
+        console.warn(e);
+        return promisify([]);
+      }
+    }
+
+    static makeUrlFor(guide, exercise) {
+      const path = `${guidesPath}/${guide.path}/${exercise.name}`;
+      return `/${window.GBS_PROJECT_TYPE}?fs=${path}`;
+    }
+
+    getExercises() {
+      try {
+        const fs = window.GBS_REQUIRE("fs");
+
+        return promisify(
+          fs
+            .readdirSync(this.path)
+            .filter(it => {
+              return fs.lstatSync(`${this.path}/${it}`).isDirectory();
+            })
+            .map(it => {
+              return {
+                name: it,
+                imageUrl: this._makeImageUrl(it)
+              }
+            })
+        );
+      } catch(e) {
+        console.warn(e);
+        return promisify([]);
+      }
+    }
+
+    _makeImageUrl(exercise) {
+      try {
+        const bitmap = window.GBS_REQUIRE("fs")
+          .readFileSync(`${this.path}/${exercise}/image.png`)
+        const base64 = new Buffer(bitmap).toString("base64");
+        return `data:image/png;base64,${base64}`;
+      } catch(e) {
+        console.warn(e);
+        return null;
+      }
+    }
+  }
+</script>

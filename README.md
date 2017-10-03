@@ -1,5 +1,8 @@
 [![Build Status](https://travis-ci.org/gobstones/gobstones-web.svg?branch=master)](https://travis-ci.org/gobstones/gobstones-web)
 
+# how to start
+[See the wiki!](https://github.com/gobstones/gobstones-web/wiki/Manual-t%C3%A9cnico)
+
 # gobstones-web
 
 This is a web IDE of the language [Gobstones](http://gobstones.github.io).
@@ -57,25 +60,19 @@ makeself . gobstones-web.run "Gobstones Web" ./start-desktop.sh
 #### run locally
 ```bash
 # requires electron
-current_branch=$(git branch | grep \* | cut -d ' ' -f2)
-git branch -D electron
-git checkout gh-pages
-git pull
-git checkout -b electron
-sed -i '$ d' index.js
+gulp
+cd dist/
 electron .
-git checkout -f "$current_branch"
 ```
 
 #### generate native distributable binaries
 ```bash
 # requires electron-packager
+git pull
 current_branch=$(git branch | grep \* | cut -d ' ' -f2)
 git branch -D electron
-git checkout gh-pages
-git pull
+git checkout origin/gh-pages
 git checkout -b electron
-sed -i '$ d' index.js
 sed -i -e "s/'\.'/'\.\/resources\/app'/g" start-electron.js
 electron-packager . gobstones-web --pĺatform linux --arch x64
 makeself ./gobstones-web-linux-x64 gobstones-web.run "Gobstones Web" ./gobstones-web

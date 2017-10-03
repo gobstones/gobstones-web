@@ -144,7 +144,7 @@
           </template>
         </div>
         <div style="width: 90%">
-          <paper-tabs no-bar selected="{{selectedTab}}" class="bottom self-end">
+          <paper-tabs id="theBoardsTab" no-bar selected="{{selectedTab}}" class="bottom self-end">
             <paper-tab>[[localize("initial-board")]] [[toOneBased(selectedInitialState)]]</paper-tab>
             <template is="dom-if" if="{{isFinalBoardVisible(finalState, error)}}">
               <paper-tab>[[localize("final-board")]]</paper-tab>

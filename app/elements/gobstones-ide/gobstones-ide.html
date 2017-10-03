@@ -2,10 +2,16 @@
 <link rel="import" href="../../scripts/behaviors/localizationBehavior.html">
 <link rel="import" href="../../scripts/behaviors/loaderBehavior.html">
 <link rel="import" href="../../scripts/jquery.html">
+<link rel="import" href="../../scripts/tour.html">
 <link rel="import" href="../../scripts/showdown.html">
 <link rel="import" href="../../scripts/js-emoji.html">
 <link rel="import" href="../../scripts/loaders/remote/urlLoader.html">
 <link rel="import" href="../../scripts/loaders/remote/gitHubLoader.html">
+<link rel="import" href="../../scripts/loaders/remote/fsLoader.html">
+<link rel="import" href="../project-selector/project-selector.html">
+<link rel="import" href="../code-viewer/code-viewer.html">
+
+<link rel="stylesheet" href="../../bower_components/material-walkthrough/dist/material-walkthrough.min.css">
 
 <dom-module id="gobstones-ide">
   <style>
@@ -27,27 +33,55 @@
       filter: grayscale(100%);
     }
 
-    .description {
+    .ide-modal {
       min-width: 500px;
+    }
+
+    .project-selector-modal {
+      width: 1083px;
+    }
+
+    .close {
+      position: absolute;
+      top: -25px;
+      right: -25px;
     }
 
     .accept {
       cursor: pointer;
     }
+
+    .toolbar-placeholder {
+      position: absolute;
+      top: -400px;
+      left: -40px;
+      width: 800px;
+      height: 300px;
+      pointer-events: none;
+    }
+
+    .code-placeholder {
+      position: absolute;
+      top: 78px;
+      left: 100px;
+      width: 300px;
+      height: 300px;
+      pointer-events: none;
+    }
   </style>
 
   <template>
 
-    <div class$="panel-container {{ideCss(isLoading)}}">
-      <template is="dom-if" if="{{isLoading}}">
+    <div class$="panel-container {{ideCss(showIsLoading)}}">
+      <template is="dom-if" if="{{showIsLoading}}">
         <div class="loading">
           <paper-spinner active></paper-spinner>
-          <span>[[localize("loading-project")]]</span>
+          <span>[[localize("loading")]]</span>
         </div>
       </template>
 
       <div class="panel-left">
-        <editor-toolbar project-type="[[projectType]]" id="toolbar"></editor-toolbar>
+        <editor-toolbar id="toolbar" project-type="[[projectType]]" id="toolbar"></editor-toolbar>
 
         <template is="dom-if" if="{{isBlocksProject(projectType)}}">
           <gobstones-blockly id="editor"></gobstones-blockly>
@@ -56,20 +90,39 @@
         <template is="dom-if" if="{{isCodeProject(projectType)}}">
           <gobstones-editor id="editor"></gobstones-editor>
         </template>
+
+        <div id="toolbar-placeholder" class="toolbar-placeholder"></div>
+        <div id="code-placeholder" class="code-placeholder"></div>
       </div>
 
       <div class="panel-right">
         <boards-panel id="boards"></boards-panel>
       </div>
 
-      <paper-dialog id="modal" class="description">
+      <paper-dialog id="descriptionModal" on-iron-overlay-closed="_onCloseDescriptionModal" class="ide-modal">
+        <paper-button class="accept close" dialog-confirm autofocus><iron-icon icon="icons:close"></iron-icon></paper-button>
+
         <paper-dialog-scrollable>
-          <div inner-h-t-m-l="[[compileMd(modalContent)]]"></div>
+          <div inner-h-t-m-l="[[compileMd(description)]]"></div>
         </paper-dialog-scrollable>
 
         <div class="buttons">
           <paper-button class="accept" dialog-confirm autofocus>[[localize("accept")]]</paper-button>
         </div>
+      </paper-dialog>
+
+      <paper-dialog id="projectSelectorModal" class="project-selector-modal">
+        <paper-button class="accept close" dialog-confirm autofocus><iron-icon icon="icons:close"></iron-icon></paper-button>
+
+        <paper-dialog-scrollable>
+          <project-selector projectType="[[projectType]]"></project-selector>
+        </paper-dialog-scrollable>
+      </paper-dialog>
+
+      <paper-dialog id="codeViewModal" class="code-view-modal">
+        <paper-button class="accept close" dialog-confirm autofocus><iron-icon icon="icons:close"></iron-icon></paper-button>
+
+        <code-viewer id="codeViewer" code="[[currentCode]]"></code-viwer>
       </paper-dialog>
     </div>
 
@@ -83,7 +136,7 @@
       name = name.replace(/[\[\]]/g, "\\$&");
       var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
           results = regex.exec(url);
-      if (!results) return null;
+      if (!results) return undefined;
       if (!results[2]) return '';
       return decodeURIComponent(results[2].replace(/\+/g, " "));
     }
@@ -100,27 +153,62 @@
       ],
       properties: {
         projectType: String,
+        showIsLoading: {
+          type: Boolean,
+          computed: "_computeShowIsLoading(isLoading, isLoadingProjects)",
+        },
         isLoading: {
           type: Boolean,
           value: false
         },
-        modalContent: {
+        isLoadingProjects: {
+          type: Boolean,
+          value: false
+        },
+        description: {
+          type: String,
+          value: ""
+        },
+        currentCode: {
           type: String,
           value: ""
         }
       },
 
       ready: function() {
+        window.extendJQuery();
+        window.GBS_PROJECT_TYPE = this.projectType;
+        this._setUpTourCancelation();
         this._setUpLoaders();
       },
 
-      setModal: function(markdown) {
-        this.modalContent = markdown;
+      setDescription: function(markdown) {
+        this.description = markdown;
         window.BUS.fire("has-description", markdown !== "");
       },
 
-      toggleModal: function() {
-        document.querySelector("#modal").toggle();
+      toggleDescriptionModal: function() {
+        document.querySelector("#descriptionModal").toggle();
+      },
+
+      hideProjectSelectorModal: function() {
+        document.querySelector("#projectSelectorModal").close();
+      },
+
+      showProjectSelectorModal: function() {
+        document.querySelector("#projectSelectorModal").open();
+      },
+
+      isProjectSelectorModalOpened: function() {
+        return document.querySelector("#projectSelectorModal").opened;
+      },
+
+      setCurrentCode: function(newCode) {
+        this.currentCode = newCode;
+      },
+
+      showCodeViewModal: function(newCode) {
+        document.querySelector("#codeViewModal").open();
       },
 
       isBlocksProject: function(projectType) { return projectType === 'blocks'; },
@@ -135,7 +223,11 @@
       },
 
       _renderMarkdown: function(markdown) {
-        return new showdown.Converter({tables: true}).makeHtml(markdown);
+        if (!window.showdown && window.GBS_DESKTOP) {
+          window.showdown = window.GBS_REQUIRE("showdown");
+        }
+
+        return new window.showdown.Converter({tables: true}).makeHtml(markdown);
       },
 
       _renderEmojis: function(markdown) {
@@ -144,6 +236,10 @@
         emoji.img_sets.apple.sheet = this._makeAppUrl('images/emojis/sheet_apple_64.png');
 
         return emoji.replace_colons(markdown);
+      },
+
+      _onCloseDescriptionModal: function() {
+        this._showTour();
       },
 
       _makeAppUrl: function(partialUrl) {
@@ -159,8 +255,10 @@
       },
 
       _resizeLeftPanel: function(show, size) {
+        const percentage = localStorage.getItem("code-panel-percentage") || 0.6;
+
         $(".panel-left").width(
-          show ? $(document).width() * 0.6 : size
+          show ? $(document).width() * percentage : size
         );
         $(window).trigger("resize");
       },
@@ -173,17 +271,22 @@
           return this._setUpLoader(UrlLoader, projectUrl, getContext);
 
         const gitHubSlug = getParameterByName("github");
+        const gitHubPath = getParameterByName("path");
         if (gitHubSlug)
-          return this._setUpLoader(GitHubLoader, gitHubSlug, getContext);
+          return this._setUpLoader(GitHubLoader, gitHubSlug, getContext, gitHubPath);
+
+        const fsPath = getParameterByName("fs");
+        if (fsPath)
+          return this._setUpLoader(FsLoader, fsPath, getContext);
       },
 
-      _setUpLoader: function(Loader, url, getContext) {
+      _setUpLoader: function(Loader, resource, getContext, subresource) {
         window.LOAD_PENDING_PROJECT = () => {
-          this.isLoading = true;
-          var finish = () => { this.isLoading = false; };
+          this.startLoading();
+          var finish = () => { this.stopLoading(); };
 
-          new Loader(this.projectType)
-            .load(url, getContext, finish)
+          new Loader(this.projectType, resource, subresource)
+            .load(getContext, finish)
             .catch((e) => {
               console.error(e);
               alert(this.localize("error-loading-project"));
@@ -192,8 +295,85 @@
         };
       },
 
-      ideCss: function(isLoading) {
-        return isLoading ? "gray" : "";
+      startLoading(property = "isLoading") {
+        $("body").css("pointer-events", "none");
+        this[property] = true;
+      },
+
+      stopLoading(property = "isLoading") {
+        $("body").css("pointer-events", "auto");
+        this[property] = false;
+      },
+
+      ideCss: function(showIsLoading) {
+        return showIsLoading ? "gray" : "";
+      },
+
+      _computeShowIsLoading: function(isLoading, isLoadingProjects) {
+        return isLoading || isLoadingProjects;
+      },
+
+      _setUpTourCancelation: function() {
+        $(document).keydown(function(e) {
+          if (e.keyCode == 27) { // ESC
+            if (window.GBS_TOUR_ON) {
+              window.MATERIAL_WALKER_CLOSE();
+              window.GBS_TOUR_ON = false;
+              window.GBS_TOUR_ENDED = true;
+            }
+          }
+        });
+      },
+
+      _showTour: function() {
+        let shouldNotShow = localStorage.getItem("show-tutorial") === "false";
+        if (window.GBS_TOUR_ENDED || shouldNotShow) return;
+        window.GBS_TOUR_ON = true;
+
+        $.walk([
+            {
+              target: "#code-placeholder",
+              content: '<span style="font-size: small; color: #dbdbdb;">' + this.localize("tutorial-0") + '</span><br>' + this.localize("tutorial-1"),
+              color: '#2e3aa1',
+              acceptText: 'OK'
+            },
+            {
+              target: ".panel-right",
+              content: this.localize("tutorial-2"),
+              color: '#2e3aa1',
+              acceptText: 'OK'
+            },
+            {
+              target: "#theBoardsTab",
+              content: this.localize("tutorial-2.5"),
+              color: '#2e3aa1',
+              acceptText: 'OK'
+            },
+            {
+              target: "#playButton",
+              content: this.localize("tutorial-3"),
+              color: '#0b465d',
+              acceptText: 'OK'
+            },
+            {
+              target: "#speedSlider",
+              content: this.localize("tutorial-3.5"),
+              color: '#0b465d',
+              acceptText: 'OK'
+            },
+            {
+              target: "#toolbar-placeholder",
+              content: this.localize("tutorial-4"),
+              color: '#2e3aa1',
+              acceptText: 'OK'
+            },
+            {
+              target: "#options-button",
+              content: this.localize("tutorial-5"),
+              color: '#2e3aa1',
+              acceptText: 'OK'
+            }
+        ]);
       }
     });
 

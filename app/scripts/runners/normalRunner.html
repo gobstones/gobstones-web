@@ -3,6 +3,8 @@
     constructor(parser) {
       this.parser = parser;
       this.handles = [];
+
+      this.HACK_FIRST_WAIT_MS = 250;
     }
 
     run({ ast, request, throttle, callbacks }) {
@@ -21,12 +23,19 @@
         return onStop("end");
       }
 
-      this.handles = states.map((state, i) =>
-        setTimeout(() => {
-          onResult(state);
-          if (i === states.length - 1) onStop("end");
-        }, i * throttle)
-      );
+      onResult(_.first(states));
+      if (states.length === 1) return onStop("end");
+
+      setTimeout(() => {
+        this.handles = states.slice(1).map((state, i) => {
+          const ii = i + 1;
+
+          return setTimeout(() => {
+            onResult(state);
+            if (ii === states.length - 1) onStop("end");
+          }, ii * throttle)
+        });
+      }, this.HACK_FIRST_WAIT_MS); // TODO: Pensar solución mejor
     }
 
     _interpret(ast, { initialState, code }) {

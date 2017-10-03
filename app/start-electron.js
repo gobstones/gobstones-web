@@ -24,8 +24,17 @@ freeport((err, port) => {
   let mainWindow;
 
   function createWindow() {
-    mainWindow = new BrowserWindow({ width: 1024, height: 800 });
+    mainWindow = new BrowserWindow({
+      width: 1024,
+      height: 800,
+      webPreferences: {
+        nodeIntegration: true,
+        preload: __dirname + "/start-electron-preload.js",
+        webSecurity: false
+      }
+    });
     mainWindow.loadURL(`http://localhost:${port}`);
+    mainWindow.maximize();
     mainWindow.on('closed', () => mainWindow = null);
   }
 

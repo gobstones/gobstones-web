@@ -10,12 +10,12 @@
     }
 
     buildContent(context) {
-      return context.ide.modalContent;
+      return context.ide.description;
     }
 
     readContent(context, content) {
-      context.ide.setModal(content);
-      context.ide.toggleModal();
+      context.ide.setDescription(content);
+      context.ide.toggleDescriptionModal();
     }
   }
 </script>

@@ -21,9 +21,13 @@
 
           this._cleanQueryString();
 
-          if (isProject) this._ide().isLoading = true;
+          if (isProject) {
+            this._ide().startLoading();
+            this._cleanAll();
+          }
+
           this.loaders[item].read(this._context(), event, () => {
-            if (isProject) this._ide().isLoading = false;
+            if (isProject) this._ide().stopLoading();
             else this._closePanel();
           });
         };
@@ -34,13 +38,20 @@
       if (window.GBS_IS_RUNNING) return;
       if (!confirm(this.localize("new-project-confirm"))) return;
 
-      this._cleanQueryString();
+      this._cleanAll();
 
+      this._goTo("/" + this.projectType);
+    },
+
+    _cleanAll() {
       const context = this._context();
-      context.ide.setModal("");
+
+      context.ide.setDescription("");
+      context.ide.setCurrentCode("");
       context.setProjectName(this.localize("new-project"));
       context.editor.reset();
       context.boards.reset();
+      context.ide.hideProjectSelectorModal();
     },
 
     _closePanel: function() {
@@ -65,21 +76,18 @@
       return document.querySelector("#gobstones-ide");
     },
 
+    _goTo: function(route) {
+      return document.querySelector("app-router").go(route);
+    },
+
     _cleanQueryString: function() {
-      const queryStringStart = location.href.indexOf("?");
-      const hashStart = location.href.indexOf("/#/");
+      let url;
+      url = window.location.href;
+      url = url.replace(url.substring(url.indexOf("?")), "");
+      url = url.substring(url.indexOf("//") + 2);
+      url = url.substring(url.indexOf("/"));
 
-      const domain = location.href.substring(
-        0,
-        hashStart > -1 ? hashStart : location.href.length
-      );
-
-      const newPath = location.href.substring(
-        0,
-        queryStringStart > -1 ? queryStringStart : location.href.length
-      ).replace(domain, "");
-
-      history.replaceState({}, '', newPath);
+      history.replaceState({}, '', url);
     }
   };
 </script>

@@ -1,0 +1,42 @@
+<link rel="import" href="./gitHubLoader.html">
+<link rel="import" href="../../jquery.html">
+
+<script>
+  class GitHubGuideLoader {
+    constructor({ repo, path = "" }) {
+      this.loader = new GitHubLoader(window.GBS_PROJECT_TYPE, repo, path);
+
+      this.repo = repo;
+      this.path = path;
+    }
+
+    static all() {
+      return $.getJSON("https://raw.githubusercontent.com/gobstones/proyectos-jr/master/guides.json");
+    }
+
+    static makeUrlFor(guide, exercise) {
+      return `/${window.GBS_PROJECT_TYPE}?github=${guide.repo}&path=${guide.path}/${exercise.name}`;
+    }
+
+    getExercises() {
+      return this.loader.scanDir().then(entries => {
+        return entries
+          .filter(it => it.type === "dir")
+          .map(it => {
+            return {
+              name: it.name,
+              imageUrl: this._makeImageUrl(it.name)
+            };
+          });
+      });
+    }
+
+    _makeImageUrl(exercise) {
+      const path = this.path !== ""
+        ? this.path + "/"
+        : this.path;
+
+      return `https://raw.githubusercontent.com/${this.repo}/master/${path}${exercise}/image.png`;
+    }
+  }
+</script>

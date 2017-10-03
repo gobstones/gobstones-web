@@ -1,0 +1,45 @@
+<script>
+  class ExpandedLoader {
+    _createZip(files) {
+      const entries = files.map(it => this._createZipEntry(it));
+      const zip = _.clone(entries);
+      zip.forEach = function(fn) {
+        entries.forEach(entry => {
+          fn(entry.relativePath, entry);
+        });
+      };
+      zip.files = _.keyBy(entries, "relativePath");
+
+      return zip;
+    }
+
+    _createZipEntry(file) {
+      return {
+        async: (encoding) => {
+          const deferred = new $.Deferred();
+          this._readBinary(file.content, encoding, deferred.resolve, deferred.reject);
+          return deferred.promise();
+        },
+        relativePath: file.relativePath
+      };
+    }
+
+    _readBinary(arrayBuffer, encoding, onSuccess, onFail) {
+      const buffers = [ arrayBuffer ];
+
+      const reader = new FileReader();
+      reader.onload = function(event) {
+        onSuccess(event.target.result);
+      };
+      reader.onerror = function (event) {
+        onFail(event.target.error);
+      };
+
+      if (encoding === "string")
+        reader.readAsText(new Blob(buffers));
+      else
+        reader.readAsBinaryString(new Blob(buffers, { type: 'application/octet-stream' }));
+    }
+  }
+</script>
+

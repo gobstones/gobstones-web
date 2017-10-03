@@ -7,7 +7,9 @@
     // readContent(context, content, fileName);
 
     save(context) {
-      this._saveText(this.getFiles(context)[0]);
+      const file = this.getFiles(context)[0];
+      if (file.content !== null)
+        this._saveText(file);
     }
 
     read(context, event, callback) {
