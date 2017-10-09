@@ -178,7 +178,7 @@
       ready: function() {
         window.extendJQuery();
         window.GBS_PROJECT_TYPE = this.projectType;
-        this._setUpTourCancelation();
+        this._setUpKeys();
         this._setUpLoaders();
       },
 
@@ -303,8 +303,10 @@
       },
 
       stopLoading(property = "isLoading") {
-        $("body").css("pointer-events", "auto");
         this[property] = false;
+        if (!this.showIsLoading) {
+          $("body").css("pointer-events", "auto");
+        }
       },
 
       ideCss: function(showIsLoading) {
@@ -315,13 +317,14 @@
         return isLoading || isLoadingProjects;
       },
 
-      _setUpTourCancelation: function() {
+      _setUpKeys: function() {
         $(document).keydown(function(e) {
           if (e.keyCode == 27) { // ESC
             if (window.GBS_TOUR_ON) {
               window.MATERIAL_WALKER_CLOSE();
               window.GBS_TOUR_ON = false;
               window.GBS_TOUR_ENDED = true;
+              return;
             }
           }
         });

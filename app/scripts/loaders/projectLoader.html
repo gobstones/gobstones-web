@@ -55,6 +55,10 @@
     readRawZip(context, file, callback) {
       JSZip.loadAsync(file).then(zip => {
         this.readRaw(context, zip, callback);
+      }).catch((e) => {
+        console.error(e);
+        alert("The project is corrupted or has errors.");
+        callback();
       });
     }
 
