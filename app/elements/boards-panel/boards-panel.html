@@ -497,7 +497,7 @@
         return { x: table[0].length, y: table.length };
       },
 
-      finishLoadingBoards: function() {
+      initializeBoards: function() {
         this._selecting = false;
       },
 
@@ -528,6 +528,9 @@
       },
 
       _onRunRequest: function(options) {
+        if (!this.initialState)
+          throw new Error("Initial state not found. WEIRD!");
+
         this._cleanState();
 
         if (options.useRandomBoard)
@@ -601,7 +604,7 @@
         this.sizeY = size.y;
 
         this._fillTable();
-        this.finishLoadingBoards();
+        this.initializeBoards();
       },
 
       _fillTable: function() {

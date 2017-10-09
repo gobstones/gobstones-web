@@ -19,8 +19,6 @@
         this[`onLoaded${item}`] = event => {
           const isProject = _.endsWith(item, "Project");
 
-          this._cleanQueryString();
-
           if (isProject) {
             this._ide().startLoading();
             this._cleanAll();
@@ -39,12 +37,12 @@
       if (!confirm(this.localize("new-project-confirm"))) return;
 
       this._cleanAll();
-
-      this._goTo("/" + this.projectType);
     },
 
     _cleanAll() {
       const context = this._context();
+
+      this._cleanQueryString();
 
       context.ide.setDescription("");
       context.ide.setCurrentCode("");

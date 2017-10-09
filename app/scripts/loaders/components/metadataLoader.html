@@ -58,7 +58,7 @@
     readContent(context, content, fileName) {
       const metadata = JSON.parse(content);
 
-      context.boards.finishLoadingBoards();
+      context.boards.initializeBoards();
 
       // defaults
       if (!metadata.source) metadata.source = { visible: true };
