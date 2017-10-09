@@ -529,6 +529,7 @@
 
       toggleToolbox: function() {
         this.isToolboxVisible = !this.isToolboxVisible;
+        this._updateStylistToolboxVisible();
       },
 
       _bootstrap: function(sizeX = this.sizeX, sizeY = this.sizeY) {
@@ -709,8 +710,8 @@
       },
 
       _onToolboxViewPermissionChange: function(visible) {
-        if (this.stylist) this.stylist.toolboxVisible = visible;
-        $(window).trigger("resize");
+        if (!this.stylist) return;
+        this._updateStylistToolboxVisible(visible);
       },
 
       _updateSize: function() {
@@ -779,6 +780,11 @@
 
       toggleToolboxButtonIcon: function(isToolboxVisible) {
         return `icons:arrow-drop-${isToolboxVisible ? "up" : "down"}`;
+      },
+
+      _updateStylistToolboxVisible: function(hasPermission = this.permissions.can_view_edition_panel) {
+        this.stylist.toolboxVisible = hasPermission && this.isToolboxVisible;
+        $(window).trigger("resize");
       }
     });
 
