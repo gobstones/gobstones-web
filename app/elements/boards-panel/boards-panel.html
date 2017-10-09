@@ -527,8 +527,8 @@
         this._selecting = false;
       },
 
-      toggleToolbox: function() {
-        this.isToolboxVisible = !this.isToolboxVisible;
+      toggleToolbox: function(value) {
+        this.isToolboxVisible = _.isBoolean(value) ? value : !this.isToolboxVisible;
         this._updateStylistToolboxVisible();
       },
 
