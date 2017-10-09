@@ -78,6 +78,10 @@
           }
         }, 0);
 
+        setTimeout(() => {
+          $(window).trigger("resize");
+        }, 0)
+
         window.blockly = this.$.blockly; // TODO: Es para debuggear
       },
 
