@@ -31,6 +31,7 @@
           active: context.boards.selectedInitialState + 1,
           initial_board_source: context.editor.runner.useRandomBoard ? this.RANDOM_SOURCE : this.SELECTED_SOURCE,
           visible_edition: context.boards.permissions.can_view_edition_panel,
+          collapse_toolbox: !context.boards.isToolboxVisible,
           user_permissions: {
             can_change_source: context.editor.runner.permissions.can_change_source,
             can_edit_board: context.boards.permissions.can_edit_board
@@ -78,6 +79,7 @@
       // permissions
       context.toolbar.set("permissions.can_use_library", metadata.library.visible);
       context.boards.set("permissions.can_view_edition_panel", metadata.board.visible_edition);
+      context.boards.toggleToolbox(!metadata.board.collapse_toolbox);
       context.editor.runner.set("permissions.can_change_source", metadata.board.user_permissions.can_change_source);
       context.boards.set("permissions.can_edit_board", metadata.board.user_permissions.can_edit_board);
       context.editor.runner.set("permissions.can_change_speed", metadata.execution_speed.user_permissions.can_change_speed);

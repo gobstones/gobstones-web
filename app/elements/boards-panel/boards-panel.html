@@ -118,6 +118,18 @@
         font-size: 15px;
       }
 
+      .toggle-toolbox-button-up {
+        position: absolute;
+        left: 1px;
+        top: 119px;
+      }
+
+      .toggle-toolbox-button-down {
+        position: absolute;
+        left: 1px;
+        top: 72px;
+      }
+
       .shortcut {
         color: var(--paper-blue-grey-200);
         font-weight: bold;
@@ -137,6 +149,7 @@
     </style>
 
     <div class="main-container">
+      <!-- TABS -->
       <paper-toolbar class="tabs">
         <div>
           <template is="dom-if" if="{{_showCodeVisible(interactive.*)}}">
@@ -156,9 +169,11 @@
         </div>
       </paper-toolbar>
 
+      <!-- TOAST -->
       <paper-toast class="toast" id="toast"></paper-toast>
 
-      <template is="dom-if" if="{{hasPermission(permissions.*, 'can_view_edition_panel')}}">
+      <!-- TOOLBOX -->
+      <template is="dom-if" if="{{shouldShowToolbox(permissions.*, isToolboxVisible)}}">
         <div class="boards-buttons">
           <paper-menu-button class$="{{boardChangeButtonCss(selectedTab, permissions.*)}}">
             <paper-icon-button icon="menu" class="dropdown-trigger"></paper-icon-button>
@@ -193,7 +208,7 @@
       </template>
 
       <div class="boards-panel">
-        <template is="dom-if" if="{{hasPermission(permissions.*, 'can_view_edition_panel')}}">
+        <template is="dom-if" if="{{shouldShowToolbox(permissions.*, isToolboxVisible)}}">
           <div class="size-bar">
             <div class$="{{boardSizeCss(selectedTab, showAttire, permissions.*)}}">
               <form>
@@ -225,6 +240,12 @@
           </div>
         </template>
 
+        <!-- TOGGLE TOOLBOX -->
+        <template is="dom-if" if="{{hasPermission(permissions.*, 'can_view_edition_panel')}}">
+          <paper-button class$="{{toggleToolboxButtonCss(isToolboxVisible)}}"><iron-icon icon$="{{toggleToolboxButtonIcon(isToolboxVisible)}}" on-click="toggleToolbox" class="black-button"></iron-icon></paper-button>
+        </template>
+
+        <!-- BOARD -->
         <div class="theBoardContainer" style="position: relative;">
           <div class="theBoard" style="position: absolute; left: 0; right: 0;">
             <!-- Initial board -->
@@ -340,6 +361,10 @@
           value: false,
           observer: "_updateAttire"
         },
+        isToolboxVisible: {
+          type: Boolean,
+          value: true
+        },
 
         permissions: {
           type: Object,
@@ -447,6 +472,7 @@
       },
 
       reset: function() {
+        this.isToolboxVisible = true;
         this.showAttire = false;
         this.set("permissions.can_view_edition_panel", true);
         this.set("permissions.can_edit_board", true);
@@ -499,6 +525,11 @@
 
       initializeBoards: function() {
         this._selecting = false;
+      },
+
+      toggleToolbox: function(value) {
+        this.isToolboxVisible = _.isBoolean(value) ? value : !this.isToolboxVisible;
+        this._updateStylistToolboxVisible();
       },
 
       _bootstrap: function(sizeX = this.sizeX, sizeY = this.sizeY) {
@@ -679,8 +710,8 @@
       },
 
       _onToolboxViewPermissionChange: function(visible) {
-        if (this.stylist) this.stylist.toolboxVisible = visible;
-        $(window).trigger("resize");
+        if (!this.stylist) return;
+        this._updateStylistToolboxVisible(visible);
       },
 
       _updateSize: function() {
@@ -712,6 +743,12 @@
         }, 1);
       },
 
+      shouldShowToolbox: function(permissions, isToolboxVisible) {
+        const hasPermission = this.hasPermission(permissions, "can_view_edition_panel");
+
+        return hasPermission && isToolboxVisible;
+      },
+
       isBoom: (error) => error !== undefined && error !== null,
       isInitialBoardSelected: (selectedTab) => selectedTab === 0,
       isFinalBoardSelected: (selectedTab) => selectedTab === 1,
@@ -735,6 +772,19 @@
 
       boardButtonCss: function(selectedTab, showAttire, permissions) {
         return "black-button" + (this.isInitialBoardNotEditable(selectedTab, showAttire, permissions) ? " hidden" : "");
+      },
+
+      toggleToolboxButtonCss: function(isToolboxVisible) {
+        return `toggle-toolbox-button-${isToolboxVisible ? "up" : "down"}`
+      },
+
+      toggleToolboxButtonIcon: function(isToolboxVisible) {
+        return `icons:arrow-drop-${isToolboxVisible ? "up" : "down"}`;
+      },
+
+      _updateStylistToolboxVisible: function(hasPermission = this.permissions.can_view_edition_panel) {
+        this.stylist.toolboxVisible = hasPermission && this.isToolboxVisible;
+        $(window).trigger("resize");
       }
     });
 
