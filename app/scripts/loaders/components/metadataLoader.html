@@ -34,7 +34,9 @@
           collapse_toolbox: !context.boards.isToolboxVisible,
           user_permissions: {
             can_change_source: context.editor.runner.permissions.can_change_source,
-            can_edit_board: context.boards.permissions.can_edit_board
+            can_edit_board: context.boards.permissions.can_edit_board,
+            can_view_size_section: context.boards.permissions.can_view_size_section,
+            can_view_attire_section: context.boards.permissions.can_view_attire_section
           }
         },
         execution_speed: {
@@ -82,6 +84,8 @@
       context.boards.toggleToolbox(!metadata.board.collapse_toolbox);
       context.editor.runner.set("permissions.can_change_source", metadata.board.user_permissions.can_change_source);
       context.boards.set("permissions.can_edit_board", metadata.board.user_permissions.can_edit_board);
+      context.boards.set("permissions.can_view_size_section", metadata.board.user_permissions.can_view_size_section !== false);
+      context.boards.set("permissions.can_view_attire_section", metadata.board.user_permissions.can_view_attire_section !== false);
       context.editor.runner.set("permissions.can_change_speed", metadata.execution_speed.user_permissions.can_change_speed);
       context.boards.set("permissions.can_toggle_attire_visibility", metadata.attire.user_permissions.can_toggle_visibility);
 

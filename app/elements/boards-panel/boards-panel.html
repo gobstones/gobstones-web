@@ -209,35 +209,39 @@
 
       <div class="boards-panel">
         <template is="dom-if" if="{{shouldShowToolbox(permissions.*, isToolboxVisible)}}">
-          <div class="size-bar">
-            <div class$="{{boardSizeCss(selectedTab, showAttire, permissions.*)}}">
-              <form>
-                <div class="size-container">
-                  <strong>[[localize("size")]]:</strong>
-                  <paper-input class="size-input" value="{{sizeX}}" type="number" min="1" max="30" disabled$="{{isInitialBoardNotEditable(selectedTab, showAttire, permissions.*)}}"></paper-input>
-                </div>
-                <div class="size-container">
-                  <span>[[localize("columns")]] <strong>[[localize("by")]]</strong></span>
-                  <paper-input class="size-input" value="{{sizeY}}" type="number" min="1" max="30" disabled$="{{isInitialBoardNotEditable(selectedTab, showAttire, permissions.*)}}"></paper-input>
-                  <span>[[localize("rows")]]</span>
-                </div>
-              </form>
+          <template is="dom-if" if="{{hasPermission(permissions.*, 'can_view_size_section')}}">
+            <div class="size-bar">
+              <div class$="{{boardSizeCss(selectedTab, showAttire, permissions.*)}}">
+                <form>
+                  <div class="size-container">
+                    <strong>[[localize("size")]]:</strong>
+                    <paper-input class="size-input" value="{{sizeX}}" type="number" min="1" max="30" disabled$="{{isInitialBoardNotEditable(selectedTab, showAttire, permissions.*)}}"></paper-input>
+                  </div>
+                  <div class="size-container">
+                    <span>[[localize("columns")]] <strong>[[localize("by")]]</strong></span>
+                    <paper-input class="size-input" value="{{sizeY}}" type="number" min="1" max="30" disabled$="{{isInitialBoardNotEditable(selectedTab, showAttire, permissions.*)}}"></paper-input>
+                    <span>[[localize("rows")]]</span>
+                  </div>
+                </form>
+              </div>
             </div>
-          </div>
+          </template>
 
-          <div class="attire-container">
-            <template is="dom-if" if="{{hasPermission(permissions.*, 'can_toggle_attire_visibility')}}">
-              <paper-button on-click="toggleShowAttire"><iron-icon class="black-button" icon="icons:visibility"></iron-icon></paper-button>
-            </template>
-            <strong>[[localize("attire")]]:</strong>
-            <paper-dropdown-menu no-animations no-label-float vertical-align="bottom" horizontal-align="right" disabled="{{!showAttire}}">
-              <paper-listbox class="dropdown-content" selected="{{selectedAttire}}">
-                <template is="dom-repeat" items="{{ availableAttires }}">
-                  <paper-item>{{item.name}}</paper-item>
-                </template>
-              </paper-listbox>
-            </paper-dropdown-menu>
-          </div>
+          <template is="dom-if" if="{{hasPermission(permissions.*, 'can_view_attire_section')}}">
+            <div class="attire-container">
+              <template is="dom-if" if="{{hasPermission(permissions.*, 'can_toggle_attire_visibility')}}">
+                <paper-button on-click="toggleShowAttire"><iron-icon class="black-button" icon="icons:visibility"></iron-icon></paper-button>
+              </template>
+              <strong>[[localize("attire")]]:</strong>
+              <paper-dropdown-menu no-animations no-label-float vertical-align="bottom" horizontal-align="right" disabled="{{!showAttire}}">
+                <paper-listbox class="dropdown-content" selected="{{selectedAttire}}">
+                  <template is="dom-repeat" items="{{ availableAttires }}">
+                    <paper-item>{{item.name}}</paper-item>
+                  </template>
+                </paper-listbox>
+              </paper-dropdown-menu>
+            </div>
+          </template>
         </template>
 
         <!-- TOGGLE TOOLBOX -->
@@ -371,7 +375,9 @@
           value: {
             can_view_edition_panel: true,
             can_edit_board: true,
-            can_toggle_attire_visibility: true
+            can_toggle_attire_visibility: true,
+            can_view_size_section: true,
+            can_view_attire_section: true
           }
         },
 
@@ -385,7 +391,7 @@
         "board-changed": "_onBoardChanged"
       },
       observers: [
-        "_onToolboxViewPermissionChange(permissions.can_view_edition_panel)",
+        "_onToolboxViewPermissionChange(permissions.can_view_edition_panel, permissions.can_view_size_section, permissions.can_view_attire_section)",
         "_onInitialBoardOptionsChange(selectedTab, showAttire, permissions.*)"
       ],
 
@@ -477,6 +483,8 @@
         this.set("permissions.can_view_edition_panel", true);
         this.set("permissions.can_edit_board", true);
         this.set("permissions.can_toggle_attire_visibility", true);
+        this.set("permissions.can_view_size_section", true);
+        this.set("permissions.can_view_attire_section", true);
         this.stylist.reset();
 
         this.sizeX = this.DEFAULT_SIZE_X;
@@ -709,9 +717,9 @@
         if (window.GBS_IS_RUNNING) this.selectedTab = 1;
       },
 
-      _onToolboxViewPermissionChange: function(visible) {
+      _onToolboxViewPermissionChange: function(visible, sizeVisible, attireVisible) {
         if (!this.stylist) return;
-        this._updateStylistToolboxVisible(visible);
+        this._updateStylistToolboxVisible(visible, sizeVisible, attireVisible);
       },
 
       _updateSize: function() {
@@ -782,8 +790,10 @@
         return `icons:arrow-drop-${isToolboxVisible ? "up" : "down"}`;
       },
 
-      _updateStylistToolboxVisible: function(hasPermission = this.permissions.can_view_edition_panel) {
+      _updateStylistToolboxVisible: function(hasPermission = this.permissions.can_view_edition_panel, sizeVisible, attireVisible) {
         this.stylist.toolboxVisible = hasPermission && this.isToolboxVisible;
+        if (sizeVisible !== undefined) this.stylist.sizeVisible = sizeVisible;
+        if (attireVisible !== undefined) this.stylist.attireVisible = attireVisible;
         $(window).trigger("resize");
       }
     });

@@ -15,6 +15,16 @@
 
 <dom-module id="gobstones-ide">
   <style>
+    .overlay {
+      background-color: rgba(1, 1, 1, 0);
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 9999;
+    }
+
     .loading {
       z-index: 999;
       position: absolute;
@@ -74,9 +84,11 @@
 
     <div class$="panel-container {{ideCss(showIsLoading)}}">
       <template is="dom-if" if="{{showIsLoading}}">
-        <div class="loading">
-          <paper-spinner active></paper-spinner>
-          <span>[[localize("loading")]]</span>
+        <div class="overlay">
+          <div class="loading">
+            <paper-spinner active></paper-spinner>
+            <span>[[localize("loading")]]</span>
+          </div>
         </div>
       </template>
 
@@ -298,15 +310,11 @@
       },
 
       startLoading(property = "isLoading") {
-        $("body").css("pointer-events", "none");
         this[property] = true;
       },
 
       stopLoading(property = "isLoading") {
         this[property] = false;
-        if (!this.showIsLoading) {
-          $("body").css("pointer-events", "auto");
-        }
       },
 
       ideCss: function(showIsLoading) {
