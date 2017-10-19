@@ -402,6 +402,18 @@
         this.stylist = new Stylist();
         this.stylist.setPanelAsResizable(this.size);
 
+        window.GobstonesBoard.setAttireProvider({
+          get: (name) => {
+            const attire = _.find(this.availableAttires, { name });
+            if (!attire) {
+              alert("The description is using the attire '" + name + "' but it wasn't found.")
+              return null;
+            }
+
+            return _.assign({}, attire, { enabled: true });
+          }
+        });
+
         this.async(() => {
           this.initialStateEditor = this.$$("#initialStateEditor");
         });
