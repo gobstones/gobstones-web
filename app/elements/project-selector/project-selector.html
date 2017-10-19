@@ -15,12 +15,16 @@
     .no-exercises {
       margin-top: 40px;
     }
+
+    .guide-selector {
+      width: 350px;
+    }
   </style>
 
   <template>
     <h1>[[localize("select-an-exercise")]] <paper-icon-button suffix icon="folder-open" on-click="loadFromFile"></paper-icon-button></h1>
 
-    <paper-dropdown-menu no-animations no-label-float vertical-align="bottom" horizontal-align="right">
+    <paper-dropdown-menu class="guide-selector" no-animations no-label-float vertical-align="bottom" horizontal-align="right">
       <paper-listbox class="dropdown-content" selected="{{selectedGuide}}">
         <template is="dom-repeat" items="{{ guides }}">
           <paper-item>{{item.name}}</paper-item>

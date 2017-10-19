@@ -111,3 +111,7 @@ blockquote {
 .ace_info {
   background-image: url("../images/bomb.png") !important;
 }
+
+iron-dropdown > #contentWrapper {
+  width: 350px;
+}
