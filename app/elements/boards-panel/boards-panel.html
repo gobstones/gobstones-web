@@ -175,20 +175,26 @@
       <!-- TOOLBOX -->
       <template is="dom-if" if="{{shouldShowToolbox(permissions.*, isToolboxVisible)}}">
         <div class="boards-buttons">
-          <paper-menu-button class$="{{boardChangeButtonCss(selectedTab, permissions.*)}}">
-            <paper-icon-button icon="menu" class="dropdown-trigger"></paper-icon-button>
-            <paper-menu class="dropdown-content" selected="{{ selectedInitialState }}">
-              <template is="dom-repeat" items="{{ availableInitialStates }}">
-                <paper-item>[[localize("initial-board")]] [[toOneBased(index)]]</paper-item>
-              </template>
-            </paper-menu>
-          </paper-menu-button>
+          <template is="dom-if" if="{{hasPermission(permissions.*, 'can_change_initial_board')}}">
+            <paper-menu-button class$="{{boardChangeButtonCss(selectedTab, permissions.*)}}">
+              <paper-icon-button icon="menu" class="dropdown-trigger"></paper-icon-button>
+              <paper-menu class="dropdown-content" selected="{{ selectedInitialState }}">
+                <template is="dom-repeat" items="{{ availableInitialStates }}">
+                  <paper-item>[[localize("initial-board")]] [[toOneBased(index)]]</paper-item>
+                </template>
+              </paper-menu>
+            </paper-menu-button>
+          </template>
 
-          <paper-button class="clean-board" on-click="cleanBoard"><iron-icon class$="{{boardButtonCss(selectedTab, showAttire, permissions.*)}}" icon="icons:delete-forever"></iron-icon></paper-button>
+          <template is="dom-if" if="{{hasPermission(permissions.*, 'can_change_initial_board')}}">
+            <template is="dom-if" if="{{hasPermission(permissions.*, 'can_edit_board')}}">
+              <paper-button class="clean-board" on-click="cleanBoard"><iron-icon class$="{{boardButtonCss(selectedTab, showAttire, permissions.*)}}" icon="icons:delete-forever"></iron-icon></paper-button>
 
-          <paper-button class="add-or-remove-board" on-click="addBoard"><iron-icon class$="{{boardButtonCss(selectedTab, showAttire, permissions.*)}}" icon="icons:add"></iron-icon></paper-button>
+              <paper-button class="add-or-remove-board" on-click="addBoard"><iron-icon class$="{{boardButtonCss(selectedTab, showAttire, permissions.*)}}" icon="icons:add"></iron-icon></paper-button>
 
-          <paper-button class="add-or-remove-board" on-click="removeCurrentBoard"><iron-icon class$="{{boardButtonCss(selectedTab, showAttire, permissions.*)}}" icon="icons:remove"></iron-icon></paper-button>
+              <paper-button class="add-or-remove-board" on-click="removeCurrentBoard"><iron-icon class$="{{boardButtonCss(selectedTab, showAttire, permissions.*)}}" icon="icons:remove"></iron-icon></paper-button>
+            </template>
+          </template>
         </div>
 
         <paper-button id="help" class="help-button"><iron-icon icon="icons:help"></iron-icon></paper-button>
@@ -373,6 +379,7 @@
         permissions: {
           type: Object,
           value: {
+            can_change_initial_board: true,
             can_view_edition_panel: true,
             can_edit_board: true,
             can_toggle_attire_visibility: true,
@@ -492,6 +499,7 @@
       reset: function() {
         this.isToolboxVisible = true;
         this.showAttire = false;
+        this.set("permissions.can_change_initial_board", true);
         this.set("permissions.can_view_edition_panel", true);
         this.set("permissions.can_edit_board", true);
         this.set("permissions.can_toggle_attire_visibility", true);
