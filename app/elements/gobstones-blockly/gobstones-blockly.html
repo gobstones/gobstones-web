@@ -2,7 +2,9 @@
 <link rel="import" href="../../bower_components/gs-element-blockly/gs-element-blockly.html">
 <link rel="import" href="../../scripts/parser.html">
 <link rel="import" href="../../scripts/behaviors/busListenerBehavior.html">
+<link rel="import" href="../../scripts/behaviors/localizationBehavior.html">
 <link rel="import" href="../../scripts/jquery.html">
+<link rel="import" href="../../scripts/behaviors/toastBehavior.html">
 <link rel="import" href="../../scripts/stylist.html">
 
 <dom-module id="gobstones-blockly">
@@ -13,7 +15,15 @@
         display: block;
         height: 100vh;
       }
+
+      .toast {
+        --paper-toast-background-color: rgba(8, 0, 255, 0.8);
+        margin-left: 10px !important;
+      }
     </style>
+
+    <!-- TOAST -->
+    <paper-toast class="toast" id="toast"></paper-toast>
 
     <gs-element-blockly id="blockly" class="blockly" workspace-xml="{{workspaceXml}}" toolbox="{{toolbox}}" media="bower_components/blockly-package/media/"></gs-element-blockly>
     <gs-element-blockly id="blocklytmp" style="visibility: hidden"></gs-element-blockly>
@@ -24,7 +34,9 @@
     Polymer({
       is: "gobstones-blockly",
       behaviors: [
-        Polymer.BusListenerBehavior
+        Polymer.BusListenerBehavior,
+        Polymer.ToastBehavior,
+        Polymer.LocalizationBehavior
       ],
       properties: {
         mode: {
@@ -80,6 +92,7 @@
 
         setTimeout(() => {
           $(window).trigger("resize");
+          this._setEmptyProceduresMessageListener();
         }, 0)
 
         window.blockly = this.$.blockly; // TODO: Es para debuggear
@@ -240,6 +253,33 @@
       _xmlToCode: function(xml) {
         this.$.blocklytmp.workspaceXml = xml;
         return this.$.blocklytmp.generateCode();
+      },
+
+      _setEmptyProceduresMessageListener: function() {
+        // Feo y super acoplado a Blockly. Yo avisé que no se podía hacer XD
+
+        const MAX_FLYOUT_WIDTH = 50;
+
+        const showMessageIfNeeded = () => {
+          const selectedCategory = $(".blocklyTreeSelected")[0];
+          if (selectedCategory) {
+            const categoryName = selectedCategory.innerText;
+            if (categoryName === this._lastSelectedCategory) return;
+            this._lastSelectedCategory = categoryName;
+            const flyoutWidth = $(".blocklyFlyout").width();
+
+            if (flyoutWidth < MAX_FLYOUT_WIDTH) {
+              if (categoryName === this.localize("my-procedures"))
+                this.showToast(this.localize("define-your-own-procedures"));
+              else if (categoryName === this.localize("my-functions"))
+                this.showToast(this.localize("define-your-own-functions"));
+            }
+          }
+        };
+
+        const toolbox = $(".blocklyToolboxDiv");
+        toolbox.mousemove(showMessageIfNeeded);
+        toolbox.mouseup(showMessageIfNeeded);
       },
 
       _ide: function() {
