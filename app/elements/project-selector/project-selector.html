@@ -19,6 +19,14 @@
     .guide-selector {
       width: 350px;
     }
+
+    .view {
+      position: absolute;
+      top: -31px;
+      right: 6px;
+      transform: scale(0.8);
+      width: 150px;
+    }
   </style>
 
   <template>
@@ -32,6 +40,16 @@
       </paper-listbox>
     </paper-dropdown-menu>
 
+    <div class="view">
+      <paper-dropdown-menu no-animations no-label-float vertical-align="top" horizontal-align="right">
+        <paper-listbox class="dropdown-content" selected="{{selectedGuide}}">
+          <paper-item>[[localize("view-large-icons")]]</paper-item>
+          <paper-item>[[localize("view-small-icons")]]</paper-item>
+          <paper-item>[[localize("view-list")]]</paper-item>
+        </paper-listbox>
+      </paper-dropdown-menu>
+    </div>
+
     <div class="container">
       <template is="dom-repeat" items="[[exercises]]">
         <div class="exercise">
@@ -41,6 +59,7 @@
           </a>
         </div>
       </template>
+
       <template is="dom-if" if="[[_isEmpty(exercises)]]">
         <h3 class="no-exercises">
           [[localize("no-exercises")]]
