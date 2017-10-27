@@ -48,21 +48,27 @@
     }
 
     .exercise-list {
+      display: inline;
       cursor: pointer;
-      width: 50px;
-      float: left;
-      margin: 10px;
     }
 
     .exercise-list > * > h3 {
       font-size: 12px;
       height: 60px;
       font-weight: 400;
+      margin-top: 2px;
+      margin-left: 5px;
       overflow: hidden;
+      white-space: nowrap;
       text-overflow: ellipsis;
-      display: -webkit-box;
-      -webkit-line-clamp: 3;
-      -webkit-box-orient: vertical;
+    }
+
+    .exercise-list > a {
+      display: inline-flex;
+    }
+
+    .separator-list {
+      margin-bottom: 25px;
     }
 
     .no-exercises {
@@ -105,16 +111,26 @@
 
     <div class="container">
       <template is="dom-if" if="[[exercises]]">
-        <hr style="transform: translateY(9px)">
+        <hr style="transform: translateY(9px)" class$="{{getSeparatorCssClass(selectedViewMode)}}">
       </template>
 
       <template is="dom-repeat" items="[[exercises]]">
         <div class$="{{getExerciseCssClass(selectedViewMode)}}">
           <a on-tap="goToExercise">
-            <h3 inner-h-t-m-l="[[getItemTitle(item.name)]]"></h3>
-            <img width$="{{getImageSize(selectedViewMode)}}" height$="{{getImageSize(selectedViewMode)}}" src="{{item.imageUrl}}" />
+            <template is="dom-if" if="[[!_isList(selectedViewMode)]]">
+              <h3 inner-h-t-m-l="[[getItemTitle(item.name)]]"></h3>
+              <img width$="{{getImageSize(selectedViewMode)}}" height$="{{getImageSize(selectedViewMode)}}" src="{{item.imageUrl}}" />
+            </template>
+
+            <template is="dom-if" if="[[_isList(selectedViewMode)]]">
+              <img width$="{{getImageSize(selectedViewMode)}}" height$="{{getImageSize(selectedViewMode)}}" src="{{item.imageUrl}}" />
+              <h3 inner-h-t-m-l="[[getItemTitle(item.name)]]"></h3>
+            </template>
           </a>
         </div>
+        <template is="dom-if" if="[[_isList(selectedViewMode)]]">
+          <br>
+        </template>
       </template>
 
       <template is="dom-if" if="[[_isEmpty(exercises)]]">
@@ -189,7 +205,7 @@
 
       getImageSize: function(selectedViewMode) {
         if (selectedViewMode === 1) return 100;
-        else if (selectedViewMode === 2) return 30;
+        else if (selectedViewMode === 2) return 50;
         else return 200;
       },
 
@@ -199,11 +215,15 @@
         else return "exercise-large";
       },
 
-      getItemTitle: function(name) {
+      getSeparatorCssClass: function(selectedViewMode) {
+        return selectedViewMode === 2 ? "separator-list" : "";
+      },
+
+      getItemTitle: function(name, selectedViewMode) {
         const lastDot = name.lastIndexOf(".");
         if (!lastDot) return name;
 
-        return "<strong>" + name.substring(0, lastDot) + "</strong><br>" + name.substring(lastDot + 1);
+        return "<strong>" + name.substring(0, lastDot) + "</strong>" + (selectedViewMode !== 2 ? "<br>" : "") + name.substring(lastDot + 1);
       },
 
       _loadCurrentGuide: function() {
@@ -250,6 +270,10 @@
 
       _isEmpty: function(exercises) {
         return exercises.length === 0;
+      },
+
+      _isList: function(selectedViewMode) {
+        return selectedViewMode === 2;
       },
 
       _guideLoader() {
