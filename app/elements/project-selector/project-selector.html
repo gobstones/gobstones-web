@@ -41,11 +41,11 @@
     </paper-dropdown-menu>
 
     <div class="view">
-      <paper-dropdown-menu no-animations no-label-float vertical-align="top" horizontal-align="right">
-        <paper-listbox class="dropdown-content" selected="{{selectedGuide}}">
-          <paper-item>[[localize("view-large-icons")]]</paper-item>
-          <paper-item>[[localize("view-small-icons")]]</paper-item>
-          <paper-item>[[localize("view-list")]]</paper-item>
+      <paper-dropdown-menu no-animations no-label-float vertical-align="top" horizontal-align="right" id="viewModeSelector">
+        <paper-listbox class="dropdown-content" selected="{{selectedViewMode}}">
+          <template is="dom-repeat" items="{{ viewModes }}">
+            <paper-item>[[localize(item)]]</paper-item>
+          </template>
         </paper-listbox>
       </paper-dropdown-menu>
     </div>
@@ -88,6 +88,19 @@
         selectedGuide: {
           type: Number,
           value: -1
+        },
+        viewModes: {
+          type: Array,
+          value: [
+            "view-large-icons",
+            "view-small-icons",
+            "view-list"
+          ]
+        },
+        selectedViewMode: {
+          type: Number,
+          value: -1,
+          observer: "_onViewModeChange"
         }
       },
 
@@ -97,6 +110,11 @@
           this.guides = guides;
           this.selectedGuide = localStorage.getItem("selected-guide") || 0;
         }).catch(() => this._stopLoading());
+
+        this.selectedViewMode = localStorage.getItem("selected-view-mode") || 0;
+        setTimeout(() => {
+          this.$.viewModeSelector.label = this.localize(this.viewModes[this.selectedViewMode]);
+        }, 0);
       },
 
       goToExercise: function(event) {
@@ -131,6 +149,11 @@
         localStorage.setItem("selected-guide", this.selectedGuide);
         this._startLoading();
         this._loadCurrentGuide();
+      },
+
+      _onViewModeChange: function() {
+        if (this.selectedViewMode === -1) return;
+        localStorage.setItem("selected-view-mode", this.selectedViewMode);
       },
 
       _startLoading: function() {
