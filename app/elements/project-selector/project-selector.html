@@ -4,6 +4,11 @@
 
 <dom-module id="project-selector">
   <style>
+    .container {
+      margin: 0 auto;
+      width: 90%;
+    }
+
     .exercise-large {
       cursor: pointer;
       width: 200px;
@@ -87,6 +92,10 @@
     </div>
 
     <div class="container">
+      <template is="dom-if" if="[[exercises]]">
+        <hr style="transform: translateY(9px)">
+      </template>
+
       <template is="dom-repeat" items="[[exercises]]">
         <div class$="{{getExerciseCssClass(selectedViewMode)}}">
           <a on-tap="goToExercise">
