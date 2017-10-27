@@ -65,6 +65,9 @@
     "updating": "Actualizando",
     "using-random-false": "Tablero: Seleccionado",
     "using-random-true": "Tablero: Aleatorio",
+    "view-large-icons": "Íconos grandes",
+    "view-small-icons": "Íconos pequeños",
+    "view-list": "Lista",
     "you-must-reload": "¿Deseas reiniciar ahora para ver los cambios? Se perderá todo el progreso no guardado."
   },
   "en": {
@@ -133,6 +136,9 @@
     "updating": "Updating",
     "using-random-false": "Board: Selected",
     "using-random-true": "Board: Random",
+    "view-large-icons": "Large icons",
+    "view-small-icons": "Small icons",
+    "view-list": "List",
     "you-must-reload": "Do you want to restart now to see the changes? Unsaved data will be lost."
   }
 }
