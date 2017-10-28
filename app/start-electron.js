@@ -4,6 +4,7 @@ const finalhandler = require('finalhandler');
 const http = require('http');
 const serveStatic = require('serve-static');
 const freeport = require('freeport');
+const path = require('path');
 
 const serve = serveStatic('.', { 'index': ['index.html'] });
 
@@ -27,6 +28,7 @@ freeport((err, port) => {
     mainWindow = new BrowserWindow({
       width: 1024,
       height: 800,
+      icon: path.join(__dirname, 'favicon.ico'),
       webPreferences: {
         nodeIntegration: false,
         preload: __dirname + "/start-electron-preload.js",
