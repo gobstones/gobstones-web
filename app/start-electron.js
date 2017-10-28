@@ -30,7 +30,7 @@ freeport((err, port) => {
       height: 800,
       icon: path.join(__dirname, 'favicon.ico'),
       webPreferences: {
-        nodeIntegration: false,
+        nodeIntegration: true,
         preload: __dirname + "/start-electron-preload.js",
         webSecurity: false
       }

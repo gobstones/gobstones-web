@@ -30,6 +30,15 @@
         width: 70%;
         margin-left: 15px;
       }
+
+      #project-buttons-placeholder {
+        position: absolute;
+        width: 140px;
+        height: 64px;
+        transform: translate(-130px, -32px);
+        z-index: 999;
+        pointer-events: none;
+      }
     </style>
 
     <paper-toolbar class="main-toolbar">
@@ -42,6 +51,9 @@
           <paper-icon-button suffix icon="folder-open" on-click="openProjectSelector"></paper-icon-button>
           <paper-icon-button suffix icon="save" on-click="saveProject"></paper-icon-button>
         </paper-input>
+        <div style="position: relative">
+          <div id="project-buttons-placeholder"></div>
+        </div>
 
         <div class="title"></div>
 
@@ -51,7 +63,7 @@
             <paper-button on-click="decreaseEditorFontSize"><iron-icon class="button" icon="icons:zoom-out"></iron-icon></paper-button>
           </template>
           <template is="dom-if" if="{{showInfo}}">
-            <paper-button on-click="showDescription"><iron-icon class="button" icon="icons:info"></iron-icon></paper-button>
+            <paper-button id="open-description-button" on-click="showDescription"><iron-icon class="button" icon="icons:info"></iron-icon></paper-button>
           </template>
           <template is="dom-if" if="{{_isCodeProject(projectType)}}">
             <template is="dom-if" if="{{permissions.can_use_library}}">
@@ -122,7 +134,8 @@
       },
 
       openProjectSelector: function() {
-        $("#projectSelectorModal")[0].open();
+        if (window.GBS_IS_RUNNING) return;
+        this._ide().showProjectSelectorModal();
       },
 
       togglePanel: function() {
@@ -140,7 +153,7 @@
       },
 
       showDescription: function() {
-        this.domHost.toggleDescriptionModal();
+        this.domHost.showDescriptionModal();
       },
 
       increaseEditorFontSize: function() {
@@ -173,6 +186,10 @@
 
       _projectExtension: function(projectType) {
         return this._projectLoader(projectType).EXTENSION;
+      },
+
+      _ide: function() {
+        return document.querySelector("#gobstones-ide");
       },
 
       buttonCssClass: function(element) {

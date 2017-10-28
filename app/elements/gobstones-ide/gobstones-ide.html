@@ -15,6 +15,16 @@
 
 <dom-module id="gobstones-ide">
   <style>
+    .overlay {
+      background-color: rgba(1, 1, 1, 0);
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 9999;
+    }
+
     .loading {
       z-index: 999;
       position: absolute;
@@ -51,15 +61,6 @@
       cursor: pointer;
     }
 
-    .toolbar-placeholder {
-      position: absolute;
-      top: -400px;
-      left: -40px;
-      width: 800px;
-      height: 300px;
-      pointer-events: none;
-    }
-
     .code-placeholder {
       position: absolute;
       top: 78px;
@@ -74,9 +75,11 @@
 
     <div class$="panel-container {{ideCss(showIsLoading)}}">
       <template is="dom-if" if="{{showIsLoading}}">
-        <div class="loading">
-          <paper-spinner active></paper-spinner>
-          <span>[[localize("loading")]]</span>
+        <div class="overlay">
+          <div class="loading">
+            <paper-spinner active></paper-spinner>
+            <span>[[localize("loading")]]</span>
+          </div>
         </div>
       </template>
 
@@ -91,7 +94,6 @@
           <gobstones-editor id="editor"></gobstones-editor>
         </template>
 
-        <div id="toolbar-placeholder" class="toolbar-placeholder"></div>
         <div id="code-placeholder" class="code-placeholder"></div>
       </div>
 
@@ -178,17 +180,18 @@
       ready: function() {
         window.extendJQuery();
         window.GBS_PROJECT_TYPE = this.projectType;
-        this._setUpTourCancelation();
+        this._setUpKeys();
         this._setUpLoaders();
       },
 
-      setModal: function(markdown) {
+      setDescription: function(markdown) {
         this.description = markdown;
         window.BUS.fire("has-description", markdown !== "");
       },
 
-      toggleDescriptionModal: function() {
-        document.querySelector("#descriptionModal").toggle();
+      showDescriptionModal: function() {
+        document.querySelector("#descriptionModal").open();
+        $("paper-drawer-panel")[0].closeDrawer();
       },
 
       hideProjectSelectorModal: function() {
@@ -197,6 +200,7 @@
 
       showProjectSelectorModal: function() {
         document.querySelector("#projectSelectorModal").open();
+        $("paper-drawer-panel")[0].closeDrawer();
       },
 
       isProjectSelectorModalOpened: function() {
@@ -223,7 +227,10 @@
       },
 
       _renderMarkdown: function(markdown) {
-        if (!window.showdown) return "";
+        if (!window.showdown && window.GBS_DESKTOP) {
+          window.showdown = window.GBS_REQUIRE("showdown");
+        }
+
         return new window.showdown.Converter({tables: true}).makeHtml(markdown);
       },
 
@@ -293,12 +300,10 @@
       },
 
       startLoading(property = "isLoading") {
-        $("body").css("pointer-events", "none");
         this[property] = true;
       },
 
       stopLoading(property = "isLoading") {
-        $("body").css("pointer-events", "auto");
         this[property] = false;
       },
 
@@ -310,13 +315,14 @@
         return isLoading || isLoadingProjects;
       },
 
-      _setUpTourCancelation: function() {
+      _setUpKeys: function() {
         $(document).keydown(function(e) {
           if (e.keyCode == 27) { // ESC
             if (window.GBS_TOUR_ON) {
               window.MATERIAL_WALKER_CLOSE();
               window.GBS_TOUR_ON = false;
               window.GBS_TOUR_ENDED = true;
+              return;
             }
           }
         });
@@ -359,8 +365,14 @@
               acceptText: 'OK'
             },
             {
-              target: "#toolbar-placeholder",
+              target: "#project-buttons-placeholder",
               content: this.localize("tutorial-4"),
+              color: '#2e3aa1',
+              acceptText: 'OK'
+            },
+            {
+              target: "#open-description-button",
+              content: this.localize("tutorial-4.5"),
               color: '#2e3aa1',
               acceptText: 'OK'
             },

@@ -62,7 +62,7 @@ makeself . gobstones-web.run "Gobstones Web" ./start-desktop.sh
 # requires electron
 gulp
 cd dist/
-electron .
+electron start-electron.js
 ```
 
 #### generate native distributable binaries

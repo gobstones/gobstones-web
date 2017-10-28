@@ -21,15 +21,24 @@
     }
 
     load(getContext, callback) {
-      const files = this._loadDir(this.path);
-      this.loader.readRaw(getContext(), this._createZip(files), callback);
+      const deferred = $.Deferred();
+
+      try {
+        const files = this._loadDir(this.path);
+        this.loader.readRaw(getContext(), this._createZip(files), callback);
+        deferred.resolve();
+      } catch(e) {
+        deferred.reject(e);
+      }
+
+      return deferred.promise();
     }
 
     _loadDir(path) {
       return window.GBS_REQUIRE("recursive-readdir-sync")(path)
         .map((it) => {
           return {
-            relativePath: it.replace(this.path + "/", ""),
+            relativePath: it.replace(/\\/g, "/").replace(this.path.replace(/\\/g, "/"), "").substring(1),
             content: toArrayBuffer(window.GBS_REQUIRE("fs").readFileSync(it))
           }
         });

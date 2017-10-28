@@ -5,13 +5,19 @@
   class Stylist {
     constructor() {
       this.toolboxVisible = true;
+      this.sizeVisible = true;
+      this.attireVisible = true;
       this.selectedTab = 0;
 
       this.SCALE = 0.8;
       this.DEFAULT_PERCENTAGE = 0.6;
       this.TOOLBAR_HEIGHT = 64;
-      this.TOOLBOX_HEIGHT = 86;
-      this.TOOLBAR_AND_TOOLBOX_HEIGHT = () => this.TOOLBAR_HEIGHT + (this.toolboxVisible ? this.TOOLBOX_HEIGHT : 0);
+      this.IS_TOOLBOX_VISIBLE = () => this.toolboxVisible && (this.sizeVisible || this.attireVisible);
+      this.TOOLBOX_HEIGHT = () =>
+        (!this.sizeVisible && !this.attireVisible)
+          ? 0
+          : 86 / (!this.sizeVisible || !this.attireVisible ? 2 : 1);
+      this.TOOLBAR_AND_TOOLBOX_HEIGHT = () => this.TOOLBAR_HEIGHT + (this.IS_TOOLBOX_VISIBLE() ? this.TOOLBOX_HEIGHT() : 0);
 
       this.BOARD_CSS_CLASS = ".theBoard";
       this.BOARD_CONTAINER_CSS_CLASS = ".theBoardContainer";
@@ -25,6 +31,8 @@
 
     reset() {
       this.toolboxVisible = true;
+      this.sizeVisible = true;
+      this.attireVisible = true;
       this.setSelectedTab(0);
     }
 

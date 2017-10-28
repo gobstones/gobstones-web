@@ -11,8 +11,8 @@ l">
     }
 
     .logo {
-      width: 150px;
-      height: 150px;
+      width: 100px;
+      height: 100px;
     }
 
     .title {
@@ -43,11 +43,20 @@ l">
     .button-code:after {
       content: 'Usar código';
     }
+
+    .download-desktop {
+      position: absolute;
+      right: 1px;
+    }
   </style>
 
   <template>
     <editor-toolbar tools="none"></editor-toolbar>
     <div class="content">
+      <div class="download-desktop">
+        <a href="https://github.com/gobstones/gobstones-web-desktop/releases">[[localize("download-desktop")]]</a>
+      </div>
+
       <div class="title">
         <img class="logo" src="../../images/logo.png" />
         <h1>Gobstones Web</h1>
