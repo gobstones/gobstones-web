@@ -33,7 +33,7 @@
     },
 
     newProject: function() {
-      if (window.GBS_IS_RUNNING) return;
+      if (window.GBS_IS_RUNNING || window.GBS_IS_DOWNLOADING_GUIDE) return;
       if (!confirm(this.localize("new-project-confirm"))) return;
 
       this._cleanAll();

@@ -167,9 +167,7 @@
           <template is="dom-if" if="{{isDownloadingExercises}}">
             <div style="font-size: small; color: gray">
               <span>[[localize("updating")]]</span>
-              <template is="dom-if" if="{{downloadProgress}}">
-                <span>&nbsp;([[downloadProgress]] / [[downloadTotal]])</span>
-              </template>
+                <span>&nbsp;([[_getDownloadProgress(downloadProgress, downloadTotal)]]%)</span>
             </div>
           </template>
         </paper-item-body>
@@ -228,12 +226,12 @@
           value: false
         },
         downloadProgress: {
-          type: String,
-          value: "0"
+          type: Number,
+          value: 0
         },
         downloadTotal: {
-          type: String,
-          value: "0"
+          type: Number,
+          value: 0
         }
       },
       observers: [
@@ -273,21 +271,23 @@
       },
 
       updateExercises: function() {
-        const bytes = window.GBS_REQUIRE("bytes");
+        //const bytes = window.GBS_REQUIRE("bytes");
 
         this.isDownloadingExercises = true;
-        this.downloadProgress = "0";
-        this.downloadTotal = "0";
+        this.downloadProgress = 0;
+        this.downloadTotal = 0;
 
+        window.GBS_IS_DOWNLOADING_GUIDE = true;
         DesktopGuideLoader.download((loaded, total) => {
-          this.downloadProgress = bytes(loaded);
-          this.downloadTotal = bytes(total);
+          this.downloadProgress = loaded;
+          this.downloadTotal = total;
         }).catch((e) => {
           console.warn(e);
         })
         .always(() => {
           this.isDownloadingExercises = false;
           this._tryReload();
+          window.GBS_IS_DOWNLOADING_GUIDE = false;
         });
       },
 
@@ -309,6 +309,11 @@
 
       _isCodeProject: function(projectType) {
         return projectType === "code";
+      },
+
+      _getDownloadProgress: function(downloadProgress, downloadTotal) {
+        if (downloadTotal <= 0) return 0;
+        return (100 * downloadProgress / downloadTotal).toFixed(2);
       },
 
       _tryReload: function() {

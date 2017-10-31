@@ -137,7 +137,7 @@
       },
 
       openProjectSelector: function() {
-        if (window.GBS_IS_RUNNING) return;
+        if (window.GBS_IS_RUNNING || window.GBS_IS_DOWNLOADING_GUIDE) return;
         this._ide().showProjectSelectorModal();
       },
 

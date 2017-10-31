@@ -33,7 +33,6 @@
     "gulp-vulcanize": "^6.0.0",
     "jasmine-core": "^2.4.1",
     "merge-stream": "^1.0.0",
-    "nw-builder": "^2.2.7",
     "require-dir": "^0.3.0",
     "run-sequence": "^1.0.2",
     "vulcanize": ">= 1.4.2",
