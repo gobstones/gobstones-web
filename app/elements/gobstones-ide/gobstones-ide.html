@@ -132,17 +132,6 @@
 
   <script>
 
-    // http://stackoverflow.com/questions/901115/how-can-i-get-query-string-values-in-javascript
-    function getParameterByName(name, url) {
-      if (!url) url = window.location.href;
-      name = name.replace(/[\[\]]/g, "\\$&");
-      var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
-          results = regex.exec(url);
-      if (!results) return undefined;
-      if (!results[2]) return '';
-      return decodeURIComponent(results[2].replace(/\+/g, " "));
-    }
-
     Polymer({
       is: 'gobstones-ide',
       listeners: {
@@ -259,7 +248,7 @@
       },
 
       _resizeLeftPanel: function(show, size) {
-        const percentage = localStorage.getItem("code-panel-percentage") || 0.6;
+        const percentage = window.STORAGE.getItem("code-panel-percentage") || 0.6;
 
         $(".panel-left").width(
           show ? $(document).width() * percentage : size
@@ -329,7 +318,7 @@
       },
 
       _showTour: function() {
-        let shouldNotShow = localStorage.getItem("show-tutorial") === "false";
+        let shouldNotShow = window.STORAGE.getItem("show-tutorial") === "false";
         if (window.GBS_TOUR_ENDED || shouldNotShow) return;
         window.GBS_TOUR_ON = true;
 

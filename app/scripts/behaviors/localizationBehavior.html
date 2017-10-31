@@ -3,7 +3,7 @@
     attached() {
       this.loadResources(this.resolveUrl("../../locales.json"));
 
-      this.language = localStorage.getItem("language") || "es";
+      this.language = window.STORAGE.getItem("language") || "es";
     }
   };
 

@@ -172,7 +172,7 @@
         },
         selectedViewMode: {
           type: Number,
-          value: parseInt(localStorage.getItem("selected-view-mode")) || 0,
+          value: parseInt(window.STORAGE.getItem("selected-view-mode")) || 0,
           observer: "_onViewModeChange"
         }
       },
@@ -181,7 +181,7 @@
         this._startLoading();
         this._guideLoader().all().then((guides) => {
           this.guides = guides;
-          this.selectedGuide = localStorage.getItem("selected-guide") || 0;
+          this.selectedGuide = window.STORAGE.getItem("selected-guide") || 0;
         }).catch(() => this._stopLoading());
 
         setTimeout(() => {
@@ -241,13 +241,13 @@
       },
 
       _onGuideChange: function() {
-        localStorage.setItem("selected-guide", this.selectedGuide);
+        window.STORAGE.setItem("selected-guide", this.selectedGuide);
         this._startLoading();
         this._loadCurrentGuide();
       },
 
       _onViewModeChange: function() {
-        localStorage.setItem("selected-view-mode", this.selectedViewMode);
+        window.STORAGE.setItem("selected-view-mode", this.selectedViewMode);
       },
 
       _startLoading: function() {

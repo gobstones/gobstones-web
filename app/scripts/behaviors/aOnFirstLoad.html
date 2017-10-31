@@ -1,0 +1,42 @@
+<script>
+  // Read querystring
+  function getParameterByName(name, url) {
+    // http://stackoverflow.com/questions/901115/how-can-i-get-query-string-values-in-javascript
+    if (!url) url = window.location.href;
+    name = name.replace(/[\[\]]/g, "\\$&");
+    var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+        results = regex.exec(url);
+    if (!results) return undefined;
+    if (!results[2]) return '';
+    return decodeURIComponent(results[2].replace(/\+/g, " "));
+  }
+
+  // Set isomorphic local storage method
+  const getDataPath = () => window.GBS_DIRNAME + "/config.json";
+  const readData = () => JSON.parse(window.GBS_REQUIRE("fs").readFileSync(getDataPath(), "utf-8"));
+  const writeData = (data) => window.GBS_REQUIRE("fs").writeFileSync(getDataPath(), JSON.stringify(data));
+  const webStorage = {
+    setItem(key, value) { localStorage.setItem(key, value); },
+    getItem(key) { return localStorage.getItem(key); }
+  };
+  const desktopStorage = {
+    setItem(key, value) {
+      try {
+        const data = readData();
+        data[key] = value;
+        writeData(data);
+      } catch(e) {
+        writeData({ [key]: value });
+      }
+    },
+    getItem(key) {
+      try {
+        const json = readData();
+        return json[key];
+      } catch(e) {
+        return null;
+      }
+    }
+  };
+  window.STORAGE = window.GBS_DESKTOP ? desktopStorage : webStorage;
+</script>
