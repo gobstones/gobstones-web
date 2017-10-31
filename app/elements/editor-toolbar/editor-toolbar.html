@@ -125,6 +125,9 @@
         }).subscribeTo("has-description", (hasDescription) => {
           this.showInfo = hasDescription;
         }).subscribeTo("load-project-from-file", () => {
+          // TODO: El editor-toolbar de select-mode queda activo por alguna razón
+          if (this.projectType === "none") return;
+          
           this.loadProject();
         });
 
