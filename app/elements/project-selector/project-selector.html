@@ -172,7 +172,7 @@
         },
         selectedViewMode: {
           type: Number,
-          value: parseInt(window.STORAGE.getItem("selected-view-mode")) || 0,
+          value: -1,
           observer: "_onViewModeChange"
         }
       },
@@ -183,6 +183,8 @@
           this.guides = guides;
           this.selectedGuide = window.STORAGE.getItem("selected-guide") || 0;
         }).catch(() => this._stopLoading());
+
+        this.selectedViewMode = parseInt(window.STORAGE.getItem("selected-view-mode")) || 0;
 
         setTimeout(() => {
           this.$.viewModeSelector.label = this.localize(this.viewModes[this.selectedViewMode]);
@@ -247,6 +249,7 @@
       },
 
       _onViewModeChange: function() {
+        if (this.selectedViewMode === -1) return;
         window.STORAGE.setItem("selected-view-mode", this.selectedViewMode);
       },
 
