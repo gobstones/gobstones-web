@@ -25,34 +25,39 @@
       const ncp = window.GBS_REQUIRE("ncp");
       window.GBS_REQUIRE("setimmediate");
 
-      return $.getBinary(
-        url,
-        function() {
-          var xhr = $.ajaxSettings.xhr();
-          xhr.onprogress = function(e) {
-            if (e.lengthComputable) onProgress(e.loaded, e.total);
-          };
-          return xhr;
-        }
-      )
-      .then((file) => {
-        const zipPath = `${window.GBS_DIRNAME}/guides.zip`;
-        fs.writeFileSync(zipPath, new Buffer(file));
-        try { fs.rmdirSync(tmpPath); } catch (e) { }
-        try { fs.rmdirSync(guidesPath); } catch (e) { }
-        try { fs.mkdirSync(guidesPath); } catch (e) { }
-        const deferred = new $.Deferred();
-        extract(zipPath, { dir: tmpPath }, function(err) {
-          if (err) deferred.reject(err); else deferred.resolve();
+      const deferred = new $.Deferred();
+      var xhr = new XMLHttpRequest();
+      xhr.open("GET", url);
+      xhr.responseType = "arraybuffer";
+      xhr.onload = function () {
+          if (this.status === 200) deferred.resolve(xhr.response);
+          else deferred.reject({ status: this.status });
+      };
+      xhr.onprogress = function(e) {
+        //if (e.lengthComputable) onProgress(e.loaded, e.total);
+        onProgress(e.loaded);
+      };
+      xhr.send();
+
+      return deferred.promise()
+        .then((file) => {
+          const zipPath = `${window.GBS_DIRNAME}/guides.zip`;
+          fs.writeFileSync(zipPath, new Buffer(file));
+          try { fs.rmdirSync(tmpPath); } catch (e) { }
+          try { fs.rmdirSync(guidesPath); } catch (e) { }
+          try { fs.mkdirSync(guidesPath); } catch (e) { }
+          const deferred = new $.Deferred();
+          extract(zipPath, { dir: tmpPath }, function(err) {
+            if (err) deferred.reject(err); else deferred.resolve();
+          });
+          return deferred.promise();
+        }).then(() => {
+          const deferred = $.Deferred();
+          ncp(`${tmpPath}/proyectos-jr-master`, guidesPath, function(err) {
+            if (err) deferred.reject(err); else deferred.resolve();
+          });
+          return deferred.promise();
         });
-        return deferred.promise();
-      }).then(() => {
-        const deferred = $.Deferred();
-        ncp(`${tmpPath}/proyectos-jr-master`, guidesPath, function(err) {
-          if (err) deferred.reject(err); else deferred.resolve();
-        });
-        return deferred.promise();
-      });
     }
 
     static all() {

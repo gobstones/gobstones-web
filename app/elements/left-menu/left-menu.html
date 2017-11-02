@@ -167,7 +167,7 @@
           <template is="dom-if" if="{{isDownloadingExercises}}">
             <div style="font-size: small; color: gray">
               <span>[[localize("updating")]]</span>
-                <span>&nbsp;([[_getDownloadProgress(downloadProgress, downloadTotal)]]%)</span>
+                <span>&nbsp;([[downloadProgress]])</span>
             </div>
           </template>
         </paper-item-body>
@@ -226,13 +226,13 @@
           value: false
         },
         downloadProgress: {
-          type: Number,
-          value: 0
-        },
-        downloadTotal: {
-          type: Number,
-          value: 0
+          type: String,
+          value: "0"
         }
+        // downloadTotal: {
+        //   type: Number,
+        //   value: 0
+        // }
       },
       observers: [
         "_onSelectedLanguageChanged(selectedLanguage)"
@@ -271,16 +271,16 @@
       },
 
       updateExercises: function() {
-        //const bytes = window.GBS_REQUIRE("bytes");
+        const bytes = window.GBS_REQUIRE("bytes");
 
         this.isDownloadingExercises = true;
-        this.downloadProgress = 0;
-        this.downloadTotal = 0;
+        this.downloadProgress = "...";
+        //this.downloadTotal = 0;
 
         window.GBS_IS_DOWNLOADING_GUIDE = true;
         DesktopGuideLoader.download((loaded, total) => {
-          this.downloadProgress = loaded;
-          this.downloadTotal = total;
+          this.downloadProgress = bytes(loaded);
+          //this.downloadTotal = total;
         }).catch((e) => {
           console.warn(e);
         })
@@ -311,10 +311,10 @@
         return projectType === "code";
       },
 
-      _getDownloadProgress: function(downloadProgress, downloadTotal) {
-        if (downloadTotal <= 0) return 0;
-        return (100 * downloadProgress / downloadTotal).toFixed(2);
-      },
+      // _getDownloadProgress: function(downloadProgress, downloadTotal) {
+      //   if (downloadTotal <= 0) return 0;
+      //   return (100 * downloadProgress / downloadTotal).toFixed(2);
+      // },
 
       _tryReload: function() {
         if (!confirm(this.localize("you-must-reload"))) return;
