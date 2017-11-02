@@ -21,7 +21,7 @@
 
           if (isProject) {
             this._ide().startLoading();
-            this._cleanAll();
+            this._cleanQueryString();
           }
 
           this.loaders[item].read(this._context(), event, () => {
@@ -40,16 +40,8 @@
     },
 
     _cleanAll() {
-      const context = this._context();
-
       this._cleanQueryString();
-
-      context.ide.setDescription("");
-      context.ide.setCurrentCode("");
-      context.setProjectName(this.localize("new-project"));
-      context.editor.reset();
-      context.boards.reset();
-      context.ide.hideProjectSelectorModal();
+      this._context().reset();
     },
 
     _closePanel: function() {
@@ -60,13 +52,24 @@
       const query = (id) => document.querySelector(id);
       const toolbar = query("#toolbar");
 
+      const loader = this;
+
       return {
         ide: this._ide(),
         toolbar: toolbar,
         editor: query("#editor"),
         boards: query("#boards"),
         getProjectName: () => toolbar.projectName,
-        setProjectName: (name) => toolbar.projectName = name
+        setProjectName: (name) => toolbar.projectName = name,
+
+        reset() {
+          this.ide.setDescription("");
+          this.ide.setCurrentCode("");
+          this.setProjectName(loader.localize("new-project"));
+          this.editor.reset();
+          this.boards.reset();
+          this.ide.hideProjectSelectorModal();
+        }
       };
     },
 

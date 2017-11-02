@@ -63,6 +63,8 @@
     }
 
     readRaw(context, zip, callback) {
+      context.reset();
+
       this._loadFilesWithLoaders(context, zip, this.loaders, () => {
         context.boards.removeFirstBoard();
 
