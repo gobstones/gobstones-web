@@ -9,8 +9,11 @@
 
     parse(sourceCode, onError = () => {}, onSuccess = (it) => it) {
       const result = this.interpreter.parse(sourceCode);
+
       if (result.reason) onError(result); // known errors
       else onSuccess(result);
+
+      return result;
     }
 
     interpret(program, initialState) {
@@ -25,7 +28,7 @@
     }
 
     buildGbb(initialState, size) {
-      const board = this._createBoard(initialState);
+      const board = this._createBoard(_.assign(initialState, { size }));
       return this.interpreter.gbb.write(board);
     }
 
