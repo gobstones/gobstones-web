@@ -44,11 +44,11 @@
         return this._getStates(result, ast.teacher);
       } catch (e) {
         e.location = this.parser.getErrorLineAndMode(e, code);
-        return this._getStates(e.context, ast.teacher, { error: e });
+        return this._getStates(e, ast.teacher, { error: e });
       }
     }
 
-    _getStates(result, teacherAst) {
+    _getStates(result, teacherAst, lastState = []) {
       const teacherTools = teacherAst.declarations
         .filter(it => _.includes(["procedureDeclaration", "functionDeclaration"], it.alias))
         .map(it => it.name);
@@ -75,7 +75,7 @@
           const isShowable = !hasToIgnoreIt || isTheLastOcurrence;
 
           return isShowable;
-        }).map(snapshot => snapshot.board);
+        }).map(snapshot => snapshot.board).concat(lastState);
     }
   }
 </script>

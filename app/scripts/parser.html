@@ -9,19 +9,16 @@
     }
 
     parse(sourceCode, onError = () => {}, onSuccess = (it) => it) {
-      try {
-        return onSuccess(this.interpreter.parse(sourceCode));
-      } catch (e) {
-        if (e.reason) {
-          onError(e); // known errors
-        }
-        else throw e; // unknown errors
-      }
+      const result = this.interpreter.parse(sourceCode);
+      if (result.reason) onError(result); // known errors
+      else onSuccess(result);
     }
 
     interpret(program, initialState) {
       const board = this._createBoard(initialState);
-      return program.interpret(board);
+      const result = program.interpret(board);
+      if (result.reason) throw result; // known errors
+      return result;
     }
 
     readGbb(gbb) {
@@ -40,7 +37,7 @@
         const isInMainCode = forceIsInMainCode || e.on.range.start.row > libraryLines;
 
         return {
-          line: e.on.range.start.row - (isInMainCode ? libraryLines : 0),
+          line: e.on.range.start.row - (isInMainCode ? libraryLines : 0) - 1,
           mode: isInMainCode ? "main" : "library"
         };
       } catch(unknownError) {
