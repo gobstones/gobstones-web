@@ -61,8 +61,8 @@
     }
 
     _handleError(e, code) {
-      e.error.location = this.parser.getErrorLineAndMode(e, code);
-      return e;
+      e.location = this.parser.getErrorLineAndMode(e, code);
+      return { error: e };
     }
   }
 </script>
