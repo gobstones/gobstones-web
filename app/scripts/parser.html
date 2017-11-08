@@ -37,7 +37,7 @@
         const isInMainCode = forceIsInMainCode || e.on.range.start.row > libraryLines;
 
         return {
-          line: e.on.range.start.row - (isInMainCode ? libraryLines : 0) - 1,
+          line: e.on.range.start.row - (isInMainCode ? libraryLines + 1 : 0),
           mode: isInMainCode ? "main" : "library"
         };
       } catch(unknownError) {
