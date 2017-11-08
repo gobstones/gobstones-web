@@ -40,27 +40,27 @@
 
     _interpret(ast, { initialState, code }) {
       try {
-        var context = this.parser.interpret(ast.program, initialState);
-        return this._getStates(context, ast.teacher, context.board());
+        var result = this.parser.interpret(ast.program, initialState);
+        return this._getStates(result, ast.teacher);
       } catch (e) {
         e.location = this.parser.getErrorLineAndMode(e, code);
         return this._getStates(e.context, ast.teacher, { error: e });
       }
     }
 
-    _getStates(context, teacherAst, lastState) {
+    _getStates(result, teacherAst) {
       const teacherTools = teacherAst.declarations
         .filter(it => _.includes(["procedureDeclaration", "functionDeclaration"], it.alias))
         .map(it => it.name);
 
-      const snapshots = context.board().snapshots;
+      const snapshots = result.snapshots;
 
       return snapshots
         .filter((snapshot, i) => {
           const toName = (it) => it.split("-")[0];
 
-          const prevNames = _.take(snapshot.names, snapshot.names.length - 1);
-          const lastName = _.last(snapshot.names)
+          const prevNames = _.take(snapshot.contextNames, snapshot.contextNames.length - 1);
+          const lastName = _.last(snapshot.contextNames)
 
           let topIgnoredName = _.find(prevNames, (it) =>
             _.includes(teacherTools, toName(it))
@@ -69,13 +69,13 @@
           const hasToIgnoreIt = _.includes(teacherTools, toName(topIgnoredName));
 
           const isTheLastOcurrence = _.every(snapshots.slice(i + 1), futureSnapshot =>
-            !_.includes(futureSnapshot.names, topIgnoredName)
+            !_.includes(futureSnapshot.contextNames, topIgnoredName)
           );
 
           const isShowable = !hasToIgnoreIt || isTheLastOcurrence;
 
           return isShowable;
-        }).map(snapshot => snapshot.board).concat(lastState);
+        }).map(snapshot => snapshot.board);
     }
   }
 </script>

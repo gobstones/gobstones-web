@@ -31,8 +31,8 @@
       const initialState = panel.initialState;
 
       panel.addInitialState({
-        header: { x: board.x, y: board.y },
-        table: board.toView()
+        header: { x: board.head.x, y: board.head.y },
+        table: board.table
       });
     }
 

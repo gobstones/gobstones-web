@@ -5,7 +5,6 @@
 <link rel="import" href="../../scripts/behaviors/localizationBehavior.html">
 <link rel="import" href="../../scripts/behaviors/expressionBehavior.html">
 <link rel="import" href="../../scripts/behaviors/toastBehavior.html">
-<link rel="import" href="../../scripts/parserAndBoardAdapter.html">
 <link rel="import" href="../../scripts/stylist.html">
 
 <dom-module id="boards-panel">
@@ -425,8 +424,6 @@
           this.initialStateEditor = this.$$("#initialStateEditor");
         });
 
-        this._adapter = new ParserAndBoardAdapter();
-
         this.subscribeTo("run-request", eventInfo => {
           this._onRunRequest(eventInfo);
         }).subscribeTo("cancel-request", () => {
@@ -597,17 +594,17 @@
 
         window.BUS.fire("initial-state", {
           header: this.initialState.header,
-          table: this._adapter.adaptToParser(this.initialState.table),
+          table: this.initialState.table,
           size: this.size
         });
       },
 
       _onResult: function(result) {
-        const board = result.board;
+        const { head, table } = result.board;
 
         this._setFinalState({
-          header: _.pick(board, "x", "y"),
-          table: this._adapter.adaptToBoard(board.table)
+          header: head,
+          table: table
         });
       },
 

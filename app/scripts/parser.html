@@ -4,19 +4,13 @@
 <script>
   class Parser {
     constructor() {
-      const { Context, Board, getParser, gbb } = window.gsWeblangCore;
-
-      this.Context = Context;
-      this.gsParser = getParser;
-      this.gbb = gbb;
-      this.Board = Board;
+      const { GobstonesInterpreterAPI } = window["gobstones-interpreter"];
+      this.interpreter = new GobstonesInterpreterAPI();
     }
 
     parse(sourceCode, onError = () => {}, onSuccess = (it) => it) {
-      if (_.trim(sourceCode) === "") return onSuccess({ declarations: [] });
-
       try {
-        return onSuccess(this.gsParser().parse(sourceCode));
+        return onSuccess(this.interpreter.parse(sourceCode));
       } catch (e) {
         if (e.reason) {
           onError(e); // known errors
@@ -25,20 +19,18 @@
       }
     }
 
-    interpret(ast, initialState) {
-      const context = this._createContext(initialState);
-      return ast.interpret(context);
+    interpret(program, initialState) {
+      const board = this._createBoard(initialState);
+      return program.interpret(board);
     }
 
     readGbb(gbb) {
-      return this.gbb.reader.fromString(gbb);
+      return this.interpreter.gbb.read(gbb);
     }
 
     buildGbb(initialState, size) {
-      var board = new this.Board(size.x, size.y).fromView(initialState.table);
-      board.x = initialState.header.x;
-      board.y = initialState.header.y;
-      return this.gbb.builder.build(board);
+      const board = this._createBoard(initialState);
+      return this.interpreter.gbb.write(board);
     }
 
     getErrorLineAndMode(e, code, forceIsInMainCode) {
@@ -56,19 +48,16 @@
       }
     }
 
-    _createContext(initialState) {
-      const context = new this.Context();
-      context.board().sizeX = initialState.size.x;
-      context.board().sizeY = initialState.size.y;
-      context.init();
-
-      _.assign(context.board(), {
-        x: initialState.header.x,
-        y: initialState.header.y,
+    _createBoard(initialState) {
+      return {
+        width: initialState.size.x,
+        height: initialState.size.y,
+        head: {
+          x: initialState.header.x,
+          y: initialState.header.y
+        },
         table: initialState.table
-      });
-
-      return context;
+      };
     }
   }
 </script>
