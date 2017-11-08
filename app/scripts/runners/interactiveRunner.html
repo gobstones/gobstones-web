@@ -15,11 +15,11 @@
       window.BUS.fire("interactive-run");
 
       const render = (result) => {
-        if (!result.error) {
-          onResult(result.board());
-        } else {
+        if (result.reason) {
           onResult(this._handleError(result, request.code));
           onStop("end");
+        } else {
+          onResult(result);
         }
       };
 
@@ -61,7 +61,7 @@
     }
 
     _handleError(e, code) {
-      e.error.location = this.parser.getErrorLineAndMode(e.error, code);
+      e.error.location = this.parser.getErrorLineAndMode(e, code);
       return e;
     }
   }
