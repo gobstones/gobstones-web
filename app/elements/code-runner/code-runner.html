@@ -107,6 +107,12 @@
           this._checkAndGetTeacherAst(code, itBroke, teacherAst => {
             this._parse(code, itBroke, ast => {
               this._setRunner(ast);
+              if (!ast.program) {
+                const error = new Error(this.localize("missing-program"));
+                error.location = { mode: "code", line: 1 };
+                onCompilationError(error);
+                return;
+              }
 
               this.runner.run({
                 ast: {
