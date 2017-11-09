@@ -51,15 +51,12 @@
         toolbox: Object,
         workspace: {
           type: Object,
-          value: { main: "", library: "" }
+          value: { main: "" }
         },
         workspaceXml: {
           type: String,
           observer: "_updateCode"
-        },
-
-        libraryProcedures: Array,
-        libraryFunctions: Array
+        }
       },
 
       ready: function() {
@@ -110,15 +107,6 @@
         if (mode === "teacher") {
           this._onTeacherLibraryChange(code);
         }
-      },
-
-      toggleMode: function() {
-        if (this.mode === "library" && this.libraryHasErrors)
-          window.BUS.fire("compilation-error", { libraryHasErrors: true });
-
-        this._setMode(
-          this.mode === "main" ? "library" : "main"
-        );
       },
 
       setAsDirty: function() {
@@ -172,13 +160,6 @@
         this.mode = mode;
         window.BUS.fire("mode-change", this.mode);
         this.workspaceXml = this._getWorkspace()[this.mode];
-
-        // TODO: Enviar a libraryProcedures y libraryFunctions
-        // Ver bien en qué formato mandarlos. Propuesta: "PonerBolitasEn(color,direccion)"
-        // https://github.com/Program-AR/gs-element-blockly/issues/50#issuecomment-280254981
-
-        // this.$.blockly.primitiveProcedures = mode === "main" ? this.libraryProcedures : [];
-        // this.$.blockly.primitiveProcedures = mode === "main" ? this.libraryFunctions : [];
       },
 
       _updateCode: function() {
@@ -188,8 +169,6 @@
         if (this.runner) this.runner.stop()
         this._getWorkspace()[this.mode] = this.workspaceXml;
         this.code[this.mode] = this.$.blockly.generateCode();
-
-        if (this.mode === "library") this._updateLibraryActions();
       },
 
       _onTeacherLibraryChange: function(teacher) {
@@ -205,21 +184,12 @@
         }
       },
 
-      _updateLibraryActions: function() {
-        try {
-          const actions = this._getActions(this.code.library);
-
-          this.libraryProcedures = actions.procedureDeclarations;
-          this.libraryFunctions = actions.functionDeclarations;
-          this.libraryHasErrors = false;
-        } catch(e) {
-          // it does not compile
-          this.libraryHasErrors = true;
-        }
-      },
-
       _getActions: function(sourceCode) {
-        const declarations = new Parser().parse(sourceCode).declarations;
+        const parser = new Parser();
+        const result = parser.parse(sourceCode);
+        if (parser.hasFailed(result)) throw result;
+
+        const declarations = result.declarations;
         const withAlias = (alias) => (declaration) => declaration.alias === `${alias}Declaration`;
 
         const computeDeclarations = (alias) => _.filter(declarations, withAlias(alias))

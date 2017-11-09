@@ -15,7 +15,7 @@
       window.BUS.fire("interactive-run");
 
       const render = (result) => {
-        if (result.reason) {
+        if (this.parser.hasFailed(result)) {
           onResult(this._handleError(result, request.code));
           onStop("end");
         } else {

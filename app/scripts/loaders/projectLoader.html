@@ -91,6 +91,7 @@
         handled = true;
         getContent().then(content => {
           try {
+            console.log("Using " + loader.constructor.name + "...");
             loader.readProjectContent(context, content);
           } catch(e) {
             console.error(loader, e);
