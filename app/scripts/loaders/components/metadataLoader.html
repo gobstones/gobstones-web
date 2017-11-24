@@ -81,6 +81,7 @@
 
       // permissions
       context.toolbar.set("permissions.can_use_library", metadata.library.visible);
+      context.menu.set("permissions.can_use_library", metadata.library.visible);
       context.boards.set("permissions.can_view_edition_panel", metadata.board.visible_edition);
       context.boards.toggleToolbox(!metadata.board.collapse_toolbox);
       context.editor.runner.set("permissions.can_change_source", metadata.board.user_permissions.can_change_initial_board_source);

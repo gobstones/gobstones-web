@@ -2,6 +2,7 @@
 <link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
 <link rel="import" href="../../bower_components/paper-item/paper-item-body.html">
 <link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../scripts/behaviors/busListenerBehavior.html">
 <link rel="import" href="../../scripts/behaviors/loaderBehavior.html">
 <link rel="import" href="../../scripts/behaviors/localizationBehavior.html">
 <link rel="import" href="../../scripts/loaders/components/codeLoader.html">
@@ -89,13 +90,15 @@
         </paper-item>
       </template>
 
-      <paper-item>
-        <paper-item-body>
-          <div>[[localize("library")]]</div>
-        </paper-item-body>
-        <paper-icon-button on-click="loadLibrary" icon="icons:folder-open" alt="open"> </paper-icon-button>
-        <paper-icon-button on-click="saveLibrary" icon="icons:save" alt="save"> </paper-icon-button>
-      </paper-item>
+      <template is="dom-if" if="{{permissions.can_use_library}}">
+        <paper-item>
+          <paper-item-body>
+            <div>[[localize("library")]]</div>
+          </paper-item-body>
+          <paper-icon-button on-click="loadLibrary" icon="icons:folder-open" alt="open"> </paper-icon-button>
+          <paper-icon-button on-click="saveLibrary" icon="icons:save" alt="save"> </paper-icon-button>
+        </paper-item>
+      </template>
 
       <paper-item>
         <paper-item-body>
@@ -207,6 +210,7 @@
     Polymer({
       is: 'left-menu',
       behaviors: [
+        Polymer.BusListenerBehavior,
         Polymer.LocalizationBehavior,
         Polymer.LoaderBehavior
       ],
@@ -228,6 +232,10 @@
         downloadProgress: {
           type: String,
           value: "0"
+        },
+        permissions: {
+          type: Object,
+          value: { can_use_library: true }
         }
         // downloadTotal: {
         //   type: Number,
@@ -239,6 +247,10 @@
       ],
 
       attached: function() {
+        this.subscribeTo("reset", () => {
+          this.set("permissions.can_use_library", true);
+        });
+
         const language = window.STORAGE.getItem("language") || "es";
         const index = this.languages.indexOf(language);
         this.selectedLanguage = index >= 0 ? index : 0;
