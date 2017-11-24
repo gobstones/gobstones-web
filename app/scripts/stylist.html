@@ -44,6 +44,24 @@
       editor.setOption("maxLines", availableLines);
     }
 
+    setUpZoom() {
+      const delta = 0.1;
+
+      $(document).ready(() => {
+        $(".panel-right").bind("mousewheel", (e) => {
+          if (e.originalEvent.wheelDelta > 0)
+            this.SCALE += delta;
+          else
+            this.SCALE -= delta;
+
+          if (this.SCALE < 0.5) this.SCALE = 0.5;
+          if (this.SCALE > 0.98) this.SCALE = 0.98;
+
+          this.refresh();
+        });
+      });
+    }
+
     setPanelAsResizable(boardDimensions) {
       $(document).ready(() => {
         this._makeResizable();
