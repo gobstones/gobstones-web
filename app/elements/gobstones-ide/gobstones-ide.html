@@ -305,12 +305,21 @@
       },
 
       _setUpKeys: function() {
-        $(document).keydown(function(e) {
+        $(document).keydown((e) => {
           if (e.keyCode == 27) { // ESC
             if (window.GBS_TOUR_ON) {
               window.MATERIAL_WALKER_CLOSE();
               window.GBS_TOUR_ON = false;
               window.GBS_TOUR_ENDED = true;
+
+              setTimeout(() => {
+                if (confirm(this.localize("do-you-want-to-disable-tutorial"))) {
+                  window.STORAGE.setItem("show-tutorial", false);
+                  document.querySelector("#menu").showTutorial = false;
+                }
+              }, 150);
+
+
               return;
             }
           }
