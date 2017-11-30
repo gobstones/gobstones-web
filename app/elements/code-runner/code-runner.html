@@ -42,10 +42,12 @@
     <template is="dom-if" if="{{permissions.can_change_source}}">
       <paper-button class="random-toggle" on-click="toggleRandom"><iron-icon class$="{{toggleRandomCss(useRandomBoard)}}" icon="av:shuffle"></iron-icon></paper-button>
     </template>
-    <paper-slider id="speedSlider" style="z-index: 10" class="speed-slider" snaps min="1" max="4" max-markers="4" step="1" value="{{speed}}" immediate-value="{{immediateSpeed}}" value="4", disabled="{{!permissions.can_change_speed}}"></paper-slider>
+    <paper-slider id="speedSlider" style="z-index: 10" class="speed-slider" snaps min="1" max="5" max-markers="5" step="1" value="{{speed}}" immediate-value="{{immediateSpeed}}" value="5", disabled="{{!permissions.can_change_speed}}"></paper-slider>
   </template>
 
   <script>
+    const MAX_SPEED = 5;
+
     Polymer({
       is: 'code-runner',
       behaviors: [
@@ -61,7 +63,7 @@
         },
         speed: {
           type: Number,
-          value: 4
+          value: MAX_SPEED
         },
         useRandomBoard: {
           type: Boolean,
@@ -74,7 +76,7 @@
         },
         immediateSpeed: {
           type: Number,
-          value: 4
+          value: MAX_SPEED
         },
 
         permissions: {
@@ -161,7 +163,7 @@
       },
 
       reset: function() {
-        this.speed = 4;
+        this.speed = MAX_SPEED;
         this.useRandomBoard = false;
 
         this.set("permissions.can_change_source", true);
@@ -215,6 +217,9 @@
       },
 
       _computeThrottle: function(speed) {
+        if (this.speed === 5) return 0;
+        if (this.speed === 4) return 50;
+
         return -(this.speed - 4) * 300;
       },
 
