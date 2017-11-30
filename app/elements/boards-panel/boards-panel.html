@@ -235,7 +235,7 @@
           <template is="dom-if" if="{{hasPermission(permissions.*, 'can_view_attire_section')}}">
             <div class="attire-container">
               <template is="dom-if" if="{{hasPermission(permissions.*, 'can_toggle_attire_visibility')}}">
-                <paper-button on-click="toggleShowAttire"><iron-icon class="black-button" icon="icons:visibility"></iron-icon></paper-button>
+                <paper-button style="z-index: 99" on-click="toggleShowAttire"><iron-icon class="black-button" icon="icons:visibility"></iron-icon></paper-button>
               </template>
               <strong>[[localize("attire")]]:</strong>
               <paper-dropdown-menu no-animations no-label-float vertical-align="bottom" horizontal-align="right" disabled="{{!showAttire}}">
