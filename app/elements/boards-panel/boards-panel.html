@@ -152,7 +152,7 @@
       <paper-toolbar class="tabs">
         <div>
           <template is="dom-if" if="{{_showCodeVisible(interactive.*)}}">
-            <paper-button on-click="toggleShowCode"><iron-icon class="button show-code-icon" icon="icons:chevron-{{_showCodeDirection(showCode)}}"></iron-icon></paper-button>
+            <paper-button style="z-index: 99" on-click="toggleShowCode"><iron-icon class="button show-code-icon" icon="icons:chevron-{{_showCodeDirection(showCode)}}"></iron-icon></paper-button>
           </template>
         </div>
         <div style="width: 90%">
@@ -187,29 +187,31 @@
 
           <template is="dom-if" if="{{hasPermission(permissions.*, 'can_change_initial_board')}}">
             <template is="dom-if" if="{{hasPermission(permissions.*, 'can_edit_board')}}">
-              <paper-button class="clean-board" on-click="cleanBoard"><iron-icon class$="{{boardButtonCss(selectedTab, showAttire, permissions.*)}}" icon="icons:delete-forever"></iron-icon></paper-button>
+              <paper-button style="z-index: 99" class="clean-board" on-click="cleanBoard"><iron-icon class$="{{boardButtonCss(selectedTab, showAttire, permissions.*)}}" icon="icons:delete-forever"></iron-icon></paper-button>
 
-              <paper-button class="add-or-remove-board" on-click="addBoard"><iron-icon class$="{{boardButtonCss(selectedTab, showAttire, permissions.*)}}" icon="icons:add"></iron-icon></paper-button>
+              <paper-button style="z-index: 99" class="add-or-remove-board" on-click="addBoard"><iron-icon class$="{{boardButtonCss(selectedTab, showAttire, permissions.*)}}" icon="icons:add"></iron-icon></paper-button>
 
-              <paper-button class="add-or-remove-board" on-click="removeCurrentBoard"><iron-icon class$="{{boardButtonCss(selectedTab, showAttire, permissions.*)}}" icon="icons:remove"></iron-icon></paper-button>
+              <paper-button style="z-index: 99" class="add-or-remove-board" on-click="removeCurrentBoard"><iron-icon class$="{{boardButtonCss(selectedTab, showAttire, permissions.*)}}" icon="icons:remove"></iron-icon></paper-button>
             </template>
           </template>
         </div>
 
-        <paper-button id="help" class="help-button"><iron-icon icon="icons:help"></iron-icon></paper-button>
-        <paper-tooltip for="help" position="left" animation-config="{{tooltipAnimation}}">
-          <div class="help-tooltip">
-            <div>
-              <span class="shortcut">[[localize("shortcut-add-stones")]]</span>: [[localize("shortcut-add-stones-description")]]
+        <template is="dom-if" if="{{!isInitialBoardNotEditable(selectedTab, showAttire, permissions.*)}}">
+          <paper-button style="z-index: 99" id="help" class="help-button"><iron-icon icon="icons:help"></iron-icon></paper-button>
+          <paper-tooltip for="help" position="left" animation-config="{{tooltipAnimation}}">
+            <div class="help-tooltip">
+              <div>
+                <span class="shortcut">[[localize("shortcut-add-stones")]]</span>: [[localize("shortcut-add-stones-description")]]
+              </div>
+              <div>
+                <span class="shortcut">[[localize("shortcut-remove-stones")]]</span>: [[localize("shortcut-remove-stones-description")]]
+              </div>
+              <div>
+                <span class="shortcut">[[localize("shortcut-set-header")]]</span>: [[localize("shortcut-set-header-description")]]
+              </div>
             </div>
-            <div>
-              <span class="shortcut">[[localize("shortcut-remove-stones")]]</span>: [[localize("shortcut-remove-stones-description")]]
-            </div>
-            <div>
-              <span class="shortcut">[[localize("shortcut-set-header")]]</span>: [[localize("shortcut-set-header-description")]]
-            </div>
-          </div>
-        </paper-tooltip>
+          </paper-tooltip>
+        </template>
       </template>
 
       <div class="boards-panel">
@@ -251,7 +253,7 @@
 
         <!-- TOGGLE TOOLBOX -->
         <template is="dom-if" if="{{hasPermission(permissions.*, 'can_view_edition_panel')}}">
-          <paper-button class$="{{toggleToolboxButtonCss(isToolboxVisible)}}"><iron-icon icon$="{{toggleToolboxButtonIcon(isToolboxVisible)}}" on-click="toggleToolbox" class="black-button"></iron-icon></paper-button>
+          <paper-button style="z-index: 99" class$="{{toggleToolboxButtonCss(isToolboxVisible)}}"><iron-icon icon$="{{toggleToolboxButtonIcon(isToolboxVisible)}}" on-click="toggleToolbox" class="black-button"></iron-icon></paper-button>
         </template>
 
         <!-- BOARD -->
