@@ -37,7 +37,7 @@
     "sw-toolbox": "^3.1.1",
     "async": "~2.1.4",
     "webcomponentsjs": "^0.7.24",
-    "proceds-blockly": "^0.0.22",
+    "proceds-blockly": "^0.1.1",
     "blockly-package": "0.0.15"
   }
 }
