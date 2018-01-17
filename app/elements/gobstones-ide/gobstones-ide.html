@@ -69,6 +69,10 @@
       height: 300px;
       pointer-events: none;
     }
+
+    .description-dialog {
+      user-select: none;
+    }
   </style>
 
   <template>
@@ -101,7 +105,7 @@
         <boards-panel id="boards"></boards-panel>
       </div>
 
-      <paper-dialog id="descriptionModal" on-iron-overlay-closed="_onCloseDescriptionModal" class="ide-modal">
+      <paper-dialog class="description-dialog" id="descriptionModal" on-iron-overlay-closed="_onCloseDescriptionModal" class="ide-modal">
         <paper-button class="accept close" dialog-confirm autofocus><iron-icon icon="icons:close"></iron-icon></paper-button>
 
         <paper-dialog-scrollable>
