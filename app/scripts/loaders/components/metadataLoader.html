@@ -25,7 +25,8 @@
           visible: context.toolbar.permissions.can_use_library
         },
         source: {
-          visible: context.boards.showCode
+          visible: context.boards.showCode,
+          percentage: +window.STORAGE.getItem("code-panel-percentage")
         },
         board: {
           active: context.boards.selectedInitialState + 1,
@@ -65,7 +66,7 @@
       context.boards.initializeBoards();
 
       // defaults
-      if (!metadata.source) metadata.source = { visible: true };
+      if (!metadata.source) metadata.source = { visible: true, percentage: context.boards.stylist.DEFAULT_PERCENTAGE };
 
       // name
       context.setProjectName(metadata.name);
@@ -74,6 +75,8 @@
       context.boards.selectedInitialState = metadata.board.active - 1;
       context.editor.runner.useRandomBoard = metadata.board.initial_board_source === this.RANDOM_SOURCE;
       context.boards.setShowCode(metadata.source.visible);
+      window.STORAGE.setItem("code-panel-percentage", metadata.source.percentage);
+      if (metadata.source.visible) context.ide.resizeLeftPanel(true);
 
       // execution_speed
       const speed = this.SPEED_NAMES.indexOf(metadata.execution_speed.active) + 1;

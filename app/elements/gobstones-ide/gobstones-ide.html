@@ -244,14 +244,14 @@
       },
 
       _showCodeChanged: function({ detail }) {
-        this._resizeLeftPanel(detail, 0);
+        this.resizeLeftPanel(detail, 0);
       },
 
       _showBoardsChanged: function({ detail }) {
-        this._resizeLeftPanel(detail, $(document).width());
+        this.resizeLeftPanel(detail, $(document).width());
       },
 
-      _resizeLeftPanel: function(show, size) {
+      resizeLeftPanel: function(show, size) {
         const percentage = window.STORAGE.getItem("code-panel-percentage") || 0.6;
 
         $(".panel-left").width(
