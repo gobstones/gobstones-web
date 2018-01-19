@@ -143,7 +143,8 @@
               if (region) this._showError(region, error);
               window.BUS.fire("compilation-error");
             },
-            (state, { region }) => {
+            (state, fullState = {}) => {
+              const { region } = fullState;
               if (region) this._highlight(region)
               this._notify(state);
             }
