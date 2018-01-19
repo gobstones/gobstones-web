@@ -23,6 +23,9 @@ npm start
 gulp jasmine
 ```
 
+## adding dependencies
+**Remember** to remove the `.tmp` and `dist` directories!
+
 ## deploy
 This is hosted at Github Pages in:
 - **staging**: http://gobstones.github.io/gobstones-web-staging

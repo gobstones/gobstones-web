@@ -132,13 +132,16 @@
         const code = this.code;
         this._onTeacherLibraryChange(code.teacher);
 
+        this.$.blockly.workspace.removeBlockErrors();
+
         console.info("GENERATED CODE", code);
         try {
           this.runner.run(
             { initialState, code },
             (error, code) => {
-              let line = _.trim(code[error.location.mode].split("\n")[error.location.line]);
-              window.BUS.fire("compilation-error", { error, line });
+              const region = error.on.region;
+              if (region) this._showError(region, error);
+              window.BUS.fire("compilation-error");
             },
             (state) => this._notify(state)
           );
@@ -151,6 +154,8 @@
 
       _notify: function(state) {
         if (state.error) {
+          const region = state.error.on.region;
+          if (region) this._showError(region, state.error);
           window.BUS.fire("execution-error", state.error.message);
         } else
           window.BUS.fire("execution-result", { board: state });
@@ -165,10 +170,13 @@
       _updateCode: function() {
         if (!this.EMPTY_WORKSPACE)
           this.EMPTY_WORKSPACE = this.workspaceXml;
+        this._getWorkspace()[this.mode] = this.workspaceXml;
+
+        const newCode = this._generateCode(this.$.blockly);
+        if (this.code[this.mode] === newCode) return;
 
         if (this.runner) this.runner.stop()
-        this._getWorkspace()[this.mode] = this.workspaceXml;
-        this.code[this.mode] = this.$.blockly.generateCode();
+        this.code[this.mode] = newCode;
       },
 
       _onTeacherLibraryChange: function(teacher) {
@@ -222,7 +230,7 @@
 
       _xmlToCode: function(xml) {
         this.$.blocklytmp.workspaceXml = xml;
-        return this.$.blocklytmp.generateCode();
+        return this._generateCode(this.$.blocklytmp);
       },
 
       _setEmptyProceduresMessageListener: function() {
@@ -250,6 +258,27 @@
         const toolbox = $(".blocklyToolboxDiv");
         toolbox.mousemove(showMessageIfNeeded);
         toolbox.mouseup(showMessageIfNeeded);
+      },
+
+      _showError(region, error) {
+        const { message, reason: { code, detail } } = error;
+
+        let kind = message;
+
+        if (code === "cannot-move-to" || code === "cannot-remove-stone")
+          kind = { kind: "PRECONDITION_ERROR", description: message };
+
+        if (code === "primitive-argument-type-mismatch")
+          kind = { kind: "TYPE_ERROR", expectedType: detail[2], actualType: detail[3] };
+
+        this.$.blockly.showBlockError(region, kind);
+      },
+
+      _generateCode(blockly) {
+        return blockly.generateCode({
+          withRegions: true,
+          clearErrors: false
+        });
       },
 
       _ide: function() {
