@@ -37,6 +37,13 @@
       margin-left: -300px;
       top: 50%;
       left: 50%;
+      transform: translateY(-100%);
+    }
+
+    .loading-logo {
+      width: 200px;
+      height: 200px;
+      opacity: 0.8;
     }
 
     .gray {
@@ -77,16 +84,21 @@
 
   <template>
 
-    <div class$="panel-container {{ideCss(showIsLoading)}}">
-      <template is="dom-if" if="{{showIsLoading}}">
-        <div class="overlay">
-          <div class="loading">
+    <template is="dom-if" if="{{showIsLoading}}">
+      <div class="overlay">
+        <div class="loading">
+          <div>
+            <img class="loading-logo" src="../../images/logo.png" />
+          </div>
+          <div>
             <paper-spinner active></paper-spinner>
             <span>[[localize("loading")]]</span>
           </div>
         </div>
-      </template>
+      </div>
+    </template>
 
+    <div class$="panel-container {{ideCss(showIsLoading)}}">
       <div class="panel-left">
         <editor-toolbar id="toolbar" project-type="[[projectType]]" id="toolbar"></editor-toolbar>
 
