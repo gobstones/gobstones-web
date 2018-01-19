@@ -187,6 +187,7 @@
         window.GBS_PROJECT_TYPE = this.projectType;
         this._setUpKeys();
         this._setUpLoaders();
+        this._setUpMouseWheel();
       },
 
       setDescription: function(markdown) {
@@ -302,6 +303,28 @@
               finish()
             });
         };
+      },
+
+      _setUpMouseWheel() {
+        this.addEventListener("wheel", (event) => {
+          let parent = event.target;
+          let isBlocklyChild = false;
+          let isBlocklyToolboxChild = false;
+
+          while (parent) {
+            if (parent.id === "blocklyDiv")
+              isBlocklyChild = true;
+            if (parent.classList.contains("blocklyToolboxDiv"))
+              isBlocklyToolboxChild = true;
+
+            parent = parent.parentElement;
+          }
+
+          if (!isBlocklyChild || isBlocklyToolboxChild) {
+            event.preventDefault();
+            event.stopPropagation();
+          }
+        }, true);
       },
 
       startLoading(property = "isLoading") {
