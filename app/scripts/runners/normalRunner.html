@@ -18,12 +18,16 @@
     }
 
     _runWithThrottle(states, throttle, { onResult, onStop }) {
+      const _onResult = (state) => onResult(state.board || state, state);
+
       if (throttle === 0) {
-        onResult(_.last(states));
+        const lastState = _.last(states);
+        _onResult(_.last(states));
         return onStop("end");
       }
 
-      onResult(_.first(states));
+      const firstState = _.first(states);
+      _onResult(_.first(states));
       if (states.length === 1) return onStop("end");
 
       setTimeout(() => {
@@ -31,7 +35,7 @@
           const ii = i + 1;
 
           return setTimeout(() => {
-            onResult(state);
+            _onResult(state);
             if (ii === states.length - 1) onStop("end");
           }, ii * throttle)
         });
@@ -75,7 +79,7 @@
           const isShowable = !hasToIgnoreIt || isTheLastOcurrence;
 
           return isShowable;
-        }).map(snapshot => snapshot.board).concat(lastState);
+        }).concat(lastState);
     }
   }
 </script>
