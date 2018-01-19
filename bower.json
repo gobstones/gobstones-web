@@ -7,7 +7,7 @@
     "page": "visionmedia/page.js#1.6.4",
     "paper-elements": "PolymerElements/paper-elements#1.0.7",
     "platinum-elements": "PolymerElements/platinum-elements#1.1.0",
-    "polymer": "Polymer/polymer#1.7.0",
+    "polymer": "Polymer/polymer#^1.7.0",
     "ace-widget": "LostInBrittany/ace-widget#1.0.13",
     "gs-board": "gobstones/gs-board",
     "lodash": "^4.14.0",
@@ -18,24 +18,17 @@
     "jszip": "Stuk/jszip#3.1.3",
     "file-saver": "1.3.3",
     "app-router": "2.7.2",
-    "async": "2.1.4",
-    "gs-element-blockly": "Program-AR/gs-element-blockly#0.5.19",
+    "async": "^2.1.4",
+    "gs-element-blockly": "Program-AR/gs-element-blockly#^0.5.19",
     "keymaster": "~1.6.3",
     "showdown": "^1.6.4",
     "js-emoji": "^3.2.2",
     "material-walkthrough": "rodri042/material-walkthrough#^0.0.2",
     "gobstones-interpreter": "gobstones/gobstones-interpreter#bower"
   },
-  "devDependencies": {
-    "web-component-tester": "^4.0.0",
-    "sinon": "git://github.com/SparkPost/bower-sinon.git#92831e660e0a1609c2e633d575578bef1d098a39"
-  },
   "ignore": [],
   "resolutions": {
-    "polymer": "^1.6.0",
-    "sw-toolbox": "^3.1.1",
-    "async": "~2.1.4",
-    "proceds-blockly": "^0.1.3",
-    "blockly-package": "0.0.15"
+    "polymer": "^1.7.0",
+    "webcomponentsjs": "^0.7.24"
   }
 }
