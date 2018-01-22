@@ -6,6 +6,7 @@
 <link rel="import" href="../../scripts/jquery.html">
 <link rel="import" href="../../scripts/behaviors/toastBehavior.html">
 <link rel="import" href="../../scripts/stylist.html">
+<link rel="import" href="../../scripts/tweenjs.html">
 
 <dom-module id="gobstones-blockly">
   <template>
@@ -282,7 +283,35 @@
         if (code === "primitive-argument-type-mismatch")
           kind = { kind: "TYPE_ERROR", expectedType: detail[2], actualType: detail[3] };
 
-        this.$.blockly.showBlockError(region, kind);
+        const block = this.$.blockly.workspace.getBlockById(region);
+        if (block) this._scrollToBlockAndShowError(block, kind);
+      },
+
+      _scrollToBlockAndShowError(block, error) {
+        const blockly = this.$.blockly;
+        const { workspace } = blockly;
+
+        const position = block.getRelativeToSurfaceXY();
+        const { viewLeft, contentLeft, viewTop, contentTop, viewWidth, viewHeight } = workspace.getMetrics();
+
+        const scrollbarPosition = {
+          x: viewLeft - contentLeft,
+          y: viewTop - contentTop
+        };
+        const finalPosition = {
+          x: position.x - viewWidth / 4 - contentLeft,
+          y: position.y - viewHeight / 2 - contentTop
+        };
+
+        new TWEEN.Tween(scrollbarPosition)
+          .to(finalPosition, 500)
+          .onUpdate(function() {
+            workspace.scrollbar.set(scrollbarPosition.x, scrollbarPosition.y);
+          })
+          .onComplete(function() {
+            blockly.showBlockError(block.id, error);
+          })
+          .start();
       },
 
       _highlight(region) {
