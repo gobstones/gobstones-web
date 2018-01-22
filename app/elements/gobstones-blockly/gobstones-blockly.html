@@ -123,6 +123,13 @@
         this.$.blockly.primitiveFunctions = [];
       },
 
+      generateCode(withRegions = true, blockly = this.$.blockly) {
+        return blockly.generateCode({
+          withRegions,
+          clearErrors: false
+        });
+      },
+
       _onRunRequest: function(options) {
         this._setMode("main");
         window.BUS.fire("run-request", options);
@@ -176,7 +183,7 @@
           this.EMPTY_WORKSPACE = this.workspaceXml;
         this._getWorkspace()[this.mode] = this.workspaceXml;
 
-        const newCode = this._generateCode(this.$.blockly);
+        const newCode = this.generateCode();
         if (this.code[this.mode] === newCode) return;
 
         if (this.runner) this.runner.stop()
@@ -234,7 +241,7 @@
 
       _xmlToCode: function(xml) {
         this.$.blocklytmp.workspaceXml = xml;
-        return this._generateCode(this.$.blocklytmp);
+        return this.generateCode(undefined, this.$.blocklytmp);
       },
 
       _setEmptyProceduresMessageListener: function() {
@@ -280,13 +287,6 @@
 
       _highlight(region) {
         this.$.blockly.highlightBlock(region);
-      },
-
-      _generateCode(blockly) {
-        return blockly.generateCode({
-          withRegions: true,
-          clearErrors: false
-        });
       },
 
       _ide: function() {

@@ -304,7 +304,7 @@
       },
 
       seeGeneratedCode: function() {
-        this._ide().setCurrentCode(this._context().editor.code.main);
+        this._ide().setCurrentCode(this._context().editor.generateCode(false));
         this._ide().showCodeViewModal();
       },
 
