@@ -284,12 +284,13 @@
           kind = { kind: "TYPE_ERROR", expectedType: detail[2], actualType: detail[3] };
 
         const block = this.$.blockly.workspace.getBlockById(region);
-        if (block) this._scrollToBlockAndShowError(block, kind);
+        if (block) this._scrollToBlock(block, () => {
+          this.$.blockly.showBlockError(region, kind);
+        });
       },
 
-      _scrollToBlockAndShowError(block, error) {
-        const blockly = this.$.blockly;
-        const { workspace } = blockly;
+      _scrollToBlock(block, onComplete = () => {}) {
+        const { workspace } = this.$.blockly;
 
         const position = block.getRelativeToSurfaceXY();
         const { viewLeft, contentLeft, viewTop, contentTop, viewWidth, viewHeight } = workspace.getMetrics();
@@ -303,14 +304,16 @@
           y: position.y - viewHeight / 2 - contentTop
         };
 
-        new TWEEN.Tween(scrollbarPosition)
+        if (Math.abs(scrollbarPosition.x - finalPosition.x) < 0.01 && Math.abs(scrollbarPosition.y - finalPosition.y) < 0.01)
+          return onComplete();
+
+        if (this.$scrollTween) this.$scrollTween.stop();
+        this.$scrollTween = new TWEEN.Tween(scrollbarPosition)
           .to(finalPosition, 500)
           .onUpdate(function() {
             workspace.scrollbar.set(scrollbarPosition.x, scrollbarPosition.y);
           })
-          .onComplete(function() {
-            blockly.showBlockError(block.id, error);
-          })
+          .onComplete(onComplete)
           .start();
       },
 
