@@ -117,6 +117,11 @@
         font-size: 15px;
       }
 
+      .button-tooltip {
+        font-size: 15px;
+        width: 150px;
+      }
+
       .toggle-toolbox-button-up {
         position: absolute;
         left: 1px;
@@ -175,7 +180,7 @@
       <template is="dom-if" if="{{shouldShowToolbox(permissions.*, isToolboxVisible)}}">
         <div class="boards-buttons">
           <template is="dom-if" if="{{hasPermission(permissions.*, 'can_change_initial_board')}}">
-            <paper-menu-button class$="{{boardChangeButtonCss(selectedTab, permissions.*)}}">
+            <paper-menu-button id="board-select-button" class$="{{boardChangeButtonCss(selectedTab, permissions.*)}}">
               <paper-icon-button icon="menu" class="dropdown-trigger"></paper-icon-button>
               <paper-menu class="dropdown-content" selected="{{ selectedInitialState }}">
                 <template is="dom-repeat" items="{{ availableInitialStates }}">
@@ -183,15 +188,35 @@
                 </template>
               </paper-menu>
             </paper-menu-button>
+            <paper-tooltip for="board-select-button" position="bottom" animation-config="{{tooltipAnimation}}">
+              <div class="button-tooltip">
+                [[localize("tooltip-change-board")]]
+              </div>
+            </paper-tooltip>
           </template>
 
           <template is="dom-if" if="{{hasPermission(permissions.*, 'can_change_initial_board')}}">
             <template is="dom-if" if="{{hasPermission(permissions.*, 'can_edit_board')}}">
-              <paper-button style="z-index: 99" class="clean-board" on-click="cleanBoard"><iron-icon class$="{{boardButtonCss(selectedTab, showAttire, permissions.*)}}" icon="icons:delete-forever"></iron-icon></paper-button>
+              <paper-button id="clean-board-button" style="z-index: 99" class="clean-board" on-click="cleanBoard"><iron-icon class$="{{boardButtonCss(selectedTab, showAttire, permissions.*)}}" icon="icons:delete-forever"></iron-icon></paper-button>
+              <paper-tooltip for="clean-board-button" position="bottom" animation-config="{{tooltipAnimation}}">
+                <div class="button-tooltip">
+                  [[localize("tooltip-clean-board")]]
+                </div>
+              </paper-tooltip>
 
-              <paper-button style="z-index: 99" class="add-or-remove-board" on-click="addBoard"><iron-icon class$="{{boardButtonCss(selectedTab, showAttire, permissions.*)}}" icon="icons:add"></iron-icon></paper-button>
+              <paper-button id="add-board-button" style="z-index: 99" class="add-or-remove-board" on-click="addBoard"><iron-icon class$="{{boardButtonCss(selectedTab, showAttire, permissions.*)}}" icon="icons:add"></iron-icon></paper-button>
+              <paper-tooltip for="add-board-button" position="bottom" animation-config="{{tooltipAnimation}}">
+                <div class="button-tooltip">
+                  [[localize("tooltip-add-board")]]
+                </div>
+              </paper-tooltip>
 
-              <paper-button style="z-index: 99" class="add-or-remove-board" on-click="removeCurrentBoard"><iron-icon class$="{{boardButtonCss(selectedTab, showAttire, permissions.*)}}" icon="icons:remove"></iron-icon></paper-button>
+              <paper-button id="remove-board-button" style="z-index: 99" class="add-or-remove-board" on-click="removeCurrentBoard"><iron-icon class$="{{boardButtonCss(selectedTab, showAttire, permissions.*)}}" icon="icons:remove"></iron-icon></paper-button>
+              <paper-tooltip for="remove-board-button" position="bottom" animation-config="{{tooltipAnimation}}">
+                <div class="button-tooltip">
+                  [[localize("tooltip-remove-board")]]
+                </div>
+              </paper-tooltip>
             </template>
           </template>
         </div>
@@ -237,12 +262,24 @@
           <template is="dom-if" if="{{hasPermission(permissions.*, 'can_view_attire_section')}}">
             <div class="attire-container">
               <template is="dom-if" if="{{hasPermission(permissions.*, 'can_toggle_attire_visibility')}}">
-                <paper-button style="z-index: 99" on-click="toggleShowAttire"><iron-icon class="black-button" icon="icons:visibility"></iron-icon></paper-button>
+                <template is="dom-if" if="{{attiresCount}}">
+                  <paper-button id="show-attire-button" style="z-index: 99" on-click="toggleShowAttire"><iron-icon class="black-button" icon="icons:visibility"></iron-icon></paper-button>
+                  <paper-tooltip for="show-attire-button" position="bottom" animation-config="{{tooltipAnimation}}">
+                    <div class="button-tooltip">
+                      <template is="dom-if" if="{{showAttire}}">
+                        [[localize("tooltip-hide-attire")]]
+                      </template>
+                      <template is="dom-if" if="{{!showAttire}}">
+                        [[localize("tooltip-show-board")]]
+                      </template>
+                    </div>
+                  </paper-tooltip>
+                </template>
               </template>
               <strong>[[localize("attire")]]:</strong>
               <paper-dropdown-menu no-animations no-label-float vertical-align="bottom" horizontal-align="right" disabled="{{!showAttire}}">
                 <paper-listbox class="dropdown-content" selected="{{selectedAttire}}">
-                  <template is="dom-repeat" items="{{ availableAttires }}">
+                  <template is="dom-repeat" items="{{ availableAttires }}" rendered-item-count="{{attiresCount}}">
                     <paper-item>{{item.name}}</paper-item>
                   </template>
                 </paper-listbox>
