@@ -84,7 +84,7 @@
       });
     }
 
-    setBlocklyResize() {
+    setUpBlocklyCustomizations() {
       const resize = () => {
         const panel = $(this.LEFT_PANEL_CSS_CLASS);
         $("#blocklyDiv").css("width", panel.width() + "px");
@@ -97,6 +97,20 @@
 
       setTimeout(resize, 0);
       $(window).resize(resize);
+
+      const setColors = (cssClass, opacity, tintKind, color) => {
+       const scrollbars = $(cssClass);
+        scrollbars.css("opacity", opacity);
+
+        scrollbars.each((i, scrollbar) => {
+          scrollbar.setAttributeNS(null, tintKind, color);
+        });
+      };
+
+      setTimeout(() => {
+        setColors(".blocklyScrollbarBackground", 0.2, "fill", "#0b465d");
+        setColors(".blocklyScrollbarHandle", 1, "stroke", "black");
+      }, 0);
     }
 
     refresh() {
@@ -105,7 +119,7 @@
     }
 
     _keepAspectRatioOnWindowResize() {
-      const documentWidth = $(document).width()
+      const documentWidth = $(document).width();
       if (!this.lastDocumentWidth) {
         this.lastDocumentWidth = documentWidth;
         return this.DEFAULT_PERCENTAGE;
