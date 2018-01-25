@@ -270,7 +270,7 @@
                         [[localize("tooltip-hide-attire")]]
                       </template>
                       <template is="dom-if" if="{{!showAttire}}">
-                        [[localize("tooltip-show-board")]]
+                        [[localize("tooltip-show-attire")]]
                       </template>
                     </div>
                   </paper-tooltip>
@@ -440,6 +440,13 @@
         "_onInitialBoardOptionsChange(selectedTab, showAttire, permissions.*)"
       ],
 
+      attached: function() {
+        this.tooltipAnimation = {
+          "entry": [{"name": "fade-in-animation", "timing": {"delay": 0}}],
+          "exit": [{"name": "fade-out-animation", "timing": {"delay": 0}}]
+        };
+      },
+
       ready: function() {
         this.DEFAULT_SIZE_X = 4;
         this.DEFAULT_SIZE_Y = 4;
@@ -486,11 +493,6 @@
 
         if (this.availableInitialStates.length > 0) return;
         this._bootstrap();
-
-        this.tooltipAnimation = {
-          "entry": [{"name": "fade-in-animation", "timing": {"delay": 0}}],
-          "exit": [{"name": "fade-out-animation", "timing": {"delay": 0}}]
-        };
       },
 
       toggleShowCode: function() {

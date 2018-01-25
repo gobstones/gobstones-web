@@ -100,10 +100,19 @@
         this.$.blockly.appendBlocksToWorkspace(xml);
       },
 
+      undo: function() {
+        this.$.blockly.workspace.undo();
+      },
+
       setCode: function(code, mode = "main") {
         this.workspace[mode] = code;
         this.code[mode] = mode === "teacher" ? code : this._xmlToCode(code);
-        if (this.mode === mode) this.workspaceXml = code;
+        if (this.mode === mode) {
+          this.workspaceXml = code;
+          setTimeout(() => {
+            this.$.blockly.workspace.undoStack_ = [];
+          }, 0)
+        }
 
         if (mode === "teacher") {
           this._onTeacherLibraryChange(code);
