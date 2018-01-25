@@ -90,14 +90,16 @@
         </paper-item>
       </template>
 
-      <template is="dom-if" if="{{permissions.can_use_library}}">
-        <paper-item>
-          <paper-item-body>
-            <div>[[localize("library")]]</div>
-          </paper-item-body>
-          <paper-icon-button on-click="loadLibrary" icon="icons:folder-open" alt="open"> </paper-icon-button>
-          <paper-icon-button on-click="saveLibrary" icon="icons:save" alt="save"> </paper-icon-button>
-        </paper-item>
+      <template is="dom-if" if="{{_isCodeProject(projectType)}}">
+        <template is="dom-if" if="{{permissions.can_use_library}}">
+          <paper-item>
+            <paper-item-body>
+              <div>[[localize("library")]]</div>
+            </paper-item-body>
+            <paper-icon-button on-click="loadLibrary" icon="icons:folder-open" alt="open"> </paper-icon-button>
+            <paper-icon-button on-click="saveLibrary" icon="icons:save" alt="save"> </paper-icon-button>
+          </paper-item>
+        </template>
       </template>
 
       <paper-item>
