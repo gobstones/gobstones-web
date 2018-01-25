@@ -161,7 +161,7 @@
           </template>
         </div>
         <div style="width: 90%">
-          <paper-tabs id="theBoardsTab" no-bar selected="{{selectedTab}}" class="bottom self-end">
+          <paper-tabs id="theBoardsTab" selected="{{selectedTab}}" class="bottom self-end">
             <paper-tab>[[localize("initial-board")]] [[toOneBased(selectedInitialState)]]</paper-tab>
             <template is="dom-if" if="{{isFinalBoardVisible(finalState, error)}}">
               <paper-tab>[[localize("final-board")]]</paper-tab>
@@ -662,7 +662,7 @@
 
       _onExecutionError: function(error) {
         this.error = error;
-        this.selectedTab = 1;
+        this._setSelectedTab(1);
       },
 
       _onUnknownError: function(error) {
@@ -672,7 +672,7 @@
       _setFinalState: function(finalState) {
         const firstTime = !this.finalState;
         this.set("finalState", finalState);
-        this.selectedTab = 1;
+        this._setSelectedTab(1);
 
         setTimeout(() => {
           this.$$("#finalStateEditor").update(finalState.table, finalState.header);
@@ -710,7 +710,14 @@
       _cleanState: function() {
         this.finalState = null;
         this.error = null;
-        this.selectedTab = 0;
+        this._setSelectedTab(0);
+      },
+
+      _setSelectedTab(selectedTab) {
+        // this is to avoid a Polymer's bug where the tab pink bar doesn't appear
+        setTimeout(() => {
+          this.selectedTab = selectedTab;
+        });
       },
 
       _showCodeVisible: function({ base }) {
@@ -771,7 +778,7 @@
 
       _updateSelectedTab: function() {
         this._updateBoardStyles();
-        if (window.GBS_IS_RUNNING) this.selectedTab = 1;
+        if (window.GBS_IS_RUNNING) this._setSelectedTab(1);
       },
 
       _onToolboxViewPermissionChange: function(visible, sizeVisible, attireVisible) {
