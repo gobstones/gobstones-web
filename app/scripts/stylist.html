@@ -110,6 +110,15 @@
       setTimeout(() => {
         setColors(".blocklyScrollbarBackground", 0.2, "fill", "#0b465d");
         setColors(".blocklyScrollbarHandle", 1, "stroke", "black");
+
+        const oldAnimateLid_ = Blockly.Trashcan.prototype.animateLid_;
+        Blockly.Trashcan.prototype.animateLid_ = function() {
+          oldAnimateLid_.call(this);
+
+          var opacity = goog.math.lerp(1, 1, this.lidOpen_);
+          this.svgGroup_.style.opacity = opacity;
+        };
+        $(".blocklyTrash").css("opacity", 1);
       }, 0);
     }
 
