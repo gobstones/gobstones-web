@@ -70,23 +70,10 @@ electron start-electron.js
 
 #### generate native distributable binaries
 ```bash
-# requires electron-packager
-git pull
-current_branch=$(git branch | grep \* | cut -d ' ' -f2)
-git branch -D electron
-git checkout origin/gh-pages
-git checkout -b electron
-sed -i -e "s/'\.'/'\.\/resources\/app'/g" start-electron.js
-electron-packager . gobstones-web --pĺatform linux --arch x64
-makeself ./gobstones-web-linux-x64 gobstones-web.run "Gobstones Web" ./gobstones-web
-git checkout -f "$current_branch"
+./release-desktop.sh
 ```
 
 Single-file packages can be generated using [winrar](https://www.winrar.es/) (windows) and [makeself](https://github.com/megastep/makeself) (linux)
-
-```bash
-makeself build/gobstones-web/linux64 gobstones-web.run "Gobstones Web" ./gobstones-web
-```
 
 ## more docs
 
