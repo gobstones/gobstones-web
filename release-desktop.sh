@@ -31,7 +31,7 @@ echo "GIVE ME THE GITHUB TOKEN"
 read TOKEN
 
 echo "PUBLISHING..."
-./node_modules/.bin/publish-release --token $TOKEN --owner gobstones --repo gobstones-web-desktop --tag $PACKAGE_VERSION --name $PACKAGE_VERSION --assets $LINUX_NAME $WINDOWS_NAME --notes "Gobstones Web - Desktop"
+./node_modules/.bin/publish-release --token $TOKEN --owner gobstones --repo gobstones-web-desktop --tag $PACKAGE_VERSION --name $PACKAGE_VERSION --assets $LINUX_NAME,$WINDOWS_NAME --notes "Gobstones Web - Desktop"
 
 echo "DONE."
 
