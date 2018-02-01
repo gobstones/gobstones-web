@@ -126,7 +126,10 @@
                 throttle: this.throttle,
                 callbacks: {
                   onResult: onResult,
-                  onStop: (eventToFire) => this.stop(eventToFire)
+                  onStop: (eventToFire) => this.stop(eventToFire),
+                  onReturnValue: (value) => {
+                    window.BUS.fire("return-value", { value });
+                  }
                 }
               });
             }, true);

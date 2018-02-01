@@ -145,6 +145,12 @@
         right: 24px;
       }
 
+      .inspect-results-button {
+        position: fixed;
+        bottom: 10px;
+        right: 10px;
+      }
+
       paper-tab {
         --paper-tab-content-unselected: {
           opacity: 0.5;
@@ -290,7 +296,18 @@
 
         <!-- TOGGLE TOOLBOX -->
         <template is="dom-if" if="{{hasPermission(permissions.*, 'can_view_edition_panel')}}">
-          <paper-button style="z-index: 99" class$="{{toggleToolboxButtonCss(isToolboxVisible)}}"><iron-icon icon$="{{toggleToolboxButtonIcon(isToolboxVisible)}}" on-click="toggleToolbox" class="black-button"></iron-icon></paper-button>
+          <paper-button id="toggle-toolbox-button" style="z-index: 99" class$="{{toggleToolboxButtonCss(isToolboxVisible)}}"><iron-icon icon$="{{toggleToolboxButtonIcon(isToolboxVisible)}}" on-click="toggleToolbox" class="black-button"></iron-icon></paper-button>
+
+          <paper-tooltip for="toggle-toolbox-button" position="bottom" animation-config="{{tooltipAnimation}}">
+            <div class="button-tooltip">
+              <template is="dom-if" if="{{isToolboxVisible}}">
+                [[localize("tooltip-hide-toolbox")]]
+              </template>
+              <template is="dom-if" if="{{!isToolboxVisible}}">
+                [[localize("tooltip-show-toolbox")]]
+              </template>
+            </div>
+          </paper-tooltip>
         </template>
 
         <!-- BOARD -->
@@ -306,6 +323,15 @@
               <template is="dom-if" if="{{!isBoom(error)}}">
                 <template is="dom-if" if="{{finalState}}">
                   <gs-board id="finalStateEditor" attire="{{attire}}"></gs-board>
+
+                  <template is="dom-if" if="{{returnValue}}">
+                    <paper-button id="inspect-results-button" class="inspect-results-button" style="z-index: 99" on-click="showReturnValue"><iron-icon class="black-button" icon="icons:search"></iron-icon></paper-button>
+                    <paper-tooltip for="inspect-results-button" position="left" animation-config="{{tooltipAnimation}}">
+                      <div class="button-tooltip">
+                        [[localize("tooltip-inspect-results")]]
+                      </div>
+                    </paper-tooltip>
+                  </template>
                 </template>
               </template>
             </template>
@@ -377,6 +403,7 @@
 
         finalState: Object,
         error: Object,
+        returnValue: Object,
 
         availableInitialStates: {
           type: Array,
@@ -477,6 +504,8 @@
           this._cleanState();
         }).subscribeTo("execution-result", eventInfo => {
           this._onResult(eventInfo);
+        }).subscribeTo("return-value", eventInfo => {
+          this._onReturnValue(eventInfo);
         }).subscribeTo("compilation-error", eventInfo => {
           this._onCompilationError(eventInfo);
         }).subscribeTo("execution-error", eventInfo => {
@@ -586,6 +615,10 @@
         });
       },
 
+      showReturnValue: function() {
+        alert(JSON.stringify(this.returnValue, null, 2));
+      },
+
       getSizeOf: function({ table }) {
         return { x: table[0].length, y: table.length };
       },
@@ -650,6 +683,10 @@
         });
       },
 
+      _onReturnValue: function({ value }) {
+        this.returnValue = value;
+      },
+
       _onCompilationError: function(report) {
         this.showToast(
           this.localize(
@@ -710,6 +747,7 @@
       _cleanState: function() {
         this.finalState = null;
         this.error = null;
+        this.returnValue = null;
         this._setSelectedTab(0);
       },
 

@@ -8,8 +8,8 @@
     }
 
     run({ ast, request, throttle, callbacks }) {
-      const states = this._interpret(ast, request);
-      this._runWithThrottle(states, throttle, callbacks);
+      const { states, returnValue } = this._interpret(ast, request);
+      this._runWithThrottle(states, returnValue, throttle, callbacks);
     }
 
     clear() {
@@ -17,18 +17,23 @@
       this.handles = [];
     }
 
-    _runWithThrottle(states, throttle, { onResult, onStop }) {
+    _runWithThrottle(states, returnValue, throttle, { onResult, onStop, onReturnValue }) {
       const _onResult = (state) => onResult(state.board || state, state);
+
+      const _onEnd = () => {
+        onStop("end");
+        onReturnValue(returnValue);
+      }
 
       if (throttle === 0) {
         const lastState = _.last(states);
         _onResult(_.last(states));
-        return onStop("end");
+        return _onEnd();
       }
 
       const firstState = _.first(states);
       _onResult(_.first(states));
-      if (states.length === 1) return onStop("end");
+      if (states.length === 1) return _onEnd();
 
       setTimeout(() => {
         this.handles = states.slice(1).map((state, i) => {
@@ -36,7 +41,7 @@
 
           return setTimeout(() => {
             _onResult(state);
-            if (ii === states.length - 1) onStop("end");
+            if (ii === states.length - 1) _onEnd();
           }, ii * throttle)
         });
       }, this.HACK_FIRST_WAIT_MS); // TODO: Pensar solución mejor
@@ -45,10 +50,15 @@
     _interpret(ast, { initialState, code }) {
       try {
         var result = this.parser.interpret(ast.program, initialState);
-        return this._getStates(result, ast.teacher);
+        return {
+          states: this._getStates(result, ast.teacher),
+          returnValue: result.returnValue
+        };
       } catch (e) {
         e.location = this.parser.getErrorLineAndMode(e, code);
-        return this._getStates(e, ast.teacher, { error: e });
+        return {
+          states: this._getStates(e, ast.teacher, { error: e })
+        };
       }
     }
 
