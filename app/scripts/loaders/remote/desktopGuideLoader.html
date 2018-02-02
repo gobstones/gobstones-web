@@ -82,9 +82,9 @@
       }));
     }
 
-    _makeImageUrl(exercise) {
+    _makeImageUrl(exercisePath) {
       try {
-        const path = `${guidesPath}/${exercise.path}`;
+        const path = `${guidesPath}/${exercisePath}`;
 
         const bitmap = window.GBS_REQUIRE("fs")
           .readFileSync(`${path}/image.png`)

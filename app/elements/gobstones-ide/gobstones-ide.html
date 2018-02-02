@@ -345,6 +345,8 @@
       },
 
       _setTheRightUrl() {
+        if (window.GBS_DESKTOP) return;
+
         let url = window.location.href;
         url = url.replace(/#\/?(blocks|code)/g, "");
         if (this.projectType === "blocks")
