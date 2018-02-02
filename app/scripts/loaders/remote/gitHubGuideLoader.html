@@ -11,7 +11,9 @@
     }
 
     static all() {
-      return $.getJSON("https://raw.githubusercontent.com/gobstones/proyectos-jr/master/guides.json");
+      const course = getParameterByName("course") || "gobstones/proyectos-jr";
+
+      return $.getJSON(`https://raw.githubusercontent.com/${course}/master/guides.json`);
     }
 
     static makeUrlFor(guide, exercise) {
