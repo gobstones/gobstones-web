@@ -6,9 +6,10 @@
   const guidesPath = `${window.GBS_DIRNAME}/guides`;
   const jsonPath = `${window.GBS_DIRNAME}/guides/guides.json`;
   const tmpPath = `${window.GBS_DIRNAME}/guides_tmp`;
+
   class DesktopGuideLoader {
-    constructor({ path }) {
-      this.path = `${guidesPath}/${path}`;
+    constructor({ exercises }) {
+      this.exercises = exercises;
     }
 
     static download(onProgress) {
@@ -24,8 +25,8 @@
       xhr.open("GET", url);
       xhr.responseType = "arraybuffer";
       xhr.onload = function () {
-          if (this.status === 200) deferred.resolve(xhr.response);
-          else deferred.reject({ status: this.status });
+        if (this.status === 200) deferred.resolve(xhr.response);
+        else deferred.reject({ status: this.status });
       };
       xhr.onprogress = function(e) {
         //if (e.lengthComputable) onProgress(e.loaded, e.total);
@@ -69,37 +70,24 @@
     }
 
     static makeUrlFor(guide, exercise) {
-      const path = `${guidesPath}/${guide.path}/${exercise.name}`;
+      const path = `${guidesPath}/${exercise.path}`;
       return `/${window.GBS_PROJECT_TYPE}?fs=${path}`;
     }
 
     getExercises() {
-      try {
-        const fs = window.GBS_REQUIRE("fs");
-
-        return promisify(
-          fs
-            .readdirSync(this.path)
-            .filter(it => {
-              return fs.lstatSync(`${this.path}/${it}`).isDirectory();
-            })
-            .map(it => {
-              return {
-                name: it,
-                imageUrl: this._makeImageUrl(it)
-              }
-            })
-        );
-      } catch(e) {
-        console.warn(e);
-        return promisify([]);
-      }
+      return promisify(this.exercises.map((exercise) => {
+        return _.assign(exercise, {
+          imageUrl: this._makeImageUrl(exercise.path)
+        });
+      }));
     }
 
     _makeImageUrl(exercise) {
       try {
+        const path = `${guidesPath}/${exercise.path}`;
+
         const bitmap = window.GBS_REQUIRE("fs")
-          .readFileSync(`${this.path}/${exercise}/image.png`)
+          .readFileSync(`${path}/image.png`)
         const base64 = new Buffer(bitmap).toString("base64");
         return `data:image/png;base64,${base64}`;
       } catch(e) {
