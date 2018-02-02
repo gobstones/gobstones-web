@@ -1,13 +1,10 @@
-<link rel="import" href="./gitHubLoader.html">
 <link rel="import" href="../../jquery.html">
 
 <script>
   class GitHubGuideLoader {
-    constructor({ repo, path = "" }) {
-      this.loader = new GitHubLoader(window.GBS_PROJECT_TYPE, repo, path);
-
+    constructor({ repo, exercises }) {
       this.repo = repo;
-      this.path = path;
+      this.exercises = exercises;
     }
 
     static all() {
@@ -17,28 +14,19 @@
     }
 
     static makeUrlFor(guide, exercise) {
-      return `/${window.GBS_PROJECT_TYPE}?github=${guide.repo}&path=${guide.path}/${exercise.name}`;
+      return `/${window.GBS_PROJECT_TYPE}?github=${guide.repo}&path=${exercise.path}`;
     }
 
     getExercises() {
-      return this.loader.scanDir().then(entries => {
-        return entries
-          .filter(it => it.type === "dir")
-          .map(it => {
-            return {
-              name: it.name,
-              imageUrl: this._makeImageUrl(it.name)
-            };
-          });
-      });
+      return promisify(this.exercises.map((exercise) => {
+        return _.assign(exercise, {
+          imageUrl: this._makeImageUrl(exercise.path)
+        });
+      }));
     }
 
-    _makeImageUrl(exercise) {
-      const path = this.path !== ""
-        ? this.path + "/"
-        : this.path;
-
-      return `https://raw.githubusercontent.com/${this.repo}/master/${path}${exercise}/image.png`;
+    _makeImageUrl(path) {
+      return `https://raw.githubusercontent.com/${this.repo}/master/${path}/image.png`;
     }
   }
 </script>

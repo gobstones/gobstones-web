@@ -3,12 +3,6 @@
 <link rel="import" href="../../jquery.html">
 
 <script>
-  const promisify = (value) => {
-    const deferred = new $.Deferred();
-    deferred.resolve(value);
-    return deferred.promise();
-  };
-
   const guidesPath = `${window.GBS_DIRNAME}/guides`;
   const jsonPath = `${window.GBS_DIRNAME}/guides/guides.json`;
   const tmpPath = `${window.GBS_DIRNAME}/guides_tmp`;

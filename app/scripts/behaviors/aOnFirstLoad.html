@@ -13,6 +13,23 @@
     return decodeURIComponent(results[2].replace(/\+/g, " "));
   }
 
+  // Clean querystring
+  function cleanQueryString() {
+    let url;
+    url = window.location.href;
+    url = url.replace(url.substring(url.indexOf("?")), "");
+    url = url.substring(url.indexOf("//") + 2);
+    url = url.substring(url.indexOf("/"));
+
+    history.replaceState({}, '', url);
+  }
+
+  function promisify(value) {
+    const deferred = new $.Deferred();
+    deferred.resolve(value);
+    return deferred.promise();
+  };
+
   // Set isomorphic local storage method
   const getDataPath = () => window.GBS_DIRNAME + "/config.json";
   const readData = () => JSON.parse(window.GBS_REQUIRE("fs").readFileSync(getDataPath(), "utf-8"));

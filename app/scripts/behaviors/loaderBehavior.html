@@ -21,7 +21,7 @@
 
           if (isProject) {
             this._ide().startLoading();
-            this._cleanQueryString();
+            cleanQueryString();
           }
 
           this.loaders[item].read(this._context(), event, () => {
@@ -40,7 +40,7 @@
     },
 
     _cleanAll() {
-      this._cleanQueryString();
+      cleanQueryString();
       this._context().reset();
     },
 
@@ -80,16 +80,6 @@
 
     _goTo: function(route) {
       return document.querySelector("app-router").go(route);
-    },
-
-    _cleanQueryString: function() {
-      let url;
-      url = window.location.href;
-      url = url.replace(url.substring(url.indexOf("?")), "");
-      url = url.substring(url.indexOf("//") + 2);
-      url = url.substring(url.indexOf("/"));
-
-      history.replaceState({}, '', url);
     }
   };
 </script>

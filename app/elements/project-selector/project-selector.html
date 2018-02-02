@@ -118,13 +118,13 @@
         <div class$="{{getExerciseCssClass(selectedViewMode)}}">
           <a on-tap="goToExercise">
             <template is="dom-if" if="[[!_isList(selectedViewMode)]]">
-              <h3 inner-h-t-m-l="[[getItemTitle(item.name)]]"></h3>
+              <h3 inner-h-t-m-l="[[getItemTitle(item, selectedViewMode)]]"></h3>
               <img width$="{{getImageSize(selectedViewMode)}}" height$="{{getImageSize(selectedViewMode)}}" src="{{item.imageUrl}}" />
             </template>
 
             <template is="dom-if" if="[[_isList(selectedViewMode)]]">
               <img width$="{{getImageSize(selectedViewMode)}}" height$="{{getImageSize(selectedViewMode)}}" src="{{item.imageUrl}}" />
-              <h3 inner-h-t-m-l="[[getItemTitle(item.name)]]"></h3>
+              <h3 inner-h-t-m-l="[[getItemTitle(item, selectedViewMode)]]"></h3>
             </template>
           </a>
         </div>
@@ -196,6 +196,7 @@
 
         const exercise = event.model.item;
 
+        cleanQueryString();
         this._goTo(
           this._guideLoader().makeUrlFor(this.guide, exercise)
         );
@@ -221,11 +222,8 @@
         return selectedViewMode === 2 ? "separator-list" : "";
       },
 
-      getItemTitle: function(name, selectedViewMode) {
-        const lastDot = name.lastIndexOf(".");
-        if (!lastDot) return name;
-
-        return "<strong>" + name.substring(0, lastDot) + "</strong>" + (selectedViewMode !== 2 ? "<br>" : "") + name.substring(lastDot + 1);
+      getItemTitle: function({ id, name }, selectedViewMode) {
+        return "<strong>" + id + "</strong>" + (selectedViewMode !== 2 ? "<br>" : " ") + name;
       },
 
       _loadCurrentGuide: function() {
