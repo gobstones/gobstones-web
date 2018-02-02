@@ -346,7 +346,7 @@
 
       _setTheRightUrl() {
         let url = window.location.href;
-        url = url.substring(0, url.indexOf("/#/"));
+        url = url.replace(/#\/?(blocks|code)/g, "");
         if (this.projectType === "blocks")
           url = url.replace(/gobstones-web/g, "gobstones-jr");
 
