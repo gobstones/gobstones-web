@@ -8,6 +8,16 @@
 <link rel="import" href="../../scripts/stylist.html">
 <link rel="import" href="../../scripts/tweenjs.html">
 
+<script>
+  window.GBS_GET_BLOCKLY_MEDIA_DIR = function() {
+    const route = "bower_components/blockly-package/media/";
+
+    return window.GBS_DESKTOP
+      ? route
+      : `https://gobstones.github.io/gobstones-web/${route}`;
+  }
+</script>
+
 <dom-module id="gobstones-blockly">
   <template>
 
@@ -26,7 +36,7 @@
     <!-- TOAST -->
     <paper-toast class="toast" id="toast"></paper-toast>
 
-    <gs-element-blockly id="blockly" class="blockly" workspace-xml="{{workspaceXml}}" toolbox="{{toolbox}}" media="bower_components/blockly-package/media/"></gs-element-blockly>
+    <gs-element-blockly id="blockly" class="blockly" workspace-xml="{{workspaceXml}}" toolbox="{{toolbox}}" media="{{mediaDir}}"></gs-element-blockly>
     <gs-element-blockly id="blocklytmp" style="visibility: hidden"></gs-element-blockly>
   </template>
 
@@ -40,6 +50,10 @@
         Polymer.LocalizationBehavior
       ],
       properties: {
+        mediaDir: {
+          type: String,
+          value: window.GBS_GET_BLOCKLY_MEDIA_DIR()
+        },
         mode: {
           type: String,
           value: "main"
