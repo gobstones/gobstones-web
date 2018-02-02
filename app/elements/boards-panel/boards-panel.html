@@ -520,8 +520,7 @@
           this._restoreInteractive();
         });
 
-        if (this.availableInitialStates.length > 0) return;
-        this._bootstrap();
+        this.reset();
       },
 
       toggleShowCode: function() {

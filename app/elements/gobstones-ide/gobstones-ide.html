@@ -185,6 +185,7 @@
       ready: function() {
         window.extendJQuery();
         window.GBS_PROJECT_TYPE = this.projectType;
+        this._setTheRightUrl();
         this._setUpKeys();
         this._setUpLoaders();
         this._setUpMouseWheel();
@@ -341,6 +342,15 @@
 
       _computeShowIsLoading: function(isLoading, isLoadingProjects) {
         return isLoading || isLoadingProjects;
+      },
+
+      _setTheRightUrl() {
+        let url = window.location.href;
+        url = url.substring(0, url.indexOf("/#/"));
+        if (this.projectType === "blocks")
+          url = url.replace(/gobstones-web/g, "gobstones-jr");
+
+        history.replaceState({}, '', url);
       },
 
       _setUpKeys: function() {
