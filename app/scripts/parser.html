@@ -51,6 +51,36 @@
       }
     }
 
+    getActionNames(sourceCode) {
+      const declarations = this._getActions(sourceCode);
+
+      const computeDeclarations = (type) =>
+        _.map(declarations[`${type}Declarations`], "name");
+
+      return {
+        procedureNames: computeDeclarations("procedure"),
+        functionNames: computeDeclarations("function")
+      };
+    }
+
+    _getActions(sourceCode) {
+      const result = this.parse(sourceCode);
+      if (this.hasFailed(result)) throw result;
+
+      const declarations = result.declarations;
+      const withAlias = (alias) =>
+        (declaration) =>
+          declaration.alias === `${alias}Declaration` &&
+          !declaration.name.toLowerCase().startsWith("aux");
+
+      const computeDeclarations = (alias) => _.filter(declarations, withAlias(alias));
+
+      return {
+        procedureDeclarations: computeDeclarations("procedure"),
+        functionDeclarations: computeDeclarations("function")
+      };
+    }
+
     _createBoard(initialState) {
       return {
         width: initialState.size.x,

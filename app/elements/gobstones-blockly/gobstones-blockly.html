@@ -214,9 +214,9 @@
         this.code[this.mode] = newCode;
       },
 
-      _onTeacherLibraryChange: function(teacher) {
-        try {
-          const actions = this._getActionNames(teacher);
+      _onTeacherLibraryChange: function(teacherCode) {
+          try {
+          const actions = new Parser().getActionNames(teacherCode);
 
           if (!_.isEmpty(actions.procedureNames)) {
             this.$.blockly.primitiveProcedures = actions.procedureNames;
@@ -225,38 +225,6 @@
         } catch(e) {
           this.runner.reportTeacherLibraryErrors(e);
         }
-      },
-
-      _getActions: function(sourceCode) {
-        const parser = new Parser();
-        const result = parser.parse(sourceCode);
-        if (parser.hasFailed(result)) throw result;
-
-        const declarations = result.declarations;
-        const withAlias = (alias) => (declaration) => declaration.alias === `${alias}Declaration`;
-
-        const computeDeclarations = (alias) => _.filter(declarations, withAlias(alias))
-
-        return {
-          procedureDeclarations: computeDeclarations("procedure"),
-          functionDeclarations: computeDeclarations("function")
-        };
-      },
-
-      _getActionNames: function(sourceCode) {
-        const declarations = this._getActions(sourceCode);
-        const isAuxiliaryDeclaration = (declaration) => declaration.name.toLowerCase().startsWith("aux");
-
-        const computeDeclarations = (type) =>
-          _(declarations[`${type}Declarations`])
-          .reject(isAuxiliaryDeclaration)
-          .map("name")
-          .value();
-
-        return {
-          procedureNames: computeDeclarations("procedure"),
-          functionNames: computeDeclarations("function")
-        };
       },
 
       _getWorkspace: function() {

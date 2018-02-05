@@ -1,5 +1,6 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 <link rel="import" href="../../bower_components/ace-widget/ace-widget.html">
+<link rel="import" href="../../scripts/parser.html">
 <link rel="import" href="../../bower_components/iron-localstorage/iron-localstorage.html">
 <link rel="import" href="../../scripts/behaviors/busListenerBehavior.html">
 <link rel="import" href="../../scripts/jquery.html">
@@ -21,6 +22,25 @@
           @apply(--gobstones-editor);
         }
       }
+
+      .procedures-hint-title {
+        text-align: center;
+      }
+
+      .procedures-hint {
+        position: fixed;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        background-color: rgba(11, 70, 93, 0.5);
+        border-radius: 15px;
+        z-index: 99;
+        /*pointer-events: none;*/
+        padding-left: 30px;
+        padding-right: 30px;
+        padding-bottom: 15px;
+        color: black;
+      }
     </style>
 
     <iron-localstorage name="font-size" value="{{fontSize}}" on-iron-localstorage-load-empty="_initializeDefaultFontSize"></iron-localstorage>
@@ -36,6 +56,34 @@
       readonly="{{readonly}}"
       initial-focus
     ></ace-widget>
+
+    <template is="dom-if" if="{{isShowingProceduresHint}}">
+      <template is="dom-if" if="{{_shouldShowProceduresHint(primitiveProcedures, primitiveFunctions)}}">
+        <div class="procedures-hint">
+          <template is="dom-if" if="{{primitiveProceduresCount}}">
+            <h3 class="procedures-hint-title">
+              [[localize("available-procedures")]]
+            </h3>
+          </template>
+          <template is="dom-repeat" items="{{primitiveProcedures}}" rendered-item-count="{{primitiveProceduresCount}}">
+            <li>
+              {{item}}
+            </li>
+          </template>
+
+          <template is="dom-if" if="{{primitiveFunctionsCount}}">
+            <h3>
+              [[localize("available-functions")]]
+            </h3>
+          </template>
+          <template is="dom-repeat" items="{{primitiveFunctions}}" rendered-item-count="{{primitiveFunctionsCount}}">
+            <li>
+              {{item}}
+            </li>
+          </template>
+        </div>
+      </template>
+    </template>
   </template>
 
   <script>
@@ -43,7 +91,8 @@
     Polymer({
       is: "gobstones-editor",
       behaviors: [
-        Polymer.BusListenerBehavior
+        Polymer.BusListenerBehavior,
+        Polymer.LocalizationBehavior
       ],
       properties: {
         mode: { type: String, value: "main" },
@@ -55,7 +104,16 @@
           type: Number,
           observer: "_fontSizeChanged"
         },
-        readonly: Boolean
+        readonly: Boolean,
+        primitiveProcedures: {
+          type: Array,
+          value: []
+        },
+        primitiveFunctions: {
+          type: Array,
+          value: []
+        },
+        isShowingProceduresHint: Boolean
       },
       listeners: {
         "ace.editor-ready": "onAceReady",
@@ -94,7 +152,6 @@
         this._removePrintMarginColumn();
         $(window).resize(() => { this._fixEditorHeight(); });
 
-
         setTimeout(() => {
           if (window.LOAD_PENDING_PROJECT) {
             window.LOAD_PENDING_PROJECT()
@@ -106,6 +163,10 @@
       setCode: function(code, mode = "main") {
         this.code[mode] = code;
         if (this.mode === mode) this.editor.setValue(code);
+
+        if (mode === "teacher") {
+          this._onTeacherLibraryChange(code);
+        }
       },
 
       onAceReady: function() {
@@ -208,6 +269,22 @@
         this.editor.focus();
       },
 
+      _onTeacherLibraryChange: function(teacherCode) {
+        this.primitiveProcedures = [];
+        this.primitiveFunctions = [];
+
+        try {
+          const actions = new Parser().getActionNames(teacherCode);
+
+          if (!_.isEmpty(actions.procedureNames)) {
+            this.primitiveProcedures = actions.procedureNames;
+            this.primitiveFunctions = actions.functionNames;
+          }
+        } catch(e) {
+          this.runner.reportTeacherLibraryErrors(e);
+        }
+      },
+
       _removePrintMarginColumn: function() {
         this.editor.setShowPrintMargin(false);
       },
@@ -220,10 +297,23 @@
           bindKey: { win: "ctrl+enter", mac: "command+enter" },
           exec: () => { this.runner.requestRun() }
         });
+
+        const key = "Alt";
+        $(window).keydown((event) => {
+          if (event.key === key) this.isShowingProceduresHint = true;
+        });
+
+        $(window).keyup((event) => {
+          if (event.key === key) this.isShowingProceduresHint = false;
+        });
       },
 
       _fixEditorHeight: function() {
         this.stylist.correctEditorHeight(this.editor);
+      },
+
+      _shouldShowProceduresHint(primitiveProcedures, primitiveFunctions) {
+        return !_.isEmpty(primitiveProcedures) || !_.isEmpty(primitiveFunctions);
       }
     });
 
