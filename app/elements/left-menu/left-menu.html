@@ -183,9 +183,12 @@
     </template>
 
     <div class="more-links">
-      <a href="https://github.com/gobstones/gobstones-web-desktop/releases">[[localize("download-desktop")]]</a>
-      <br />
-      <br />
+      <template is="dom-if" if="{{!_isDesktop()}}">
+        <a href="https://github.com/gobstones/gobstones-web-desktop/releases">[[localize("download-desktop")]]</a>
+        <br />
+        <br />
+      </template>
+
       <a href="https://github.com/gobstones/gobstones-web/wiki/Acerca-de-Gobstones-Web" target="_blank">[[localize("about-gobstones-web")]]</a>
     </div>
 

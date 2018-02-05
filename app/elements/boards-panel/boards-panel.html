@@ -351,6 +351,12 @@
     </div>
 
     <code-runner class="run-button" id="runner"></code-runner>
+
+    <paper-dialog id="inspectResultsModal" class="inspect-results-modal">
+      <paper-button class="accept close" dialog-confirm autofocus><iron-icon icon="icons:close"></iron-icon></paper-button>
+
+      <results-inspector id="resultsInspector" result="[[returnValue]]"></code-viwer>
+    </paper-dialog>
   </template>
 
   <script>
@@ -615,7 +621,7 @@
       },
 
       showReturnValue: function() {
-        alert(JSON.stringify(this.returnValue, null, 2));
+        this.$$("#inspectResultsModal").open()
       },
 
       getSizeOf: function({ table }) {
