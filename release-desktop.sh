@@ -1,5 +1,8 @@
 #!/bin/bash
 
+echo "REMEMBER TO USE NODE 7 (nvm use 7) - ¿ARE YOU USING IT?"
+read _NOTHING_
+
 git pull
 
 PACKAGE_VERSION=`git describe --tags $(git rev-list --tags --max-count=1)`
