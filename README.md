@@ -1,5 +1,8 @@
 [![Build Status](https://travis-ci.org/gobstones/gobstones-web.svg?branch=master)](https://travis-ci.org/gobstones/gobstones-web)
 
+# how to start
+[See the wiki!](https://github.com/gobstones/gobstones-web/wiki/Manual-t%C3%A9cnico)
+
 # gobstones-web
 
 This is a web IDE of the language [Gobstones](http://gobstones.github.io).
@@ -19,6 +22,9 @@ npm start
 ```bash
 gulp jasmine
 ```
+
+## adding dependencies
+**Remember** to remove the `.tmp` and `dist` directories!
 
 ## deploy
 This is hosted at Github Pages in:
@@ -57,36 +63,17 @@ makeself . gobstones-web.run "Gobstones Web" ./start-desktop.sh
 #### run locally
 ```bash
 # requires electron
-current_branch=$(git branch | grep \* | cut -d ' ' -f2)
-git branch -D electron
-git checkout gh-pages
-git pull
-git checkout -b electron
-sed -i '$ d' index.js
-electron .
-git checkout -f "$current_branch"
+gulp
+cd dist/
+electron start-electron.js
 ```
 
 #### generate native distributable binaries
 ```bash
-# requires electron-packager
-current_branch=$(git branch | grep \* | cut -d ' ' -f2)
-git branch -D electron
-git checkout gh-pages
-git pull
-git checkout -b electron
-sed -i '$ d' index.js
-sed -i -e "s/'\.'/'\.\/resources\/app'/g" start-electron.js
-electron-packager . gobstones-web --pĺatform linux --arch x64
-makeself ./gobstones-web-linux-x64 gobstones-web.run "Gobstones Web" ./gobstones-web
-git checkout -f "$current_branch"
+./release-desktop.sh
 ```
 
 Single-file packages can be generated using [winrar](https://www.winrar.es/) (windows) and [makeself](https://github.com/megastep/makeself) (linux)
-
-```bash
-makeself build/gobstones-web/linux64 gobstones-web.run "Gobstones Web" ./gobstones-web
-```
 
 ## more docs
 

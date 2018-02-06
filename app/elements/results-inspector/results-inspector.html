@@ -1,0 +1,48 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<dom-module id="results-inspector">
+  <style>
+    .title {
+      margin-bottom: 30px;
+    }
+
+    .json-type {
+      width: 500px;
+      overflow-wrap: break-word;
+      white-space: pre-line;
+    }
+
+    .json-editor {
+      width: 500px;
+      height: 200px;
+    }
+  </style>
+
+  <template>
+    <h1 class="title">[[localize("results")]]</h1>
+
+    <pre class="json-type">{{result.type}}</pre>
+
+    <juicy-jsoneditor
+      class="json-editor"
+      json="{{result.value}}"
+      mode="view"
+      search="false"
+    >
+    </juicy-jsoneditor>
+  </template>
+
+  <script>
+
+    Polymer({
+      is: 'results-inspector',
+      behaviors: [
+        Polymer.LocalizationBehavior
+      ],
+      properties: {
+        result: Object
+      }
+    });
+
+  </script>
+</dom-module>

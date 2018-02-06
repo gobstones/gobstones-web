@@ -1,0 +1,48 @@
+<link rel="import" href="./expandedLoader.html">
+<link rel="import" href="../projectLoader.html">
+<link rel="import" href="../projectBlocksLoader.html">
+
+<script>
+  function toArrayBuffer(buf) {
+    var ab = new ArrayBuffer(buf.length);
+    var view = new Uint8Array(ab);
+    for (var i = 0; i < buf.length; ++i) {
+        view[i] = buf[i];
+    }
+    return ab;
+  }
+
+  class FsLoader extends ExpandedLoader {
+    constructor(projectType, path) {
+      super();
+      this.loader = projectType === "code" ? new ProjectLoader : new ProjectBlocksLoader;
+
+      this.path = path;
+    }
+
+    load(getContext, callback) {
+      const deferred = $.Deferred();
+
+      try {
+        const files = this._loadDir(this.path);
+        this.loader.readRaw(getContext(), this._createZip(files), callback);
+        deferred.resolve();
+      } catch(e) {
+        deferred.reject(e);
+      }
+
+      return deferred.promise();
+    }
+
+    _loadDir(path) {
+      return window.GBS_REQUIRE("recursive-readdir-sync")(path)
+        .map((it) => {
+          return {
+            relativePath: it.replace(/\\/g, "/").replace(this.path.replace(/\\/g, "/"), "").substring(1),
+            content: toArrayBuffer(window.GBS_REQUIRE("fs").readFileSync(it))
+          }
+        });
+    }
+  }
+</script>
+

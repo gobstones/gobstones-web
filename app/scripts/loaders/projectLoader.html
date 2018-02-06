@@ -55,13 +55,15 @@
     readRawZip(context, file, callback) {
       JSZip.loadAsync(file).then(zip => {
         this.readRaw(context, zip, callback);
+      }).catch((e) => {
+        console.error(e);
+        alert("The project is corrupted or has errors.");
+        callback();
       });
     }
 
     readRaw(context, zip, callback) {
-      context.editor.reset();
-      context.boards.reset();
-      context.editor.setAsDirty();
+      context.reset();
 
       this._loadFilesWithLoaders(context, zip, this.loaders, () => {
         context.boards.removeFirstBoard();
@@ -91,6 +93,7 @@
         handled = true;
         getContent().then(content => {
           try {
+            console.log("Using " + loader.constructor.name + "...");
             loader.readProjectContent(context, content);
           } catch(e) {
             console.error(loader, e);

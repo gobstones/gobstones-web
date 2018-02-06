@@ -1,43 +1,39 @@
-<script src="../bower_components/gs-weblang-core/umd/index.umd.min.js"></script>
+<script src="../bower_components/gobstones-interpreter/lib/gobstones-interpreter.js"></script>
 
 <script>
   class Parser {
     constructor() {
-      const { Context, Board, getParser, gbb } = window.gsWeblangCore;
-
-      this.Context = Context;
-      this.gsParser = getParser;
-      this.gbb = gbb;
-      this.Board = Board;
+      const { GobstonesInterpreterAPI } = window["gobstones-interpreter"];
+      this.interpreter = new GobstonesInterpreterAPI();
     }
 
     parse(sourceCode, onError = () => {}, onSuccess = (it) => it) {
-      if (_.trim(sourceCode) === "") return onSuccess({ declarations: [] });
+      const result = this.interpreter.parse(sourceCode);
 
-      try {
-        return onSuccess(this.gsParser().parse(sourceCode));
-      } catch (e) {
-        if (e.reason) {
-          onError(e); // known errors
-        }
-        else throw e; // unknown errors
-      }
+      if (this.hasFailed(result)) onError(result); // known errors
+      else onSuccess(result);
+
+      return result;
     }
 
-    interpret(ast, initialState) {
-      const context = this._createContext(initialState);
-      return ast.interpret(context);
+    interpret(program, initialState) {
+      const board = this._createBoard(initialState);
+      const result = program.interpret(board);
+      if (this.hasFailed(result)) throw result; // known errors
+      return result;
     }
 
     readGbb(gbb) {
-      return this.gbb.reader.fromString(gbb);
+      return this.interpreter.gbb.read(gbb);
     }
 
     buildGbb(initialState, size) {
-      var board = new this.Board(size.x, size.y).fromView(initialState.table);
-      board.x = initialState.header.x;
-      board.y = initialState.header.y;
-      return this.gbb.builder.build(board);
+      const board = this._createBoard(_.assign(initialState, { size }));
+      return this.interpreter.gbb.write(board);
+    }
+
+    hasFailed(result) {
+      return result.reason;
     }
 
     getErrorLineAndMode(e, code, forceIsInMainCode) {
@@ -47,7 +43,7 @@
         const isInMainCode = forceIsInMainCode || e.on.range.start.row > libraryLines;
 
         return {
-          line: e.on.range.start.row - (isInMainCode ? libraryLines : 0),
+          line: e.on.range.start.row - (isInMainCode ? libraryLines + 1 : 0),
           mode: isInMainCode ? "main" : "library"
         };
       } catch(unknownError) {
@@ -55,19 +51,46 @@
       }
     }
 
-    _createContext(initialState) {
-      const context = new this.Context();
-      context.board().sizeX = initialState.size.x;
-      context.board().sizeY = initialState.size.y;
-      context.init();
+    getActionNames(sourceCode) {
+      const declarations = this._getActions(sourceCode);
 
-      _.assign(context.board(), {
-        x: initialState.header.x,
-        y: initialState.header.y,
+      const computeDeclarations = (type) =>
+        _.map(declarations[`${type}Declarations`], "name");
+
+      return {
+        procedureNames: computeDeclarations("procedure"),
+        functionNames: computeDeclarations("function")
+      };
+    }
+
+    _getActions(sourceCode) {
+      const result = this.parse(sourceCode);
+      if (this.hasFailed(result)) throw result;
+
+      const declarations = result.declarations;
+      const withAlias = (alias) =>
+        (declaration) =>
+          declaration.alias === `${alias}Declaration` &&
+          !declaration.name.toLowerCase().startsWith("aux");
+
+      const computeDeclarations = (alias) => _.filter(declarations, withAlias(alias));
+
+      return {
+        procedureDeclarations: computeDeclarations("procedure"),
+        functionDeclarations: computeDeclarations("function")
+      };
+    }
+
+    _createBoard(initialState) {
+      return {
+        width: initialState.size.x,
+        height: initialState.size.y,
+        head: {
+          x: initialState.header.x,
+          y: initialState.header.y
+        },
         table: initialState.table
-      });
-
-      return context;
+      };
     }
   }
 </script>

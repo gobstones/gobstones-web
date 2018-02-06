@@ -3,12 +3,14 @@
 
 <script>
   class UrlLoader {
-    constructor(projectType) {
+    constructor(projectType, url) {
       this.loader = projectType === "code" ? new ProjectLoader : new ProjectBlocksLoader;
+
+      this.url = url;
     }
 
-    load(url, getContext, callback) {
-      return $.getBinary(url).then(content => {
+    load(getContext, callback) {
+      return $.getBinary(this.url).then(content => {
         this.loader.readRawZip(getContext(), content, callback);
       });
     }

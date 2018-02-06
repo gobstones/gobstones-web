@@ -5,13 +5,19 @@
   class Stylist {
     constructor() {
       this.toolboxVisible = true;
+      this.sizeVisible = true;
+      this.attireVisible = true;
       this.selectedTab = 0;
 
       this.SCALE = 0.8;
       this.DEFAULT_PERCENTAGE = 0.6;
       this.TOOLBAR_HEIGHT = 64;
-      this.TOOLBOX_HEIGHT = 86;
-      this.TOOLBAR_AND_TOOLBOX_HEIGHT = () => this.TOOLBAR_HEIGHT + (this.toolboxVisible ? this.TOOLBOX_HEIGHT : 0);
+      this.IS_TOOLBOX_VISIBLE = () => this.toolboxVisible && (this.sizeVisible || this.attireVisible);
+      this.TOOLBOX_HEIGHT = () =>
+        (!this.sizeVisible && !this.attireVisible)
+          ? 0
+          : 86 / (!this.sizeVisible || !this.attireVisible ? 2 : 1);
+      this.TOOLBAR_AND_TOOLBOX_HEIGHT = () => this.TOOLBAR_HEIGHT + (this.IS_TOOLBOX_VISIBLE() ? this.TOOLBOX_HEIGHT() : 0);
 
       this.BOARD_CSS_CLASS = ".theBoard";
       this.BOARD_CONTAINER_CSS_CLASS = ".theBoardContainer";
@@ -25,6 +31,8 @@
 
     reset() {
       this.toolboxVisible = true;
+      this.sizeVisible = true;
+      this.attireVisible = true;
       this.setSelectedTab(0);
     }
 
@@ -34,6 +42,24 @@
 
       editor.setOption("minLines", availableLines);
       editor.setOption("maxLines", availableLines);
+    }
+
+    setUpZoom() {
+      const delta = 0.1;
+
+      $(document).ready(() => {
+        $(".panel-right").bind("mousewheel", (e) => {
+          if (e.originalEvent.wheelDelta > 0)
+            this.SCALE += delta;
+          else
+            this.SCALE -= delta;
+
+          if (this.SCALE < 0.5) this.SCALE = 0.5;
+          if (this.SCALE > 0.98) this.SCALE = 0.98;
+
+          this.refresh();
+        });
+      });
     }
 
     setPanelAsResizable(boardDimensions) {
@@ -48,11 +74,17 @@
       });
 
       $(window).resize(() => {
+        const percentage = this._getPercentage();
+        const isBorder = Math.abs(1 - percentage) < 0.0001 || Math.abs(percentage) < 0.0001;
+
+        if (!isBorder)
+          window.STORAGE.setItem("code-panel-percentage", this._getPercentage());
+
         this.refresh();
       });
     }
 
-    setBlocklyResize() {
+    setUpBlocklyCustomizations() {
       const resize = () => {
         const panel = $(this.LEFT_PANEL_CSS_CLASS);
         $("#blocklyDiv").css("width", panel.width() + "px");
@@ -65,6 +97,29 @@
 
       setTimeout(resize, 0);
       $(window).resize(resize);
+
+      const setColors = (cssClass, opacity, tintKind, color) => {
+       const scrollbars = $(cssClass);
+        scrollbars.css("opacity", opacity);
+
+        scrollbars.each((i, scrollbar) => {
+          scrollbar.setAttributeNS(null, tintKind, color);
+        });
+      };
+
+      setTimeout(() => {
+        setColors(".blocklyScrollbarBackground", 0.2, "fill", "#0b465d");
+        setColors(".blocklyScrollbarHandle", 1, "stroke", "black");
+
+        const oldAnimateLid_ = Blockly.Trashcan.prototype.animateLid_;
+        Blockly.Trashcan.prototype.animateLid_ = function() {
+          oldAnimateLid_.call(this);
+
+          var opacity = goog.math.lerp(1, 1, this.lidOpen_);
+          this.svgGroup_.style.opacity = opacity;
+        };
+        $(".blocklyTrash").css("opacity", 1);
+      }, 0);
     }
 
     refresh() {
@@ -73,7 +128,7 @@
     }
 
     _keepAspectRatioOnWindowResize() {
-      const documentWidth = $(document).width()
+      const documentWidth = $(document).width();
       if (!this.lastDocumentWidth) {
         this.lastDocumentWidth = documentWidth;
         return this.DEFAULT_PERCENTAGE;

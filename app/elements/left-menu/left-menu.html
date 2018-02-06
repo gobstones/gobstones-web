@@ -2,6 +2,7 @@
 <link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
 <link rel="import" href="../../bower_components/paper-item/paper-item-body.html">
 <link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../scripts/behaviors/busListenerBehavior.html">
 <link rel="import" href="../../scripts/behaviors/loaderBehavior.html">
 <link rel="import" href="../../scripts/behaviors/localizationBehavior.html">
 <link rel="import" href="../../scripts/loaders/components/codeLoader.html">
@@ -11,6 +12,8 @@
 <link rel="import" href="../../scripts/loaders/components/appendBlocksLoader.html"
 <link rel="import" href="../../scripts/loaders/components/initialBoardLoader.html">
 <link rel="import" href="../../scripts/loaders/components/attires/individualAttireLoader.html">
+<link rel="import" href="../../scripts/loaders/components/finalBoardLoader.html">
+<link rel="import" href="../../scripts/loaders/remote/desktopGuideLoader.html">
 
 <dom-module id="left-menu">
   <template>
@@ -44,12 +47,17 @@
         margin-bottom: 20px;
       }
 
-      .about {
-        margin-top: 20px;
+      .more-links {
+        margin-top: 10px;
         text-align: center;
       }
 
-      .about > a {
+      .language-selector {
+        margin-top: 20px;
+        margin-left: 13px;
+      }
+
+      .more-links > a {
         color: #00004f;
       }
     </style>
@@ -82,13 +90,17 @@
         </paper-item>
       </template>
 
-      <paper-item>
-        <paper-item-body>
-          <div>[[localize("library")]]</div>
-        </paper-item-body>
-        <paper-icon-button on-click="loadLibrary" icon="icons:folder-open" alt="open"> </paper-icon-button>
-        <paper-icon-button on-click="saveLibrary" icon="icons:save" alt="save"> </paper-icon-button>
-      </paper-item>
+      <template is="dom-if" if="{{_isCodeProject(projectType)}}">
+        <template is="dom-if" if="{{permissions.can_use_library}}">
+          <paper-item>
+            <paper-item-body>
+              <div>[[localize("library")]]</div>
+            </paper-item-body>
+            <paper-icon-button on-click="loadLibrary" icon="icons:folder-open" alt="open"> </paper-icon-button>
+            <paper-icon-button on-click="saveLibrary" icon="icons:save" alt="save"> </paper-icon-button>
+          </paper-item>
+        </template>
+      </template>
 
       <paper-item>
         <paper-item-body>
@@ -106,24 +118,77 @@
         <paper-icon-button on-click="saveAttire" icon="icons:save" alt="save"> </paper-icon-button>
       </paper-item>
 
+      <paper-item>
+        <paper-item-body>
+          <div>[[localize("final-board")]]</div>
+        </paper-item-body>
+        <paper-icon-button on-click="saveFinalBoard" icon="icons:save" alt="save"> </paper-icon-button>
+      </paper-item>
+
       <template is="dom-if" if="{{!_isCodeProject(projectType)}}">
+        <paper-item>
+          <paper-item-body>
+            <div>[[localize("generated-code")]]</div>
+          </paper-item-body>
+          <paper-icon-button on-click="seeGeneratedCode" icon="icons:code" alt="save"> </paper-icon-button>
+          <paper-icon-button on-click="saveGeneratedCode" icon="icons:save" alt="save"> </paper-icon-button>
+        </paper-item>
         <paper-item>
           <paper-item-body>
             <div>[[localize("add-blocks")]]</div>
           </paper-item-body>
           <paper-icon-button on-click="loadAppendBlocks" icon="icons:folder-open" alt="open"> </paper-icon-button>
         </paper-item>
-
-        <paper-item>
-          <paper-item-body>
-            <div>[[localize("generated-code")]]</div>
-          </paper-item-body>
-          <paper-icon-button on-click="saveGeneratedCode" icon="icons:save" alt="save"> </paper-icon-button>
-        </paper-item>
       </template>
     </div>
 
-    <div class="about">
+    <div class="language-selector">
+      <div>
+        <paper-dropdown-menu id="languageSelector" no-animations no-label-float vertical-align="bottom" horizontal-align="right">
+          <paper-listbox class="dropdown-content" selected="{{selectedLanguage}}">
+            <template is="dom-repeat" items="{{languages}}">
+              <paper-item>[[localize(item)]]</paper-item>
+            </template>
+          </paper-listbox>
+        </paper-dropdown-menu>
+      </div>
+    </div>
+
+    <paper-item>
+      <paper-item-body>
+        <div>[[localize("show-tutorial")]]</div>
+      </paper-item-body>
+      <paper-toggle-button checked="{{showTutorial}}" on-change="_onShowTutorialChanged"></paper-toggle-button>
+    </paper-item>
+
+    <template is="dom-if" if="{{_isDesktop()}}">
+      <paper-item style="text-align: center; margin-top: 20px">
+        <paper-item-body>
+          <template is="dom-if" if="{{!isDownloadingExercises}}">
+            <div>
+              [[localize("update-exercises")]]
+            </div>
+          </template>
+          <template is="dom-if" if="{{isDownloadingExercises}}">
+            <div style="font-size: small; color: gray">
+              <span>[[localize("updating")]]</span>
+                <span>&nbsp;([[downloadProgress]])</span>
+            </div>
+          </template>
+        </paper-item-body>
+        <template is="dom-if" if="{{!isDownloadingExercises}}">
+          <paper-icon-button on-click="updateExercises" icon="icons:file-download" alt="refresh"> </paper-icon-button>
+        </template>
+      </paper-item>
+    </template>
+
+    <div class="more-links">
+      <template is="dom-if" if="{{!_isDesktop()}}">
+        <a href="https://github.com/gobstones/gobstones-web-desktop/releases">[[localize("download-desktop")]]</a>
+        <br />
+        <br />
+      </template>
+
       <a href="https://github.com/gobstones/gobstones-web/wiki/Acerca-de-Gobstones-Web" target="_blank">[[localize("about-gobstones-web")]]</a>
     </div>
 
@@ -153,34 +218,131 @@
     Polymer({
       is: 'left-menu',
       behaviors: [
+        Polymer.BusListenerBehavior,
         Polymer.LocalizationBehavior,
         Polymer.LoaderBehavior
       ],
       properties: {
-        projectType: String
+        projectType: String,
+        languages: {
+          type: Array,
+          value: ["es", "en"]
+        },
+        showTutorial: {
+          type: Boolean,
+          value: true
+        },
+        selectedLanguage: Number,
+        isDownloadingExercises: {
+          type: Boolean,
+          value: false
+        },
+        downloadProgress: {
+          type: String,
+          value: "0"
+        },
+        permissions: {
+          type: Object,
+          value: { can_use_library: true }
+        }
+        // downloadTotal: {
+        //   type: Number,
+        //   value: 0
+        // }
       },
+      observers: [
+        "_onSelectedLanguageChanged(selectedLanguage)"
+      ],
 
       attached: function() {
+        this.subscribeTo("reset", () => {
+          this.set("permissions.can_use_library", true);
+        });
+
+        const language = window.STORAGE.getItem("language") || "es";
+        const index = this.languages.indexOf(language);
+        this.selectedLanguage = index >= 0 ? index : 0;
+
+        const shouldNotShowTutorial = window.STORAGE.getItem("show-tutorial") === "false";
+        this.showTutorial = !shouldNotShowTutorial;
+
+        setTimeout(() => {
+          this.$.languageSelector.label = this.localize(this.languages[this.selectedLanguage]);
+        }, 0);
+
         this.setUpLoaders(
           this._isCodeProject(this.projectType)
             ? {
               Code: new CodeLoader,
               Library: new LibraryLoader,
               InitialBoard: new InitialBoardLoader,
-              Attire: new IndividualAttireLoader
+              Attire: new IndividualAttireLoader,
+              FinalBoard: new FinalBoardLoader
             } : {
               Code: new CodeBlocksLoader,
               Library: new LibraryBlocksLoader,
               InitialBoard: new InitialBoardLoader,
               Attire: new IndividualAttireLoader,
-              AppendBlocks: new AppendBlocksLoader,
-              GeneratedCode: new CodeLoader
+              FinalBoard: new FinalBoardLoader,
+              GeneratedCode: new CodeLoader,
+              AppendBlocks: new AppendBlocksLoader
             }
-        ); // ;(
+        );
+      },
+
+      updateExercises: function() {
+        const bytes = window.GBS_REQUIRE("bytes");
+
+        this.isDownloadingExercises = true;
+        this.downloadProgress = "...";
+        //this.downloadTotal = 0;
+
+        window.GBS_IS_DOWNLOADING_GUIDE = true;
+        DesktopGuideLoader.download((loaded, total) => {
+          this.downloadProgress = bytes(loaded);
+          //this.downloadTotal = total;
+        }).catch((e) => {
+          console.warn(e);
+        })
+        .always(() => {
+          this.isDownloadingExercises = false;
+          this._tryReload();
+          window.GBS_IS_DOWNLOADING_GUIDE = false;
+        });
+      },
+
+      seeGeneratedCode: function() {
+        this._ide().setCurrentCode(this._context().editor.generateCode(false));
+        this._ide().showCodeViewModal();
+      },
+
+      _onSelectedLanguageChanged: function(selectedLanguage) {
+        window.STORAGE.setItem("language", this.languages[selectedLanguage]);
+
+        if (!this.localize) return;
+        this._tryReload();
+      },
+
+      _onShowTutorialChanged: function() {
+        window.STORAGE.setItem("show-tutorial", this.showTutorial);
       },
 
       _isCodeProject: function(projectType) {
         return projectType === "code";
+      },
+
+      // _getDownloadProgress: function(downloadProgress, downloadTotal) {
+      //   if (downloadTotal <= 0) return 0;
+      //   return (100 * downloadProgress / downloadTotal).toFixed(2);
+      // },
+
+      _tryReload: function() {
+        if (!confirm(this.localize("you-must-reload"))) return;
+        location.reload();
+      },
+
+      _isDesktop: function() {
+        return window.GBS_DESKTOP;
       }
     });
 

@@ -5,7 +5,6 @@
 <link rel="import" href="../../scripts/behaviors/localizationBehavior.html">
 <link rel="import" href="../../scripts/behaviors/expressionBehavior.html">
 <link rel="import" href="../../scripts/behaviors/toastBehavior.html">
-<link rel="import" href="../../scripts/parserAndBoardAdapter.html">
 <link rel="import" href="../../scripts/stylist.html">
 
 <dom-module id="boards-panel">
@@ -118,6 +117,23 @@
         font-size: 15px;
       }
 
+      .button-tooltip {
+        font-size: 15px;
+        width: 150px;
+      }
+
+      .toggle-toolbox-button-up {
+        position: absolute;
+        left: 1px;
+        top: 119px;
+      }
+
+      .toggle-toolbox-button-down {
+        position: absolute;
+        left: 1px;
+        top: 72px;
+      }
+
       .shortcut {
         color: var(--paper-blue-grey-200);
         font-weight: bold;
@@ -129,6 +145,12 @@
         right: 24px;
       }
 
+      .inspect-results-button {
+        position: fixed;
+        bottom: 10px;
+        right: 10px;
+      }
+
       paper-tab {
         --paper-tab-content-unselected: {
           opacity: 0.5;
@@ -137,14 +159,15 @@
     </style>
 
     <div class="main-container">
+      <!-- TABS -->
       <paper-toolbar class="tabs">
         <div>
           <template is="dom-if" if="{{_showCodeVisible(interactive.*)}}">
-            <paper-button on-click="toggleShowCode"><iron-icon class="button show-code-icon" icon="icons:chevron-{{_showCodeDirection(showCode)}}"></iron-icon></paper-button>
+            <paper-button style="z-index: 99" on-click="toggleShowCode"><iron-icon class="button show-code-icon" icon="icons:chevron-{{_showCodeDirection(showCode)}}"></iron-icon></paper-button>
           </template>
         </div>
         <div style="width: 90%">
-          <paper-tabs no-bar selected="{{selectedTab}}" class="bottom self-end">
+          <paper-tabs id="theBoardsTab" selected="{{selectedTab}}" class="bottom self-end">
             <paper-tab>[[localize("initial-board")]] [[toOneBased(selectedInitialState)]]</paper-tab>
             <template is="dom-if" if="{{isFinalBoardVisible(finalState, error)}}">
               <paper-tab>[[localize("final-board")]]</paper-tab>
@@ -156,75 +179,138 @@
         </div>
       </paper-toolbar>
 
+      <!-- TOAST -->
       <paper-toast class="toast" id="toast"></paper-toast>
 
-      <template is="dom-if" if="{{hasPermission(permissions.*, 'can_view_edition_panel')}}">
+      <!-- TOOLBOX -->
+      <template is="dom-if" if="{{shouldShowToolbox(permissions.*, isToolboxVisible)}}">
         <div class="boards-buttons">
-          <paper-menu-button class$="{{boardChangeButtonCss(selectedTab, permissions.*)}}">
-            <paper-icon-button icon="menu" class="dropdown-trigger"></paper-icon-button>
-            <paper-menu class="dropdown-content" selected="{{ selectedInitialState }}">
-              <template is="dom-repeat" items="{{ availableInitialStates }}">
-                <paper-item>[[localize("initial-board")]] [[toOneBased(index)]]</paper-item>
-              </template>
-            </paper-menu>
-          </paper-menu-button>
+          <template is="dom-if" if="{{hasPermission(permissions.*, 'can_change_initial_board')}}">
+            <paper-menu-button id="board-select-button" class$="{{boardChangeButtonCss(selectedTab, permissions.*)}}">
+              <paper-icon-button icon="menu" class="dropdown-trigger"></paper-icon-button>
+              <paper-menu class="dropdown-content" selected="{{ selectedInitialState }}">
+                <template is="dom-repeat" items="{{ availableInitialStates }}">
+                  <paper-item>[[localize("initial-board")]] [[toOneBased(index)]]</paper-item>
+                </template>
+              </paper-menu>
+            </paper-menu-button>
+            <paper-tooltip for="board-select-button" position="bottom" animation-config="{{tooltipAnimation}}">
+              <div class="button-tooltip">
+                [[localize("tooltip-change-board")]]
+              </div>
+            </paper-tooltip>
+          </template>
 
-          <paper-button class="clean-board" on-click="cleanBoard"><iron-icon class$="{{boardButtonCss(selectedTab, showAttire, permissions.*)}}" icon="icons:delete-forever"></iron-icon></paper-button>
+          <template is="dom-if" if="{{hasPermission(permissions.*, 'can_change_initial_board')}}">
+            <template is="dom-if" if="{{hasPermission(permissions.*, 'can_edit_board')}}">
+              <paper-button id="clean-board-button" style="z-index: 99" class="clean-board" on-click="cleanBoard"><iron-icon class$="{{boardButtonCss(selectedTab, showAttire, permissions.*)}}" icon="icons:delete-forever"></iron-icon></paper-button>
+              <paper-tooltip for="clean-board-button" position="bottom" animation-config="{{tooltipAnimation}}">
+                <div class="button-tooltip">
+                  [[localize("tooltip-clean-board")]]
+                </div>
+              </paper-tooltip>
 
-          <paper-button class="add-or-remove-board" on-click="addBoard"><iron-icon class$="{{boardButtonCss(selectedTab, showAttire, permissions.*)}}" icon="icons:add"></iron-icon></paper-button>
+              <paper-button id="add-board-button" style="z-index: 99" class="add-or-remove-board" on-click="addBoard"><iron-icon class$="{{boardButtonCss(selectedTab, showAttire, permissions.*)}}" icon="icons:add"></iron-icon></paper-button>
+              <paper-tooltip for="add-board-button" position="bottom" animation-config="{{tooltipAnimation}}">
+                <div class="button-tooltip">
+                  [[localize("tooltip-add-board")]]
+                </div>
+              </paper-tooltip>
 
-          <paper-button class="add-or-remove-board" on-click="removeCurrentBoard"><iron-icon class$="{{boardButtonCss(selectedTab, showAttire, permissions.*)}}" icon="icons:remove"></iron-icon></paper-button>
+              <paper-button id="remove-board-button" style="z-index: 99" class="add-or-remove-board" on-click="removeCurrentBoard"><iron-icon class$="{{boardButtonCss(selectedTab, showAttire, permissions.*)}}" icon="icons:remove"></iron-icon></paper-button>
+              <paper-tooltip for="remove-board-button" position="bottom" animation-config="{{tooltipAnimation}}">
+                <div class="button-tooltip">
+                  [[localize("tooltip-remove-board")]]
+                </div>
+              </paper-tooltip>
+            </template>
+          </template>
         </div>
 
-        <paper-button id="help" class="help-button"><iron-icon icon="icons:help"></iron-icon></paper-button>
-        <paper-tooltip for="help" position="left" animation-config="{{tooltipAnimation}}">
-          <div class="help-tooltip">
-            <div>
-              <span class="shortcut">[[localize("shortcut-add-stones")]]</span>: [[localize("shortcut-add-stones-description")]]
+        <template is="dom-if" if="{{!isInitialBoardNotEditable(selectedTab, showAttire, permissions.*)}}">
+          <paper-button style="z-index: 99" id="help" class="help-button"><iron-icon icon="icons:help"></iron-icon></paper-button>
+          <paper-tooltip for="help" position="left" animation-config="{{tooltipAnimation}}">
+            <div class="help-tooltip">
+              <div>
+                <span class="shortcut">[[localize("shortcut-add-stones")]]</span>: [[localize("shortcut-add-stones-description")]]
+              </div>
+              <div>
+                <span class="shortcut">[[localize("shortcut-remove-stones")]]</span>: [[localize("shortcut-remove-stones-description")]]
+              </div>
+              <div>
+                <span class="shortcut">[[localize("shortcut-set-header")]]</span>: [[localize("shortcut-set-header-description")]]
+              </div>
             </div>
-            <div>
-              <span class="shortcut">[[localize("shortcut-remove-stones")]]</span>: [[localize("shortcut-remove-stones-description")]]
-            </div>
-            <div>
-              <span class="shortcut">[[localize("shortcut-set-header")]]</span>: [[localize("shortcut-set-header-description")]]
-            </div>
-          </div>
-        </paper-tooltip>
+          </paper-tooltip>
+        </template>
       </template>
 
       <div class="boards-panel">
-        <template is="dom-if" if="{{hasPermission(permissions.*, 'can_view_edition_panel')}}">
-          <div class="size-bar">
-            <div class$="{{boardSizeCss(selectedTab, showAttire, permissions.*)}}">
-              <form>
-                <div class="size-container">
-                  <strong>[[localize("size")]]:</strong>
-                  <paper-input class="size-input" value="{{sizeX}}" type="number" min="1" max="30" disabled$="{{isInitialBoardNotEditable(selectedTab, showAttire, permissions.*)}}"></paper-input>
-                </div>
-                <div class="size-container">
-                  <span>[[localize("columns")]] <strong>[[localize("by")]]</strong></span>
-                  <paper-input class="size-input" value="{{sizeY}}" type="number" min="1" max="30" disabled$="{{isInitialBoardNotEditable(selectedTab, showAttire, permissions.*)}}"></paper-input>
-                  <span>[[localize("rows")]]</span>
-                </div>
-              </form>
+        <template is="dom-if" if="{{shouldShowToolbox(permissions.*, isToolboxVisible)}}">
+          <template is="dom-if" if="{{hasPermission(permissions.*, 'can_view_size_section')}}">
+            <div class="size-bar">
+              <div class$="{{boardSizeCss(selectedTab, showAttire, permissions.*)}}">
+                <form>
+                  <div class="size-container">
+                    <strong>[[localize("size")]]:</strong>
+                    <paper-input class="size-input" value="{{sizeX}}" type="number" min="1" max="30" disabled$="{{isInitialBoardNotEditable(selectedTab, showAttire, permissions.*)}}"></paper-input>
+                  </div>
+                  <div class="size-container">
+                    <span>[[localize("columns")]] <strong>[[localize("by")]]</strong></span>
+                    <paper-input class="size-input" value="{{sizeY}}" type="number" min="1" max="30" disabled$="{{isInitialBoardNotEditable(selectedTab, showAttire, permissions.*)}}"></paper-input>
+                    <span>[[localize("rows")]]</span>
+                  </div>
+                </form>
+              </div>
             </div>
-          </div>
+          </template>
 
-          <div class="attire-container">
-            <template is="dom-if" if="{{hasPermission(permissions.*, 'can_toggle_attire_visibility')}}">
-              <paper-button on-click="toggleShowAttire"><iron-icon class="black-button" icon="icons:visibility"></iron-icon></paper-button>
-            </template>
-            <strong>[[localize("attire")]]:</strong>
-            <paper-dropdown-menu no-animations no-label-float vertical-align="bottom" horizontal-align="right" disabled="{{!showAttire}}">
-              <paper-listbox class="dropdown-content" selected="{{selectedAttire}}">
-                <template is="dom-repeat" items="{{ availableAttires }}">
-                  <paper-item>{{item.name}}</paper-item>
+          <template is="dom-if" if="{{hasPermission(permissions.*, 'can_view_attire_section')}}">
+            <div class="attire-container">
+              <template is="dom-if" if="{{hasPermission(permissions.*, 'can_toggle_attire_visibility')}}">
+                <template is="dom-if" if="{{attiresCount}}">
+                  <paper-button id="show-attire-button" style="z-index: 99" on-click="toggleShowAttire"><iron-icon class="black-button" icon="icons:visibility"></iron-icon></paper-button>
+                  <paper-tooltip for="show-attire-button" position="bottom" animation-config="{{tooltipAnimation}}">
+                    <div class="button-tooltip">
+                      <template is="dom-if" if="{{showAttire}}">
+                        [[localize("tooltip-hide-attire")]]
+                      </template>
+                      <template is="dom-if" if="{{!showAttire}}">
+                        [[localize("tooltip-show-attire")]]
+                      </template>
+                    </div>
+                  </paper-tooltip>
                 </template>
-              </paper-listbox>
-            </paper-dropdown-menu>
-          </div>
+              </template>
+              <strong>[[localize("attire")]]:</strong>
+              <paper-dropdown-menu no-animations no-label-float vertical-align="bottom" horizontal-align="right" disabled="{{!showAttire}}">
+                <paper-listbox class="dropdown-content" selected="{{selectedAttire}}">
+                  <template is="dom-repeat" items="{{ availableAttires }}" rendered-item-count="{{attiresCount}}">
+                    <paper-item>{{item.name}}</paper-item>
+                  </template>
+                </paper-listbox>
+              </paper-dropdown-menu>
+            </div>
+          </template>
         </template>
 
+        <!-- TOGGLE TOOLBOX -->
+        <template is="dom-if" if="{{hasPermission(permissions.*, 'can_view_edition_panel')}}">
+          <paper-button id="toggle-toolbox-button" style="z-index: 99" class$="{{toggleToolboxButtonCss(isToolboxVisible)}}"><iron-icon icon$="{{toggleToolboxButtonIcon(isToolboxVisible)}}" on-click="toggleToolbox" class="black-button"></iron-icon></paper-button>
+
+          <paper-tooltip for="toggle-toolbox-button" position="bottom" animation-config="{{tooltipAnimation}}">
+            <div class="button-tooltip">
+              <template is="dom-if" if="{{isToolboxVisible}}">
+                [[localize("tooltip-hide-toolbox")]]
+              </template>
+              <template is="dom-if" if="{{!isToolboxVisible}}">
+                [[localize("tooltip-show-toolbox")]]
+              </template>
+            </div>
+          </paper-tooltip>
+        </template>
+
+        <!-- BOARD -->
         <div class="theBoardContainer" style="position: relative;">
           <div class="theBoard" style="position: absolute; left: 0; right: 0;">
             <!-- Initial board -->
@@ -237,6 +323,15 @@
               <template is="dom-if" if="{{!isBoom(error)}}">
                 <template is="dom-if" if="{{finalState}}">
                   <gs-board id="finalStateEditor" attire="{{attire}}"></gs-board>
+
+                  <template is="dom-if" if="{{returnValue}}">
+                    <paper-button id="inspect-results-button" class="inspect-results-button" style="z-index: 99" on-click="showReturnValue"><iron-icon class="black-button" icon="icons:search"></iron-icon></paper-button>
+                    <paper-tooltip for="inspect-results-button" position="left" animation-config="{{tooltipAnimation}}">
+                      <div class="button-tooltip">
+                        [[localize("tooltip-inspect-results")]]
+                      </div>
+                    </paper-tooltip>
+                  </template>
                 </template>
               </template>
             </template>
@@ -256,6 +351,12 @@
     </div>
 
     <code-runner class="run-button" id="runner"></code-runner>
+
+    <paper-dialog id="inspectResultsModal" class="inspect-results-modal">
+      <paper-button class="accept close" dialog-confirm autofocus><iron-icon icon="icons:close"></iron-icon></paper-button>
+
+      <results-inspector id="resultsInspector" result="[[returnValue]]"></code-viwer>
+    </paper-dialog>
   </template>
 
   <script>
@@ -308,6 +409,7 @@
 
         finalState: Object,
         error: Object,
+        returnValue: Object,
 
         availableInitialStates: {
           type: Array,
@@ -340,13 +442,20 @@
           value: false,
           observer: "_updateAttire"
         },
+        isToolboxVisible: {
+          type: Boolean,
+          value: true
+        },
 
         permissions: {
           type: Object,
           value: {
+            can_change_initial_board: true,
             can_view_edition_panel: true,
             can_edit_board: true,
-            can_toggle_attire_visibility: true
+            can_toggle_attire_visibility: true,
+            can_view_size_section: true,
+            can_view_attire_section: true
           }
         },
 
@@ -360,22 +469,40 @@
         "board-changed": "_onBoardChanged"
       },
       observers: [
-        "_onToolboxViewPermissionChange(permissions.can_view_edition_panel)",
+        "_onToolboxViewPermissionChange(permissions.can_view_edition_panel, permissions.can_view_size_section, permissions.can_view_attire_section)",
         "_onInitialBoardOptionsChange(selectedTab, showAttire, permissions.*)"
       ],
+
+      attached: function() {
+        this.tooltipAnimation = {
+          "entry": [{"name": "fade-in-animation", "timing": {"delay": 0}}],
+          "exit": [{"name": "fade-out-animation", "timing": {"delay": 0}}]
+        };
+      },
 
       ready: function() {
         this.DEFAULT_SIZE_X = 4;
         this.DEFAULT_SIZE_Y = 4;
 
         this.stylist = new Stylist();
+        this.stylist.setUpZoom();
         this.stylist.setPanelAsResizable(this.size);
+
+        window.GobstonesBoard.setAttireProvider({
+          get: (name) => {
+            const attire = _.find(this.availableAttires, { name });
+            if (!attire) {
+              alert("The description is using the attire '" + name + "' but it wasn't found.")
+              return null;
+            }
+
+            return _.assign({}, attire, { enabled: true });
+          }
+        });
 
         this.async(() => {
           this.initialStateEditor = this.$$("#initialStateEditor");
         });
-
-        this._adapter = new ParserAndBoardAdapter();
 
         this.subscribeTo("run-request", eventInfo => {
           this._onRunRequest(eventInfo);
@@ -383,6 +510,8 @@
           this._cleanState();
         }).subscribeTo("execution-result", eventInfo => {
           this._onResult(eventInfo);
+        }).subscribeTo("return-value", eventInfo => {
+          this._onReturnValue(eventInfo);
         }).subscribeTo("compilation-error", eventInfo => {
           this._onCompilationError(eventInfo);
         }).subscribeTo("execution-error", eventInfo => {
@@ -397,13 +526,7 @@
           this._restoreInteractive();
         });
 
-        if (this.availableInitialStates.length > 0) return;
-        this._bootstrap();
-
-        this.tooltipAnimation = {
-          "entry": [{"name": "fade-in-animation", "timing": {"delay": 1000}}],
-          "exit": [{"name": "fade-out-animation"}]
-        };
+        this.reset();
       },
 
       toggleShowCode: function() {
@@ -447,10 +570,14 @@
       },
 
       reset: function() {
+        this.isToolboxVisible = true;
         this.showAttire = false;
+        this.set("permissions.can_change_initial_board", true);
         this.set("permissions.can_view_edition_panel", true);
         this.set("permissions.can_edit_board", true);
         this.set("permissions.can_toggle_attire_visibility", true);
+        this.set("permissions.can_view_size_section", true);
+        this.set("permissions.can_view_attire_section", true);
         this.stylist.reset();
 
         this.sizeX = this.DEFAULT_SIZE_X;
@@ -493,12 +620,21 @@
         });
       },
 
+      showReturnValue: function() {
+        this.$$("#inspectResultsModal").open()
+      },
+
       getSizeOf: function({ table }) {
         return { x: table[0].length, y: table.length };
       },
 
-      finishLoadingBoards: function() {
+      initializeBoards: function() {
         this._selecting = false;
+      },
+
+      toggleToolbox: function(value) {
+        this.isToolboxVisible = _.isBoolean(value) ? value : !this.isToolboxVisible;
+        this._updateStylistToolboxVisible();
       },
 
       _bootstrap: function(sizeX = this.sizeX, sizeY = this.sizeY) {
@@ -528,6 +664,9 @@
       },
 
       _onRunRequest: function(options) {
+        if (!this.initialState)
+          throw new Error("Initial state not found. WEIRD!");
+
         this._cleanState();
 
         if (options.useRandomBoard)
@@ -535,35 +674,37 @@
 
         window.BUS.fire("initial-state", {
           header: this.initialState.header,
-          table: this._adapter.adaptToParser(this.initialState.table),
+          table: this.initialState.table,
           size: this.size
         });
       },
 
       _onResult: function(result) {
-        const board = result.board;
+        const { head, table } = result.board;
 
         this._setFinalState({
-          header: _.pick(board, "x", "y"),
-          table: this._adapter.adaptToBoard(board.table)
+          header: head,
+          table: table
         });
+      },
+
+      _onReturnValue: function({ value }) {
+        this.returnValue = value;
       },
 
       _onCompilationError: function(report) {
         this.showToast(
-          report.line
-            ? `[${report.line}] ${report.error.message}`
-            : this.localize(
-              report.libraryHasErrors
-                ? "the-library-has-errors"
-                : "the-program-has-errors"
-            )
+          this.localize(
+            report.libraryHasErrors
+              ? "the-library-has-errors"
+              : "the-program-has-errors"
+          )
         );
       },
 
       _onExecutionError: function(error) {
         this.error = error;
-        this.selectedTab = 1;
+        this._setSelectedTab(1);
       },
 
       _onUnknownError: function(error) {
@@ -573,7 +714,7 @@
       _setFinalState: function(finalState) {
         const firstTime = !this.finalState;
         this.set("finalState", finalState);
-        this.selectedTab = 1;
+        this._setSelectedTab(1);
 
         setTimeout(() => {
           this.$$("#finalStateEditor").update(finalState.table, finalState.header);
@@ -601,7 +742,7 @@
         this.sizeY = size.y;
 
         this._fillTable();
-        this.finishLoadingBoards();
+        this.initializeBoards();
       },
 
       _fillTable: function() {
@@ -611,7 +752,15 @@
       _cleanState: function() {
         this.finalState = null;
         this.error = null;
-        this.selectedTab = 0;
+        this.returnValue = null;
+        this._setSelectedTab(0);
+      },
+
+      _setSelectedTab(selectedTab) {
+        // this is to avoid a Polymer's bug where the tab pink bar doesn't appear
+        setTimeout(() => {
+          this.selectedTab = selectedTab;
+        });
       },
 
       _showCodeVisible: function({ base }) {
@@ -672,12 +821,12 @@
 
       _updateSelectedTab: function() {
         this._updateBoardStyles();
-        if (window.GBS_IS_RUNNING) this.selectedTab = 1;
+        if (window.GBS_IS_RUNNING) this._setSelectedTab(1);
       },
 
-      _onToolboxViewPermissionChange: function(visible) {
-        if (this.stylist) this.stylist.toolboxVisible = visible;
-        $(window).trigger("resize");
+      _onToolboxViewPermissionChange: function(visible, sizeVisible, attireVisible) {
+        if (!this.stylist) return;
+        this._updateStylistToolboxVisible(visible, sizeVisible, attireVisible);
       },
 
       _updateSize: function() {
@@ -709,6 +858,12 @@
         }, 1);
       },
 
+      shouldShowToolbox: function(permissions, isToolboxVisible) {
+        const hasPermission = this.hasPermission(permissions, "can_view_edition_panel");
+
+        return hasPermission && isToolboxVisible;
+      },
+
       isBoom: (error) => error !== undefined && error !== null,
       isInitialBoardSelected: (selectedTab) => selectedTab === 0,
       isFinalBoardSelected: (selectedTab) => selectedTab === 1,
@@ -732,6 +887,21 @@
 
       boardButtonCss: function(selectedTab, showAttire, permissions) {
         return "black-button" + (this.isInitialBoardNotEditable(selectedTab, showAttire, permissions) ? " hidden" : "");
+      },
+
+      toggleToolboxButtonCss: function(isToolboxVisible) {
+        return `toggle-toolbox-button-${isToolboxVisible ? "up" : "down"}`
+      },
+
+      toggleToolboxButtonIcon: function(isToolboxVisible) {
+        return `icons:arrow-drop-${isToolboxVisible ? "up" : "down"}`;
+      },
+
+      _updateStylistToolboxVisible: function(hasPermission = this.permissions.can_view_edition_panel, sizeVisible, attireVisible) {
+        this.stylist.toolboxVisible = hasPermission && this.isToolboxVisible;
+        if (sizeVisible !== undefined) this.stylist.sizeVisible = sizeVisible;
+        if (attireVisible !== undefined) this.stylist.attireVisible = attireVisible;
+        $(window).trigger("resize");
       }
     });
 

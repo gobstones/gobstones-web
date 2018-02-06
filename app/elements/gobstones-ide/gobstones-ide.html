@@ -2,13 +2,29 @@
 <link rel="import" href="../../scripts/behaviors/localizationBehavior.html">
 <link rel="import" href="../../scripts/behaviors/loaderBehavior.html">
 <link rel="import" href="../../scripts/jquery.html">
+<link rel="import" href="../../scripts/tour.html">
 <link rel="import" href="../../scripts/showdown.html">
 <link rel="import" href="../../scripts/js-emoji.html">
 <link rel="import" href="../../scripts/loaders/remote/urlLoader.html">
 <link rel="import" href="../../scripts/loaders/remote/gitHubLoader.html">
+<link rel="import" href="../../scripts/loaders/remote/fsLoader.html">
+<link rel="import" href="../project-selector/project-selector.html">
+<link rel="import" href="../code-viewer/code-viewer.html">
+
+<link rel="stylesheet" href="../../bower_components/material-walkthrough/dist/material-walkthrough.min.css">
 
 <dom-module id="gobstones-ide">
   <style>
+    .overlay {
+      background-color: rgba(1, 1, 1, 0);
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 9999;
+    }
+
     .loading {
       z-index: 999;
       position: absolute;
@@ -21,33 +37,60 @@
       margin-left: -300px;
       top: 50%;
       left: 50%;
+      transform: translateY(-100%);
+    }
+
+    .loading-logo {
+      width: 200px;
+      height: 200px;
+      opacity: 0.8;
     }
 
     .gray {
       filter: grayscale(100%);
     }
 
-    .description {
+    .ide-modal {
       min-width: 500px;
     }
 
-    .accept {
-      cursor: pointer;
+    .project-selector-modal {
+      width: 1083px;
+    }
+
+    .code-placeholder {
+      position: absolute;
+      top: 78px;
+      left: 100px;
+      width: 300px;
+      height: 300px;
+      pointer-events: none;
+    }
+
+    .description-dialog {
+      user-select: none;
     }
   </style>
 
   <template>
 
-    <div class$="panel-container {{ideCss(isLoading)}}">
-      <template is="dom-if" if="{{isLoading}}">
+    <template is="dom-if" if="{{showIsLoading}}">
+      <div class="overlay">
         <div class="loading">
-          <paper-spinner active></paper-spinner>
-          <span>[[localize("loading-project")]]</span>
+          <div>
+            <img class="loading-logo" src="../../images/logo.png" />
+          </div>
+          <div>
+            <paper-spinner active></paper-spinner>
+            <span>[[localize("loading")]]</span>
+          </div>
         </div>
-      </template>
+      </div>
+    </template>
 
+    <div class$="panel-container {{ideCss(showIsLoading)}}">
       <div class="panel-left">
-        <editor-toolbar project-type="[[projectType]]" id="toolbar"></editor-toolbar>
+        <editor-toolbar id="toolbar" project-type="[[projectType]]" id="toolbar"></editor-toolbar>
 
         <template is="dom-if" if="{{isBlocksProject(projectType)}}">
           <gobstones-blockly id="editor"></gobstones-blockly>
@@ -56,37 +99,44 @@
         <template is="dom-if" if="{{isCodeProject(projectType)}}">
           <gobstones-editor id="editor"></gobstones-editor>
         </template>
+
+        <div id="code-placeholder" class="code-placeholder"></div>
       </div>
 
       <div class="panel-right">
         <boards-panel id="boards"></boards-panel>
       </div>
 
-      <paper-dialog id="modal" class="description">
+      <paper-dialog class="description-dialog" id="descriptionModal" on-iron-overlay-closed="_onCloseDescriptionModal" class="ide-modal">
+        <paper-button class="accept close" dialog-confirm autofocus><iron-icon icon="icons:close"></iron-icon></paper-button>
+
         <paper-dialog-scrollable>
-          <div inner-h-t-m-l="[[compileMd(modalContent)]]"></div>
+          <div inner-h-t-m-l="[[compileMd(description)]]"></div>
         </paper-dialog-scrollable>
 
         <div class="buttons">
           <paper-button class="accept" dialog-confirm autofocus>[[localize("accept")]]</paper-button>
         </div>
       </paper-dialog>
+
+      <paper-dialog id="projectSelectorModal" class="project-selector-modal">
+        <paper-button class="accept close" dialog-confirm autofocus><iron-icon icon="icons:close"></iron-icon></paper-button>
+
+        <paper-dialog-scrollable>
+          <project-selector projectType="[[projectType]]"></project-selector>
+        </paper-dialog-scrollable>
+      </paper-dialog>
+
+      <paper-dialog id="codeViewModal" class="code-view-modal">
+        <paper-button class="accept close" dialog-confirm autofocus><iron-icon icon="icons:close"></iron-icon></paper-button>
+
+        <code-viewer id="codeViewer" code="[[currentCode]]"></code-viwer>
+      </paper-dialog>
     </div>
 
   </template>
 
   <script>
-
-    // http://stackoverflow.com/questions/901115/how-can-i-get-query-string-values-in-javascript
-    function getParameterByName(name, url) {
-      if (!url) url = window.location.href;
-      name = name.replace(/[\[\]]/g, "\\$&");
-      var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
-          results = regex.exec(url);
-      if (!results) return null;
-      if (!results[2]) return '';
-      return decodeURIComponent(results[2].replace(/\+/g, " "));
-    }
 
     Polymer({
       is: 'gobstones-ide',
@@ -100,27 +150,66 @@
       ],
       properties: {
         projectType: String,
+        showIsLoading: {
+          type: Boolean,
+          computed: "_computeShowIsLoading(isLoading, isLoadingProjects)",
+        },
         isLoading: {
           type: Boolean,
           value: false
         },
-        modalContent: {
+        isLoadingProjects: {
+          type: Boolean,
+          value: false
+        },
+        description: {
+          type: String,
+          value: ""
+        },
+        currentCode: {
           type: String,
           value: ""
         }
       },
 
       ready: function() {
+        window.extendJQuery();
+        window.GBS_PROJECT_TYPE = this.projectType;
+        this._setTheRightUrl();
+        this._setUpKeys();
         this._setUpLoaders();
+        this._setUpMouseWheel();
       },
 
-      setModal: function(markdown) {
-        this.modalContent = markdown;
+      setDescription: function(markdown) {
+        this.description = markdown;
         window.BUS.fire("has-description", markdown !== "");
       },
 
-      toggleModal: function() {
-        document.querySelector("#modal").toggle();
+      showDescriptionModal: function() {
+        document.querySelector("#descriptionModal").open();
+        $("paper-drawer-panel")[0].closeDrawer();
+      },
+
+      hideProjectSelectorModal: function() {
+        document.querySelector("#projectSelectorModal").close();
+      },
+
+      showProjectSelectorModal: function() {
+        document.querySelector("#projectSelectorModal").open();
+        $("paper-drawer-panel")[0].closeDrawer();
+      },
+
+      isProjectSelectorModalOpened: function() {
+        return document.querySelector("#projectSelectorModal").opened;
+      },
+
+      setCurrentCode: function(newCode) {
+        this.currentCode = newCode;
+      },
+
+      showCodeViewModal: function(newCode) {
+        document.querySelector("#codeViewModal").open();
       },
 
       isBlocksProject: function(projectType) { return projectType === 'blocks'; },
@@ -135,7 +224,11 @@
       },
 
       _renderMarkdown: function(markdown) {
-        return new showdown.Converter({tables: true}).makeHtml(markdown);
+        if (!window.showdown && window.GBS_DESKTOP) {
+          window.showdown = window.GBS_REQUIRE("showdown");
+        }
+
+        return new window.showdown.Converter({tables: true}).makeHtml(markdown);
       },
 
       _renderEmojis: function(markdown) {
@@ -146,21 +239,27 @@
         return emoji.replace_colons(markdown);
       },
 
+      _onCloseDescriptionModal: function() {
+        this._showTour();
+      },
+
       _makeAppUrl: function(partialUrl) {
         return location.pathname + partialUrl;
       },
 
       _showCodeChanged: function({ detail }) {
-        this._resizeLeftPanel(detail, 0);
+        this.resizeLeftPanel(detail, 0);
       },
 
       _showBoardsChanged: function({ detail }) {
-        this._resizeLeftPanel(detail, $(document).width());
+        this.resizeLeftPanel(detail, $(document).width());
       },
 
-      _resizeLeftPanel: function(show, size) {
+      resizeLeftPanel: function(show, size) {
+        const percentage = window.STORAGE.getItem("code-panel-percentage") || 0.6;
+
         $(".panel-left").width(
-          show ? $(document).width() * 0.6 : size
+          show ? $(document).width() * percentage : size
         );
         $(window).trigger("resize");
       },
@@ -173,17 +272,22 @@
           return this._setUpLoader(UrlLoader, projectUrl, getContext);
 
         const gitHubSlug = getParameterByName("github");
+        const gitHubPath = getParameterByName("path");
         if (gitHubSlug)
-          return this._setUpLoader(GitHubLoader, gitHubSlug, getContext);
+          return this._setUpLoader(GitHubLoader, gitHubSlug, getContext, gitHubPath);
+
+        const fsPath = getParameterByName("fs");
+        if (fsPath)
+          return this._setUpLoader(FsLoader, fsPath, getContext);
       },
 
-      _setUpLoader: function(Loader, url, getContext) {
+      _setUpLoader: function(Loader, resource, getContext, subresource) {
         window.LOAD_PENDING_PROJECT = () => {
-          this.isLoading = true;
-          var finish = () => { this.isLoading = false; };
+          this.startLoading();
+          var finish = () => { this.stopLoading(); };
 
-          new Loader(this.projectType)
-            .load(url, getContext, finish)
+          new Loader(this.projectType, resource, subresource)
+            .load(getContext, finish)
             .catch((e) => {
               console.error(e);
               alert(this.localize("error-loading-project"));
@@ -192,8 +296,134 @@
         };
       },
 
-      ideCss: function(isLoading) {
-        return isLoading ? "gray" : "";
+      _setUpMouseWheel() {
+        this.addEventListener("wheel", (event) => {
+          let parent = event.target;
+          let isBlocklyChild = false;
+          let isBlocklyToolboxChild = false;
+
+          while (parent) {
+            if (parent.id === "blocklyDiv")
+              isBlocklyChild = true;
+            if (parent.classList.contains("blocklyToolboxDiv"))
+              isBlocklyToolboxChild = true;
+
+            parent = parent.parentElement;
+          }
+
+          if (!isBlocklyChild || isBlocklyToolboxChild) {
+            event.preventDefault();
+            event.stopPropagation();
+          }
+        }, true);
+      },
+
+      startLoading(property = "isLoading") {
+        this[property] = true;
+      },
+
+      stopLoading(property = "isLoading") {
+        this[property] = false;
+      },
+
+      ideCss: function(showIsLoading) {
+        return showIsLoading ? "gray" : "";
+      },
+
+      _computeShowIsLoading: function(isLoading, isLoadingProjects) {
+        return isLoading || isLoadingProjects;
+      },
+
+      _setTheRightUrl() {
+        if (window.GBS_DESKTOP) return;
+
+        let url = window.location.href;
+        url = url.replace(/#\/?(blocks|code)/g, "");
+        if (this.projectType === "blocks")
+          url = url.replace(/gobstones-web/g, "gobstones-jr");
+
+        history.replaceState({}, '', url);
+      },
+
+      _setUpKeys: function() {
+        $(document).keydown((e) => {
+          if (e.keyCode == 27) { // ESC
+            if (window.GBS_TOUR_ON) {
+              window.MATERIAL_WALKER_CLOSE();
+              window.GBS_TOUR_ON = false;
+              window.GBS_TOUR_ENDED = true;
+
+              setTimeout(() => {
+                if (confirm(this.localize("do-you-want-to-disable-tutorial"))) {
+                  window.STORAGE.setItem("show-tutorial", false);
+                  document.querySelector("#menu").showTutorial = false;
+                }
+              }, 150);
+
+
+              return;
+            }
+          }
+        });
+      },
+
+      _showTour: function() {
+        if (!this.$.boards.showCode) return;
+
+        let shouldNotShow = window.STORAGE.getItem("show-tutorial") === "false";
+        if (window.GBS_TOUR_ENDED || shouldNotShow) return;
+        window.GBS_TOUR_ON = true;
+
+        $.walk([
+            {
+              target: "#code-placeholder",
+              content: '<span style="font-size: small; color: #dbdbdb;">' + this.localize("tutorial-0") + '</span><br>' + this.localize("tutorial-1"),
+              color: '#2e3aa1',
+              acceptText: 'OK'
+            },
+            {
+              target: ".panel-right",
+              content: this.localize("tutorial-2"),
+              color: '#2e3aa1',
+              acceptText: 'OK'
+            },
+            {
+              target: "#theBoardsTab",
+              content: this.localize("tutorial-2.5"),
+              color: '#2e3aa1',
+              acceptText: 'OK'
+            },
+            {
+              target: "#playButton",
+              content: this.localize("tutorial-3"),
+              color: '#0b465d',
+              acceptText: 'OK'
+            },
+            {
+              target: "#speedSlider",
+              content: this.localize("tutorial-3.5"),
+              color: '#0b465d',
+              acceptText: 'OK'
+            },
+            {
+              target: "#project-buttons-placeholder",
+              content: this.localize("tutorial-4"),
+              color: '#2e3aa1',
+              acceptText: 'OK'
+            },
+            {
+              target: "#open-description-button",
+              content: this.localize("tutorial-4.5"),
+              color: '#2e3aa1',
+              acceptText: 'OK'
+            },
+            {
+              target: "#options-button",
+              content: this.localize("tutorial-5"),
+              color: '#2e3aa1',
+              acceptText: 'OK'
+            }
+        ]);
       }
     });
 

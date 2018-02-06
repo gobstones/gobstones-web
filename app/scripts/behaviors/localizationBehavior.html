@@ -1,9 +1,10 @@
 <script>
   Polymer.MyLocalizationBehavior = {
-      attached() {
-          this.loadResources(this.resolveUrl("../../locales.json"));
-          this.language = "es";
-      }
+    attached() {
+      this.loadResources(this.resolveUrl("../../locales.json"));
+
+      this.language = window.STORAGE.getItem("language") || "es";
+    }
   };
 
   Polymer.LocalizationBehavior = [ Polymer.AppLocalizeBehavior, Polymer.MyLocalizationBehavior ];

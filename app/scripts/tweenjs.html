@@ -1,0 +1,9 @@
+<script src="../bower_components/tweenjs/src/Tween.js"></script>
+
+<script>
+  function animate(time) {
+    requestAnimationFrame(animate);
+    TWEEN.update(time);
+  }
+  requestAnimationFrame(animate);
+</script>

@@ -1,0 +1,32 @@
+<link rel="import" href="../../jquery.html">
+
+<script>
+  class GitHubGuideLoader {
+    constructor({ repo, exercises }) {
+      this.repo = repo;
+      this.exercises = exercises;
+    }
+
+    static all() {
+      const course = getParameterByName("course") || "gobstones/proyectos-jr";
+
+      return $.getJSON(`https://raw.githubusercontent.com/${course}/master/guides.json`);
+    }
+
+    static makeUrlFor(guide, exercise) {
+      return `/${window.GBS_PROJECT_TYPE}?github=${guide.repo}&path=${exercise.path}`;
+    }
+
+    getExercises() {
+      return promisify(this.exercises.map((exercise) => {
+        return _.assign(exercise, {
+          imageUrl: this._makeImageUrl(exercise.path)
+        });
+      }));
+    }
+
+    _makeImageUrl(path) {
+      return `https://raw.githubusercontent.com/${this.repo}/master/${path}/image.png`;
+    }
+  }
+</script>

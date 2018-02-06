@@ -3,11 +3,13 @@
     constructor(parser) {
       this.parser = parser;
       this.handles = [];
+
+      this.HACK_FIRST_WAIT_MS = 250;
     }
 
     run({ ast, request, throttle, callbacks }) {
-      const states = this._interpret(ast, request);
-      this._runWithThrottle(states, throttle, callbacks);
+      const { states, returnValue } = this._interpret(ast, request);
+      this._runWithThrottle(states, returnValue, throttle, callbacks);
     }
 
     clear() {
@@ -15,43 +17,64 @@
       this.handles = [];
     }
 
-    _runWithThrottle(states, throttle, { onResult, onStop }) {
-      if (throttle === 0) {
-        onResult(_.last(states));
-        return onStop("end");
+    _runWithThrottle(states, returnValue, throttle, { onResult, onStop, onReturnValue }) {
+      const _onResult = (state) => onResult(state.board || state, state);
+
+      const _onEnd = () => {
+        onStop("end");
+        onReturnValue(returnValue);
       }
 
-      this.handles = states.map((state, i) =>
-        setTimeout(() => {
-          onResult(state);
-          if (i === states.length - 1) onStop("end");
-        }, i * throttle)
-      );
+      if (throttle === 0) {
+        const lastState = _.last(states);
+        _onResult(_.last(states));
+        return _onEnd();
+      }
+
+      const firstState = _.first(states);
+      _onResult(_.first(states));
+      if (states.length === 1) return _onEnd();
+
+      setTimeout(() => {
+        this.handles = states.slice(1).map((state, i) => {
+          const ii = i + 1;
+
+          return setTimeout(() => {
+            _onResult(state);
+            if (ii === states.length - 1) _onEnd();
+          }, ii * throttle)
+        });
+      }, this.HACK_FIRST_WAIT_MS); // TODO: Pensar solución mejor
     }
 
     _interpret(ast, { initialState, code }) {
       try {
-        var context = this.parser.interpret(ast.program, initialState);
-        return this._getStates(context, ast.teacher, context.board());
+        var result = this.parser.interpret(ast.program, initialState);
+        return {
+          states: this._getStates(result, ast.teacher),
+          returnValue: result.returnValue
+        };
       } catch (e) {
         e.location = this.parser.getErrorLineAndMode(e, code);
-        return this._getStates(e.context, ast.teacher, { error: e });
+        return {
+          states: this._getStates(e, ast.teacher, { error: e })
+        };
       }
     }
 
-    _getStates(context, teacherAst, lastState) {
+    _getStates(result, teacherAst, lastState = []) {
       const teacherTools = teacherAst.declarations
         .filter(it => _.includes(["procedureDeclaration", "functionDeclaration"], it.alias))
         .map(it => it.name);
 
-      const snapshots = context.board().snapshots;
+      const snapshots = result.snapshots;
 
       return snapshots
         .filter((snapshot, i) => {
           const toName = (it) => it.split("-")[0];
 
-          const prevNames = _.take(snapshot.names, snapshot.names.length - 1);
-          const lastName = _.last(snapshot.names)
+          const prevNames = _.take(snapshot.contextNames, snapshot.contextNames.length - 1);
+          const lastName = _.last(snapshot.contextNames)
 
           let topIgnoredName = _.find(prevNames, (it) =>
             _.includes(teacherTools, toName(it))
@@ -60,13 +83,13 @@
           const hasToIgnoreIt = _.includes(teacherTools, toName(topIgnoredName));
 
           const isTheLastOcurrence = _.every(snapshots.slice(i + 1), futureSnapshot =>
-            !_.includes(futureSnapshot.names, topIgnoredName)
+            !_.includes(futureSnapshot.contextNames, topIgnoredName)
           );
 
           const isShowable = !hasToIgnoreIt || isTheLastOcurrence;
 
           return isShowable;
-        }).map(snapshot => snapshot.board).concat(lastState);
+        }).concat(lastState);
     }
   }
 </script>

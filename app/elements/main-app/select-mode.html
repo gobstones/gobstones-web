@@ -4,10 +4,19 @@ l">
 <link rel="import" href="../../scripts/behaviors/loaderBehavior.html">
 <link rel="import" href="../../scripts/loaders/projectBlocksLoader.html">
 
-<dom-module id="select-project">
+<dom-module id="select-mode">
   <style>
     .content {
       text-align: center;
+    }
+
+    .logo {
+      width: 100px;
+      height: 100px;
+    }
+
+    .title {
+      margin-bottom: 20px;
     }
 
     .button {
@@ -34,35 +43,62 @@ l">
     .button-code:after {
       content: 'Usar código';
     }
+
+    .download-desktop {
+      position: absolute;
+      right: 1px;
+    }
   </style>
 
   <template>
-    <editor-toolbar tools="none"></editor-toolbar>
-    <div class="content">
-      <paper-icon-button class="button button-blocks" on-click="useBlocks" icon="icons:extension" alt="use blocks"> </paper-icon-button>
+    <template is="dom-if" if="{{isDesktop}}">
+      <editor-toolbar></editor-toolbar>
+      <div class="content">
+        <!--
+        <div class="download-desktop">
+          <a href="https://github.com/gobstones/gobstones-web-desktop/releases">[[localize("download-desktop")]]</a>
+        </div>
+        -->
 
-      <paper-icon-button class="button button-code" on-click="useCode" icon="icons:code" alt="use code"> </paper-icon-button>
-    </div>
+        <div class="title">
+          <img class="logo" src="../../images/logo.png" />
+          <h1>Gobstones Web</h1>
+        </div>
 
-    <input id="InitialBlocksProject" type="file" accept=".gbp" on-change="onInitialProjectLoad" style="display:none;" />
+        <paper-icon-button class="button button-blocks" on-click="useBlocks" icon="icons:extension" alt="use blocks"> </paper-icon-button>
+
+        <paper-icon-button class="button button-code" on-click="useCode" icon="icons:code" alt="use code"> </paper-icon-button>
+      </div>
+
+      <input id="InitialBlocksProject" type="file" accept=".gbp" on-change="onInitialProjectLoad" style="display:none;" />
+    </template>
   </template>
 
   <script>
     Polymer({
-      is: 'select-project',
+      is: 'select-mode',
       behaviors: [
         Polymer.LocalizationBehavior,
         Polymer.LoaderBehavior
       ],
+      properties: {
+        isDesktop: {
+          type: Boolean,
+          value: window.GBS_DESKTOP
+        },
+      },
 
       ready: function() {
         this.setUpLoaders({
           InitialBlocksProject: new ProjectBlocksLoader
         });
+
+        if (!this.isDesktop) this.async(() => { this.useCode(); });
       },
 
       useBlocks: function() {
-        this.loadInitialBlocksProject();
+        //this.loadInitialBlocksProject();
+        this._goTo("/blocks");
       },
 
       useCode: function() {

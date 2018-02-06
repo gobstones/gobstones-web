@@ -1,29 +1,41 @@
+<link rel="import" href="./expandedLoader.html">
 <link rel="import" href="../projectLoader.html">
 <link rel="import" href="../projectBlocksLoader.html">
 
 <script>
-  class GitHubLoader {
-    constructor(projectType) {
+  class GitHubLoader extends ExpandedLoader {
+    constructor(projectType, slug, initialPath) {
+      super();
       this.loader = projectType === "code" ? new ProjectLoader : new ProjectBlocksLoader;
 
       this.CLIENT_ID = "086085200026d5c54c19";
       this.CLIENT_SECRET = "f40981be76b00e35d4437d71184f42a70d08f3a6";
+
+      this.slug = slug;
+      this.initialPath = initialPath;
     }
 
-    load(slug, getContext, callback) {
-      const [ username, repoName ] = slug.split("/");
+    load(getContext, callback) {
+      return this._loadDir(this.initialPath).then(files => {
+        if (this.initialPath !== undefined)
+          files.forEach(it => it.relativePath = it.relativePath.replaceAll(`${this.initialPath}/`, ""));
 
-      return this._loadDir(username, repoName).then(files => {
         this.loader.readRaw(getContext(), this._createZip(files), callback);
       });
     }
 
-    _loadDir(username, repoName, path = "/") {
+    scanDir(path = this.initialPath || "") {
+      const [ username, repoName ] = this.slug.split("/");
+
       return $.get(
-        `https://api.github.com/repos/${username}/${repoName}/contents${path}?client_id=${this.CLIENT_ID}&client_secret=${this.CLIENT_SECRET}`
-      ).then(entries => {
+        `https://api.github.com/repos/${username}/${repoName}/contents/${path}?client_id=${this.CLIENT_ID}&client_secret=${this.CLIENT_SECRET}`
+      );
+    }
+
+    _loadDir(path = "") {
+      return this.scanDir(path).then(entries => {
         const $files = entries.map(it =>
-          this._loadEntry(it, username, repoName, path)
+          this._loadEntry(it, path)
         );
 
         return $.when.apply($, $files).then(function() {
@@ -32,9 +44,9 @@
       });
     }
 
-    _loadEntry(entry, username, repoName, path) {
+    _loadEntry(entry, path) {
       return entry.type === "dir"
-        ? this._loadDir(username, repoName, `${path}/${entry.name}`)
+        ? this._loadDir(`${path}/${entry.name}`)
         : this._downloadFile(entry.download_url, entry.path);
     }
 
@@ -42,47 +54,6 @@
       return $.getBinary(url).then(content => {
         return { relativePath, content };
       });
-    }
-
-    _createZip(files) {
-      const entries = files.map(it => this._createZipEntry(it));
-      const zip = _.clone(entries);
-      zip.forEach = function(fn) {
-        entries.forEach(entry => {
-          fn(entry.relativePath, entry);
-        });
-      };
-      zip.files = _.keyBy(entries, "relativePath");
-
-      return zip;
-    }
-
-    _createZipEntry(file) {
-      return {
-        async: (encoding) => {
-          const deferred = new $.Deferred();
-          this._readBinary(file.content, encoding, deferred.resolve, deferred.reject);
-          return deferred.promise();
-        },
-        relativePath: file.relativePath
-      };
-    }
-
-    _readBinary(arrayBuffer, encoding, onSuccess, onFail) {
-      const buffers = [ arrayBuffer ];
-
-      const reader = new FileReader();
-      reader.onload = function(event) {
-        onSuccess(event.target.result);
-      };
-      reader.onerror = function (event) {
-        onFail(event.target.error);
-      };
-
-      if (encoding === "string")
-        reader.readAsText(new Blob(buffers));
-      else
-        reader.readAsBinaryString(new Blob(buffers, { type: 'application/octet-stream' }));
     }
   }
 </script>

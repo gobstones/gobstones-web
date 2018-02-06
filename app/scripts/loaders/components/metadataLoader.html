@@ -10,7 +10,7 @@
 
       this.FILENAME = "meta.yml";
 
-      this.SPEED_NAMES = ["low", "medium", "high", "instantaneous"];
+      this.SPEED_NAMES = ["low", "medium", "high", "superhigh", "instantaneous"];
       this.RANDOM_SOURCE = "random";
       this.SELECTED_SOURCE = "selected";
     }
@@ -23,15 +23,20 @@
           visible: context.toolbar.permissions.can_use_library
         },
         source: {
-          visible: context.boards.showCode
+          visible: context.boards.showCode,
+          percentage: +window.STORAGE.getItem("code-panel-percentage")
         },
         board: {
           active: context.boards.selectedInitialState + 1,
           initial_board_source: context.editor.runner.useRandomBoard ? this.RANDOM_SOURCE : this.SELECTED_SOURCE,
           visible_edition: context.boards.permissions.can_view_edition_panel,
+          collapse_toolbox: !context.boards.isToolboxVisible,
           user_permissions: {
-            can_change_source: context.editor.runner.permissions.can_change_source,
-            can_edit_board: context.boards.permissions.can_edit_board
+            can_change_initial_board: context.boards.permissions.can_change_initial_board,
+            can_change_initial_board_source: context.editor.runner.permissions.can_change_source,
+            can_edit_board: context.boards.permissions.can_edit_board,
+            can_view_size_section: context.boards.permissions.can_view_size_section,
+            can_view_attire_section: context.boards.permissions.can_view_attire_section
           }
         },
         execution_speed: {
@@ -56,10 +61,10 @@
     readContent(context, content, fileName) {
       const metadata = jsyaml.safeLoad(content);
 
-      context.boards.finishLoadingBoards();
+      context.boards.initializeBoards();
 
       // defaults
-      if (!metadata.source) metadata.source = { visible: true };
+      if (!metadata.source) metadata.source = { visible: true, percentage: context.boards.stylist.DEFAULT_PERCENTAGE };
 
       // name
       context.setProjectName(metadata.name);
@@ -68,6 +73,8 @@
       context.boards.selectedInitialState = metadata.board.active - 1;
       context.editor.runner.useRandomBoard = metadata.board.initial_board_source === this.RANDOM_SOURCE;
       context.boards.setShowCode(metadata.source.visible);
+      window.STORAGE.setItem("code-panel-percentage", metadata.source.percentage);
+      if (metadata.source.visible) context.ide.resizeLeftPanel(true);
 
       // execution_speed
       const speed = this.SPEED_NAMES.indexOf(metadata.execution_speed.active) + 1;
@@ -75,9 +82,14 @@
 
       // permissions
       context.toolbar.set("permissions.can_use_library", metadata.library.visible);
+      context.menu.set("permissions.can_use_library", metadata.library.visible);
       context.boards.set("permissions.can_view_edition_panel", metadata.board.visible_edition);
-      context.editor.runner.set("permissions.can_change_source", metadata.board.user_permissions.can_change_source);
+      context.boards.toggleToolbox(!metadata.board.collapse_toolbox);
+      context.editor.runner.set("permissions.can_change_source", metadata.board.user_permissions.can_change_initial_board_source);
+      context.boards.set("permissions.can_change_initial_board", metadata.board.user_permissions.can_change_initial_board);
       context.boards.set("permissions.can_edit_board", metadata.board.user_permissions.can_edit_board);
+      context.boards.set("permissions.can_view_size_section", metadata.board.user_permissions.can_view_size_section !== false);
+      context.boards.set("permissions.can_view_attire_section", metadata.board.user_permissions.can_view_attire_section !== false);
       context.editor.runner.set("permissions.can_change_speed", metadata.execution_speed.user_permissions.can_change_speed);
       context.boards.set("permissions.can_toggle_attire_visibility", metadata.attire.user_permissions.can_toggle_visibility);
 
