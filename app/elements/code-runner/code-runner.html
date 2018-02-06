@@ -112,6 +112,7 @@
               this._setRunner(ast);
               if (!ast.program) {
                 const error = new Error(this.localize("missing-program"));
+                error.on = {};
                 error.location = { mode: "code", line: 1 };
                 itBroke(error);
                 return;

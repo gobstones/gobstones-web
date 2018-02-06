@@ -26,7 +26,7 @@
       // shouldHandle(path);
       // readProjectContent(context, content);
 
-      this.attireLoader = new ProjectAttireLoader("attires/");
+      this.attireLoader = new ProjectAttireLoader("assets/attires/");
       this.metadataLoader = new MetadataLoader();
       this.descriptionLoader = new DescriptionLoader();
     }
@@ -68,6 +68,7 @@
       this._loadFilesWithLoaders(context, zip, this.loaders, () => {
         context.boards.removeFirstBoard();
 
+        console.log("Reading attires...");
         this.attireLoader.readFromZip(context, zip, () => {
           this._loadFilesWithLoaders(context, zip, [this.metadataLoader, this.descriptionLoader], callback);
         });
@@ -88,6 +89,7 @@
         const getContent = () => zipEntry.async("string");
         if (!loader.shouldHandle(relativePath)) return;
 
+        console.log("Reading '" + relativePath + "'...");
         handled = true;
         getContent().then(content => {
           try {

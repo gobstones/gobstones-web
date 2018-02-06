@@ -23,6 +23,7 @@
     "keymaster": "~1.6.3",
     "showdown": "^1.6.4",
     "js-emoji": "^3.2.2",
+    "js-yaml": "~3.9.0",
     "material-walkthrough": "rodri042/material-walkthrough#^0.0.2",
     "gobstones-interpreter": "gobstones/gobstones-interpreter#bower",
     "tweenjs": "@tweenjs/tweenjs#v16.3.0",

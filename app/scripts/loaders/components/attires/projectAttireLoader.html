@@ -3,8 +3,10 @@
 <script>
   class ProjectAttireLoader {
     constructor(pathPrefix) {
+      this.FILENAME = "config.yml";
+
       this.reader = new AttireReader(relativePath => {
-        return _.includes(relativePath, "/") && _.endsWith(relativePath, ".json");
+        return _.includes(relativePath, "/") && _.endsWith(relativePath, `/${this.FILENAME}`);
       });
       this.pathPrefix = pathPrefix;
     }

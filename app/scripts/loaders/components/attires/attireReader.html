@@ -1,4 +1,5 @@
 <link rel="import" href="../../../async.html">
+<link rel="import" href="../../../js-yaml.html">
 
 <script>
   const toBinary = base64 => {
@@ -16,13 +17,13 @@
 
   class AttireReader {
     constructor(isAnAttire) {
-      this.FILE_EXTENSION = ".json";
+      this.FILENAME = "config.yml";
       this.BASE64_PREFIX = "data:image/png;base64,";
       this.isAnAttire = isAnAttire;
     }
 
     writeToZip(attire, zip, pathPrefix = "") {
-      zip.file(pathPrefix + attire.name + this.FILE_EXTENSION, this._serialize(attire));
+      zip.file(pathPrefix + this.FILENAME, this._serialize(attire));
 
       attire.rules.forEach(rule => {
         const imageBase64 = rule.image.replace(this.BASE64_PREFIX, "");
@@ -77,11 +78,11 @@
     }
 
     _serialize(attire) {
-      return JSON.stringify(this._transform(attire), null, 2);
+      return jsyaml.safeDump(this._transform(attire));
     }
 
-    _deserialize(json) {
-      return JSON.parse(json);
+    _deserialize(attire) {
+      return jsyaml.safeLoad(attire);
     }
 
     _transform(attire) {

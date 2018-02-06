@@ -1,6 +1,13 @@
 <link rel="import" href="../../jquery.html">
 
 <script>
+  const COURSE = () => {
+    if (!window.GBS_COURSE)
+      window.GBS_COURSE = getParameterByName("course") || "gobstones/proyectos-jr";
+
+    return window.GBS_COURSE;
+  };
+
   class GitHubGuideLoader {
     constructor({ repo, exercises }) {
       this.repo = repo;
@@ -8,13 +15,11 @@
     }
 
     static all() {
-      const course = getParameterByName("course") || "gobstones/proyectos-jr";
-
-      return $.getJSON(`https://raw.githubusercontent.com/${course}/master/guides.json`);
+      return $.getJSON(`https://raw.githubusercontent.com/${COURSE()}/master/guides.json`);
     }
 
     static makeUrlFor(guide, exercise) {
-      return `/${window.GBS_PROJECT_TYPE}?github=${guide.repo}&path=${exercise.path}`;
+      return `/${window.GBS_PROJECT_TYPE}?course=${COURSE()}&github=${guide.repo}&path=${exercise.path}`;
     }
 
     getExercises() {

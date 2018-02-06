@@ -1,5 +1,6 @@
 <link rel="import" href="../textLoader.html">
 <link rel="import" href="mixins/singleFileComponent.html">
+<link rel="import" href="../../js-yaml.html">
 
 <script>
   class MetadataLoader extends TextLoader {
@@ -7,10 +8,7 @@
       super();
       _.defaults(this, SingleFileComponent);
 
-      this.SUFFIX = ".json";
-      this.shouldHandle = path => {
-        return !_.includes(path, "/") && _.endsWith(path, this.SUFFIX);
-      };
+      this.FILENAME = "meta.yml";
 
       this.SPEED_NAMES = ["low", "medium", "high", "superhigh", "instantaneous"];
       this.RANDOM_SOURCE = "random";
@@ -18,7 +16,7 @@
     }
 
     buildContent(context) {
-      return JSON.stringify({
+      return jsyaml.safeDump({
         name: context.getProjectName(),
         type: context.ide.projectType,
         library: {
@@ -57,11 +55,11 @@
           }
         },
         blocks: context.editor.toolbox
-      }, null, 2);
+      }, { skipInvalid: true });
     }
 
     readContent(context, content, fileName) {
-      const metadata = JSON.parse(content);
+      const metadata = jsyaml.safeLoad(content);
 
       context.boards.initializeBoards();
 
