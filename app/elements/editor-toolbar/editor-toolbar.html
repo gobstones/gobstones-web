@@ -19,6 +19,18 @@
         user-select: none;
       }
 
+      .procedures-hint-button {
+        cursor: pointer;
+        margin-right: 15px;
+        color: orange;
+      }
+
+      .procedures-hint-tooltip {
+        font-size: 15px;
+        width: 400px;
+        text-align: center;
+      }
+
       .main-toolbar {
         z-index: 10;
       }
@@ -59,6 +71,15 @@
         </div>
 
         <div class="title"></div>
+
+        <template is="dom-if" if="{{showProceduresHint}}">
+          <iron-icon id="procedures-hint-button" class="procedures-hint-button" icon="icons:lightbulb-outline"></iron-icon></paper-button>
+          <paper-tooltip for="procedures-hint-button" position="left" animation-config="{{tooltipAnimation}}">
+            <div class="procedures-hint-tooltip">
+              [[localize("you-have-available-actions")]]
+            </div>
+          </paper-tooltip>
+        </template>
 
         <div class="buttons">
           <template is="dom-if" if="{{_isCodeProject(projectType)}}">
@@ -113,10 +134,22 @@
           type: Boolean,
           value: false
         },
+        showProceduresHint: {
+          type: Boolean,
+          value: false
+        },
         permissions: {
           type: Object,
           value: { can_use_library: true }
-        }
+        },
+        tooltipAnimation: Object
+      },
+
+      attached: function() {
+        this.tooltipAnimation = {
+          "entry": [{"name": "fade-in-animation", "timing": {"delay": 0}}],
+          "exit": [{"name": "fade-out-animation", "timing": {"delay": 0}}]
+        };
       },
 
       ready: function() {
@@ -130,6 +163,10 @@
           this.showBoards = true;
         }).subscribeTo("has-description", (hasDescription) => {
           this.showInfo = hasDescription;
+        }).subscribeTo("primitive-actions-on", () => {
+          this.showProceduresHint = true;
+        }).subscribeTo("primitive-actions-off", () => {
+          this.showProceduresHint = false;
         }).subscribeTo("load-project-from-file", () => {
           // TODO: El editor-toolbar de select-mode queda activo por alguna razón
           if (this.projectType === "none") return;

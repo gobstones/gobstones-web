@@ -35,7 +35,7 @@
         background-color: rgba(11, 70, 93, 0.5);
         border-radius: 15px;
         z-index: 99;
-        /*pointer-events: none;*/
+        pointer-events: none;
         padding-left: 30px;
         padding-right: 30px;
         padding-bottom: 15px;
@@ -104,7 +104,10 @@
           type: Number,
           observer: "_fontSizeChanged"
         },
-        readonly: Boolean,
+        readonly: {
+          type: Boolean,
+          value: false
+        },
         primitiveProcedures: {
           type: Array,
           value: []
@@ -113,7 +116,10 @@
           type: Array,
           value: []
         },
-        isShowingProceduresHint: Boolean
+        isShowingProceduresHint: {
+          type: Boolean,
+          value: false
+        }
       },
       listeners: {
         "ace.editor-ready": "onAceReady",
@@ -272,13 +278,16 @@
       _onTeacherLibraryChange: function(teacherCode) {
         this.primitiveProcedures = [];
         this.primitiveFunctions = [];
+        window.BUS.fire("primitive-actions-off");
 
         try {
           const actions = new Parser().getActionNames(teacherCode);
 
-          if (!_.isEmpty(actions.procedureNames)) {
+          if (!_.isEmpty(actions.procedureNames) || !_.isEmpty(actions.functionNames)) {
             this.primitiveProcedures = actions.procedureNames;
             this.primitiveFunctions = actions.functionNames;
+
+            window.BUS.fire("primitive-actions-on");
           }
         } catch(e) {
           this.runner.reportTeacherLibraryErrors(e);
@@ -298,7 +307,7 @@
           exec: () => { this.runner.requestRun() }
         });
 
-        const key = "Alt";
+        const key = "Control";
         $(window).keydown((event) => {
           if (event.key === key) this.isShowingProceduresHint = true;
         });
