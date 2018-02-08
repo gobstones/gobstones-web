@@ -15,7 +15,7 @@ npm install && bower install
 
 ## run server
 ```bash
-npm start
+gulp serve
 ```
 
 ## run tests
