@@ -196,15 +196,15 @@
       <template is="dom-if" if="{{_isCodeProject(projectType)}}">
         <input id="Code" type="file" accept=".gbs" on-change="onLoadedCode" style="visibility: hidden;" />
 
-        <input id="Library" type="file" accept=".gbl" on-change="onLoadedLibrary" style="visibility: hidden;" />
+        <input id="Library" type="file" accept=".gbs" on-change="onLoadedLibrary" style="visibility: hidden;" />
       </template>
 
       <template is="dom-if" if="{{!_isCodeProject(projectType)}}">
-        <input id="Code" type="file" accept=".gbjs" on-change="onLoadedCode" style="visibility: hidden;" />
+        <input id="Code" type="file" accept=".gbk" on-change="onLoadedCode" style="visibility: hidden;" />
 
-        <input id="Library" type="file" accept=".gbjl" on-change="onLoadedLibrary" style="visibility: hidden;" />
+        <input id="Library" type="file" accept=".gbk" on-change="onLoadedLibrary" style="visibility: hidden;" />
 
-        <input id="AppendBlocks" type="file" accept=".gbjs,.gbjl" on-change="onLoadedAppendBlocks" style="visibility: hidden;" />
+        <input id="AppendBlocks" type="file" accept=".gbk" on-change="onLoadedAppendBlocks" style="visibility: hidden;" />
       </template>
 
       <input id="InitialBoard" type="file" accept=".gbb" on-change="onLoadedInitialBoard" style="visibility: hidden;" />
