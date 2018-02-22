@@ -218,11 +218,11 @@
 
       _onTeacherLibraryChange: function(teacherCode) {
           try {
-          const actions = new Parser().getActionNames(teacherCode);
+          const actions = new Parser().getActions(teacherCode);
 
-          if (!_.isEmpty(actions.procedureNames) || !_.isEmpty(actions.functionNames)) {
-            this.$.blockly.primitiveProcedures = actions.procedureNames;
-            this.$.blockly.primitiveFunctions = actions.functionNames;
+          if (!_.isEmpty(actions.procedureDeclarations) || !_.isEmpty(actions.functionDeclarations)) {
+            this.$.blockly.primitiveProcedures = actions.procedureDeclarations;
+            this.$.blockly.primitiveFunctions = actions.functionDeclarations;
           }
         } catch(e) {
           this.runner.reportTeacherLibraryErrors(e);

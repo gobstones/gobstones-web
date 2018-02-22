@@ -51,19 +51,7 @@
       }
     }
 
-    getActionNames(sourceCode) {
-      const declarations = this._getActions(sourceCode);
-
-      const computeDeclarations = (type) =>
-        _.map(declarations[`${type}Declarations`], "name");
-
-      return {
-        procedureNames: computeDeclarations("procedure"),
-        functionNames: computeDeclarations("function")
-      };
-    }
-
-    _getActions(sourceCode) {
+    getActions(sourceCode) {
       const result = this.parse(sourceCode);
       if (this.hasFailed(result)) throw result;
 
@@ -73,11 +61,27 @@
           declaration.alias === `${alias}Declaration` &&
           !declaration.name.toLowerCase().startsWith("aux");
 
-      const computeDeclarations = (alias) => _.filter(declarations, withAlias(alias));
+      const computeDeclarations = (alias) =>
+        _(declarations)
+          .filter(withAlias(alias))
+          .map((it) => _.assign(it, { attributes: result.getAttributes(it.name) }))
+          .value();
 
       return {
         procedureDeclarations: computeDeclarations("procedure"),
         functionDeclarations: computeDeclarations("function")
+      };
+    }
+
+    getActionNames(sourceCode) {
+      const declarations = this.getActions(sourceCode);
+
+      const computeDeclarations = (type) =>
+        _.map(declarations[`${type}Declarations`], "name");
+
+      return {
+        procedureNames: computeDeclarations("procedure"),
+        functionNames: computeDeclarations("function")
       };
     }
 
