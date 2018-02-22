@@ -170,12 +170,13 @@
           this.runner.run(
             { initialState, code },
             (error, code) => {
-              const region = error.on.region;
+              const { region } = error.on;
               if (region) this._showError(region, error);
               window.BUS.fire("compilation-error");
             },
             (state, fullState = {}) => {
-              const { region } = fullState;
+              const { regionStack } = fullState;
+              const region = this._getLastRegion(regionStack);
               if (region) this._highlight(region)
               this._notify(state);
             }
@@ -189,7 +190,8 @@
 
       _notify: function(state) {
         if (state.error) {
-          const region = state.error.on.region;
+          const { regionStack } = state.error.on;
+          const region = this._getLastRegion(regionStack);
           if (region) this._showError(region, state.error);
           window.BUS.fire("execution-error", state.error.message);
         } else
@@ -261,6 +263,10 @@
         const toolbox = $(".blocklyToolboxDiv");
         toolbox.mousemove(showMessageIfNeeded);
         toolbox.mouseup(showMessageIfNeeded);
+      },
+
+      _getLastRegion(regionStack) {
+        return _(regionStack).compact().last();
       },
 
       _showError(region, error) {
