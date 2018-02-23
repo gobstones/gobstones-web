@@ -38,7 +38,7 @@
 
     correctEditorHeight(editor) {
       const lineHeight = editor.renderer.lineHeight;
-      const availableLines = ($(document).height() - this.TOOLBAR_HEIGHT) / editor.renderer.lineHeight;
+      const availableLines = ($(document).height() - this.TOOLBAR_HEIGHT - this._getTabsHeight()) / editor.renderer.lineHeight;
 
       editor.setOption("minLines", availableLines);
       editor.setOption("maxLines", availableLines);
@@ -88,7 +88,7 @@
       const resize = () => {
         const panel = $(this.LEFT_PANEL_CSS_CLASS);
         $("#blocklyDiv").css("width", panel.width() + "px");
-        $("#blocklyDiv").css("height", panel.height() - this.TOOLBAR_HEIGHT + "px");
+        $("#blocklyDiv").css("height", panel.height() - this.TOOLBAR_HEIGHT - this._getTabsHeight() + "px");
 
         // fix for white overlay in procedure comments:
         $("#blocklyDiv").unbind("click");
@@ -186,13 +186,17 @@
       return $(document).height() - this.TOOLBAR_AND_TOOLBOX_HEIGHT();
     }
 
-
     _getBoardWidth() {
       return this._getBoard().width();
     }
 
     _getBoardHeight() {
       return this._getBoard().height();
+    }
+
+    _getTabsHeight() {
+      const ide = document.querySelector("#gobstones-ide");
+      return ide.projectType === "teacher" ? 48 : 0;
     }
 
     _getScale(percentage) {
