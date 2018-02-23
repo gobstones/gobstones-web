@@ -123,6 +123,7 @@ gulp.task('copy', function() {
   var app = gulp.src([
     'package.json',
     'app/*',
+    'jsoneditor',
     '!app/test',
     '!app/elements',
     '!app/bower_components',
