@@ -13,40 +13,48 @@
           opacity: 0.5;
         }
       }
+
+      .editor {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        left: 0;
+        top: 0;
+      }
+
+      .visible {
+        visibility: visible;
+      }
+
+      .unvisible {
+        visibility: hidden;
+      }
     </style>
 
-    <paper-tabs id="editorTab" selected="{{selectedTab}}" class="bottom self-end">
-      <paper-tab>[[localize("code")]]</paper-tab>
-      <paper-tab>[[localize("blocks")]]</paper-tab>
-      <paper-tab>[[localize("students-library")]]</paper-tab>
-      <paper-tab>[[localize("teachers-library")]]</paper-tab>
-      <paper-tab>[[localize("description")]]</paper-tab>
-      <paper-tab>[[localize("settings")]]</paper-tab>
-    </paper-tabs>
+    <div>
+      <paper-tabs id="editorTab" selected="{{selectedTab}}" class="bottom self-end">
+        <paper-tab>[[localize("code")]]</paper-tab>
+        <paper-tab>[[localize("blocks")]]</paper-tab>
+        <paper-tab>[[localize("students-library")]]</paper-tab>
+        <paper-tab>[[localize("teachers-library")]]</paper-tab>
+        <paper-tab>[[localize("description")]]</paper-tab>
+        <paper-tab>[[localize("settings")]]</paper-tab>
+      </paper-tabs>
 
-    <template is="dom-if" if="{{_isCodeSelected(selectedTab)}}">
-      <gobstones-editor id="code-editor" />
-    </template>
+      <div style="position: relative">
+        <gobstones-editor id="code-editor" class$="editor {{_codeClass(selectedTab)}}"></gobstones-editor>
 
-    <template is="dom-if" if="{{_isBlocksSelected(selectedTab)}}">
-      <gobstones-blockly id="blocks-editor" />
-    </template>
+        <gobstones-blockly id="blocks-editor" class$="editor {{_blocksClass(selectedTab)}}"></gobstones-blockly>
 
-    <template is="dom-if" if="{{_isLibrarySelected(selectedTab)}}">
-      <gobstones-editor id="library-editor" />
-    </template>
+        <gobstones-editor id="library-editor" class$="editor {{_libraryClass(selectedTab)}}"></gobstones-editor>
 
-    <template is="dom-if" if="{{_isTeacherLibrarySelected(selectedTab)}}">
-      <gobstones-editor id="teacher-library-editor" />
-    </template>
+        <gobstones-editor id="teacher-library-editor" class$="editor {{_teacherLibraryClass(selectedTab)}}"></gobstones-editor>
 
-    <template is="dom-if" if="{{_isDescriptionSelected(selectedTab)}}">
-      <description-editor id="description-editor" />
-    </template>
+        <description-editor id="description-editor" class$="editor {{_descriptionClass(selectedTab)}}"></description-editor>
 
-    <template is="dom-if" if="{{_isMetadataSelected(selectedTab)}}">
-      Metadata
-    </template>
+        <div class$="editor {{_metadataClass(selectedTab)}}">Metadata</div>
+      </div>
+    </div>
 
   </template>
 
@@ -70,18 +78,23 @@
       ready: function() {
       },
 
+      addCode: function(xml) {
+        // TODO: Pasar métodos a los correspondientes hijitos
+        this.$.blockly.appendBlocksToWorkspace(xml);
+      },
+
       setCode: function(code, mode = "main") {
       },
 
       reset: function() {
       },
 
-      _isCodeSelected: (selectedTab) => selectedTab === 0,
-      _isBlocksSelected: (selectedTab) => selectedTab === 1,
-      _isLibrarySelected: (selectedTab) => selectedTab === 2,
-      _isTeacherLibrarySelected: (selectedTab) => selectedTab === 3,
-      _isDescriptionSelected: (selectedTab) => selectedTab === 4,
-      _isMetadataSelected: (selectedTab) => selectedTab === 5
+      _codeClass: (selectedTab) => selectedTab === 0 ? "visible" : "unvisible",
+      _blocksClass: (selectedTab) => selectedTab === 1 ? "visible" : "unvisible",
+      _libraryClass: (selectedTab) => selectedTab === 2 ? "visible" : "unvisible",
+      _teacherLibraryClass: (selectedTab) => selectedTab === 3 ? "visible" : "unvisible",
+      _descriptionClass: (selectedTab) => selectedTab === 4 ? "visible" : "unvisible",
+      _metadataClass: (selectedTab) => selectedTab === 5 ? "visible" : "unvisible"
     });
 
   </script>

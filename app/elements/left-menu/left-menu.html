@@ -70,7 +70,7 @@
     <div class="line-separator"></div>
 
     <div role="listbox">
-      <template is="dom-if" if="{{_isCodeProject(projectType)}}">
+      <template is="dom-if" if="{{_isCodeOrTeacherProject(projectType)}}">
         <paper-item>
           <paper-item-body>
             <div>[[localize("code")]]</div>
@@ -80,17 +80,17 @@
         </paper-item>
       </template>
 
-      <template is="dom-if" if="{{_isBlocksProject(projectType)}}">
+      <template is="dom-if" if="{{_isBlocksOrTeacherProject(projectType)}}">
         <paper-item>
           <paper-item-body>
             <div>[[localize("blocks")]]</div>
           </paper-item-body>
-          <paper-icon-button on-click="loadCode" icon="icons:folder-open" alt="open"> </paper-icon-button>
-          <paper-icon-button on-click="saveCode" icon="icons:save" alt="save"> </paper-icon-button>
+          <paper-icon-button on-click="loadBlocks" icon="icons:folder-open" alt="open"> </paper-icon-button>
+          <paper-icon-button on-click="saveBlocks" icon="icons:save" alt="save"> </paper-icon-button>
         </paper-item>
       </template>
 
-      <template is="dom-if" if="{{_isCodeProject(projectType)}}">
+      <template is="dom-if" if="{{_isCodeOrTeacherProject(projectType)}}">
         <template is="dom-if" if="{{permissions.can_use_library}}">
           <paper-item>
             <paper-item-body>
@@ -125,7 +125,7 @@
         <paper-icon-button on-click="saveFinalBoard" icon="icons:save" alt="save"> </paper-icon-button>
       </paper-item>
 
-      <template is="dom-if" if="{{_isBlocksProject(projectType)}}">
+      <template is="dom-if" if="{{_isBlocksOrTeacherProject(projectType)}}">
         <paper-item>
           <paper-item-body>
             <div>[[localize("generated-code")]]</div>
@@ -193,14 +193,14 @@
     </div>
 
     <div class="items">
-      <template is="dom-if" if="{{_isCodeProject(projectType)}}">
+      <template is="dom-if" if="{{_isCodeOrTeacherProject(projectType)}}">
         <input id="Code" type="file" accept=".gbs" on-change="onLoadedCode" style="visibility: hidden;" />
 
         <input id="Library" type="file" accept=".gbs" on-change="onLoadedLibrary" style="visibility: hidden;" />
       </template>
 
-      <template is="dom-if" if="{{_isBlocksProject(projectType)}}">
-        <input id="Code" type="file" accept=".gbk" on-change="onLoadedCode" style="visibility: hidden;" />
+      <template is="dom-if" if="{{_isBlocksOrTeacherProject(projectType)}}">
+        <input id="Blocks" type="file" accept=".gbk" on-change="onLoadedBlocks" style="visibility: hidden;" />
 
         <input id="Library" type="file" accept=".gbk" on-change="onLoadedLibrary" style="visibility: hidden;" />
 
@@ -271,22 +271,24 @@
         }, 0);
 
         this.setUpLoaders(
-          this._isCodeProject(this.projectType)
-            ? {
-              Code: new CodeLoader,
-              Library: new LibraryLoader,
-              InitialBoard: new InitialBoardLoader,
-              Attire: new IndividualAttireLoader,
-              FinalBoard: new FinalBoardLoader
-            } : {
-              Code: new CodeBlocksLoader,
-              Library: new LibraryBlocksLoader,
-              InitialBoard: new InitialBoardLoader,
-              Attire: new IndividualAttireLoader,
-              FinalBoard: new FinalBoardLoader,
-              GeneratedCode: new CodeLoader,
-              AppendBlocks: new AppendBlocksLoader
-            }
+          _({
+            InitialBoard: new InitialBoardLoader,
+            Attire: new IndividualAttireLoader,
+            FinalBoard: new FinalBoardLoader
+          })
+            .assign(
+              this._isCodeOrTeacherProject(this.projectType) ? {
+                Code: new CodeLoader,
+                Library: new LibraryLoader
+              } : {})
+            .assign(
+              this._isBlocksOrTeacherProject(this.projectType) ? {
+                Blocks: new CodeBlocksLoader,
+                Library: new LibraryBlocksLoader,
+                GeneratedCode: new CodeLoader,
+                AppendBlocks: new AppendBlocksLoader
+              } : {})
+            .value()
         );
       },
 
@@ -328,11 +330,23 @@
       },
 
       _isCodeProject: function(projectType) {
-        return projectType === "code" || projectType === "teacher";
+        return projectType === "code";
       },
 
       _isBlocksProject: function(projectType) {
-        return projectType === "blocks" || projectType === "teacher";
+        return projectType === "blocks";
+      },
+
+      _isTeacherProject: function(projectType) {
+        return projectType === "teacher";
+      },
+
+      _isCodeOrTeacherProject: function(projectType) {
+        return this._isCodeProject(projectType) || this._isTeacherProject(projectType);
+      },
+
+      _isBlocksOrTeacherProject: function(projectType) {
+        return this._isBlocksProject(projectType) || this._isTeacherProject(projectType);
       },
 
       // _getDownloadProgress: function(downloadProgress, downloadTotal) {

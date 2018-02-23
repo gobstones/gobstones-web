@@ -1,13 +1,11 @@
 <link rel="import" href="projectLoader.html">
-<link rel="import" href="components/codeLoader.html">
 <link rel="import" href="components/codeBlocksLoader.html">
-<link rel="import" href="components/libraryLoader.html">
 <link rel="import" href="components/libraryBlocksLoader.html">
 <link rel="import" href="components/teacherLoader.html">
 <link rel="import" href="components/initialBoardLoader.html">
 
 <script>
-  class ProjectBlocksLoader extends ProjectLoader {
+  class ProjectTeacherLoader extends ProjectLoader {
     constructor() {
       super();
 
@@ -15,7 +13,9 @@
       this.loaders = [
         new TeacherLoader,
         new LibraryBlocksLoader,
+        new LibraryLoader,
         new CodeBlocksLoader,
+        new CodeLoader,
         new InitialBoardLoader
       ];
     }
