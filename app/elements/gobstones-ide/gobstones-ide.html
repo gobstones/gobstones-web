@@ -338,9 +338,11 @@
         if (window.GBS_DESKTOP) return;
 
         let url = window.location.href;
-        url = url.replace(/#\/?(blocks|code)/g, "");
+        url = url.replace(/#\/?(blocks|code|teacher)/g, "");
         if (this.projectType === "blocks")
           url = url.replace(/gobstones-web/g, "gobstones-jr");
+        if (this.projectType === "teacher")
+          url = url.replace(/gobstones-web/g, "gobstones-teacher");
 
         history.replaceState({}, '', url);
       },

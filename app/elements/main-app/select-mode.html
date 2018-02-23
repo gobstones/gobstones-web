@@ -93,7 +93,10 @@ l">
           InitialBlocksProject: new ProjectBlocksLoader
         });
 
-        if (!this.isDesktop) this.async(() => { this.useCode(); });
+
+        this.async(() => { this._goTo("/teacher"); });
+        // TODO: Recuperar
+        // if (!this.isDesktop) this.async(() => { this.useCode(); });
       },
 
       useBlocks: function() {

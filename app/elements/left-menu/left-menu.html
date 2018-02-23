@@ -80,7 +80,7 @@
         </paper-item>
       </template>
 
-      <template is="dom-if" if="{{!_isCodeProject(projectType)}}">
+      <template is="dom-if" if="{{_isBlocksProject(projectType)}}">
         <paper-item>
           <paper-item-body>
             <div>[[localize("blocks")]]</div>
@@ -125,7 +125,7 @@
         <paper-icon-button on-click="saveFinalBoard" icon="icons:save" alt="save"> </paper-icon-button>
       </paper-item>
 
-      <template is="dom-if" if="{{!_isCodeProject(projectType)}}">
+      <template is="dom-if" if="{{_isBlocksProject(projectType)}}">
         <paper-item>
           <paper-item-body>
             <div>[[localize("generated-code")]]</div>
@@ -199,7 +199,7 @@
         <input id="Library" type="file" accept=".gbs" on-change="onLoadedLibrary" style="visibility: hidden;" />
       </template>
 
-      <template is="dom-if" if="{{!_isCodeProject(projectType)}}">
+      <template is="dom-if" if="{{_isBlocksProject(projectType)}}">
         <input id="Code" type="file" accept=".gbk" on-change="onLoadedCode" style="visibility: hidden;" />
 
         <input id="Library" type="file" accept=".gbk" on-change="onLoadedLibrary" style="visibility: hidden;" />
@@ -328,7 +328,11 @@
       },
 
       _isCodeProject: function(projectType) {
-        return projectType === "code";
+        return projectType === "code" || projectType === "teacher";
+      },
+
+      _isBlocksProject: function(projectType) {
+        return projectType === "blocks" || projectType === "teacher";
       },
 
       // _getDownloadProgress: function(downloadProgress, downloadTotal) {
