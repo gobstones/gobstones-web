@@ -133,7 +133,6 @@
     _setUpResize(selector, extraPixels = 0) {
       const resize = () => {
         const panel = $(this.LEFT_PANEL_CSS_CLASS);
-        console.log(panel.height() - this.TOOLBAR_HEIGHT - this._getTabsHeight());
         $(selector).css("height", panel.height() - this.TOOLBAR_HEIGHT - this._getTabsHeight() + extraPixels + "px");
       };
 
