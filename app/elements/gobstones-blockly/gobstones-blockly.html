@@ -217,7 +217,7 @@
       },
 
       _onTeacherLibraryChange: function(teacherCode) {
-          try {
+        try {
           const actions = new Parser().getActions(teacherCode);
 
           if (!_.isEmpty(actions.procedureDeclarations) || !_.isEmpty(actions.functionDeclarations)) {
