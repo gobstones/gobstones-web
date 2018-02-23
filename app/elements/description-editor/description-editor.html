@@ -1,5 +1,6 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 <link rel="import" href="../../scripts/simplemde.html">
+<link rel="import" href="../../scripts/stylist.html">
 
 <dom-module id="description-editor">
   <template>
@@ -15,9 +16,13 @@
           const editor = new SimpleMDE({
             element: this.$$("#markdown-editor"),
             autofocus: true,
-            spellChecker: false
+            spellChecker: false,
+            hideIcons: ["side-by-side", "fullscreen", "guide"]
           });
         });
+
+        this.stylist = new Stylist();
+        this.stylist.setUpMarkdownEditorCustomizations();
       }
     });
   </script>
