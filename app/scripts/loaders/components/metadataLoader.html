@@ -18,7 +18,6 @@
     buildContent(context) {
       return jsyaml.safeDump({
         name: context.getProjectName(),
-        type: context.ide.projectType,
         library: {
           visible: context.toolbar.permissions.can_use_library
         },
