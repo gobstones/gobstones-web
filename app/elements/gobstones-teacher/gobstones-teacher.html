@@ -8,11 +8,21 @@
   <template>
 
     <style>
+      paper-tab {
+        --paper-tab-content-unselected: {
+          opacity: 0.5;
+        }
+      }
     </style>
 
-    <h1>
-      TEST
-    </h1>
+    <paper-tabs id="editorTab" selected="{{selectedTab}}" class="bottom self-end">
+      <paper-tab>[[localize("code")]]</paper-tab>
+      <paper-tab>[[localize("blocks")]]</paper-tab>
+      <paper-tab>[[localize("students-library")]]</paper-tab>
+      <paper-tab>[[localize("teachers-library")]]</paper-tab>
+      <paper-tab>[[localize("description")]]</paper-tab>
+      <paper-tab>[[localize("settings")]]</paper-tab>
+    </paper-tabs>
 
   </template>
 
@@ -25,6 +35,10 @@
         Polymer.LocalizationBehavior
       ],
       properties: {
+        selectedTab: {
+          type: Number,
+          value: 0
+        }
       },
       listeners: {
       },
@@ -36,7 +50,14 @@
       },
 
       reset: function() {
-      }
+      },
+
+      _isCodeSelected: (selectedTab) => selectedTab === 0,
+      _isBlocksSelected: (selectedTab) => selectedTab === 1,
+      _isLibrarySelected: (selectedTab) => selectedTab === 2,
+      _isTeacherLibrarySelected: (selectedTab) => selectedTab === 3,
+      _isDescriptionSelected: (selectedTab) => selectedTab === 4,
+      _isMetadataSelected: (selectedTab) => selectedTab === 5
     });
 
   </script>
