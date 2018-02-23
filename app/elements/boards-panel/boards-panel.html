@@ -350,7 +350,9 @@
       </div>
     </div>
 
-    <code-runner class="run-button" id="runner"></code-runner>
+    <code-runner class$="run-button {{_runButtonCss(projectType)}}" id="runner">
+
+    </code-runner>
 
     <paper-dialog id="inspectResultsModal" class="inspect-results-modal">
       <paper-button class="accept close" dialog-confirm autofocus><iron-icon icon="icons:close"></iron-icon></paper-button>
@@ -371,6 +373,10 @@
         Polymer.ToastBehavior
       ],
       properties: {
+        projectType: {
+          type: String,
+          value: "none"
+        },
         showCode: {
           type: Boolean,
           value: true
@@ -902,6 +908,10 @@
         if (sizeVisible !== undefined) this.stylist.sizeVisible = sizeVisible;
         if (attireVisible !== undefined) this.stylist.attireVisible = attireVisible;
         $(window).trigger("resize");
+      },
+
+      _runButtonCss: function(projectType) {
+        return projectType === "teacher" ? "hidden" : "";
       }
     });
 
