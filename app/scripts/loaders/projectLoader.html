@@ -32,7 +32,7 @@
     }
 
     save(context) {
-      const loaders = this.loaders.concat(this.metadataLoader);
+      const loaders = this._loadersForSaving();
       const files = _.flatMap(loaders, loader => loader.getFiles(context));
 
       const zip = new JSZip();
@@ -73,6 +73,10 @@
           this._loadFilesWithLoaders(context, zip, [this.metadataLoader, this.descriptionLoader], callback);
         });
       });
+    }
+
+    _loadersForSaving() {
+      return this.loaders.concat(this.metadataLoader);
     }
 
     _loadFilesWithLoaders(context, zip, loaders, callback) {

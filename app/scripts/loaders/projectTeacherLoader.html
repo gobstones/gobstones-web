@@ -24,5 +24,9 @@
       this.metadataLoader = new MetadataTeacherLoader()
       this.descriptionLoader = new DescriptionTeacherLoader()
     }
+
+    _loadersForSaving() {
+      return this.loaders.concat(this.metadataLoader, this.descriptionLoader);
+    }
   }
 </script>

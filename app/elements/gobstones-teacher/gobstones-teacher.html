@@ -161,6 +161,10 @@
         }
       },
 
+      getDescription: function() {
+        return this._editors()[ID_DESCRIPTION].getDescription();
+      },
+
       setDescription: function(content) {
         this._editors()[ID_DESCRIPTION].setDescription(content);
       },
