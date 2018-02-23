@@ -193,7 +193,7 @@
 
       toggleShowBoards: function() {
         this.showBoards = !this.showBoards;
-        this.fire("show-boards-changed", this.showBoards);
+        this._ide().showBoardsChanged({ detail: this.showBoards });
       },
 
       toggleLibrary: function() {

@@ -541,7 +541,7 @@
 
       setShowCode: function(showCode) {
         this.showCode = showCode;
-        this.fire("show-code-changed", this.showCode);
+        this._ide().showCodeChanged({ detail: this.showCode });
 
         setTimeout(() => {
           try {
@@ -908,7 +908,11 @@
         if (sizeVisible !== undefined) this.stylist.sizeVisible = sizeVisible;
         if (attireVisible !== undefined) this.stylist.attireVisible = attireVisible;
         $(window).trigger("resize");
-      }
+      },
+
+      _ide: function() {
+        return document.querySelector("#gobstones-ide");
+      },
     });
 
   </script>
