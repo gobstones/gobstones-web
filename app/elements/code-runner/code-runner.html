@@ -193,7 +193,7 @@
         this._checkLibraryCompiles(code.library, onError, () => {
           return this._checkLibraryCompiles(
             code.teacher,
-            this.reportTeacherLibraryErrors,
+            (e) => this.reportTeacherLibraryErrors(e),
             onSuccess
           );
         });

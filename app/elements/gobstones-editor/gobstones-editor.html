@@ -266,6 +266,10 @@
       _reportError: function(error, type) {
         if (error.location.mode === "library") this._setMode("library");
 
+        this._setAnnotation(error, type);
+      },
+
+      _setAnnotation(error, type) {
         this.editor.getSession().setAnnotations([{
           row: error.location.line - 1,
           column: 0,
