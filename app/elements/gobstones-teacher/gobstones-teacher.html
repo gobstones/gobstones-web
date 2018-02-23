@@ -169,6 +169,14 @@
         this._editors()[ID_DESCRIPTION].setDescription(content);
       },
 
+      getMetadata: function() {
+        return this._editors()[ID_METADATA].getMetadata();
+      },
+
+      setMetadata: function(content) {
+        this._editors()[ID_METADATA].setMetadata(content);
+      },
+
       generateCode: function(withRegions, blockly) {
         return this._editors()[ID_BLOCKS].generateCode(withRegions, blockly);
       },

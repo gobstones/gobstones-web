@@ -57,27 +57,43 @@
       }, { skipInvalid: true });
     }
 
+
+    readCoreOptions(context, content) {
+        context.boards.initializeBoards();
+
+        const metadata = jsyaml.safeLoad(content);
+
+        // defaults
+        if (!metadata.source) metadata.source = { visible: true, percentage: context.boards.stylist.DEFAULT_PERCENTAGE };
+
+        // name
+        context.setProjectName(metadata.name);
+
+        // board
+        context.boards.selectedInitialState = metadata.board.active - 1;
+        context.editor.runner.useRandomBoard = metadata.board.initial_board_source === this.RANDOM_SOURCE;
+        window.STORAGE.setItem("code-panel-percentage", metadata.source.percentage);
+        context.ide.resizeLeftPanel(true);
+
+        // execution_speed
+        const speed = this.SPEED_NAMES.indexOf(metadata.execution_speed.active) + 1;
+        context.editor.runner.speed = speed === 0 ? 4 : speed;
+
+        // attire
+        setTimeout(() => {
+          // wait for gs-board to fire "board-changed" and update the model
+          context.boards.setAttire(metadata.attire.active);
+          context.boards.showAttire = metadata.attire.visible;
+        }, 0);
+
+        return metadata;
+    }
+
     readContent(context, content, fileName) {
-      const metadata = jsyaml.safeLoad(content);
-
-      context.boards.initializeBoards();
-
-      // defaults
-      if (!metadata.source) metadata.source = { visible: true, percentage: context.boards.stylist.DEFAULT_PERCENTAGE };
-
-      // name
-      context.setProjectName(metadata.name);
+      const metadata = this.readCoreOptions(context, content);
 
       // board
-      context.boards.selectedInitialState = metadata.board.active - 1;
-      context.editor.runner.useRandomBoard = metadata.board.initial_board_source === this.RANDOM_SOURCE;
       context.boards.setShowCode(metadata.source.visible);
-      window.STORAGE.setItem("code-panel-percentage", metadata.source.percentage);
-      if (metadata.source.visible) context.ide.resizeLeftPanel(true);
-
-      // execution_speed
-      const speed = this.SPEED_NAMES.indexOf(metadata.execution_speed.active) + 1;
-      context.editor.runner.speed = speed === 0 ? 4 : speed;
 
       // permissions
       context.toolbar.set("permissions.can_use_library", metadata.library.visible);
@@ -91,13 +107,6 @@
       context.boards.set("permissions.can_view_attire_section", metadata.board.user_permissions.can_view_attire_section !== false);
       context.editor.runner.set("permissions.can_change_speed", metadata.execution_speed.user_permissions.can_change_speed);
       context.boards.set("permissions.can_toggle_attire_visibility", metadata.attire.user_permissions.can_toggle_visibility);
-
-      // attire
-      setTimeout(() => {
-        // wait for gs-board to fire "board-changed" and update the model
-        context.boards.setAttire(metadata.attire.active);
-        context.boards.showAttire = metadata.attire.visible;
-      }, 0);
 
       if (metadata.blocks) context.editor.toolbox = metadata.blocks;
     }
