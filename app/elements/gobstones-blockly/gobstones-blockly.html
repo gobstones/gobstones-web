@@ -71,24 +71,30 @@
         workspaceXml: {
           type: String,
           observer: "_updateCode"
+        },
+        withRunner: {
+          type: Boolean,
+          value: false
         }
       },
 
       ready: function() {
-        const boardsPanel = document.getElementById("boards");
-        if (boardsPanel) {
-          this.runner = boardsPanel.$.runner;
-          this.runner.addEventListener("run", ({ detail }) => {
-            this._onRunRequest(detail)
-          });
-          this.runner.addEventListener("cancel", () => {
-            window.BUS.fire("cancel-request");
+        if (this.withRunner) {
+          const boardsPanel = document.getElementById("boards");
+          if (boardsPanel) {
+            this.runner = boardsPanel.$.runner;
+            this.runner.addEventListener("run", ({ detail }) => {
+              this._onRunRequest(detail)
+            });
+            this.runner.addEventListener("cancel", () => {
+              window.BUS.fire("cancel-request");
+            });
+          }
+
+          this.subscribeTo("initial-state", event => {
+            this._runCode(event);
           });
         }
-
-        this.subscribeTo("initial-state", event => {
-          this._runCode(event);
-        });
 
         this.stylist = new Stylist();
         this.stylist.setUpBlocklyCustomizations();
@@ -220,10 +226,8 @@
         try {
           const actions = new Parser().getActions(teacherCode);
 
-          if (!_.isEmpty(actions.procedureDeclarations) || !_.isEmpty(actions.functionDeclarations)) {
-            this.$.blockly.primitiveProcedures = actions.procedureDeclarations;
-            this.$.blockly.primitiveFunctions = actions.functionDeclarations;
-          }
+          this.$.blockly.primitiveProcedures = actions.procedureDeclarations;
+          this.$.blockly.primitiveFunctions = actions.functionDeclarations;
         } catch(e) {
           this.runner.reportTeacherLibraryErrors(e);
         }

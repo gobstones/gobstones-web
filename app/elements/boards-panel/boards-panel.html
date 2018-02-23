@@ -350,7 +350,7 @@
       </div>
     </div>
 
-    <code-runner class$="run-button {{_runButtonCss(projectType)}}" id="runner">
+    <code-runner class="run-button" id="runner">
 
     </code-runner>
 
@@ -908,10 +908,6 @@
         if (sizeVisible !== undefined) this.stylist.sizeVisible = sizeVisible;
         if (attireVisible !== undefined) this.stylist.attireVisible = attireVisible;
         $(window).trigger("resize");
-      },
-
-      _runButtonCss: function(projectType) {
-        return projectType === "teacher" ? "hidden" : "";
       }
     });
 

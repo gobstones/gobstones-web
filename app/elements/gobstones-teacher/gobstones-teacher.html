@@ -77,17 +77,38 @@
         selectedTab: {
           type: Number,
           value: 0
-        },
-        runner: {
-          type: Object,
-          computed: "_computeRunner(selectedTab)"
-        },
+        }
         // TODO: Soportar code para la exportación
       },
       listeners: {
+        "content-change": "_onContentChange"
       },
 
       ready: function() {
+        const boardsPanel = document.getElementById("boards");
+        if (boardsPanel) {
+          this.runner = boardsPanel.$.runner;
+          this._editors()[ID_CODE].runner = this.runner;
+          this._editors()[ID_BLOCKS].runner = this.runner;
+
+          this.runner.addEventListener("run", ({ detail }) => {
+            if (this.selectedTab > ID_BLOCKS) return;
+
+            this._currentEditor()._onRunRequest(detail)
+            this._editors()[ID_CODE].readonly = true;
+          });
+          this.runner.addEventListener("cancel", () => {
+            window.BUS.fire("cancel-request");
+            this._editors()[ID_CODE].readonly = false;
+          });
+          this.runner.addEventListener("end", () => {
+            this._editors()[ID_CODE].readonly = false;
+          });
+        }
+
+        this.subscribeTo("initial-state", event => {
+          this._currentEditor()._runCode(event);
+        });
       },
 
       setCode: function(code, mode) {
@@ -124,6 +145,13 @@
         return this._editors().forEach((editor) => editor.reset && editor.reset());
       },
 
+      _onContentChange: function(event) {
+        const editor = event.target;
+        if (editor.id !== "teacher-library-editor") return;
+
+        this._editors()[ID_BLOCKS].setCode(editor.code.main, "teacher");
+      },
+
       _codeClass: (selectedTab) => selectedTab === ID_CODE ? "visible" : "unvisible",
       _blocksClass: (selectedTab) => selectedTab === ID_BLOCKS ? "visible" : "unvisible",
       _libraryClass: (selectedTab) => selectedTab === ID_LIBRARY ? "visible" : "unvisible",
@@ -141,10 +169,6 @@
 
       _currentEditor: function(selectedTab = this.selectedTab) {
         return this._editors()[selectedTab];
-      },
-
-      _computeRunner: function(selectedTab) {
-        return this._currentEditor(selectedTab).runner;
       }
     });
 

@@ -93,11 +93,11 @@
         <gbs-editor-toolbar id="toolbar" project-type="[[projectType]]" id="toolbar"></gbs-editor-toolbar>
 
         <template is="dom-if" if="{{isBlocksProject(projectType)}}">
-          <gobstones-blockly id="editor"></gobstones-blockly>
+          <gobstones-blockly id="editor" with-runner></gobstones-blockly>
         </template>
 
         <template is="dom-if" if="{{isCodeProject(projectType)}}">
-          <gobstones-editor id="editor" with-fatalities></gobstones-editor>
+          <gobstones-editor id="editor" with-fatalities with-runner></gobstones-editor>
         </template>
 
         <template is="dom-if" if="{{isTeacherProject(projectType)}}">

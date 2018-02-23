@@ -123,6 +123,10 @@
         withFatalities: {
           type: Boolean,
           value: false
+        },
+        withRunner: {
+          type: Boolean,
+          value: false
         }
       },
       listeners: {
@@ -135,25 +139,27 @@
         this.DEFAULT_FONT_SIZE = 17;
         this.HOP_SIZE = 3;
 
-        const boardsPanel = document.getElementById("boards");
-        if (boardsPanel) {
-          this.runner = boardsPanel.$.runner;
-          this.runner.addEventListener("run", ({ detail }) => {
-            this._onRunRequest(detail)
-            this.readonly = true;
-          });
-          this.runner.addEventListener("cancel", () => {
-            window.BUS.fire("cancel-request");
-            this.readonly = false;
-          });
-          this.runner.addEventListener("end", () => {
-            this.readonly = false;
+        if (this.withRunner) {
+          const boardsPanel = document.getElementById("boards");
+          if (boardsPanel) {
+            this.runner = boardsPanel.$.runner;
+            this.runner.addEventListener("run", ({ detail }) => {
+              this._onRunRequest(detail)
+              this.readonly = true;
+            });
+            this.runner.addEventListener("cancel", () => {
+              window.BUS.fire("cancel-request");
+              this.readonly = false;
+            });
+            this.runner.addEventListener("end", () => {
+              this.readonly = false;
+            });
+          }
+
+          this.subscribeTo("initial-state", event => {
+            this._runCode(event);
           });
         }
-
-        this.subscribeTo("initial-state", event => {
-          this._runCode(event);
-        });
 
         this.editor = this.$.ace.editor;
         this._setFatalities();
@@ -186,6 +192,7 @@
       onContentChange: function(content) {
         this.set(`code.${this.mode}`, content.detail.value);
         this.setAsDirty();
+        this.fire("content-change");
       },
 
       increaseFontSize: function() {

@@ -50,26 +50,26 @@
 
     _context: function() {
       const query = (id) => document.querySelector(id);
-      const toolbar = query("#toolbar");
 
       const loader = this;
+      const ide = this._ide();
+      const toolbar = query("#toolbar");
+      const menu = query("#menu");
+      const editor = query("#editor");
+      const boards = query("#boards");
 
       return {
-        ide: this._ide(),
-        toolbar: toolbar,
-        menu: query("#menu"),
-        editor: query("#editor"),
-        boards: query("#boards"),
+        ide, toolbar, menu, editor, boards,
         getProjectName: () => toolbar.projectName,
         setProjectName: (name) => toolbar.projectName = name,
 
         reset() {
-          this.ide.setDescription("");
-          this.ide.setCurrentCode("");
+          ide.setDescription("");
+          ide.setCurrentCode("");
           this.setProjectName(loader.localize("new-project"));
-          this.editor.reset();
-          this.boards.reset();
-          this.ide.hideProjectSelectorModal();
+          editor.reset();
+          boards.reset();
+          ide.hideProjectSelectorModal();
         }
       };
     },
