@@ -32,6 +32,22 @@
       <gobstones-blockly id="blocks-editor" />
     </template>
 
+    <template is="dom-if" if="{{_isLibrarySelected(selectedTab)}}">
+      <gobstones-editor id="library-editor" />
+    </template>
+
+    <template is="dom-if" if="{{_isTeacherLibrarySelected(selectedTab)}}">
+      <gobstones-editor id="teacher-library-editor" />
+    </template>
+
+    <template is="dom-if" if="{{_isDescriptionSelected(selectedTab)}}">
+      Description
+    </template>
+
+    <template is="dom-if" if="{{_isMetadataSelected(selectedTab)}}">
+      Metadata
+    </template>
+
   </template>
 
   <script>
