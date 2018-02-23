@@ -118,12 +118,14 @@
         <paper-icon-button on-click="saveAttire" icon="icons:save" alt="save"> </paper-icon-button>
       </paper-item>
 
-      <paper-item>
-        <paper-item-body>
-          <div>[[localize("final-board")]]</div>
-        </paper-item-body>
-        <paper-icon-button on-click="saveFinalBoard" icon="icons:save" alt="save"> </paper-icon-button>
-      </paper-item>
+      <template is="dom-if" if="{{!isTeacherProject(projectType)}}">
+        <paper-item>
+          <paper-item-body>
+            <div>[[localize("final-board")]]</div>
+          </paper-item-body>
+          <paper-icon-button on-click="saveFinalBoard" icon="icons:save" alt="save"> </paper-icon-button>
+        </paper-item>
+      </template>
 
       <template is="dom-if" if="{{_isBlocksOrTeacherProject(projectType)}}">
         <paper-item>

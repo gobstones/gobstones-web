@@ -90,10 +90,6 @@
       ready: function() {
       },
 
-      addCode: function(xml) {
-        return this._currentEditor().addCode(xml);
-      },
-
       setCode: function(code, mode) {
         const isBlocklyCode = code.startsWith("<");
 
@@ -116,20 +112,12 @@
         this._editors()[ID_DESCRIPTION].setDescription(content);
       },
 
-      undo: function() {
-        return this._currentEditor().undo();
-      },
-
-      increaseFontSize: function() {
-        return this._currentEditor().increaseFontSize();
-      },
-
-      decreaseFontSize: function() {
-        return this._currentEditor().decreaseFontSize();
-      },
-
       generateCode: function(withRegions, blockly) {
         return this._editors()[ID_BLOCKS].generateCode(withRegions, blockly);
+      },
+
+      addCode: function(xml) {
+        return this._editors()[ID_BLOCKS].addCode(xml);
       },
 
       reset: function() {

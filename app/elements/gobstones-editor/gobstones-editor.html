@@ -119,6 +119,10 @@
         isShowingProceduresHint: {
           type: Boolean,
           value: false
+        },
+        withFatalities: {
+          type: Boolean,
+          value: false
         }
       },
       listeners: {
@@ -299,6 +303,8 @@
       },
 
       _setFatalities: function() {
+        if (!this.withFatalities) return;
+
         const ace = this.$.ace;
 
         ace.editor.commands.addCommand({
