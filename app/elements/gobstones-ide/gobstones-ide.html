@@ -100,6 +100,10 @@
           <gobstones-editor id="editor"></gobstones-editor>
         </template>
 
+        <template is="dom-if" if="{{isTeacherProject(projectType)}}">
+          <gobstones-teacher id="editor"></gobstones-editor>
+        </template>
+
         <div id="code-placeholder" class="code-placeholder"></div>
       </div>
 
@@ -214,6 +218,7 @@
 
       isCodeProject: function(projectType) { return projectType === 'code'; },
       isBlocksProject: function(projectType) { return projectType === 'blocks'; },
+      isTeacherProject: function(projectType) { return projectType === 'teacher'; },
 
       compileMd: function(markdown) {
         return this._renderMarkdown(this._renderEmojis(markdown));

@@ -1,0 +1,43 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../scripts/parser.html">
+<link rel="import" href="../../scripts/behaviors/busListenerBehavior.html">
+<link rel="import" href="../../scripts/jquery.html">
+<link rel="import" href="../../scripts/stylist.html">
+
+<dom-module id="gobstones-teacher">
+  <template>
+
+    <style>
+    </style>
+
+    <h1>
+      TEST
+    </h1>
+
+  </template>
+
+  <script>
+
+    Polymer({
+      is: "gobstones-teacher",
+      behaviors: [
+        Polymer.BusListenerBehavior,
+        Polymer.LocalizationBehavior
+      ],
+      properties: {
+      },
+      listeners: {
+      },
+
+      ready: function() {
+      },
+
+      setCode: function(code, mode = "main") {
+      },
+
+      reset: function() {
+      }
+    });
+
+  </script>
+</dom-module>
