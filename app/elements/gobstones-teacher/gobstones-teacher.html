@@ -81,7 +81,8 @@
         runner: {
           type: Object,
           computed: "_computeRunner(selectedTab)"
-        }
+        },
+        // TODO: Soportar code para la exportación
       },
       listeners: {
       },
@@ -96,15 +97,19 @@
       setCode: function(code, mode) {
         const isBlocklyCode = code.startsWith("<");
 
-        return this._editors()[
-          mode === "library"
-            ? ID_LIBRARY
-            : (
-              mode === "teacher"
-                ? ID_TEACHER_LIBRARY
-                : (isBlocklyCode ? ID_BLOCKS : ID_CODE)
-            )
-        ].setCode(code);
+        const editors = this._editors();
+
+        if (mode === "library") {
+          editors[ID_LIBRARY].setCode(code);
+          editors[ID_CODE].setCode(code, mode);
+          editors[ID_BLOCKS].setCode(code, mode);
+        } else if (mode === "teacher") {
+          editors[ID_TEACHER_LIBRARY].setCode(code);
+          editors[ID_CODE].setCode(code, mode);
+          editors[ID_BLOCKS].setCode(code, mode);
+        } else {
+          editors[isBlocklyCode ? ID_BLOCKS : ID_CODE].setCode(code);
+        }
       },
 
       undo: function() {

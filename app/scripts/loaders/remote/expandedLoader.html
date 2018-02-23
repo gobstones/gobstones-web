@@ -1,5 +1,7 @@
+<link rel="import" href="./remoteLoader.html">
+
 <script>
-  class ExpandedLoader {
+  class ExpandedLoader extends RemoteLoader {
     _createZip(files) {
       const entries = files.map(it => this._createZipEntry(it));
       const zip = _.clone(entries);

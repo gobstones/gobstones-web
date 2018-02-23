@@ -1,6 +1,4 @@
 <link rel="import" href="./expandedLoader.html">
-<link rel="import" href="../projectLoader.html">
-<link rel="import" href="../projectBlocksLoader.html">
 
 <script>
   function toArrayBuffer(buf) {
@@ -15,7 +13,7 @@
   class FsLoader extends ExpandedLoader {
     constructor(projectType, path) {
       super();
-      this.loader = projectType === "code" ? new ProjectLoader : new ProjectBlocksLoader;
+      this.loader = this._getProjectLoader(projectType);
 
       this.path = path;
     }

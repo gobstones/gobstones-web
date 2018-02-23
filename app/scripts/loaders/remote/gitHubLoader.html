@@ -1,12 +1,10 @@
 <link rel="import" href="./expandedLoader.html">
-<link rel="import" href="../projectLoader.html">
-<link rel="import" href="../projectBlocksLoader.html">
 
 <script>
   class GitHubLoader extends ExpandedLoader {
     constructor(projectType, slug, initialPath) {
       super();
-      this.loader = projectType === "code" ? new ProjectLoader : new ProjectBlocksLoader;
+      this.loader = this._getProjectLoader(projectType);
 
       this.CLIENT_ID = "086085200026d5c54c19";
       this.CLIENT_SECRET = "f40981be76b00e35d4437d71184f42a70d08f3a6";

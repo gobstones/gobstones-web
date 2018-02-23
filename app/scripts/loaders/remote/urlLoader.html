@@ -1,10 +1,10 @@
-<link rel="import" href="../projectLoader.html">
-<link rel="import" href="../projectBlocksLoader.html">
+<link rel="import" href="./remoteLoader.html">
 
 <script>
-  class UrlLoader {
+  class UrlLoader extends RemoteLoader {
     constructor(projectType, url) {
-      this.loader = projectType === "code" ? new ProjectLoader : new ProjectBlocksLoader;
+      super();
+      this.loader = this._getProjectLoader(projectType);
 
       this.url = url;
     }
