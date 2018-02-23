@@ -86,7 +86,7 @@
             <paper-button on-click="increaseEditorFontSize"><iron-icon class="button" icon="icons:zoom-in"></iron-icon></paper-button>
             <paper-button on-click="decreaseEditorFontSize"><iron-icon class="button" icon="icons:zoom-out"></iron-icon></paper-button>
           </template>
-          <template is="dom-if" if="{{!_isCodeProject(projectType)}}">
+          <template is="dom-if" if="{{_isBlocksProject(projectType)}}">
             <paper-button on-click="undo"><iron-icon class="button" icon="icons:undo"></iron-icon></paper-button>
           </template>
           <template is="dom-if" if="{{showInfo}}">
@@ -216,6 +216,10 @@
 
       _isCodeProject: function(projectType) {
         return projectType === "code";
+      },
+
+      _isBlocksProject: function(projectType) {
+        return projectType === "blocks";
       },
 
       _areToolsVisible: function(projectType) {

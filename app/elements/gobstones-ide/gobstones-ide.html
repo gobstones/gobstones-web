@@ -212,8 +212,8 @@
         document.querySelector("#codeViewModal").open();
       },
 
-      isBlocksProject: function(projectType) { return projectType === 'blocks'; },
       isCodeProject: function(projectType) { return projectType === 'code'; },
+      isBlocksProject: function(projectType) { return projectType === 'blocks'; },
 
       compileMd: function(markdown) {
         return this._renderMarkdown(this._renderEmojis(markdown));
@@ -370,7 +370,7 @@
       },
 
       _showTour: function() {
-        if (!this.$.boards.showCode) return;
+        if (!this.$.boards.showCode || this.projectType === "teacher") return;
 
         let shouldNotShow = window.STORAGE.getItem("show-tutorial") === "false";
         if (window.GBS_TOUR_ENDED || shouldNotShow) return;
