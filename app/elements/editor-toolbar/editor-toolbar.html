@@ -6,7 +6,7 @@
 <link rel="import" href="../../scripts/loaders/projectBlocksLoader.html">
 <link rel="import" href="../../scripts/jquery.html">
 
-<dom-module id="editor-toolbar">
+<dom-module id="gbs-editor-toolbar">
   <template>
 
     <style>
@@ -107,7 +107,7 @@
   <script>
 
     Polymer({
-      is: 'editor-toolbar',
+      is: 'gbs-editor-toolbar',
       behaviors: [
         Polymer.BusListenerBehavior,
         Polymer.LocalizationBehavior,
@@ -168,7 +168,7 @@
         }).subscribeTo("primitive-actions-off", () => {
           this.showProceduresHint = false;
         }).subscribeTo("load-project-from-file", () => {
-          // TODO: El editor-toolbar de select-mode queda activo por alguna razón
+          // TODO: El gbs-editor-toolbar de select-mode queda activo por alguna razón
           if (this.projectType === "none") return;
 
           this.loadProject();

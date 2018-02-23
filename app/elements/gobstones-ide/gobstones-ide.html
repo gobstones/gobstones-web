@@ -90,7 +90,7 @@
 
     <div class$="panel-container {{ideCss(showIsLoading)}}">
       <div class="panel-left">
-        <editor-toolbar id="toolbar" project-type="[[projectType]]" id="toolbar"></editor-toolbar>
+        <gbs-editor-toolbar id="toolbar" project-type="[[projectType]]" id="toolbar"></gbs-editor-toolbar>
 
         <template is="dom-if" if="{{isBlocksProject(projectType)}}">
           <gobstones-blockly id="editor"></gobstones-blockly>

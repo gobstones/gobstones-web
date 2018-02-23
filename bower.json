@@ -27,7 +27,8 @@
     "material-walkthrough": "rodri042/material-walkthrough#^0.0.2",
     "gobstones-interpreter": "gobstones/gobstones-interpreter#bower",
     "tweenjs": "@tweenjs/tweenjs#v16.3.0",
-    "juicy-jsoneditor": "~1.2.0"
+    "juicy-jsoneditor": "~1.2.0",
+    "simplemde": "~1.11.2"
   },
   "ignore": [],
   "resolutions": {

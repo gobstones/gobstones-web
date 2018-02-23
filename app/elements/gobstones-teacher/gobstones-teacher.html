@@ -2,7 +2,7 @@
 <link rel="import" href="../../scripts/parser.html">
 <link rel="import" href="../../scripts/behaviors/busListenerBehavior.html">
 <link rel="import" href="../../scripts/jquery.html">
-<link rel="import" href="../../scripts/stylist.html">
+<link rel="import" href="../../scripts/simplemde.html">
 
 <dom-module id="gobstones-teacher">
   <template>
@@ -41,7 +41,7 @@
     </template>
 
     <template is="dom-if" if="{{_isDescriptionSelected(selectedTab)}}">
-      Description
+      <description-editor id="description-editor" />
     </template>
 
     <template is="dom-if" if="{{_isMetadataSelected(selectedTab)}}">

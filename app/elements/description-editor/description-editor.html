@@ -1,0 +1,26 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../scripts/simplemde.html">
+
+<dom-module id="description-editor">
+  <template>
+    <textarea id="markdown-editor"></textarea>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'description-editor',
+
+      ready: function() {
+        this.async(() => {
+          const editor = new SimpleMDE({
+            element: this.$$("#markdown-editor"),
+            autofocus: true,
+            spellChecker: false
+          });
+        });
+      }
+    });
+  </script>
+</dom-module>
+
+
