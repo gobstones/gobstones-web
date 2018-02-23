@@ -311,7 +311,7 @@
             parent = parent.parentElement;
           }
 
-          if (!isBlocklyChild || isBlocklyToolboxChild) {
+          if ((!isBlocklyChild && event.ctrlKey) || isBlocklyToolboxChild) {
             event.preventDefault();
             event.stopPropagation();
           }
