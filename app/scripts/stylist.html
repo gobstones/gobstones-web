@@ -123,9 +123,18 @@
     }
 
     setUpMarkdownEditorCustomizations() {
+      this._setUpResize(".CodeMirror", -100);
+    }
+
+    setUpMetadataEditorCustomizations() {
+      this._setUpResize(".metadata-editor-options");
+    }
+
+    _setUpResize(selector, extraPixels = 0) {
       const resize = () => {
         const panel = $(this.LEFT_PANEL_CSS_CLASS);
-        $(".CodeMirror").css("height", panel.height() - this.TOOLBAR_HEIGHT - this._getTabsHeight() - 100 + "px");
+        console.log(panel.height() - this.TOOLBAR_HEIGHT - this._getTabsHeight());
+        $(selector).css("height", panel.height() - this.TOOLBAR_HEIGHT - this._getTabsHeight() + extraPixels + "px");
       };
 
       setTimeout(resize, 0);

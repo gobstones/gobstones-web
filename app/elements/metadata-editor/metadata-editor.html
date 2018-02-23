@@ -9,9 +9,19 @@
         background-color: white;
         font-weight: 800;
       }
+
+      .metadata-editor-options {
+        width: 100%;
+        overflow: scroll;
+        overflow-x: hidden;
+      }
+
+      .json-editor {
+        height: 50vh;
+      }
     </style>
 
-    <div>
+    <div class="metadata-editor-options">
       <paper-item center-justified flex class="menu-header-gobstones">
         <div>Biblioteca (solo texto)</div>
       </paper-item>
@@ -31,7 +41,7 @@
         <paper-item-body>
           <div>Inicialmente visible</div>
         </paper-item-body>
-        <paper-toggle-button checked="{{metadata.library.visible}}"></paper-toggle-button>
+        <paper-toggle-button checked="{{metadata.source.visible}}"></paper-toggle-button>
       </paper-item>
 
       <paper-item center-justified flex class="menu-header-gobstones">
@@ -40,51 +50,51 @@
 
       <paper-item>
         <paper-item-body>
-          <div>Panel de edición visible</div>
+          <div>Panel de edición inicialmente colapsado</div>
         </paper-item-body>
-        <paper-toggle-button checked="{{metadata.library.visible}}"></paper-toggle-button>
+        <paper-toggle-button checked="{{metadata.board.collapse_toolbox}}"></paper-toggle-button>
       </paper-item>
 
       <paper-item>
         <paper-item-body>
-          <div>Panel de edición inicialmente colapsado</div>
+          <div>Panel de edición visible</div>
         </paper-item-body>
-        <paper-toggle-button checked="{{metadata.library.visible}}"></paper-toggle-button>
+        <paper-toggle-button checked="{{metadata.board.visible_edition}}"></paper-toggle-button>
       </paper-item>
 
       <paper-item>
         <paper-item-body>
           <div>Puede cambiar de tablero inicial</div>
         </paper-item-body>
-        <paper-toggle-button checked="{{metadata.library.visible}}"></paper-toggle-button>
+        <paper-toggle-button checked="{{metadata.board.user_permissions.can_change_initial_board}}"></paper-toggle-button>
       </paper-item>
 
       <paper-item>
         <paper-item-body>
           <div>Puede editar tableros iniciales</div>
         </paper-item-body>
-        <paper-toggle-button checked="{{metadata.library.visible}}"></paper-toggle-button>
+        <paper-toggle-button checked="{{metadata.board.user_permissions.can_edit_board}}"></paper-toggle-button>
       </paper-item>
 
       <paper-item>
         <paper-item-body>
           <div>Puede cambiar la fuente de tableros (aleatoria o seleccionada)</div>
         </paper-item-body>
-        <paper-toggle-button checked="{{metadata.library.visible}}"></paper-toggle-button>
+        <paper-toggle-button checked="{{metadata.board.user_permissions.can_change_initial_board_source}}"></paper-toggle-button>
       </paper-item>
 
       <paper-item>
         <paper-item-body>
           <div>Puede ver la sección de tamaño</div>
         </paper-item-body>
-        <paper-toggle-button checked="{{metadata.library.visible}}"></paper-toggle-button>
+        <paper-toggle-button checked="{{metadata.board.user_permissions.can_view_size_section}}"></paper-toggle-button>
       </paper-item>
 
       <paper-item>
         <paper-item-body>
           <div>Puede ver la sección de vestimentas</div>
         </paper-item-body>
-        <paper-toggle-button checked="{{metadata.library.visible}}"></paper-toggle-button>
+        <paper-toggle-button checked="{{metadata.board.user_permissions.can_view_attire_section}}"></paper-toggle-button>
       </paper-item>
 
       <paper-item center-justified flex class="menu-header-gobstones">
@@ -95,7 +105,7 @@
         <paper-item-body>
           <div>Puede cambiar la velocidad de ejecución</div>
         </paper-item-body>
-        <paper-toggle-button checked="{{metadata.library.visible}}"></paper-toggle-button>
+        <paper-toggle-button checked="{{metadata.execution_speed.user_permissions.can_change_speed}}"></paper-toggle-button>
       </paper-item>
 
       <paper-item center-justified flex class="menu-header-gobstones">
@@ -104,16 +114,9 @@
 
       <paper-item>
         <paper-item-body>
-          <div>Inicialmente activadas</div>
-        </paper-item-body>
-        <paper-toggle-button checked="{{metadata.library.visible}}"></paper-toggle-button>
-      </paper-item>
-
-      <paper-item>
-        <paper-item-body>
           <div>Puede activar o desactivar vestimentas</div>
         </paper-item-body>
-        <paper-toggle-button checked="{{metadata.library.visible}}"></paper-toggle-button>
+        <paper-toggle-button checked="{{metadata.attire.user_permissions.can_toggle_visibility}}"></paper-toggle-button>
       </paper-item>
 
       <paper-item center-justified flex class="menu-header-gobstones">
@@ -172,11 +175,8 @@
       },
 
       ready: function() {
-        setInterval(() => {
-          console.log(this.metadata);
-        }, 100);
-        // this.stylist = new Stylist();
-        // this.stylist.setUpMarkdownEditorCustomizations();
+        this.stylist = new Stylist();
+        this.stylist.setUpMetadataEditorCustomizations();
       },
 
       getConfiguration: function() {
