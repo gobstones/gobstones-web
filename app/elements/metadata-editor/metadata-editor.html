@@ -4,16 +4,177 @@
 
 <dom-module id="metadata-editor">
   <template>
+    <style>
+      .menu-header-gobstones {
+        background-color: white;
+        font-weight: 800;
+      }
+    </style>
+
     <div>
-      Holi
+      <paper-item center-justified flex class="menu-header-gobstones">
+        <div>Biblioteca (solo texto)</div>
+      </paper-item>
+
+      <paper-item>
+        <paper-item-body>
+          <div>Visible</div>
+        </paper-item-body>
+        <paper-toggle-button checked="{{metadata.library.visible}}"></paper-toggle-button>
+      </paper-item>
+
+      <paper-item center-justified flex class="menu-header-gobstones">
+        <div>Sección de código</div>
+      </paper-item>
+
+      <paper-item>
+        <paper-item-body>
+          <div>Inicialmente visible</div>
+        </paper-item-body>
+        <paper-toggle-button checked="{{metadata.library.visible}}"></paper-toggle-button>
+      </paper-item>
+
+      <paper-item center-justified flex class="menu-header-gobstones">
+        <div>Sección de tableros</div>
+      </paper-item>
+
+      <paper-item>
+        <paper-item-body>
+          <div>Panel de edición visible</div>
+        </paper-item-body>
+        <paper-toggle-button checked="{{metadata.library.visible}}"></paper-toggle-button>
+      </paper-item>
+
+      <paper-item>
+        <paper-item-body>
+          <div>Panel de edición inicialmente colapsado</div>
+        </paper-item-body>
+        <paper-toggle-button checked="{{metadata.library.visible}}"></paper-toggle-button>
+      </paper-item>
+
+      <paper-item>
+        <paper-item-body>
+          <div>Puede cambiar de tablero inicial</div>
+        </paper-item-body>
+        <paper-toggle-button checked="{{metadata.library.visible}}"></paper-toggle-button>
+      </paper-item>
+
+      <paper-item>
+        <paper-item-body>
+          <div>Puede editar tableros iniciales</div>
+        </paper-item-body>
+        <paper-toggle-button checked="{{metadata.library.visible}}"></paper-toggle-button>
+      </paper-item>
+
+      <paper-item>
+        <paper-item-body>
+          <div>Puede cambiar la fuente de tableros (aleatoria o seleccionada)</div>
+        </paper-item-body>
+        <paper-toggle-button checked="{{metadata.library.visible}}"></paper-toggle-button>
+      </paper-item>
+
+      <paper-item>
+        <paper-item-body>
+          <div>Puede ver la sección de tamaño</div>
+        </paper-item-body>
+        <paper-toggle-button checked="{{metadata.library.visible}}"></paper-toggle-button>
+      </paper-item>
+
+      <paper-item>
+        <paper-item-body>
+          <div>Puede ver la sección de vestimentas</div>
+        </paper-item-body>
+        <paper-toggle-button checked="{{metadata.library.visible}}"></paper-toggle-button>
+      </paper-item>
+
+      <paper-item center-justified flex class="menu-header-gobstones">
+        <div>Velocidad de ejecución</div>
+      </paper-item>
+
+      <paper-item>
+        <paper-item-body>
+          <div>Puede cambiar la velocidad de ejecución</div>
+        </paper-item-body>
+        <paper-toggle-button checked="{{metadata.library.visible}}"></paper-toggle-button>
+      </paper-item>
+
+      <paper-item center-justified flex class="menu-header-gobstones">
+        <div>Vestimentas</div>
+      </paper-item>
+
+      <paper-item>
+        <paper-item-body>
+          <div>Inicialmente activadas</div>
+        </paper-item-body>
+        <paper-toggle-button checked="{{metadata.library.visible}}"></paper-toggle-button>
+      </paper-item>
+
+      <paper-item>
+        <paper-item-body>
+          <div>Puede activar o desactivar vestimentas</div>
+        </paper-item-body>
+        <paper-toggle-button checked="{{metadata.library.visible}}"></paper-toggle-button>
+      </paper-item>
+
+      <paper-item center-justified flex class="menu-header-gobstones">
+        <div>Herramientas de bloques</div>
+      </paper-item>
+
+      <juicy-jsoneditor
+        class="json-editor"
+        json="{{metadata.blocks}}"
+        search="false"
+      ></juicy-jsoneditor>
     </div>
   </template>
 
   <script>
     Polymer({
       is: 'metadata-editor',
+      properties: {
+        metadata: {
+          type: Object,
+          value: {
+            library: {
+              visible: true
+            },
+            source: {
+              visible: true,
+              percentage: 0.6,
+            },
+            board: {
+              visible_edition: true,
+              collapse_toolbox: false,
+              user_permissions: {
+                can_change_initial_board: true,
+                can_change_initial_board_source: true,
+                can_edit_board: true,
+                can_view_size_section: true,
+                can_view_attire_section: true
+              }
+            },
+            execution_speed: {
+              user_permissions: {
+                can_change_speed: true
+              }
+            },
+            attire: {
+              user_permissions: {
+                can_toggle_visibility: true
+              }
+            },
+            blocks: {
+              visible: [],
+              disabled: []
+            }
+          }
+        }
+      },
 
       ready: function() {
+        setInterval(() => {
+          console.log(this.metadata);
+        }, 100);
         // this.stylist = new Stylist();
         // this.stylist.setUpMarkdownEditorCustomizations();
       },
