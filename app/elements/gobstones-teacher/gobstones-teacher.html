@@ -52,7 +52,7 @@
 
         <description-editor id="description-editor" class$="editor {{_descriptionClass(selectedTab)}}"></description-editor>
 
-        <div class$="editor {{_metadataClass(selectedTab)}}">Metadata</div>
+        <div id="metadata-editor" class$="editor {{_metadataClass(selectedTab)}}">Metadata</div>
       </div>
     </div>
 
@@ -79,14 +79,34 @@
       },
 
       addCode: function(xml) {
-        // TODO: Pasar métodos a los correspondientes hijitos
-        this.$.blockly.appendBlocksToWorkspace(xml);
+        return this._currentEditor().addCode(xml);
       },
 
-      setCode: function(code, mode = "main") {
+      setCode: function(code, mode) {
+        const editors = this._editors();
+        const isBlocklyCode = code.startsWith("<");
+
+        return editors[mode === "library" ? 2 : (isBlocklyCode ? 1 : 0)].setCode(code);
+      },
+
+      undo: function() {
+        return this._currentEditor().undo();
+      },
+
+      increaseFontSize: function() {
+        return this._currentEditor().increaseFontSize();
+      },
+
+      decreaseFontSize: function() {
+        return this._currentEditor().decreaseFontSize();
+      },
+
+      generateCode: function(withRegions, blockly) {
+        return this._currentEditor().generateCode(withRegions, blockly);
       },
 
       reset: function() {
+        return this._editors().forEach((editor) => editor.reset());
       },
 
       _codeClass: (selectedTab) => selectedTab === 0 ? "visible" : "unvisible",
@@ -94,7 +114,19 @@
       _libraryClass: (selectedTab) => selectedTab === 2 ? "visible" : "unvisible",
       _teacherLibraryClass: (selectedTab) => selectedTab === 3 ? "visible" : "unvisible",
       _descriptionClass: (selectedTab) => selectedTab === 4 ? "visible" : "unvisible",
-      _metadataClass: (selectedTab) => selectedTab === 5 ? "visible" : "unvisible"
+      _metadataClass: (selectedTab) => selectedTab === 5 ? "visible" : "unvisible",
+
+      _editors: function() {
+        return [
+          "code-editor", "blocks-editor",
+          "library-editor", "teacher-library-editor",
+          "description-editor", "metadata-editor"
+        ].map((it) => this.$[it]);
+      },
+
+      _currentEditor: function() {
+        return this._editors()[this.selectedTab];
+      }
     });
 
   </script>
