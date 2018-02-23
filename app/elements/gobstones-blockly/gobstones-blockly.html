@@ -220,6 +220,8 @@
 
         if (this.runner) this.runner.stop()
         this.code[this.mode] = newCode;
+
+        this.fire("content-change");
       },
 
       _onTeacherLibraryChange: function(teacherCode) {

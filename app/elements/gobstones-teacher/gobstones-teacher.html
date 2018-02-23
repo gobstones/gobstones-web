@@ -76,15 +76,28 @@
       properties: {
         selectedTab: {
           type: Number,
-          value: 0
-        }
-        // TODO: Soportar code para la exportación
+          value: 0,
+          observer: "_onTabChange"
+        },
+        code: Object,
+        workspace: Object
       },
       listeners: {
         "content-change": "_onContentChange"
       },
 
       ready: function() {
+        this.code = {
+          main: "",
+          library: "",
+          teacher: ""
+        };
+
+        this.workspace = {
+          main: "",
+          library: ""
+        };
+
         const boardsPanel = document.getElementById("boards");
         if (boardsPanel) {
           this.runner = boardsPanel.$.runner;
@@ -150,10 +163,29 @@
       },
 
       _onContentChange: function(event) {
-        const editor = event.target;
-        if (editor.id !== "teacher-library-editor") return;
+        const editors = this._editors();
 
-        this._editors()[ID_BLOCKS].setCode(editor.code.main, "teacher");
+        const editor = event.target;
+        if (editor.id === "code-editor") {
+          this.code.main = editor.code.main;
+        }
+        if (editor.id === "blocks-editor") {
+          this.workspace.main = editor.workspace.main;
+        }
+        if (editor.id === "library-editor") {
+          const code = editor.code.main;
+          this.code.library = code;
+          editors[ID_CODE].setCode(code, "library");
+          editors[ID_BLOCKS].setCode(code, "library");
+        }
+        if (editor.id === "teacher-library-editor") {
+          const code = editor.code.main;
+          this.code.teacher = code;
+          editors[ID_CODE].setCode(code, "teacher");
+          editors[ID_BLOCKS].setCode(code, "teacher");
+        }
+
+        console.log(this.code, this.workspace);
       },
 
       _codeClass: (selectedTab) => selectedTab === ID_CODE ? "visible" : "unvisible",
@@ -173,6 +205,10 @@
 
       _currentEditor: function(selectedTab = this.selectedTab) {
         return this._editors()[selectedTab];
+      },
+
+      _onTabChange: function() {
+        window.BUS.fire("editor-dirty");
       }
     });
 

@@ -286,7 +286,6 @@
             .assign(
               this._isBlocksOrTeacherProject(this.projectType) ? {
                 Blocks: new CodeBlocksLoader,
-                Library: new LibraryBlocksLoader,
                 GeneratedCode: new CodeLoader,
                 AppendBlocks: new AppendBlocksLoader
               } : {})
