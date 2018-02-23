@@ -94,9 +94,7 @@ l">
         });
 
 
-        this.async(() => { this._goTo("/teacher"); });
-        // TODO: Recuperar
-        // if (!this.isDesktop) this.async(() => { this.useCode(); });
+        if (!this.isDesktop) this.async(() => { this.useCode(); });
       },
 
       useBlocks: function() {
