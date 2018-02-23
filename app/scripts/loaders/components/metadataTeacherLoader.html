@@ -3,7 +3,9 @@
 <script>
   class MetadataTeacherLoader extends MetadataLoader {
     buildContent(context) {
-      return ""; // TODO: Hacer
+      const partialMetadata = context.editor.getMetadata();
+
+      return this.buildFullOptions(context, partialMetadata);
     }
 
     readContent(context, content, fileName) {
