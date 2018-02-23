@@ -77,6 +77,10 @@
         selectedTab: {
           type: Number,
           value: 0
+        },
+        runner: {
+          type: Object,
+          computed: "_computeRunner(selectedTab)"
         }
       },
       listeners: {
@@ -95,7 +99,11 @@
         return this._editors()[
           mode === "library"
             ? ID_LIBRARY
-            : (isBlocklyCode ? ID_BLOCKS : ID_CODE)
+            : (
+              mode === "teacher"
+                ? ID_TEACHER_LIBRARY
+                : (isBlocklyCode ? ID_BLOCKS : ID_CODE)
+            )
         ].setCode(code);
       },
 
@@ -116,7 +124,7 @@
       },
 
       reset: function() {
-        return this._editors().forEach((editor) => editor.reset());
+        return this._editors().forEach((editor) => editor.reset && editor.reset());
       },
 
       _codeClass: (selectedTab) => selectedTab === ID_CODE ? "visible" : "unvisible",
@@ -134,8 +142,12 @@
         ].map((it) => this.$[it]);
       },
 
-      _currentEditor: function() {
-        return this._editors()[this.selectedTab];
+      _currentEditor: function(selectedTab = this.selectedTab) {
+        return this._editors()[selectedTab];
+      },
+
+      _computeRunner: function(selectedTab) {
+        return this._currentEditor(selectedTab).runner;
       }
     });
 
