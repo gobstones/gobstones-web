@@ -1,0 +1,21 @@
+<link rel="import" href="../textLoader.html">
+<link rel="import" href="mixins/singleFileComponent.html">
+
+<script>
+  class DescriptionTeacherLoader extends TextLoader {
+    constructor() {
+      super();
+      _.defaults(this, SingleFileComponent);
+      this.FILENAME = "description.md";
+    }
+
+    buildContent(context) {
+      // return context.ide.description;
+    }
+
+    readContent(context, content) {
+      // context.ide.setDescription(content);
+      // context.ide.showDescriptionModal();
+    }
+  }
+</script>

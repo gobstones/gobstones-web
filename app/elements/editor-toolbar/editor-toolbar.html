@@ -89,10 +89,8 @@
           <template is="dom-if" if="{{_isBlocksProject(projectType)}}">
             <paper-button on-click="undo"><iron-icon class="button" icon="icons:undo"></iron-icon></paper-button>
           </template>
-          <template is="dom-if" if="{{!_isTeacherProject(projectType)}}">
-            <template is="dom-if" if="{{showInfo}}">
-              <paper-button id="open-description-button" on-click="showDescription"><iron-icon class="button" icon="icons:info"></iron-icon></paper-button>
-            </template>
+          <template is="dom-if" if="{{showInfo}}">
+            <paper-button id="open-description-button" on-click="showDescription"><iron-icon class="button" icon="icons:info"></iron-icon></paper-button>
           </template>
           <template is="dom-if" if="{{_isCodeProject(projectType)}}">
             <template is="dom-if" if="{{permissions.can_use_library}}">
