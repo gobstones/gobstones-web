@@ -236,8 +236,7 @@
         setTimeout(() => { this._fixEditorHeight(); }, 500);
       },
 
-      _runCode: function(initialState) {
-        const code = this.code;
+      _runCode: function(initialState, code = this.code) {
         this.editor.getSession().clearAnnotations();
 
         try {

@@ -165,8 +165,7 @@
         window.BUS.fire("run-request", options);
       },
 
-      _runCode: function(initialState) {
-        const code = this.code;
+      _runCode: function(initialState, code = this.code) {
         this._onTeacherLibraryChange(code.teacher);
 
         this.$.blockly.workspace.removeBlockErrors();
