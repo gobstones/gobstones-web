@@ -24,6 +24,14 @@
       <paper-tab>[[localize("settings")]]</paper-tab>
     </paper-tabs>
 
+    <template is="dom-if" if="{{_isCodeSelected(selectedTab)}}">
+      <gobstones-editor id="code-editor" />
+    </template>
+
+    <template is="dom-if" if="{{_isBlocksSelected(selectedTab)}}">
+      <gobstones-blockly id="blocks-editor" />
+    </template>
+
   </template>
 
   <script>
