@@ -38,9 +38,9 @@
         this.fire("gbs-start");
       },
 
-      stop: function() {
+      stop: function(reason = "canceled") {
         this.isRunning = false;
-        this.fire("gbs-stop");
+        this.fire("gbs-stop", reason);
       },
 
       _onButtonClick: function() {
