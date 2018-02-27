@@ -37,7 +37,6 @@
       id="playButton"
       style="z-index: 10;"
       title="{{localize('execute')}}"
-      isRunning="{{isRunning}}"
     ></gobstones-code-runner>
     <template is="dom-if" if="{{permissions.can_change_source}}">
       <paper-button class="random-toggle" on-click="toggleRandom"><iron-icon class$="{{toggleRandomCss(useRandomBoard)}}" icon="av:shuffle"></iron-icon></paper-button>
@@ -56,11 +55,6 @@
         Polymer.ToastBehavior
       ],
       properties: {
-        isRunning: {
-          type: Boolean,
-          value: false,
-          observer: "_onUpdate"
-        },
         speed: {
           type: Number,
           value: MAX_SPEED
@@ -89,11 +83,9 @@
       },
       listeners: {
         "immediate-value-change": "_onSpeedChange",
-        "gbs-run-request": "_asd"
-      },
-
-      _asd: function({ detail: { start, stop }}) {
-        start({ initialBoard: 1, code: 2, targetBoard: 3 }); // TODO: Hacer
+        "gbs-run-request": "_onRunRequest",
+        "gbs-start": "_onStart",
+        "gbs-stop": "_onStop"
       },
 
       ready: function() {
@@ -103,8 +95,6 @@
       },
 
       run: function(request, onCompilationError, onResult) {
-        this.isRunning = true;
-
         const code = request.code;
         const itBroke = (err, code) => {
           this.stop();
@@ -154,16 +144,9 @@
       stop: function(eventToFire = "cancel") {
         window.BUS.fire("execution-stop");
         this._clear();
-        this.isRunning = false;
         this.async(() => {
           this.fire(eventToFire);
         });
-      },
-
-      onButtonClick: function() {
-        this.isRunning = !this.isRunning;
-        if (this.isRunning) this.requestRun()
-        else this.stop();
       },
 
       toggleRandom: function() {
@@ -182,6 +165,10 @@
       reportTeacherLibraryErrors: function(e) {
         this.showToast(this.localize("teachers-library-has-errors"));
         throw e;
+      },
+
+      _onRunRequest: function({ detail: { start, stop } }) {
+        start({ initialBoard: 1, code: 2, targetBoard: 3 }); // TODO: Hacer
       },
 
       _setRunner: function(ast) {
@@ -232,8 +219,12 @@
         return -(this.speed - 4) * 300;
       },
 
-      _onUpdate: function() {
-        window.GBS_IS_RUNNING = this.isRunning;
+      _onStart: function() {
+        window.GBS_IS_RUNNING = true;
+      },
+
+      _onStop: function() {
+        window.GBS_IS_RUNNING = false;
       },
 
       toggleRandomCss: function(useRandomBoard) {
