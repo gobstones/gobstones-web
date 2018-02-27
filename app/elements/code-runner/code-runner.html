@@ -39,6 +39,7 @@
                title="{{localize('execute')}}"
                on-click="onButtonClick"
     ></paper-fab>
+    <gobstones-code-runner />
     <template is="dom-if" if="{{permissions.can_change_source}}">
       <paper-button class="random-toggle" on-click="toggleRandom"><iron-icon class$="{{toggleRandomCss(useRandomBoard)}}" icon="av:shuffle"></iron-icon></paper-button>
     </template>

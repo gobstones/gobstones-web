@@ -1,0 +1,31 @@
+<dom-module id="gobstones-code-runner">
+
+  <template>
+    <style>
+    </style>
+
+    <div>
+      <paper-fab id="gbs-play-button"
+                 icon="av:play-arrow"
+                 on-click="onButtonClick"
+      ></paper-fab>
+    </div>
+  </template>
+
+  <script>
+    // TODO: Mover a https://github.com/gobstones/gobstones-code-runner
+
+    Polymer({
+      is: 'gobstones-code-runner',
+
+      properties: {
+        initialBoard: Object,
+        code: String,
+        runningSpeed: {
+          type: Number,
+          value: 3 // 1 to 5
+        },
+        targetBoard: String
+      }
+    });
+  </script>
