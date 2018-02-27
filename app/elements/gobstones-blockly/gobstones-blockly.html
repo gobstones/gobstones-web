@@ -226,7 +226,7 @@
 
       _onTeacherLibraryChange: function(teacherCode) {
         try {
-          const actions = new Parser().getActions(teacherCode);
+          const actions = new Parser().getActionsFromSource(teacherCode);
 
           this.$.blockly.primitiveProcedures = actions.procedureDeclarations;
           this.$.blockly.primitiveFunctions = actions.functionDeclarations;

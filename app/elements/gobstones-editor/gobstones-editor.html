@@ -291,7 +291,7 @@
         window.BUS.fire("primitive-actions-off");
 
         try {
-          const actions = new Parser().getActionNames(teacherCode);
+          const actions = new Parser().getActionNamesFromSource(teacherCode);
 
           if (!_.isEmpty(actions.procedureNames) || !_.isEmpty(actions.functionNames)) {
             this.primitiveProcedures = actions.procedureNames;
