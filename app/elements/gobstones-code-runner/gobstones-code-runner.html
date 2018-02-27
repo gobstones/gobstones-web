@@ -54,6 +54,44 @@
         }
       },
 
+      _setRunner: function(ast) {
+        this.runner = this._isInteractive(ast)
+          ? new InteractiveRunner(this.parser)
+          : new NormalRunner(this.parser);
+      },
+
+      _clear: function() {
+        this.runner.clear();
+      },
+
+      // TODO: Cambié la interfaz, arreglar el llamado de code-runner
+      _checkAndGetTeacherAst: function(code, { onLibraryError, onTeacherError }, onSuccess) {
+        this._checkLibraryCompiles(code.library, onLibraryError, () => {
+          return this._checkLibraryCompiles(
+            code.teacher,
+            onTeacherError,
+            onSuccess
+          );
+        });
+      },
+
+      _checkLibraryCompiles: function(sourceCode, onError, onSuccess) {
+        this._parse({ library: sourceCode, main: "", teacher: "" }, onError, onSuccess);
+      },
+
+      _parse: function(code, onError, onSuccess, forceMainCodeLineNumbers) {
+        const sourceCode = code.library + "\n" + code.main + "\n" + code.teacher;
+
+        this.parser.parse(sourceCode, e => {
+          e.location = this.parser.getErrorLineAndMode(e, code, forceMainCodeLineNumbers);
+          return onError(e, code);
+        }, onSuccess);
+      },
+
+      _isInteractive: function(ast) {
+        return ast && ast.program && ast.program.alias === "interactiveProgram";
+      },
+
       _checkRequiredProperties: function(request, properties) {
         const missingProperties = _(request).keys().filter((it) => properties[it]).value();
         if (missingProperties.length > 0) {

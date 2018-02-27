@@ -95,6 +95,7 @@
       },
 
       run: function(request, onCompilationError, onResult) {
+        debugger;
         const code = request.code;
         const itBroke = (err, code) => {
           this.stop();
@@ -102,6 +103,7 @@
         };
 
         try {
+          // TODO: Cambié la interfaz, arreglar el llamado
           this._checkAndGetTeacherAst(code, itBroke, teacherAst => {
             this._parse(code, itBroke, ast => {
               this._setRunner(ast);
@@ -144,7 +146,7 @@
       stop: function(eventToFire = "cancel") {
         window.BUS.fire("execution-stop");
         this._clear();
-        this.playButton.stop();
+        this.$.playButton.stop();
         this.async(() => {
           this.fire(eventToFire);
         });
@@ -169,44 +171,16 @@
       },
 
       _onRunRequest: function({ detail: { start, stop } }) {
+        // this.requestRun();
         start({ initialBoard: 1, code: 2, targetBoard: 3 }); // TODO: Hacer
       },
 
-      _setRunner: function(ast) {
-        this.runner = this._isInteractive(ast)
-          ? new InteractiveRunner(this.parser)
-          : new NormalRunner(this.parser);
+      _onStart: function() {
+        window.GBS_IS_RUNNING = true;
       },
 
-      _clear: function() {
-        this.runner.clear();
-      },
-
-      _checkAndGetTeacherAst: function(code, onError, onSuccess) {
-        this._checkLibraryCompiles(code.library, onError, () => {
-          return this._checkLibraryCompiles(
-            code.teacher,
-            (e) => this.reportTeacherLibraryErrors(e),
-            onSuccess
-          );
-        });
-      },
-
-      _checkLibraryCompiles: function(sourceCode, onError, onSuccess) {
-        this._parse({ library: sourceCode, main: "", teacher: "" }, onError, onSuccess);
-      },
-
-      _parse: function(code, onError, onSuccess, fixMainErrorLines) {
-        const sourceCode = code.library + "\n" + code.main + "\n" + code.teacher;
-
-        this.parser.parse(sourceCode, e => {
-          e.location = this.parser.getErrorLineAndMode(e, code, fixMainErrorLines);
-          return onError(e, code);
-        }, onSuccess);
-      },
-
-      _isInteractive: function(ast) {
-        return ast && ast.program && ast.program.alias === "interactiveProgram";
+      _onStop: function({ detail: reason }) {
+        window.GBS_IS_RUNNING = false;
       },
 
       _onSpeedChange: function() {
@@ -218,14 +192,6 @@
         if (this.speed === 4) return 50;
 
         return -(this.speed - 4) * 300;
-      },
-
-      _onStart: function() {
-        window.GBS_IS_RUNNING = true;
-      },
-
-      _onStop: function() {
-        window.GBS_IS_RUNNING = false;
       },
 
       toggleRandomCss: function(useRandomBoard) {
