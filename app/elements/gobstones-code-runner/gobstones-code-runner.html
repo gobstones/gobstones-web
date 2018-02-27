@@ -5,9 +5,9 @@
     </style>
 
     <div>
-      <paper-fab id="gbs-play-button"
+      <paper-fab id="gbsPlayButton"
                  icon="av:play-arrow"
-                 on-click="onButtonClick"
+                 on-click="_onButtonClick"
       ></paper-fab>
     </div>
   </template>
@@ -19,13 +19,50 @@
       is: 'gobstones-code-runner',
 
       properties: {
-        initialBoard: Object,
-        code: String,
-        runningSpeed: {
-          type: Number,
-          value: 3 // 1 to 5
-        },
-        targetBoard: String
+        isRunning: {
+          type: Boolean,
+          value: false,
+          notify: true,
+          observer: "_onUpdate"
+        }
+      },
+
+      start: function(request) {
+        this._checkRequiredProperties(request, ["initialBoard", "code", "targetBoard"]);
+        if (this.isRunning) this.stop();
+
+        const { initialBoard, code, targetBoard, runningSpeed = 3 } = request;
+        // TODO: Run
+
+        this.isRunning = true;
+        this.fire("gbs-start");
+      },
+
+      stop: function() {
+        this.isRunning = false;
+        this.fire("gbs-stop");
+      },
+
+      _onButtonClick: function() {
+        if (!this.isRunning) {
+          this.fire("gbs-run-request", {
+            start: this.start.bind(this),
+            stop: this.stop.bind(this)
+          });
+        } else {
+          this.stop();
+        }
+      },
+
+      _checkRequiredProperties: function(request, properties) {
+        const missingProperties = _(request).keys().filter((it) => properties[it]).value();
+        if (missingProperties.length > 0) {
+          throw new Error(`Missing properties: ${missingProperties.join(", ")}`);
+        }
+      },
+
+      _onUpdate: function() {
+        this.$.gbsPlayButton.icon = this.isRunning ? "av:stop" : "av:play-arrow";
       }
     });
   </script>

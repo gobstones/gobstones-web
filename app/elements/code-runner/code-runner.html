@@ -33,13 +33,12 @@
 
   <template>
     <paper-toast class="toast" id="toast"></paper-toast>
-    <paper-fab id="playButton"
-               style="z-index: 10;"
-               icon="av:play-arrow"
-               title="{{localize('execute')}}"
-               on-click="onButtonClick"
-    ></paper-fab>
-    <gobstones-code-runner />
+    <gobstones-code-runner
+      id="playButton"
+      style="z-index: 10;"
+      title="{{localize('execute')}}"
+      isRunning="{{isRunning}}"
+    ></gobstones-code-runner>
     <template is="dom-if" if="{{permissions.can_change_source}}">
       <paper-button class="random-toggle" on-click="toggleRandom"><iron-icon class$="{{toggleRandomCss(useRandomBoard)}}" icon="av:shuffle"></iron-icon></paper-button>
     </template>
@@ -60,7 +59,7 @@
         isRunning: {
           type: Boolean,
           value: false,
-          observer: "_update"
+          observer: "_onUpdate"
         },
         speed: {
           type: Number,
@@ -89,7 +88,12 @@
         }
       },
       listeners: {
-        "immediate-value-change": "_onSpeedChange"
+        "immediate-value-change": "_onSpeedChange",
+        "gbs-run-request": "_asd"
+      },
+
+      _asd: function({ detail: { start, stop }}) {
+        start({ initialBoard: 1, code: 2, targetBoard: 3 }); // TODO: Hacer
       },
 
       ready: function() {
@@ -228,8 +232,7 @@
         return -(this.speed - 4) * 300;
       },
 
-      _update: function() {
-        this.$.playButton.icon = this.isRunning ? "av:stop" : "av:play-arrow";
+      _onUpdate: function() {
         window.GBS_IS_RUNNING = this.isRunning;
       },
 
