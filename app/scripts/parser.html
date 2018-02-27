@@ -54,28 +54,7 @@
     }
 
     getActionsFromSource(sourceCode) {
-      return this.getActionsFromAst(this.parse(sourceCode))
-    }
-
-    getActionsFromAst(ast) {
-      if (this.hasFailed(ast)) throw ast;
-
-      const declarations = ast.declarations;
-      const withAlias = (alias) =>
-        (declaration) =>
-          declaration.alias === `${alias}Declaration` &&
-          !declaration.name.toLowerCase().startsWith("aux");
-
-      const computeDeclarations = (alias) =>
-        _(declarations)
-          .filter(withAlias(alias))
-          .map((it) => _.assign(it, { attributes: ast.getAttributes(it.name) }))
-          .value();
-
-      return {
-        procedureDeclarations: computeDeclarations("procedure"),
-        functionDeclarations: computeDeclarations("function")
-      };
+      return this.getActionsFromAst(this.parse(sourceCode), true)
     }
 
     getActionNamesFromSource(sourceCode) {
@@ -87,6 +66,27 @@
       return {
         procedureNames: computeDeclarations("procedure"),
         functionNames: computeDeclarations("function")
+      };
+    }
+
+    getActionsFromAst(ast, omitAux = false) {
+      if (this.hasFailed(ast)) throw ast;
+
+      const declarations = ast.declarations;
+      const withAlias = (alias) =>
+        (declaration) =>
+          declaration.alias === `${alias}Declaration` &&
+          (!declaration.name.toLowerCase().startsWith("aux") || !omitAux);
+
+      const computeDeclarations = (alias) =>
+        _(declarations)
+          .filter(withAlias(alias))
+          .map((it) => _.assign(it, { attributes: ast.getAttributes(it.name) }))
+          .value();
+
+      return {
+        procedureDeclarations: computeDeclarations("procedure"),
+        functionDeclarations: computeDeclarations("function")
       };
     }
 

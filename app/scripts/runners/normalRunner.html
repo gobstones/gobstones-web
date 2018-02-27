@@ -61,9 +61,9 @@
     }
 
     _getStates(result, teacherAst, lastState = []) {
-      const teacherTools = teacherAst.declarations
-        .filter(it => _.includes(["procedureDeclaration", "functionDeclaration"], it.alias))
-        .map(it => it.name);
+      const teacherTools = _(
+        this.parser.getActionsFromAst(teacherAst)
+      ).values().flatten().map(it => it.name);
 
       const snapshots = result.snapshots;
 
