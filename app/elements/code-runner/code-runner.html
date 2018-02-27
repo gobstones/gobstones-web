@@ -144,6 +144,7 @@
       stop: function(eventToFire = "cancel") {
         window.BUS.fire("execution-stop");
         this._clear();
+        this.playButton.stop();
         this.async(() => {
           this.fire(eventToFire);
         });
