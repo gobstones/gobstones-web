@@ -14,8 +14,6 @@
     run({ ast, request, throttle, callbacks: { onResult, onStop } }) {
       const controller = this._interpret(ast, request, request);
 
-      window.BUS.fire("interactive-run");
-
       const render = (result) => {
         if (this.parser.hasFailed(result)) {
           onResult(this._handleError(result, request.code));

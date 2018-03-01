@@ -91,7 +91,7 @@
             });
           }
 
-          this.subscribeTo("initial-state", event => {
+          this.subscribeTo("initial-state", (event) => {
             this._runCode(event);
           });
         }
@@ -165,7 +165,7 @@
         window.BUS.fire("run-request", options);
       },
 
-      _runCode: function(initialState, requiredCode = this.code) {
+      _runCode: function({ initialState, controller }, requiredCode = this.code) {
         const code = _.assign(requiredCode, { main: this.code.main });
         this._onTeacherLibraryChange(code.teacher);
 
@@ -173,19 +173,28 @@
 
         console.info("GENERATED CODE", code);
         try {
-          this.runner.run(
+          controller.start(
             { initialState, code },
-            (error, code) => {
-              const { region } = error.on;
-              if (region) this._showError(region, error);
-              window.BUS.fire("compilation-error");
+            {
+              onCompilationError: (error, code) => {
+                const { region } = error.on;
+                if (region) this._showError(region, error);
+                window.BUS.fire("compilation-error");
+              },
+              onTeacherCompilationError: (e) => {
+                this.runner.reportTeacherLibraryErrors(e);
+              },
+              onInteractiveRun: () => {
+                window.BUS.fire("interactive-run");
+              },
+              onResult: (state, fullState = {}) => {
+                const { regionStack } = fullState;
+                const region = this._getLastRegion(regionStack);
+                if (region) this._highlight(region)
+                this._notify(state);
+              }
             },
-            (state, fullState = {}) => {
-              const { regionStack } = fullState;
-              const region = this._getLastRegion(regionStack);
-              if (region) this._highlight(region)
-              this._notify(state);
-            }
+            this.runner.speed
           );
         } catch (e) {
           window.BUS.fire("unknown-error", e);

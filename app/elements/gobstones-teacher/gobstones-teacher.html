@@ -138,7 +138,7 @@
           this._editors()[ID_CODE]._setMode = _.noop;
         }
 
-        this.subscribeTo("initial-state", event => {
+        this.subscribeTo("initial-state", (event) => {
           this._currentEditor()._runCode(event, this.code);
         });
       },

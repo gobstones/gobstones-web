@@ -64,10 +64,6 @@
           value: false
         },
 
-        throttle: {
-          type: Number,
-          computed: "_computeThrottle(speed)"
-        },
         immediateSpeed: {
           type: Number,
           value: MAX_SPEED
@@ -89,67 +85,15 @@
       },
 
       ready: function() {
-        this.parser = new Parser();
-        this.runner = new NormalRunner(this.parser);
         this.subscribeTo("reset", () => this.reset());
       },
 
-      run: function(request, onCompilationError, onResult) {
-        debugger;
-        const code = request.code;
-        const itBroke = (err, code) => {
-          this.stop();
-          onCompilationError(err, code);
-        };
-
-        try {
-          // TODO: Cambié la interfaz, arreglar el llamado
-          this._checkAndGetTeacherAst(code, itBroke, teacherAst => {
-            this._parse(code, itBroke, ast => {
-              this._setRunner(ast);
-              if (!ast.program) {
-                const error = new Error(this.localize("missing-program"));
-                error.on = {};
-                error.location = { mode: "code", line: 1 };
-                itBroke(error);
-                return;
-              }
-
-              this.runner.run({
-                ast: {
-                  program: ast.program,
-                  teacher: teacherAst
-                },
-                request: request,
-                throttle: this.throttle,
-                callbacks: {
-                  onResult: onResult,
-                  onStop: (eventToFire) => this.stop(eventToFire),
-                  onReturnValue: (value) => {
-                    window.BUS.fire("return-value", { value });
-                  }
-                }
-              });
-            }, true);
-          });
-        } catch (e) {
-          this.stop();
-          throw e;
-        }
-      },
-
       requestRun: function() {
-        this._clear();
-        this.fire("run", { useRandomBoard: this.useRandomBoard });
+        this.$.playButton.requestRun();
       },
 
-      stop: function(eventToFire = "cancel") {
-        window.BUS.fire("execution-stop");
-        this._clear();
+      stop: function() {
         this.$.playButton.stop();
-        this.async(() => {
-          this.fire(eventToFire);
-        });
       },
 
       toggleRandom: function() {
@@ -170,28 +114,24 @@
         throw e;
       },
 
-      _onRunRequest: function({ detail: { start, stop } }) {
-        // this.requestRun();
-        start({ initialBoard: 1, code: 2, targetBoard: 3 }); // TODO: Hacer
+      _onRunRequest: function({ detail: controller }) {
+        this.fire("run", { useRandomBoard: this.useRandomBoard, controller });
       },
 
       _onStart: function() {
         window.GBS_IS_RUNNING = true;
       },
 
-      _onStop: function({ detail: reason }) {
+      _onStop: function({ detail: eventToFire }) {
+        window.BUS.fire("execution-stop");
         window.GBS_IS_RUNNING = false;
+        this.async(() => {
+          this.fire(eventToFire);
+        });
       },
 
       _onSpeedChange: function() {
         this.showToast(this.localize(`speed-${this.immediateSpeed}`));
-      },
-
-      _computeThrottle: function(speed) {
-        if (this.speed === 5) return 0;
-        if (this.speed === 4) return 50;
-
-        return -(this.speed - 4) * 300;
       },
 
       toggleRandomCss: function(useRandomBoard) {

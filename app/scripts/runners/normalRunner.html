@@ -63,7 +63,7 @@
     _getStates(result, teacherAst, lastState = []) {
       const teacherTools = _(
         this.parser.getActionsFromAst(teacherAst)
-      ).values().flatten().map(it => it.name);
+      ).values().flatten().map(it => it.name).value();
 
       const snapshots = result.snapshots;
 

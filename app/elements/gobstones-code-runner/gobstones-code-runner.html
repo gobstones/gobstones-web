@@ -19,6 +19,7 @@
       is: 'gobstones-code-runner',
 
       properties: {
+        targetBoard: String,
         isRunning: {
           type: Boolean,
           value: false,
@@ -27,28 +28,77 @@
         }
       },
 
-      start: function(request) {
-        this._checkRequiredProperties(request, ["initialBoard", "code", "targetBoard"]);
-        if (this.isRunning) this.stop();
-
-        const { initialBoard, code, targetBoard, runningSpeed = 3 } = request;
-        // TODO: Run
-
-        this.isRunning = true;
-        this.fire("gbs-start");
+      ready: function() {
+        this.parser = new Parser();
+        this.runner = new NormalRunner(this.parser);
       },
 
-      stop: function(reason = "canceled") {
+      start: function(request, callbacks, speed = 3) {
+        const {
+          onResult,
+          onCompilationError = function() { },
+          onTeacherCompilationError = function() { },
+          onReturnValue = function() { },
+          onInteractiveRun = function() { }
+        } = callbacks;
+
+        if (this.isRunning) this.stop();
+        this.isRunning = true;
+        this.fire("gbs-start");
+
+        const code = request.code;
+        const throttle = this._getThrottle(speed);
+        const reportError = (err, code) => { this.stop(); onCompilationError(err, code); };
+        const reportTeacherError = (err, code) => { this.stop(); onTeacherCompilationError(err, code); };
+
+        try {
+          const errorHandlers = {
+            onLibraryError: reportError,
+            onTeacherError: onTeacherCompilationError
+          };
+          this._checkAndGetTeacherAst(code, errorHandlers, teacherAst => {
+            this._parse(code, reportError, ast => {
+              if (onInteractiveRun && this._isInteractive(ast)) onInteractiveRun();
+              this._setRunner(ast);
+
+              this.runner.run({
+                ast: {
+                  program: ast.program,
+                  teacher: teacherAst
+                },
+                request: request,
+                throttle: throttle,
+                callbacks: {
+                  onResult: onResult,
+                  onStop: (eventToFire) => this.stop(eventToFire),
+                  onReturnValue: onReturnValue
+                }
+              });
+            }, true);
+          });
+        } catch (e) {
+          this.stop();
+          throw e;
+        }
+      },
+
+      stop: function(reason = "cancel") {
         this.isRunning = false;
+        this._clear();
         this.fire("gbs-stop", reason);
+      },
+
+      requestRun: function() {
+        this._clear();
+        this.fire("gbs-run-request", {
+          start: this.start.bind(this),
+          stop: this.stop.bind(this)
+        });
       },
 
       _onButtonClick: function() {
         if (!this.isRunning) {
-          this.fire("gbs-run-request", {
-            start: this.start.bind(this),
-            stop: this.stop.bind(this)
-          });
+          this.requestRun();
         } else {
           this.stop();
         }
@@ -61,10 +111,9 @@
       },
 
       _clear: function() {
-        this.runner.clear();
+        if (this.runner) this.runner.clear();
       },
 
-      // TODO: Cambié la interfaz, arreglar el llamado de code-runner
       _checkAndGetTeacherAst: function(code, { onLibraryError, onTeacherError }, onSuccess) {
         this._checkLibraryCompiles(code.library, onLibraryError, () => {
           return this._checkLibraryCompiles(
@@ -79,24 +128,34 @@
         this._parse({ library: sourceCode, main: "", teacher: "" }, onError, onSuccess);
       },
 
-      _parse: function(code, onError, onSuccess, forceMainCodeLineNumbers) {
+      _parse: function(code, onError, onSuccess, isMainCode) {
         const sourceCode = code.library + "\n" + code.main + "\n" + code.teacher;
 
         this.parser.parse(sourceCode, e => {
-          e.location = this.parser.getErrorLineAndMode(e, code, forceMainCodeLineNumbers);
+          e.location = this.parser.getErrorLineAndMode(e, code, isMainCode);
           return onError(e, code);
-        }, onSuccess);
+        }, (ast) => {
+          if (isMainCode && !ast.program) {
+            const error = new Error("missing-program");
+            error.on = {};
+            error.location = { mode: "code", line: 1 };
+            onError(error);
+            return;
+          }
+
+          onSuccess(ast);
+        });
       },
 
       _isInteractive: function(ast) {
         return ast && ast.program && ast.program.alias === "interactiveProgram";
       },
 
-      _checkRequiredProperties: function(request, properties) {
-        const missingProperties = _(request).keys().filter((it) => properties[it]).value();
-        if (missingProperties.length > 0) {
-          throw new Error(`Missing properties: ${missingProperties.join(", ")}`);
-        }
+      _getThrottle: function(speed) {
+        if (speed === 5) return 0;
+        if (speed === 4) return 50;
+
+        return -(speed - 4) * 300;
       },
 
       _onUpdate: function() {
