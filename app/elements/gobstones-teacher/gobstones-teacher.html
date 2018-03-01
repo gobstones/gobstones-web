@@ -139,7 +139,7 @@
         }
 
         this.subscribeTo("initial-state", (event) => {
-          this._currentEditor()._runCode(event, this.code);
+          this._currentEditor()._runCode(event, this.code, true);
         });
       },
 
@@ -208,8 +208,8 @@
         if (editor.id === "teacher-library-editor") {
           const code = editor.code.main;
           this.code.teacher = code;
-          editors[ID_CODE].setCode(code, "teacher");
-          editors[ID_BLOCKS].setCode(code, "teacher");
+          editors[ID_CODE].setCode(code, "teacher", false);
+          editors[ID_BLOCKS].setCode(code, "teacher", false);
         }
       },
 

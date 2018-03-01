@@ -110,8 +110,9 @@
       },
 
       reportTeacherLibraryErrors: function(e) {
+        debugger
         this.showToast(this.localize("teachers-library-has-errors"));
-        throw e;
+        console.error(e);
       },
 
       _onRunRequest: function({ detail: controller }) {

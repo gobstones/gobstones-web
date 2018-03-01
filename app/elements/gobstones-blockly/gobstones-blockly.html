@@ -124,7 +124,7 @@
         this.$.blockly.workspace.undo();
       },
 
-      setCode: function(code, mode = "main") {
+      setCode: function(code, mode = "main", withTeacherErrorsReport = true) {
         this.workspace[mode] = code;
         this.code[mode] = mode === "teacher" ? code : this._xmlToCode(code);
         if (this.mode === mode) {
@@ -135,7 +135,7 @@
         }
 
         if (mode === "teacher") {
-          this._onTeacherLibraryChange(code);
+          this._onTeacherLibraryChange(code, withTeacherErrorsReport);
         }
       },
 
@@ -233,14 +233,15 @@
         this.fire("content-change");
       },
 
-      _onTeacherLibraryChange: function(teacherCode) {
+      _onTeacherLibraryChange: function(teacherCode, withErrorReport = false) {
         try {
           const actions = new Parser().getActionsFromSource(teacherCode);
 
           this.$.blockly.primitiveProcedures = actions.procedureDeclarations;
           this.$.blockly.primitiveFunctions = actions.functionDeclarations;
         } catch(e) {
-          this.runner.reportTeacherLibraryErrors(e);
+          if (withErrorReport)
+            this.runner.reportTeacherLibraryErrors(e);
         }
       },
 

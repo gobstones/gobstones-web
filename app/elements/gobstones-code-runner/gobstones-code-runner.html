@@ -33,6 +33,11 @@
       },
 
       start: function(request, callbacks, speed = 3) {
+        if (!request || !request.initialState || !request.code)
+          throw new Error("The request must be `{ initialState, code }`");
+        if (!callbacks || !callbacks.onResult)
+          throw new Error("Missing callback: `onResult`");
+
         const {
           onResult,
           onCompilationError = function() { },
@@ -53,7 +58,7 @@
         try {
           const errorHandlers = {
             onLibraryError: reportError,
-            onTeacherError: onTeacherCompilationError
+            onTeacherError: reportTeacherError
           };
           this._checkAndGetTeacherAst(code, errorHandlers, teacherAst => {
             this._parse(code, reportError, ast => {
