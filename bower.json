@@ -20,7 +20,6 @@
     "app-router": "2.7.2",
     "async": "^2.1.4",
     "gs-element-blockly": "Program-AR/gs-element-blockly#^0.8.0",
-    "keymaster": "~1.6.3",
     "showdown": "^1.6.4",
     "js-emoji": "^3.2.2",
     "js-yaml": "~3.9.0",
@@ -28,7 +27,8 @@
     "gobstones-interpreter": "gobstones/gobstones-interpreter#bower",
     "tweenjs": "@tweenjs/tweenjs#v16.3.0",
     "juicy-jsoneditor": "~1.2.0",
-    "simplemde": "~1.11.2"
+    "simplemde": "~1.11.2",
+    "gobstones-code-runner": "gobstones/gobstones-code-runner"
   },
   "ignore": [],
   "resolutions": {

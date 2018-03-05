@@ -152,7 +152,7 @@
             });
           }
 
-          this.subscribeTo("initial-state", event => {
+          this.subscribeTo("initial-state", (event) => {
             this._runCode(event);
           });
         }
@@ -172,12 +172,12 @@
         }, 0);
       },
 
-      setCode: function(code, mode = "main") {
+      setCode: function(code, mode = "main", withTeacherErrorsReport = true) {
         this.code[mode] = code;
         if (this.mode === mode) this.editor.setValue(code);
 
         if (mode === "teacher") {
-          this._onTeacherLibraryChange(code);
+          this._onTeacherLibraryChange(code, withTeacherErrorsReport);
         }
       },
 
@@ -236,17 +236,32 @@
         setTimeout(() => { this._fixEditorHeight(); }, 500);
       },
 
-      _runCode: function(initialState, code = this.code) {
+      _runCode: function({ initialState, controller }, code = this.code) {
         this.editor.getSession().clearAnnotations();
 
         try {
-          this.runner.run(
+          controller.start(
             { initialState, code },
-            (e) => {
-              this._reportError(e, "error");
-              window.BUS.fire("compilation-error");
+            {
+              onCompilationError: (e) => {
+                if (e.message === "missing-program")
+                  e.message = this.localize("missing-program");
+
+                this._reportError(e, "error");
+                window.BUS.fire("compilation-error");
+              },
+              onTeacherCompilationError: (e) => {
+                this.runner.reportTeacherLibraryErrors(e);
+              },
+              onInteractiveRun: () => {
+                window.BUS.fire("interactive-run");
+              },
+              onResult: (state) => this._notify(state),
+              onReturnValue: (value) => {
+                window.BUS.fire("return-value", { value });
+              }
             },
-            (state) => this._notify(state)
+            this.runner.speed
           );
         } catch (e) {
           window.BUS.fire("unknown-error", e);
@@ -285,13 +300,13 @@
         this.editor.focus();
       },
 
-      _onTeacherLibraryChange: function(teacherCode) {
+      _onTeacherLibraryChange: function(teacherCode, withErrorReport = false) {
         this.primitiveProcedures = [];
         this.primitiveFunctions = [];
         window.BUS.fire("primitive-actions-off");
 
         try {
-          const actions = new Parser().getActionNames(teacherCode);
+          const actions = new Parser().getActionNamesFromSource(teacherCode);
 
           if (!_.isEmpty(actions.procedureNames) || !_.isEmpty(actions.functionNames)) {
             this.primitiveProcedures = actions.procedureNames;
@@ -300,7 +315,8 @@
             window.BUS.fire("primitive-actions-on");
           }
         } catch(e) {
-          this.runner.reportTeacherLibraryErrors(e);
+          if (withErrorReport)
+            this.runner.reportTeacherLibraryErrors(e);
         }
       },
 

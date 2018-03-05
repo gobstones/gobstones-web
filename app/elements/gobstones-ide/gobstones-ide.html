@@ -223,11 +223,11 @@
         this.resizeLeftPanel(detail, $(document).width());
       },
 
-      resizeLeftPanel: function(show, size) {
-        const percentage = window.STORAGE.getItem("code-panel-percentage") || 0.6;
+      resizeLeftPanel: function(show, hiddenSize) {
+        const percentage = +window.STORAGE.getItem("code-panel-percentage") || 0.6;
 
         $(".panel-left").width(
-          show ? $(document).width() * percentage : size
+          show ? $(document).width() * percentage : hiddenSize
         );
         $(window).trigger("resize");
       },

@@ -675,14 +675,18 @@
 
         this._cleanState();
 
+        const { useRandomBoard, controller } = options;
         if (options.useRandomBoard)
           this.selectedInitialState = _.random(0, this.availableInitialStates.length - 1);
 
-        window.BUS.fire("initial-state", {
+        const initialState = {
           header: this.initialState.header,
           table: this.initialState.table,
           size: this.size
-        });
+        };
+
+
+        window.BUS.fire("initial-state", { initialState, controller });
       },
 
       _onResult: function(result) {
