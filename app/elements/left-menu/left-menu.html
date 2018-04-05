@@ -272,6 +272,11 @@
           this.$.languageSelector.label = this.localize(this.languages[this.selectedLanguage]);
         }, 0);
 
+        const generatedCodeLoader = new CodeLoader();
+        generatedCodeLoader.buildContent = (context) => {
+          return context.editor.generateCode(false);
+        }
+
         this.setUpLoaders(
           _({
             InitialBoard: new InitialBoardLoader,
@@ -286,7 +291,7 @@
             .assign(
               this._isBlocksOrTeacherProject(this.projectType) ? {
                 Blocks: new CodeBlocksLoader,
-                GeneratedCode: new CodeLoader,
+                GeneratedCode: generatedCodeLoader,
                 AppendBlocks: new AppendBlocksLoader
               } : {})
             .value()
