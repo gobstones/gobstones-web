@@ -73,7 +73,7 @@
 
         <div class="title"></div>
 
-        <template is="dom-if" if="{{!isTeacherProject(projectType)}}">
+        <template is="dom-if" if="{{_isCodeProject(projectType)}}">
           <template is="dom-if" if="{{showProceduresHint}}">
             <iron-icon id="procedures-hint-button" class="procedures-hint-button" icon="icons:lightbulb-outline"></iron-icon></paper-button>
             <paper-tooltip for="procedures-hint-button" position="left" animation-config="{{tooltipAnimation}}">
