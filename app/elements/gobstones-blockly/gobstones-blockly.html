@@ -85,6 +85,9 @@
             this.runner.addEventListener("run", ({ detail }) => {
               this._onRunRequest(detail)
             });
+            this.runner.addEventListener("end", () => {
+              setTimeout(() => this.highlight(), 1000);
+            });
             this.runner.addEventListener("cancel", () => {
               window.BUS.fire("cancel-request");
             });
@@ -159,6 +162,10 @@
         });
       },
 
+      highlight(region) {
+        this.$.blockly.highlightBlock(region);
+      },
+
       _onRunRequest: function(options) {
         this._setMode("main");
         window.BUS.fire("run-request", options);
@@ -189,7 +196,7 @@
               onResult: (state, fullState = {}) => {
                 const { regionStack } = fullState;
                 const region = this._getLastRegion(regionStack);
-                if (region) this._highlight(region)
+                if (region) this.highlight(region)
                 this._notify(state);
               }
             },
@@ -327,10 +334,6 @@
           })
           .onComplete(onComplete)
           .start();
-      },
-
-      _highlight(region) {
-        this.$.blockly.highlightBlock(region);
       }
     });
 

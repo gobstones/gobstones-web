@@ -121,6 +121,7 @@
           });
           this.runner.addEventListener("end", () => {
             this._editors()[ID_CODE].readonly = false;
+            setTimeout(() => this._editors()[ID_BLOCKS].highlight(), 1000);
           });
 
           this._editors()[ID_CODE]._reportError = (error, type) => {
