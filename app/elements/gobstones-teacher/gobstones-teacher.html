@@ -32,22 +32,22 @@
 
     <div>
       <paper-tabs id="editorTab" selected="{{selectedTab}}" class="bottom self-end">
-        <paper-tab>[[localize("code")]]</paper-tab>
         <paper-tab>[[localize("blocks")]]</paper-tab>
-        <paper-tab>[[localize("students-library")]]</paper-tab>
+        <paper-tab>[[localize("code")]]</paper-tab>
         <paper-tab>[[localize("teachers-library")]]</paper-tab>
+        <paper-tab>[[localize("students-library")]]</paper-tab>
         <paper-tab>[[localize("description")]]</paper-tab>
         <paper-tab>[[localize("settings")]]</paper-tab>
       </paper-tabs>
 
       <div style="position: relative">
-        <gobstones-editor id="code-editor" class$="editor {{_codeClass(selectedTab)}}"></gobstones-editor>
-
         <gobstones-blockly id="blocks-editor" class$="editor {{_blocksClass(selectedTab)}}"></gobstones-blockly>
 
-        <gobstones-editor id="library-editor" class$="editor {{_libraryClass(selectedTab)}}"></gobstones-editor>
+        <gobstones-editor id="code-editor" class$="editor {{_codeClass(selectedTab)}}"></gobstones-editor>
 
         <gobstones-editor id="teacher-library-editor" class$="editor {{_teacherLibraryClass(selectedTab)}}"></gobstones-editor>
+
+        <gobstones-editor id="library-editor" class$="editor {{_libraryClass(selectedTab)}}"></gobstones-editor>
 
         <description-editor id="description-editor" class$="editor {{_descriptionClass(selectedTab)}}"></description-editor>
 
@@ -59,10 +59,10 @@
 
   <script>
 
-    const ID_CODE = 0;
-    const ID_BLOCKS = 1;
-    const ID_LIBRARY = 2;
-    const ID_TEACHER_LIBRARY = 3;
+    const ID_BLOCKS = 0;
+    const ID_CODE = 1;
+    const ID_TEACHER_LIBRARY = 2;
+    const ID_LIBRARY = 3;
     const ID_DESCRIPTION = 4;
     const ID_METADATA = 5;
 
@@ -100,13 +100,13 @@
         const boardsPanel = document.getElementById("boards");
         if (boardsPanel) {
           this.runner = boardsPanel.$.runner;
-          this._editors()[ID_CODE].runner = this.runner;
           this._editors()[ID_BLOCKS].runner = this.runner;
-          this._editors()[ID_LIBRARY].runner = this.runner;
+          this._editors()[ID_CODE].runner = this.runner;
           this._editors()[ID_TEACHER_LIBRARY].runner = this.runner;
+          this._editors()[ID_LIBRARY].runner = this.runner;
 
           this.runner.addEventListener("run", ({ detail }) => {
-            if (this.selectedTab > ID_BLOCKS) {
+            if (this.selectedTab > ID_CODE) {
               this.runner.showToast(this.localize("go-to-first-tabs"));
               this.runner.stop();
               return;
@@ -149,12 +149,12 @@
 
         if (mode === "library") {
           editors[ID_LIBRARY].setCode(code);
-          editors[ID_CODE].setCode(code, mode);
           editors[ID_BLOCKS].setCode(code, mode);
+          editors[ID_CODE].setCode(code, mode);
         } else if (mode === "teacher") {
           editors[ID_TEACHER_LIBRARY].setCode(code);
-          editors[ID_CODE].setCode(code, mode);
           editors[ID_BLOCKS].setCode(code, mode);
+          editors[ID_CODE].setCode(code, mode);
         } else {
           editors[isBlocklyCode ? ID_BLOCKS : ID_CODE].setCode(code);
         }
@@ -201,28 +201,28 @@
         if (editor.id === "library-editor") {
           const code = editor.code.main;
           this.code.library = code;
-          editors[ID_CODE].setCode(code, "library");
           editors[ID_BLOCKS].setCode(code, "library");
+          editors[ID_CODE].setCode(code, "library");
         }
         if (editor.id === "teacher-library-editor") {
           const code = editor.code.main;
           this.code.teacher = code;
-          editors[ID_CODE].setCode(code, "teacher", false);
           editors[ID_BLOCKS].setCode(code, "teacher", false);
+          editors[ID_CODE].setCode(code, "teacher", false);
         }
       },
 
-      _codeClass: (selectedTab) => selectedTab === ID_CODE ? "visible" : "unvisible",
       _blocksClass: (selectedTab) => selectedTab === ID_BLOCKS ? "visible" : "unvisible",
-      _libraryClass: (selectedTab) => selectedTab === ID_LIBRARY ? "visible" : "unvisible",
+      _codeClass: (selectedTab) => selectedTab === ID_CODE ? "visible" : "unvisible",
       _teacherLibraryClass: (selectedTab) => selectedTab === ID_TEACHER_LIBRARY ? "visible" : "unvisible",
+      _libraryClass: (selectedTab) => selectedTab === ID_LIBRARY ? "visible" : "unvisible",
       _descriptionClass: (selectedTab) => selectedTab === ID_DESCRIPTION ? "visible" : "unvisible",
       _metadataClass: (selectedTab) => selectedTab === ID_METADATA ? "visible" : "unvisible",
 
       _editors: function() {
         return [
-          "code-editor", "blocks-editor",
-          "library-editor", "teacher-library-editor",
+          "blocks-editor", "code-editor",
+          "teacher-library-editor", "library-editor",
           "description-editor", "metadata-editor"
         ].map((it) => this.$[it]);
       },
