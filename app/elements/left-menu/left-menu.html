@@ -118,7 +118,7 @@
         <paper-icon-button on-click="saveAttire" icon="icons:save" alt="save"> </paper-icon-button>
       </paper-item>
 
-      <template is="dom-if" if="{{!isTeacherProject(projectType)}}">
+      <template is="dom-if" if="{{_isCodeOrBlocksProject(projectType)}}">
         <paper-item>
           <paper-item-body>
             <div>[[localize("final-board")]]</div>
@@ -345,6 +345,10 @@
 
       _isTeacherProject: function(projectType) {
         return projectType === "teacher";
+      },
+
+      _isCodeOrBlocksProject: function(projectType) {
+        return this._isCodeProject(projectType) || this._isBlocksProject(projectType);
       },
 
       _isCodeOrTeacherProject: function(projectType) {

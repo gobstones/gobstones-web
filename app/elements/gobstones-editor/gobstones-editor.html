@@ -143,8 +143,13 @@
               this.readonly = true;
             });
             this.runner.addEventListener("cancel", () => {
-              window.BUS.fire("cancel-request");
               this.readonly = false;
+
+              if (this.isInteractiveOn) {
+                this.isInteractiveOn = false;
+                return;
+              }
+              window.BUS.fire("cancel-request");
             });
             this.runner.addEventListener("end", () => {
               this.readonly = false;
@@ -153,6 +158,8 @@
 
           this.subscribeTo("initial-state", (event) => {
             this._runCode(event);
+          }).subscribeTo("interactive-run", () => {
+            this.isInteractiveOn = true;
           });
         }
 

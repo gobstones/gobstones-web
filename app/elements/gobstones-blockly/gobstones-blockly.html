@@ -89,12 +89,18 @@
               setTimeout(() => this.highlight(), 1000);
             });
             this.runner.addEventListener("cancel", () => {
+              if (this.isInteractiveOn) {
+                this.isInteractiveOn = false;
+                return;
+              }
               window.BUS.fire("cancel-request");
             });
           }
 
           this.subscribeTo("initial-state", (event) => {
             this._runCode(event);
+          }).subscribeTo("interactive-run", () => {
+            this.isInteractiveOn = true;
           });
         }
 
