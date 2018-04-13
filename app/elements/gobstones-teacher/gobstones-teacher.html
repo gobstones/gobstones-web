@@ -13,6 +13,20 @@
         }
       }
 
+      .fab-sync {
+        --paper-fab-background: var(--fab-sync-background);
+        --paper-fab-keyboard-focus-background: var(--fab-sync-background);
+        width: 10px;
+        height: 10px !important;
+        position: absolute;
+        left: 3px;
+        top: 3px;
+      }
+
+      .fab-sync:after {
+        content: "➟";
+      }
+
       .editor {
         position: absolute;
         width: 100%;
@@ -28,11 +42,21 @@
       .unvisible {
         visibility: hidden;
       }
+
+      .button-tooltip {
+        font-size: 15px;
+      }
     </style>
 
     <div>
+      <paper-tooltip for="fab-sync-button" position="right" animation-config="{{tooltipAnimation}}">
+        <div class="button-tooltip">
+          [[localize("tooltip-blocks-sync")]]
+        </div>
+      </paper-tooltip>
       <paper-tabs id="editorTab" selected="{{selectedTab}}" class="bottom self-end">
         <paper-tab>[[localize("blocks")]]</paper-tab>
+        <paper-fab id="fab-sync-button" mini label="" class="fab-sync" on-click="_onBlocksSyncClick"></paper-fab>
         <paper-tab>[[localize("code")]]</paper-tab>
         <paper-tab>[[localize("teachers-library")]]</paper-tab>
         <paper-tab>[[localize("students-library")]]</paper-tab>
@@ -79,13 +103,26 @@
           observer: "_onTabChange"
         },
         code: Object,
-        workspace: Object
+        workspace: Object,
+
+        tooltipAnimation: Object
       },
       listeners: {
         "content-change": "_onContentChange"
       },
 
+      attached: function() {
+        this.tooltipAnimation = {
+          "entry": [{"name": "fade-in-animation", "timing": {"delay": 0}}],
+          "exit": [{"name": "fade-out-animation", "timing": {"delay": 0}}]
+        };
+      },
+
       ready: function() {
+        this.BLOCKS_SYNC_ON_COLOR = "#03a9f4";
+        this.BLOCKS_SYNC_OFF_COLOR = "#666666";
+        this._setBlocksSyncOff();
+
         this.code = {
           main: "",
           library: "",
@@ -195,9 +232,12 @@
         const editor = event.target;
         if (editor.id === "code-editor") {
           this.code.main = editor.code.main;
+          if (!this.isSyncingBlocks) this._setBlocksSyncOff();
         }
         if (editor.id === "blocks-editor") {
           this.workspace.main = editor.workspace.main;
+
+          if (this.blocksSyncEnabled) this._copyBlocksToCode();
         }
         if (editor.id === "library-editor") {
           const code = editor.code.main;
@@ -211,6 +251,43 @@
           editors[ID_BLOCKS].setCode(code, "teacher", false);
           editors[ID_CODE].setCode(code, "teacher", false);
         }
+
+        this.async(() => {
+          this.isSyncingBlocks = false;
+        });
+      },
+
+      _setBlocksSyncOff: function() {
+        this.customStyle["--fab-sync-background"] = this.BLOCKS_SYNC_OFF_COLOR;
+        this.updateStyles();
+        this.blocksSyncEnabled = false;
+      },
+
+      _setBlocksSyncOn: function() {
+        const generatedCode = this.generateCode(false);
+        const currentCode = this._editors()[ID_CODE].code.main;
+
+        if (currentCode !== "" && currentCode !== generatedCode) {
+          const userAccepts = confirm(this.localize("blocks-sync-confirm-overwrite"));
+          if (!userAccepts) return;
+        }
+
+        this.blocksSyncEnabled = true;
+        this.customStyle["--fab-sync-background"] = this.BLOCKS_SYNC_ON_COLOR;
+        this.updateStyles();
+
+        this._copyBlocksToCode();
+      },
+
+      _copyBlocksToCode() {
+        const generatedCode = this.generateCode(false);
+        this.isSyncingBlocks = true;
+        this.setCode(generatedCode);
+      },
+
+      _onBlocksSyncClick: function() {
+        if (this.blocksSyncEnabled) this._setBlocksSyncOff();
+        else this._setBlocksSyncOn();
       },
 
       _blocksClass: (selectedTab) => selectedTab === ID_BLOCKS ? "visible" : "unvisible",
