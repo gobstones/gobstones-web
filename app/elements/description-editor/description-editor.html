@@ -4,10 +4,30 @@
 
 <dom-module id="description-editor">
   <template>
-    <textarea id="markdown-editor"></textarea>
+    <textarea id="markdown-editor" onchange="console.log('jeje')"></textarea>
   </template>
 
   <script>
+
+const DEFAULT_DESCRIPTION = `# Proyecto x.y: Nombre del ejercicio
+Descripción del ejercicio.
+
+## Tablero esperado
+
+<center>
+  <gs-board>
+    GBB/1.0
+    size 3 3
+    cell 0 0 Azul 2
+    cell 1 2 Rojo 7
+    head 1 1
+  </gs-board>
+</center>
+
+[Enunciado en PDF][PDF]
+
+[PDF]: https://link-a-un-pdf "Enunciado de 'Simulando repartir caramelos' en PDF"`;
+
     Polymer({
       is: 'description-editor',
 
@@ -17,12 +37,21 @@
             element: this.$$("#markdown-editor"),
             autofocus: true,
             spellChecker: false,
-            hideIcons: ["side-by-side", "fullscreen", "guide"]
+            hideIcons: ["side-by-side", "fullscreen", "guide"],
+            previewRender: function(plainText) {
+              // (using showdown instead of the default markdown parser)
+              const compiledHtml = document.querySelector("#gobstones-ide").compileMd(plainText);
+              return compiledHtml;
+            }
           });
         });
 
         this.stylist = new Stylist();
         this.stylist.setUpMarkdownEditorCustomizations();
+
+        this.async(() => {
+          this.setDescription(DEFAULT_DESCRIPTION);
+        })
       },
 
       getDescription: function() {
