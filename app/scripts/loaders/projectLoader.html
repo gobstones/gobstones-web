@@ -112,7 +112,7 @@
     }
 
     _removeUtf8Bom(content) {
-      return content.charCodeAt(0) === 0xfeff
+      return content.charCodeAt && content.charCodeAt(0) === 0xfeff
         ? content.substr(1)
         : content;
     }
