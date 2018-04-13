@@ -98,6 +98,7 @@
         getContent().then(content => {
           try {
             console.log("Using " + loader.constructor.name + "...");
+            content = this._removeUtf8Bom(content);
             loader.readProjectContent(context, content);
           } catch(e) {
             console.error(loader, e);
@@ -108,6 +109,12 @@
       });
 
       if (!handled) callback();
+    }
+
+    _removeUtf8Bom(content) {
+      return content.charCodeAt(0) === 0xfeff
+        ? content.substr(1)
+        : content;
     }
   }
 </script>
