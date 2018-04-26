@@ -165,12 +165,13 @@
       const board = this._getBoard();
 
       board.css({ opacity: 0, transform: "scale(1)" });
-      const scale = this._getScale(percentage);
-      this._centerBoard(percentage, scale);
+      let scale = this._getScale(percentage);
+      this._centerBoard(percentage);
+
       board.css({ opacity: 1, transform: `scale(${scale})` });
     }
 
-    _centerBoard(percentage, scale) {
+    _centerBoard(percentage) {
       // center vertically
       const middleY = this._getRightPanelHeight() / 2;
       const offsetY = this._getBoardHeight() / 2;
@@ -219,12 +220,19 @@
 
     _getScale(percentage) {
       const panelWidth = this._getRightPanelWidth(percentage);
-      const scaleX = panelWidth / this._getBoardWidth();
+      const boardWidth = this._getBoardWidth()
+      const scaleX = panelWidth / boardWidth;
 
       const panelHeight = this._getRightPanelHeight();
-      const scaleY = panelHeight / this._getBoardHeight();
+      const boardHeight = this._getBoardHeight();
+      const scaleY = panelHeight / boardHeight;
 
-      return Math.max(Math.min(scaleX, scaleY) * this.SCALE, 0);
+      const scale = Math.max(Math.min(scaleX, scaleY) * this.SCALE, 0);
+      const fixedScale = scale.toFixed(1);
+      let finalScale = parseFloat(fixedScale);
+      if (parseInt(_.last(fixedScale)) % 2 === 1) finalScale += 0.02;
+
+      return finalScale;
     }
 
     _getBoard() {
