@@ -26,10 +26,14 @@
           type: Object,
           observer: "_onItemChanged"
         },
+        previousState: String,
         state: {
           type: String,
           observer: "_onCheckboxChanged"
         }
+      },
+      listeners: {
+        "child-changed": "_onChildChanged"
       },
 
       _onItemChanged: function() {
@@ -37,14 +41,26 @@
       },
 
       _onCheckboxChanged: function() {
-        if (this.state === "off")
+        if (this.state === "off") {
           this.item = this.item.setVisible(false);
+          this.fire("child-changed", { item: this.item, visible: false });
+        }
 
-        if (this.state === "on")
+        if (this.state === "on") {
           this.item = this.item.setVisible(true);
+          this.fire("child-changed", { item: this.item, visible: true });
+        }
 
-        if (this.state == null)
+        if (this.state === null && !this._isEditingChild)
           this.state = "on";
+      },
+
+      _onChildChanged: function({ detail: { item, visible } }) {
+        this._isEditingChild = true;
+        const child = _.find(this.item.children, (it) => it.alias === item.alias);
+        if (child) child.visible = visible;
+        this._onItemChanged();
+        this._isEditingChild = false;
       }
     });
   </script>
@@ -59,21 +75,26 @@
     </style>
 
     <ul>
-      <template is="dom-repeat" items="{{blocks}}">
+      <template is="dom-repeat" items="{{_blocks}}">
         <blocks-toolbox-item item="{{item}}"></blocks-toolbox-item>
       </template>
     </ul>
   </template>
 
   <script>
-
     Polymer({
       is: 'blocks-toolbox-selector',
       properties: {
-        blocks: Array
+        blocks: Object,
+        _blocks: {
+          type: Array,
+          observer: "_onBlocksUpdate"
+        }
       },
 
       ready: function() {
+        // TODO: Inicializar desde this.blocks
+
         const tree = Blockly.Xml.textToDom(`
           <xml id="toolbox" style="display: none">
             <category name="Comandos">
@@ -155,7 +176,7 @@
           </xml>
         `);
 
-        this.blocks = this._buildBlocks(tree);
+        this._blocks = this._buildBlocks(tree);
       },
 
       _buildBlocks(rootNode) {
@@ -203,8 +224,14 @@
           })
           .compact()
           .value();
+      },
+
+      _onBlocksUpdate() {
+        // this.blocks = {
+        //   visible: this._blocks. // TODO: Los que digan "on"
+        // TODO: Hacer switch de enabled
+        // }
       }
     });
-
   </script>
 </dom-module>
