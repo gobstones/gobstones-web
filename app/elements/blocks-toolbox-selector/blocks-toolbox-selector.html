@@ -8,7 +8,7 @@
       }
     </style>
 
-    <li><paper-tristate-checkbox state="{{state}}"></paper-tristate-checkbox> {{item.alias}}</li>
+    <li><paper-tristate-checkbox state="{{state}}">{{item.alias}}</paper-tristate-checkbox></li>
     <template is="dom-if" if="{{item.children}}">
       <ul>
         <template is="dom-repeat" items="{{item.children}}">
@@ -42,6 +42,9 @@
 
         if (this.state === "on")
           this.item = this.item.setVisible(true);
+
+        if (this.state == null)
+          this.state = "on";
       }
     });
   </script>
