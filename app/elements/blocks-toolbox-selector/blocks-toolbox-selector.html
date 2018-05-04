@@ -1,0 +1,207 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<dom-module id="blocks-toolbox-item">
+  <template>
+    <style>
+      ul {
+        list-style-type: none;
+      }
+    </style>
+
+    <li><paper-tristate-checkbox state="{{state}}"></paper-tristate-checkbox> {{item.alias}}</li>
+    <template is="dom-if" if="{{item.children}}">
+      <ul>
+        <template is="dom-repeat" items="{{item.children}}">
+          <blocks-toolbox-item item="{{item}}"></blocks-toolbox-item>
+        </template>
+      </ul>
+    </template>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'blocks-toolbox-item',
+      properties: {
+        item: {
+          type: Object,
+          observer: "_onItemChanged"
+        },
+        state: {
+          type: String,
+          observer: "_onCheckboxChanged"
+        }
+      },
+
+      _onItemChanged: function() {
+        this.state = this.item.getVisibilityState();
+      },
+
+      _onCheckboxChanged: function() {
+        if (this.state === "off")
+          this.item = this.item.setVisible(false);
+
+        if (this.state === "on")
+          this.item = this.item.setVisible(true);
+      }
+    });
+  </script>
+</dom-module>
+
+<dom-module id="blocks-toolbox-selector">
+  <template>
+    <style>
+      ul {
+        list-style-type: none;
+      }
+    </style>
+
+    <ul>
+      <template is="dom-repeat" items="{{blocks}}">
+        <blocks-toolbox-item item="{{item}}"></blocks-toolbox-item>
+      </template>
+    </ul>
+  </template>
+
+  <script>
+
+    Polymer({
+      is: 'blocks-toolbox-selector',
+      properties: {
+        blocks: Array
+      },
+
+      ready: function() {
+        const tree = Blockly.Xml.textToDom(`
+          <xml id="toolbox" style="display: none">
+            <category name="Comandos">
+              <category name="Comandos primitivos">
+                <block type="Poner"></block>
+                <block type="Sacar"></block>
+                <block type="Mover"></block>
+                <block type="IrAlBorde"></block>
+                <block type="VaciarTablero"></block>
+                <block type="BOOM"></block>
+              </category>
+              <category name="Procedimientos primitivos">
+              </category>
+              <category name="Mis procedimientos" custom="PROCEDURE_CALLS">
+              </category>
+              <category name="Alternativas">
+                <block type="AlternativaSimple"></block>
+                <block type="AlternativaCompleta"></block>
+              </category>
+              <category name="Repeticiones">
+                <block type="RepeticionSimple"></block>
+                <block type="RepeticionCondicional"></block>
+              </category>
+              <category name="Asignación">
+                <block type="Asignacion"></block>
+              </category>
+            </category>
+            <category name="Expresiones">
+              <category name="Literales">
+                <block type="math_number"></block>
+                <block type="ColorSelector"></block>
+                <block type="DireccionSelector"></block>
+                <block type="BoolSelector"></block>
+              </category>
+              <category name="Expresiones primitivas">
+                <block type="hayBolitas"></block>
+                <block type="puedeMover"></block>
+                <block type="nroBolitas"></block>
+              </category>
+              <category name="Funciones primitivas">
+              </category>
+              <category name="Mis funciones" custom="FUNCTION_CALLS">
+              </category>
+              <category name="Operadores">
+                <block type="OperadorNumerico"></block>
+                <block type="OperadorDeComparacion"></block>
+                <block type="OperadorLogico"></block>
+                <block type="not"></block>
+                <block type="siguiente"></block>
+                <block type="previo"></block>
+                <block type="opuesto"></block>
+              </category>
+            </category>
+            <category name="Definiciones">
+              <category name="Programas">
+                <block type="Program"></block>
+                <block type="InteractiveProgram"></block>
+              </category>
+              <category name="Asociaciones">
+                <block type="InteractiveLetterBinding"></block>
+                <block type="InteractiveNumberBinding"></block>
+                <block type="InteractiveKeyBinding"></block>
+              </category>
+              <category name="Procedimientos">
+                <block type="procedures_defnoreturnnoparams"></block>
+                <block type="procedures_defnoreturn"></block>
+              </category>
+              <category name="Funciones">
+                <block type="procedures_defreturnsimple"></block>
+                <block type="procedures_defreturnsimplewithparams"></block>
+                <block type="procedures_defreturn"></block>
+              </category>
+            </category>
+            <category name="Auxiliares Docente">
+              <block type="ComandoCompletar"></block>
+              <block type="ExpresionCompletar"></block>
+              <block type="AsociacionDeTeclaCompletar"></block>
+            </category>
+          </xml>
+        `);
+
+        this.blocks = this._buildBlocks(tree);
+      },
+
+      _buildBlocks(rootNode) {
+        const toArray = (arrayLike) => Array.apply(null, arrayLike);
+
+        return _(toArray(rootNode.children))
+          .map((node) => {
+            const name = node.attributes[0].value;
+            if (!name) return;
+
+            const alias = _.findKey(
+              Blockly.GobstonesLanguage.blockIDAliases,
+              (it) => it === name
+            );
+
+            return {
+              name: name,
+              alias: alias || name,
+              visible: true,
+              disabled: false,
+              children: this._buildBlocks(node),
+              getVisibilityState: function() {
+                const hasChildren = this.children.length > 0;
+                const allChildrenChecked = this.children.every((it) => it.visible);
+                const noneChildrenChecked = this.children.every((it) => !it.visible);
+
+                return hasChildren
+                  ? (
+                    allChildrenChecked ? "on" : (noneChildrenChecked ? "off" : null)
+                  ) : (
+                    this.visible ? "on" : "off"
+                  );
+              },
+              setVisible: function(visible) {
+                return _(this)
+                  .chain()
+                  .cloneDeep()
+                  .assign({
+                    visible,
+                    children: this.children.map((it) => it.setVisible(visible))
+                  })
+                  .value();
+              }
+            };
+          })
+          .compact()
+          .value();
+      }
+    });
+
+  </script>
+</dom-module>
