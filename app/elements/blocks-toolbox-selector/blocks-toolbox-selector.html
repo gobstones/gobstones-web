@@ -37,7 +37,7 @@
       },
 
       _onItemChanged: function() {
-        this.state = this.item.getVisibilityState();
+        this.state = this.item.updateVisibilityState();
       },
 
       _onCheckboxChanged: function() {
@@ -86,11 +86,11 @@
       is: 'blocks-toolbox-selector',
       properties: {
         blocks: Object,
-        _blocks: {
-          type: Array,
-          observer: "_onBlocksUpdate"
-        }
+        _blocks: Array
       },
+      observers: [
+        "_onBlocksUpdate(_blocks)"
+      ],
 
       ready: function() {
         // TODO: Inicializar desde this.blocks
@@ -198,17 +198,19 @@
               visible: true,
               disabled: false,
               children: this._buildBlocks(node),
-              getVisibilityState: function() {
+              updateVisibilityState: function() {
                 const hasChildren = this.children.length > 0;
                 const allChildrenChecked = this.children.every((it) => it.visible);
                 const noneChildrenChecked = this.children.every((it) => !it.visible);
 
-                return hasChildren
+                this.state = hasChildren
                   ? (
                     allChildrenChecked ? "on" : (noneChildrenChecked ? "off" : null)
                   ) : (
                     this.visible ? "on" : "off"
                   );
+
+                return this.state;
               },
               setVisible: function(visible) {
                 return _(this)
@@ -227,10 +229,26 @@
       },
 
       _onBlocksUpdate() {
-        // this.blocks = {
-        //   visible: this._blocks. // TODO: Los que digan "on"
-        // TODO: Hacer switch de enabled
-        // }
+        // TODO: No anda el observer
+
+        this.blocks = {
+          visible: this._getVisibleBlocks(),
+          enabled: []
+          // TODO: Hacer switches de enabled
+        };
+
+        console.log("LOS BLOCKS SON", this.blocks.visible);
+      },
+
+      _getVisibleBlocks(array = this._blocks) {
+        return _(array)
+          .reject({ state: "off" })
+          .flatMap((it) => {
+            return it.state === "on"
+              ? it.alias
+              : this._getVisibleBlocks(it.children)
+          })
+          .value();
       }
     });
   </script>
