@@ -230,14 +230,7 @@
       _onBlocksUpdate() {
         if (!this.__onBlocksUpdate)
           this.__onBlocksUpdate = _.debounce(() => {
-            const blocks = _(this.children)
-              .chain()
-              .first()
-              .get("children")
-              .toArray()
-              .map((it) => it.item)
-              .compact()
-              .value();
+            const blocks = this._blocks;
 
             this.blocks = {
               visible: this._getVisibleBlocks(blocks),
