@@ -37,22 +37,26 @@
       },
 
       _onItemChanged: function() {
-        this.state = this.item.updateVisibilityState();
+        this.state = this.item.state;
       },
 
       _onCheckboxChanged: function() {
         if (this.state === "off") {
-          this.item = this.item.setVisible(false);
+          this.item.setVisible(false);
           this.fire("child-changed", { item: this.item, visible: false });
         }
 
         if (this.state === "on") {
-          this.item = this.item.setVisible(true);
+          this.item.setVisible(true);
           this.fire("child-changed", { item: this.item, visible: true });
         }
 
         if (this.state === null && !this._isEditingChild)
           this.state = "on";
+
+        this
+          .querySelectorAll("blocks-toolbox-item")
+          .forEach((it) => it._onItemChanged());
       },
 
       _onChildChanged: function({ detail: { item, visible } }) {
@@ -61,6 +65,8 @@
         if (child) child.visible = visible;
         this._onItemChanged();
         this._isEditingChild = false;
+
+        this.fire("toolbox-changed");
       }
     });
   </script>
@@ -88,9 +94,9 @@
         blocks: Object,
         _blocks: Array
       },
-      observers: [
-        "_onBlocksUpdate(_blocks)"
-      ],
+      listeners: {
+        "toolbox-changed": "_onBlocksUpdate"
+      },
 
       ready: function() {
         // TODO: Inicializar desde this.blocks
@@ -198,29 +204,22 @@
               visible: true,
               disabled: false,
               children: this._buildBlocks(node),
-              updateVisibilityState: function() {
+              setVisible: function(isVisible) {
+                this.visible = isVisible;
+                this.children.forEach((it) => it.setVisible(isVisible));
+              },
+              get state() {
+                const isChecked = (it) => it.visible && it.children.every(isChecked);
                 const hasChildren = this.children.length > 0;
-                const allChildrenChecked = this.children.every((it) => it.visible);
+                const allChildrenChecked = this.children.every(isChecked);
                 const noneChildrenChecked = this.children.every((it) => !it.visible);
 
-                this.state = hasChildren
+                return hasChildren
                   ? (
                     allChildrenChecked ? "on" : (noneChildrenChecked ? "off" : null)
                   ) : (
                     this.visible ? "on" : "off"
                   );
-
-                return this.state;
-              },
-              setVisible: function(visible) {
-                return _(this)
-                  .chain()
-                  .cloneDeep()
-                  .assign({
-                    visible,
-                    children: this.children.map((it) => it.setVisible(visible))
-                  })
-                  .value();
               }
             };
           })
@@ -229,18 +228,30 @@
       },
 
       _onBlocksUpdate() {
-        // TODO: No anda el observer
+        if (!this.__onBlocksUpdate)
+          this.__onBlocksUpdate = _.debounce(() => {
+            const blocks = _(this.children)
+              .chain()
+              .first()
+              .get("children")
+              .toArray()
+              .map((it) => it.item)
+              .compact()
+              .value();
 
-        this.blocks = {
-          visible: this._getVisibleBlocks(),
-          enabled: []
-          // TODO: Hacer switches de enabled
-        };
+            this.blocks = {
+              visible: this._getVisibleBlocks(blocks),
+              enabled: []
+              // TODO: Hacer switches de enabled
+            };
 
-        console.log("LOS BLOCKS SON", this.blocks.visible);
+            console.log("LOS BLOCKS SON", this.blocks.visible);
+          }, 100);
+
+        this.__onBlocksUpdate();
       },
 
-      _getVisibleBlocks(array = this._blocks) {
+      _getVisibleBlocks(array) {
         return _(array)
           .reject({ state: "off" })
           .flatMap((it) => {
