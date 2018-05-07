@@ -25,9 +25,9 @@
       }
     </style>
 
-    <li><paper-tristate-checkbox class="check" state="{{state}}"><span class$="{{enabledCss(item.*)}}">{{item.alias}}</span></paper-tristate-checkbox><paper-toggle-button class="toggle" checked="{{item.enabled}}"></paper-toggle-button></li>
+    <li><paper-tristate-checkbox class="check" state="{{state}}"><span class$="{{enabledCss(item.*)}}">{{item.alias}}</span></paper-tristate-checkbox><template is="dom-if" if="{{item.isBlock}}"><paper-toggle-button class="toggle" checked="{{item.enabled}}"></paper-toggle-button></template></li>
 
-    <template is="dom-if" if="{{item.children}}">
+    <template is="dom-if" if="{{item.children.length}}">
       <ul>
         <template is="dom-repeat" items="{{item.children}}">
           <blocks-toolbox-item item="{{item}}"></blocks-toolbox-item>
@@ -53,6 +53,9 @@
       listeners: {
         "child-changed": "_onChildChanged"
       },
+      observers: [
+        "_onEnabledChanged(item.*)"
+      ],
 
       enabledCss: function({ base: item }) {
         return item.enabled ? "enabled" : "disabled";
@@ -60,6 +63,11 @@
 
       _onItemChanged: function() {
         this.state = this.item.state;
+      },
+
+      _onEnabledChanged: function() {
+        console.log("Y CAMBIO VITEH");
+        this.fire("toolbox-changed");
       },
 
       _onCheckboxChanged: function() {
@@ -113,7 +121,10 @@
     Polymer({
       is: 'blocks-toolbox-selector',
       properties: {
-        blocks: Object,
+        blocks: {
+          type: Object,
+          notify: true
+        },
         _blocks: Array
       },
       listeners: {
@@ -226,9 +237,13 @@
               visible: true,
               enabled: true,
               children: this._buildBlocks(node),
+              isBlock: node.tagName === "block",
               setVisible: function(isVisible) {
                 this.visible = isVisible;
                 this.children.forEach((it) => it.setVisible(isVisible));
+              },
+              setEnabled: function(isEnabled) {
+                this.enabled = isEnabled;
               },
               get state() {
                 const isChecked = (it) => it.visible && it.children.every(isChecked);
@@ -252,14 +267,12 @@
       _onBlocksUpdate() {
         if (!this.__onBlocksUpdate)
           this.__onBlocksUpdate = _.debounce(() => {
-            const visible = this._getVisibleBlocks(this._blocks);
-
             this.blocks = {
-              visible: visible,
-              disabled: visible.filter((it) => !it.enabled)
+              visible: this._getVisibleBlocks(this._blocks),
+              disabled: this._getDisabledBlocks(this._blocks)
             };
 
-            console.log("LOS DESACTIVADOS SON", this.blocks.disabled);
+            console.log("Y DALE", this.blocks);
           }, 100);
 
         this.__onBlocksUpdate();
@@ -274,7 +287,18 @@
               : this._getVisibleBlocks(it.children)
           })
           .value();
-      }
+      },
+
+      _getDisabledBlocks(array) {
+        return _(array)
+          .flatMap((it) => {
+            return it.children.length > 0
+              ? this._getDisabledBlocks(it.children)
+              : (it.enabled ? null : it.alias)
+          })
+          .compact()
+          .value();
+      },
     });
   </script>
 </dom-module>
