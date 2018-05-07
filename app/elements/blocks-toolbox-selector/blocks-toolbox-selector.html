@@ -6,9 +6,27 @@
       ul {
         list-style-type: none;
       }
+
+      .check {
+        vertical-align: super;
+      }
+
+      .toggle {
+        display: inline;
+        margin-left: 10px;
+      }
+
+      .enabled {
+        text-decoration: inherit;
+      }
+
+      .disabled {
+        text-decoration: line-through;
+      }
     </style>
 
-    <li><paper-tristate-checkbox state="{{state}}">{{item.alias}}</paper-tristate-checkbox></li>
+    <li><paper-tristate-checkbox class="check" state="{{state}}"><span class$="{{enabledCss(item.*)}}">{{item.alias}}</span></paper-tristate-checkbox><paper-toggle-button class="toggle" checked="{{item.enabled}}"></paper-toggle-button></li>
+
     <template is="dom-if" if="{{item.children}}">
       <ul>
         <template is="dom-repeat" items="{{item.children}}">
@@ -34,6 +52,10 @@
       },
       listeners: {
         "child-changed": "_onChildChanged"
+      },
+
+      enabledCss: function({ base: item }) {
+        return item.enabled ? "enabled" : "disabled";
       },
 
       _onItemChanged: function() {
@@ -202,7 +224,7 @@
               name: name,
               alias: alias || name,
               visible: true,
-              disabled: false,
+              enabled: true,
               children: this._buildBlocks(node),
               setVisible: function(isVisible) {
                 this.visible = isVisible;
@@ -230,15 +252,14 @@
       _onBlocksUpdate() {
         if (!this.__onBlocksUpdate)
           this.__onBlocksUpdate = _.debounce(() => {
-            const blocks = this._blocks;
+            const visible = this._getVisibleBlocks(this._blocks);
 
             this.blocks = {
-              visible: this._getVisibleBlocks(blocks),
-              enabled: []
-              // TODO: Hacer switches de enabled
+              visible: visible,
+              disabled: visible.filter((it) => !it.enabled)
             };
 
-            console.log("LOS BLOCKS SON", this.blocks.visible);
+            console.log("LOS DESACTIVADOS SON", this.blocks.disabled);
           }, 100);
 
         this.__onBlocksUpdate();
