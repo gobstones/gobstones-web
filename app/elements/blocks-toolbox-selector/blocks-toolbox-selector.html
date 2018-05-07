@@ -40,10 +40,7 @@
     Polymer({
       is: 'blocks-toolbox-item',
       properties: {
-        item: {
-          type: Object,
-          observer: "_onItemChanged"
-        },
+        item: Object,
         previousState: String,
         state: {
           type: String,
@@ -54,19 +51,15 @@
         "child-changed": "_onChildChanged"
       },
       observers: [
-        "_onEnabledChanged(item.*)"
+        "onItemChanged(item.*)"
       ],
 
       enabledCss: function({ base: item }) {
         return item.enabled ? "enabled" : "disabled";
       },
 
-      _onItemChanged: function() {
+      onItemChanged: function() {
         this.state = this.item.state;
-      },
-
-      _onEnabledChanged: function() {
-        console.log("Y CAMBIO VITEH");
         this.fire("toolbox-changed");
       },
 
@@ -86,17 +79,15 @@
 
         this
           .querySelectorAll("blocks-toolbox-item")
-          .forEach((it) => it._onItemChanged());
+          .forEach((it) => it.onItemChanged());
       },
 
       _onChildChanged: function({ detail: { item, visible } }) {
         this._isEditingChild = true;
         const child = _.find(this.item.children, (it) => it.alias === item.alias);
         if (child) child.visible = visible;
-        this._onItemChanged();
+        this.onItemChanged();
         this._isEditingChild = false;
-
-        this.fire("toolbox-changed");
       }
     });
   </script>
@@ -271,8 +262,6 @@
               visible: this._getVisibleBlocks(this._blocks),
               disabled: this._getDisabledBlocks(this._blocks)
             };
-
-            console.log("Y DALE", this.blocks);
           }, 100);
 
         this.__onBlocksUpdate();
