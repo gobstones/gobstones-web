@@ -263,8 +263,8 @@
                 window.BUS.fire("interactive-run");
               },
               onResult: (state) => this._notify(state),
-              onReturnValue: (value) => {
-                window.BUS.fire("return-value", { value });
+              onReturnValue: (value, actualReturnValue) => {
+                window.BUS.fire("return-value", { value: { value, actualReturnValue } });
               }
             },
             this.runner.speed

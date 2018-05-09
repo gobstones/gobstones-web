@@ -49,6 +49,15 @@
 
       $(document).ready(() => {
         $(".panel-right").bind("mousewheel", (e) => {
+          let parent = e.originalEvent.target;
+
+          while (parent) {
+            if (parent.tagName.toLowerCase() === "results-inspector")
+              return;
+
+            parent = parent.parentElement;
+          }
+
           if (e.originalEvent.wheelDelta > 0)
             this.SCALE += delta;
           else
