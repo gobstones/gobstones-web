@@ -1,16 +1,28 @@
 <link rel="import" href="./expandedLoader.html">
 
 <script>
+  const GITHUB_CLIENT_ID = "086085200026d5c54c19";
+  const GITHUB_CLIENT_SECRET = "f40981be76b00e35d4437d71184f42a70d08f3a6";
+
   class GitHubLoader extends ExpandedLoader {
     constructor(projectType, slug, initialPath) {
       super();
       this.loader = this._getProjectLoader(projectType);
 
-      this.CLIENT_ID = "086085200026d5c54c19";
-      this.CLIENT_SECRET = "f40981be76b00e35d4437d71184f42a70d08f3a6";
-
       this.slug = slug;
       this.initialPath = initialPath;
+    }
+
+    static reportIssue(title, body, email) {
+      return $.ajax({
+        type: "POST",
+        url: `https://api.github.com/repos/gobstones/gobstones-issues/issues?client_id=${GITHUB_CLIENT_ID}&client_secret=${GITHUB_CLIENT_SECRET}`,
+        data: { title, body },
+        dataType: "json",
+        headers: {
+          "Authorization": "token bfa5cc1abb5a8e67a9a3c13e7deeb009514bc97e"
+        }
+      });
     }
 
     load(getContext, callback) {
@@ -26,7 +38,7 @@
       const [ username, repoName ] = this.slug.split("/");
 
       return $.get(
-        `https://api.github.com/repos/${username}/${repoName}/contents/${path}?client_id=${this.CLIENT_ID}&client_secret=${this.CLIENT_SECRET}`
+        `https://api.github.com/repos/${username}/${repoName}/contents/${path}?client_id=${GITHUB_CLIENT_ID}&client_secret=${GITHUB_CLIENT_SECRET}`
       );
     }
 

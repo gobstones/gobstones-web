@@ -1,0 +1,43 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../scripts/loaders/remote/gitHubLoader.html">
+
+<dom-module id="report-issue">
+  <style>
+    .title {
+      margin-bottom: 30px;
+    }
+  </style>
+
+  <template>
+    <h1 class="title">[[localize("report-bug")]]</h1>
+
+    <iron-form>
+      <form>
+        <input type="text" name="title" value="{{title}}">
+        <textarea>asfasf</textarea>
+
+        <paper-button raised onclick="send()">Submit</paper-button>
+      </form>
+    </iron-form>
+  </template>
+
+  <script>
+
+    Polymer({
+      is: 'report-issue',
+      behaviors: [
+        Polymer.LocalizationBehavior
+      ],
+      properties: {
+        title: String,
+        body: String
+      },
+
+      send() {
+        alert("MANDAR TODO");
+        debugger;
+      }
+    });
+
+  </script>
+</dom-module>

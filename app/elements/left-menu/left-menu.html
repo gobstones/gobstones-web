@@ -192,6 +192,8 @@
       </template>
 
       <a href="https://github.com/gobstones/gobstones-web/wiki/Acerca-de-Gobstones-Web" target="_blank">[[localize("about-gobstones-web")]]</a>
+
+      <a href="javascript:void(0)" on-click="reportIssue">LASKFJLASKJFSALKJ</a>
     </div>
 
     <div class="items">
@@ -322,6 +324,10 @@
       seeGeneratedCode: function() {
         this._ide().setCurrentCode(this._context().editor.generateCode(false));
         this._ide().showCodeViewModal();
+      },
+
+      reportIssue: function() {
+        this._ide().showReportIssueModal();
       },
 
       _onSelectedLanguageChanged: function(selectedLanguage) {

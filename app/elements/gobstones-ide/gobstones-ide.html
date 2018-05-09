@@ -136,6 +136,12 @@
 
         <code-viewer id="codeViewer" code="[[currentCode]]"></code-viwer>
       </paper-dialog>
+
+      <paper-dialog id="reportIssueModal" class="report-issue-modal">
+        <paper-button class="accept close" dialog-confirm autofocus><iron-icon icon="icons:close"></iron-icon></paper-button>
+
+        <report-issue></code-viwer>
+      </paper-dialog>
     </div>
 
   </template>
@@ -213,6 +219,10 @@
 
       showCodeViewModal: function(newCode) {
         document.querySelector("#codeViewModal").open();
+      },
+
+      showReportIssueModal: function() {
+        document.querySelector("#reportIssueModal").open();
       },
 
       showCodeChanged: function({ detail }) {
