@@ -40,7 +40,7 @@
         <iron-autogrow-textarea rows="5" bind-value="{{body}}" placeholder$="{{localize('report-bug-description')}}"></iron-autogrow-textarea>
       </div>
 
-      <div class="report-warning">[[localize("report-bug-public")]]</div>
+      <div class="report-warning">[[localize("report-bug-public")]]<a target="_blank" href="https://github.com/gobstones/gobstones-issues/issues">issue tracker</a>.</div>
 
       <button class="submit" on-click="send" disabled$="{{isLoading}}">[[localize("report-bug-send")]]</button>
     </div>
