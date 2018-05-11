@@ -1,0 +1,83 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../scripts/loaders/remote/gitHubLoader.html">
+
+<dom-module id="report-issue">
+  <style>
+    .title {
+      margin-bottom: 30px;
+      text-align: center;
+    }
+
+    .form {
+      width: 400px;
+      margin-left: 20px;
+      margin-right: 20px;
+    }
+
+    .body {
+      width: 100%;
+    }
+
+    .submit {
+      margin-top: 10px;
+      margin-bottom: 10px;
+    }
+
+    .report-warning {
+      color: gray;
+    }
+  </style>
+
+  <template>
+    <h1 class="title">[[localize("report-bug")]]</h1>
+
+    <div class="form">
+      <div>
+        <paper-input label$="{{localize('report-bug-title')}}" value="{{title}}"></paper-input>
+      </div>
+
+      <div>
+        <iron-autogrow-textarea rows="5" bind-value="{{body}}" placeholder$="{{localize('report-bug-description')}}"></iron-autogrow-textarea>
+      </div>
+
+      <div class="report-warning">[[localize("report-bug-public")]]</div>
+
+      <button class="submit" on-click="send" disabled$="{{isLoading}}">[[localize("report-bug-send")]]</button>
+    </div>
+  </template>
+
+  <script>
+
+    Polymer({
+      is: 'report-issue',
+      behaviors: [
+        Polymer.LocalizationBehavior
+      ],
+      properties: {
+        title: String,
+        body: String,
+        isLoading: Boolean
+      },
+
+      send() {
+        this.isLoading = true;
+
+        GitHubLoader
+          .reportIssue(this.title, this.body)
+          .then(() => {
+            this.title = "";
+            this.body = "";
+            document.querySelector("#reportIssueModal").close();
+            alert(this.localize("report-bug-success"));
+          })
+          .catch(() => {
+            alert(this.localize("report-bug-error"));
+          })
+          .always(() => {
+            this.isLoading = false;
+          })
+      }
+    });
+
+  </script>
+</dom-module>
