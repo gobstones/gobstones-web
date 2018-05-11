@@ -5,20 +5,45 @@
   <style>
     .title {
       margin-bottom: 30px;
+      text-align: center;
+    }
+
+    .form {
+      width: 400px;
+      margin-left: 20px;
+      margin-right: 20px;
+    }
+
+    .body {
+      width: 100%;
+    }
+
+    .submit {
+      margin-top: 10px;
+      margin-bottom: 10px;
+    }
+
+    .report-warning {
+      color: gray;
     }
   </style>
 
   <template>
     <h1 class="title">[[localize("report-bug")]]</h1>
 
-    <iron-form>
-      <form>
-        <input type="text" name="title" value="{{title}}">
-        <textarea>asfasf</textarea>
+    <div class="form">
+      <div>
+        <paper-input label$="{{localize('report-bug-title')}}" value="{{title}}"></paper-input>
+      </div>
 
-        <paper-button raised onclick="send()">Submit</paper-button>
-      </form>
-    </iron-form>
+      <div>
+        <iron-autogrow-textarea rows="5" bind-value="{{body}}" placeholder$="{{localize('report-bug-description')}}"></iron-autogrow-textarea>
+      </div>
+
+      <div class="report-warning">[[localize("report-bug-public")]]</div>
+
+      <button class="submit" on-click="send" disabled$="{{isLoading}}">[[localize("report-bug-send")]]</button>
+    </div>
   </template>
 
   <script>
@@ -30,12 +55,27 @@
       ],
       properties: {
         title: String,
-        body: String
+        body: String,
+        isLoading: Boolean
       },
 
       send() {
-        alert("MANDAR TODO");
-        debugger;
+        this.isLoading = true;
+
+        GitHubLoader
+          .reportIssue(this.title, this.body)
+          .then(() => {
+            this.title = "";
+            this.body = "";
+            document.querySelector("#reportIssueModal").close();
+            alert(this.localize("report-bug-success"));
+          })
+          .catch(() => {
+            alert(this.localize("report-bug-error"));
+          })
+          .always(() => {
+            this.isLoading = false;
+          })
       }
     });
 
