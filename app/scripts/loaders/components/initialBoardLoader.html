@@ -16,7 +16,7 @@
       const panel = context.boards;
       const files = panel.availableInitialStates.map((initialBoard, i) => {
         return {
-          name: `Board${i + 1}${this.SUFFIX}`,
+          name: `assets/boards/Board${i + 1}${this.SUFFIX}`,
           content: new Parser().buildGbb(initialBoard, panel.getSizeOf(initialBoard))
         }
       });

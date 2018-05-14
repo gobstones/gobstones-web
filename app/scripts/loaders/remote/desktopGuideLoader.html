@@ -87,7 +87,7 @@
         const path = `${guidesPath}/${exercisePath}`;
 
         const bitmap = window.GBS_REQUIRE("fs")
-          .readFileSync(`${path}/image.png`)
+          .readFileSync(`${path}/cover.png`)
         const base64 = new Buffer(bitmap).toString("base64");
         return `data:image/png;base64,${base64}`;
       } catch(e) {
