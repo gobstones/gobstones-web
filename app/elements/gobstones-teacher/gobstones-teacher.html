@@ -50,7 +50,7 @@
       .solution-selector {
         position: absolute;
         right: 15px;
-        z-index: 999;
+        z-index: 99;
         background-color: rgba(0, 0, 0, 0.02);
         border-radius: 5px;
         padding-left: 5px;
@@ -180,6 +180,8 @@
         this.BLOCKS_SYNC_OFF_COLOR = "#666666";
         this._setBlocksSyncOff();
 
+        window.test = this; // TODO: BORRAR
+
         const boardsPanel = document.getElementById("boards");
         if (boardsPanel) {
           this.runner = boardsPanel.$.runner;
@@ -227,7 +229,7 @@
       },
 
       getCode: function() {
-        return _.merge(this.solution.code, {
+        return _.merge({}, this.solution.code, {
           library: this._getSolutionLibrary(),
           teacher: this._getSolutionTeacher()
         });
@@ -310,7 +312,6 @@
       },
 
       _setSolutionWorkspace: function(workspace) {
-        window.tuvieja = this;
         this.availableSolutions[this.selectedSolution].workspace.main = workspace;
       },
 
@@ -392,7 +393,7 @@
 
       _setBlocksSyncOn: function() {
         const generatedCode = this.generateCode(false);
-        const currentCode = this._editors()[ID_CODE].code.main;
+        const currentCode = this.solution.code.main;
 
         if (currentCode !== "" && currentCode !== generatedCode) {
           const userAccepts = confirm(this.localize("blocks-sync-confirm-overwrite"));
@@ -409,6 +410,7 @@
       _copyBlocksToCode() {
         const generatedCode = this.generateCode(false);
         this.isSyncingBlocks = true;
+        this.setSolutionCode(generatedCode);
         this.setCode(generatedCode);
       },
 
