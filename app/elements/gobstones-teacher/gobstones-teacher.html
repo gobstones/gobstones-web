@@ -347,12 +347,11 @@
       _removeSolution: function(action) {
         if (this.availableSolutions.length < 2) return;
 
-        const oldIndex = this.selectedSolution;
-        const newIndex = this.selectedSolution - 1;
+        let index = this.selectedSolution;
+        if (index === 0) index++;
+        action(index);
 
-        if (newIndex < 0) this.selectedSolution = 1;
-        action(oldIndex);
-        this.selectedSolution = Math.max(0, newIndex);
+        this.selectedSolution = Math.max(0, this.availableSolutions.length - 1);
       },
 
       _computeSolution: function(selectedSolution, availableSolutions) {
