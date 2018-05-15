@@ -180,8 +180,6 @@
         this.BLOCKS_SYNC_OFF_COLOR = "#666666";
         this._setBlocksSyncOff();
 
-        window.test = this; // TODO: BORRAR
-
         const boardsPanel = document.getElementById("boards");
         if (boardsPanel) {
           this.runner = boardsPanel.$.runner;
@@ -351,8 +349,6 @@
           this.setCode(this.solution.code.main, "main", false);
           this.setCode(this.solution.workspace.main, "main", true);
         });
-
-        console.log("ELEGIDO", this.solution); // TODO: VER BLOCKS SYNC
       },
 
       _onContentChange: function(event) {
@@ -410,7 +406,7 @@
       _copyBlocksToCode() {
         const generatedCode = this.generateCode(false);
         this.isSyncingBlocks = true;
-        this.setSolutionCode(generatedCode);
+        this._setSolutionCode(generatedCode);
         this.setCode(generatedCode);
       },
 
