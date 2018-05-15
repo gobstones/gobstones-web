@@ -40,15 +40,12 @@
       },
 
       adaptType(result) {
-        if (!result) return "";
-        const { value: { type } } = result;
-
-        return type;
+        return result && result.value && result.value.type || "";
       },
 
       adaptValue(result) {
-        if (!result) return "";
-        const { value: { value }, actualReturnValue } = result;
+        const actualReturnValue = result && result.actualReturnValue;
+        if (!actualReturnValue) return "";
 
         const format = (node, indentLevel = 0) => {
           const type = node.type().toString();

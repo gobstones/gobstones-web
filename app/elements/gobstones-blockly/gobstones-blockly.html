@@ -136,7 +136,9 @@
         this.workspace[mode] = code;
         this.code[mode] = mode === "teacher" ? code : this._xmlToCode(code);
         if (this.mode === mode) {
-          this.workspaceXml = code;
+          if (code !== "") this.workspaceXml = code;
+          else this.$.blockly.resetWorkspace();
+
           setTimeout(() => {
             this.$.blockly.workspace.undoStack_ = [];
           }, 0)
@@ -237,7 +239,10 @@
         this._getWorkspace()[this.mode] = this.workspaceXml;
 
         const newCode = this.generateCode();
-        if (this.code[this.mode] === newCode) return;
+        if (this.code[this.mode] === newCode) {
+          this.fire("content-change");
+          return;
+        }
 
         if (this.runner) this.runner.stop()
         this.code[this.mode] = newCode;

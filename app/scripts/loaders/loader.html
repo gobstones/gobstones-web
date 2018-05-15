@@ -29,7 +29,7 @@
 
     _saveBlob(content, name) {
       const blob = new Blob([content]);
-      saveAs(blob, name);
+      saveAs(blob, _.last(name.split("/")));
     }
 
     _clean(event) {

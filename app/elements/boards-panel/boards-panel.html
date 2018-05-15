@@ -324,7 +324,7 @@
                 <template is="dom-if" if="{{finalState}}">
                   <gs-board id="finalStateEditor" attire="{{attire}}"></gs-board>
 
-                  <template is="dom-if" if="{{returnValue}}">
+                  <template is="dom-if" if="{{_hasReturnValue(returnValue)}}">
                     <paper-button id="inspect-results-button" class="inspect-results-button" style="z-index: 99" on-click="showReturnValue"><iron-icon class="black-button" icon="icons:search"></iron-icon></paper-button>
                     <paper-tooltip for="inspect-results-button" position="left" animation-config="{{tooltipAnimation}}">
                       <div class="button-tooltip">
@@ -779,6 +779,10 @@
 
       _showCodeDirection: function(value) {
         return value ? 'left' : 'right';
+      },
+
+      _hasReturnValue: function(returnValue) {
+        return returnValue && returnValue.value;
       },
 
       _computeSize: function(sizeX, sizeY) {
