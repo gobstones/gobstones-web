@@ -238,6 +238,10 @@
         });
       },
 
+      preSave: function() {
+        this.selectedSolution = 0;
+      },
+
       getCode: function() {
         return _.merge({}, this.solution.code, {
           library: this._getSolutionLibrary(),

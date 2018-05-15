@@ -32,6 +32,8 @@
     }
 
     save(context) {
+      if (context.editor.preSave) context.editor.preSave();
+
       const loaders = this._loadersForSaving();
       const files = _.flatMap(loaders, loader => loader.getFiles(context));
 
