@@ -1,0 +1,20 @@
+<link rel="import" href="../textLoader.html">
+<link rel="import" href="mixins/singleFileComponent.html">
+
+<script>
+  class SolutionsLoader extends TextLoader {
+    constructor() {
+      super();
+      _.defaults(this, SingleFileComponent);
+      this.FILENAME = "solutions.json";
+    }
+
+    buildContent(context) {
+      return JSON.stringify(context.editor.availableSolutions);
+    }
+
+    readContent(context, content) {
+      context.editor.set("availableSolutions", JSON.parse(content));
+    }
+  }
+</script>

@@ -290,6 +290,9 @@
       },
 
       reset: function() {
+        const solutionsCount = this.availableSolutions.length;
+        for (let i = 0; i < solutionsCount - 1; i++) this.removeCurrentSolution();
+
         return this._editors().forEach((editor) => editor.reset && editor.reset());
       },
 
