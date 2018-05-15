@@ -180,6 +180,18 @@
         this.BLOCKS_SYNC_OFF_COLOR = "#666666";
         this._setBlocksSyncOff();
 
+        Object.defineProperty(this, "code", {
+          get: function() {
+            return this.getCode();
+          }
+        });
+
+        Object.defineProperty(this, "workspace", {
+          get: function() {
+            return this.solution.workspace;
+          }
+        });
+
         const boardsPanel = document.getElementById("boards");
         if (boardsPanel) {
           this.runner = boardsPanel.$.runner;
