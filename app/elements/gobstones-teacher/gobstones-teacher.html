@@ -46,6 +46,16 @@
       .button-tooltip {
         font-size: 15px;
       }
+
+      .solution-selector {
+        position: absolute;
+        right: 15px;
+        z-index: 999;
+        background-color: rgba(0, 0, 0, 0.02);
+        border-radius: 5px;
+        padding-left: 5px;
+        padding-right: 5px;
+      }
     </style>
 
     <div>
@@ -63,6 +73,32 @@
         <paper-tab>[[localize("description")]]</paper-tab>
         <paper-tab>[[localize("settings")]]</paper-tab>
       </paper-tabs>
+
+      <template is="dom-if" if="{{isBlocksOrCodeTabSelected(selectedTab)}}">
+        <div class="solution-selector">
+          <paper-dropdown-menu no-animations no-label-float vertical-align="bottom" horizontal-align="right">
+            <paper-listbox class="dropdown-content" selected="{{selectedSolution}}">
+              <template is="dom-repeat" items="{{ availableSolutions }}" rendered-item-count="{{solutionsCount}}">
+                <paper-item>{{getSolutionName(index)}}</paper-item>
+              </template>
+            </paper-listbox>
+          </paper-dropdown-menu>
+
+          <paper-button id="add-solution-button" style="z-index: 99" on-click="addSolution"><iron-icon class="black-button" icon="icons:add"></iron-icon></paper-button>
+          <paper-tooltip for="add-solution-button" position="bottom" animation-config="{{tooltipAnimation}}">
+            <div class="button-tooltip">
+              [[localize("tooltip-add-solution")]]
+            </div>
+          </paper-tooltip>
+
+          <paper-button id="remove-solution-button" style="z-index: 99" on-click="removeCurrentSolution"><iron-icon class="black-button" icon="icons:remove"></iron-icon></paper-button>
+          <paper-tooltip for="remove-solution-button" position="bottom" animation-config="{{tooltipAnimation}}">
+            <div class="button-tooltip">
+              [[localize("tooltip-remove-solution")]]
+            </div>
+          </paper-tooltip>
+        </div>
+      </template>
 
       <div style="position: relative">
         <gobstones-blockly id="blocks-editor" class$="editor {{_blocksClass(selectedTab)}}"></gobstones-blockly>
@@ -102,6 +138,14 @@
           value: 0,
           observer: "_onTabChange"
         },
+        selectedSolution: {
+          type: Number,
+          value: 0
+        },
+        availableSolutions: {
+          type: Array,
+          value: []
+        },
         code: Object,
         workspace: Object,
 
@@ -134,6 +178,10 @@
           library: ""
         };
 
+        this.availableSolutions.push({
+          code: this.code, workspace: this.workspace
+        });
+
         const boardsPanel = document.getElementById("boards");
         if (boardsPanel) {
           this.runner = boardsPanel.$.runner;
@@ -143,7 +191,7 @@
           this._editors()[ID_LIBRARY].runner = this.runner;
 
           this.runner.addEventListener("run", ({ detail }) => {
-            if (this.selectedTab > ID_CODE) {
+            if (!this.isBlocksOrCodeTabSelected(this.selectedTab)) {
               this.runner.showToast(this.localize("go-to-first-tabs"));
               this.runner.stop();
               return;
@@ -224,6 +272,14 @@
 
       reset: function() {
         return this._editors().forEach((editor) => editor.reset && editor.reset());
+      },
+
+      getSolutionName: function(index) {
+        return "Alumno"; // TODO: I18n
+      },
+
+      isBlocksOrCodeTabSelected: function(selectedTab) {
+        return selectedTab === ID_BLOCKS || selectedTab === ID_CODE;
       },
 
       _onContentChange: function(event) {
