@@ -14,7 +14,9 @@
     }
 
     readContent(context, content) {
-      context.editor.set("availableSolutions", JSON.parse(content));
+      const solutions = JSON.parse(content);
+      context.editor.set("availableSolutions", solutions);
+      context.editor.selectedSolution = 0;
     }
   }
 </script>
