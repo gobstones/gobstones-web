@@ -138,16 +138,29 @@
           value: 0,
           observer: "_onTabChange"
         },
+        solution: {
+          type: Object,
+          computed: "_computeSolution(selectedSolution, availableSolutions)",
+          observer: "_onSolutionSelected"
+        },
         selectedSolution: {
           type: Number,
-          value: 0
+          value: 0,
         },
         availableSolutions: {
           type: Array,
-          value: []
+          value: [{
+            code: {
+              main: "",
+              library: "",
+              teacher: ""
+            },
+            workspace: {
+              main: "",
+              library: ""
+            }
+          }]
         },
-        code: Object,
-        workspace: Object,
 
         tooltipAnimation: Object
       },
@@ -166,21 +179,6 @@
         this.BLOCKS_SYNC_ON_COLOR = "#03a9f4";
         this.BLOCKS_SYNC_OFF_COLOR = "#666666";
         this._setBlocksSyncOff();
-
-        this.code = {
-          main: "",
-          library: "",
-          teacher: ""
-        };
-
-        this.workspace = {
-          main: "",
-          library: ""
-        };
-
-        this.availableSolutions.push({
-          code: this.code, workspace: this.workspace
-        });
 
         const boardsPanel = document.getElementById("boards");
         if (boardsPanel) {
@@ -224,12 +222,21 @@
         }
 
         this.subscribeTo("initial-state", (event) => {
-          this._currentEditor()._runCode(event, this.code, true);
+          this._currentEditor()._runCode(event, this.getCode(), true);
         });
       },
 
-      setCode: function(code, mode) {
-        const isBlocklyCode = code.startsWith("<");
+      getCode: function() {
+        return _.merge(this.solution.code, {
+          library: this._getSolutionLibrary(),
+          teacher: this._getSolutionTeacher()
+        });
+      },
+
+      setCode: function(code, mode, isBlocklyCode) {
+        const shouldUseBlocks = isBlocklyCode !== undefined
+          ? isBlocklyCode
+          : code.startsWith("<");
 
         const editors = this._editors();
 
@@ -242,7 +249,7 @@
           editors[ID_BLOCKS].setCode(code, mode);
           editors[ID_CODE].setCode(code, mode);
         } else {
-          editors[isBlocklyCode ? ID_BLOCKS : ID_CODE].setCode(code);
+          editors[shouldUseBlocks ? ID_BLOCKS : ID_CODE].setCode(code);
         }
       },
 
@@ -298,6 +305,31 @@
         return selectedTab === ID_BLOCKS || selectedTab === ID_CODE;
       },
 
+      _setSolutionCode: function(code) {
+        this.availableSolutions[this.selectedSolution].code.main = code;
+      },
+
+      _setSolutionWorkspace: function(workspace) {
+        window.tuvieja = this;
+        this.availableSolutions[this.selectedSolution].workspace.main = workspace;
+      },
+
+      _getSolutionLibrary: function() {
+        return this.availableSolutions[0].code.library;
+      },
+
+      _setSolutionLibrary: function(library) {
+        this.availableSolutions[0].code.library = library;
+      },
+
+      _getSolutionTeacher: function() {
+        return this.availableSolutions[0].code.teacher;
+      },
+
+      _setSolutionTeacher: function(teacher) {
+        this.availableSolutions[0].code.teacher = library;
+      },
+
       _removeSolution: function(action) {
         if (this.availableSolutions.length < 2) return;
 
@@ -309,28 +341,40 @@
         this.selectedSolution = Math.max(0, newIndex);
       },
 
+      _computeSolution: function(selectedSolution, availableSolutions) {
+        return availableSolutions[selectedSolution];
+      },
+
+      _onSolutionSelected: function() {
+        setTimeout(() => {
+          this.setCode(this.solution.code.main, "main", false);
+          this.setCode(this.solution.workspace.main, "main", true);
+        });
+
+        console.log("ELEGIDO", this.solution); // TODO: VER BLOCKS SYNC
+      },
+
       _onContentChange: function(event) {
         const editors = this._editors();
 
         const editor = event.target;
         if (editor.id === "code-editor") {
-          this.code.main = editor.code.main;
+          this._setSolutionCode(editor.code.main);
           if (!this.isSyncingBlocks) this._setBlocksSyncOff();
         }
         if (editor.id === "blocks-editor") {
-          this.workspace.main = editor.workspace.main;
-
+          this._setSolutionWorkspace(editor.workspace.main);
           if (this.blocksSyncEnabled) this._copyBlocksToCode();
         }
         if (editor.id === "library-editor") {
           const code = editor.code.main;
-          this.code.library = code;
+          this._setSolutionLibrary(code);
           editors[ID_BLOCKS].setCode(code, "library");
           editors[ID_CODE].setCode(code, "library");
         }
         if (editor.id === "teacher-library-editor") {
           const code = editor.code.main;
-          this.code.teacher = code;
+          this._setSolutionTeacher(code);
           editors[ID_BLOCKS].setCode(code, "teacher", false);
           editors[ID_CODE].setCode(code, "teacher", false);
         }
