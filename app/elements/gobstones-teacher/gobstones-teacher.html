@@ -275,11 +275,38 @@
       },
 
       getSolutionName: function(index) {
-        return "Alumno"; // TODO: I18n
+        return index === 0
+          ? this.localize("solutions-student")
+          : `${this.localize("solutions-solution")} ${index}`;
+      },
+
+      addSolution: function() {
+        this.push("availableSolutions", {
+          code: { main: "", library: "", teacher: "" },
+          workspace: { main: "", library: "" }
+        });
+        this.selectedSolution = this.availableSolutions.length - 1;
+      },
+
+      removeCurrentSolution: function() {
+        this._removeSolution(index => {
+          this.splice("availableSolutions", index, 1);
+        });
       },
 
       isBlocksOrCodeTabSelected: function(selectedTab) {
         return selectedTab === ID_BLOCKS || selectedTab === ID_CODE;
+      },
+
+      _removeSolution: function(action) {
+        if (this.availableSolutions.length < 2) return;
+
+        const oldIndex = this.selectedSolution;
+        const newIndex = this.selectedSolution - 1;
+
+        if (newIndex < 0) this.selectedSolution = 1;
+        action(oldIndex);
+        this.selectedSolution = Math.max(0, newIndex);
       },
 
       _onContentChange: function(event) {
