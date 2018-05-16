@@ -1,22 +1,50 @@
 <link rel="import" href="../textLoader.html">
-<link rel="import" href="mixins/singleFileComponent.html">
 
 <script>
   class SolutionsLoader extends TextLoader {
     constructor() {
       super();
-      _.defaults(this, SingleFileComponent);
-      this.FILENAME = "solutions.json";
+      this.REGEXP = /assets\/solutions\/Solution(\d+)\.(gbs|gbk)/;
     }
 
-    buildContent(context) {
-      return JSON.stringify(context.editor.availableSolutions);
+    getFiles(context) {
+      const editor = context.editor;
+      const files = editor.availableSolutions.slice(1).map((solution, i) => {
+        return {
+          name: `assets/solutions/Solution${i + 1}.gbs`,
+          content: solution.code.main
+        };
+      }).concat(editor.availableSolutions.slice(1).map((solution, i) => {
+        return {
+          name: `assets/solutions/Solution${i + 1}.gbk`,
+          content: solution.workspace.main
+        };
+      }));
+
+      return files;
     }
 
-    readContent(context, content) {
-      const solutions = JSON.parse(content);
-      context.editor.set("availableSolutions", solutions);
-      context.editor.selectedSolution = 0;
+    readContent(context, content, fileName) {
+      const resource = this._isBlocks(fileName) ? "workspace" : "code";
+      const index = parseInt(fileName.match(this.REGEXP)[1]);
+
+      context.editor.availableSolutions[index][resource].main = content;
+    }
+
+    readProjectContent(context, content, fileName) {
+      this.readContent(context, content, fileName);
+    }
+
+    shouldHandle(path) {
+      return this.REGEXP.test(path);
+    }
+
+    _isCode(path) {
+      return _.endsWith(path, ".gbs");
+    }
+
+    _isBlocks(path) {
+      return _.endsWith(path, ".gbk");
     }
   }
 </script>

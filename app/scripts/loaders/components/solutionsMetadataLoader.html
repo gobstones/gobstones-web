@@ -1,0 +1,22 @@
+<link rel="import" href="../textLoader.html">
+<link rel="import" href="mixins/singleFileComponent.html">
+
+<script>
+  class SolutionsMetadataLoader extends TextLoader {
+    constructor() {
+      super();
+      _.defaults(this, SingleFileComponent);
+      this.FILENAME = "solutions.json";
+    }
+
+    buildContent(context) {
+      return JSON.stringify({ count: context.editor.availableSolutions.length - 1 });
+    }
+
+    readContent(context, content) {
+      const solutions = JSON.parse(content);
+      for (let i = 0; i < solutions.count; i++) context.editor.addSolution();
+      context.editor.selectedSolution = 0;
+    }
+  }
+</script>

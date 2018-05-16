@@ -7,18 +7,13 @@
       this.SUFFIX = ".gbb";
     }
 
-    buildContent(context) {
-      const panel = context.boards;
-      return new Parser().buildGbb(panel.initialState, panel.size);
-    }
-
     getFiles(context) {
       const panel = context.boards;
       const files = panel.availableInitialStates.map((initialBoard, i) => {
         return {
           name: `assets/boards/Board${i + 1}${this.SUFFIX}`,
           content: new Parser().buildGbb(initialBoard, panel.getSizeOf(initialBoard))
-        }
+        };
       });
 
       return files.splice(panel.selectedInitialState, 1).concat(files);

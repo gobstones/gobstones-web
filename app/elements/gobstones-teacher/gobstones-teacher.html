@@ -79,7 +79,7 @@
           <paper-dropdown-menu no-animations no-label-float vertical-align="bottom" horizontal-align="right">
             <paper-listbox class="dropdown-content" selected="{{selectedSolution}}">
               <template is="dom-repeat" items="{{ availableSolutions }}" rendered-item-count="{{solutionsCount}}">
-                <paper-item>{{getSolutionName(index)}}</paper-item>
+                <paper-item>{{getSolutionName(index, localize)}}</paper-item>
               </template>
             </paper-listbox>
           </paper-dropdown-menu>
@@ -300,10 +300,10 @@
         return this._editors().forEach((editor) => editor.reset && editor.reset());
       },
 
-      getSolutionName: function(index) {
+      getSolutionName: function(index, localize) {
         return index === 0
-          ? this.localize("solutions-student")
-          : `${this.localize("solutions-solution")} ${index}`;
+          ? localize("solutions-student")
+          : `${localize("solutions-solution")} ${index}`;
       },
 
       addSolution: function() {
