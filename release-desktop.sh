@@ -37,6 +37,9 @@ cp "./dist/gobstones-web Setup 1.0.0.exe" $WINDOWS_NAME_1
 
 # ---
 
+mv "$LINUX_NAME_1" node_modules/
+mv "$WINDOWS_NAME_1" node_modules/
+
 TYPE="code"
 sed -i -e "s/\/#\/blocks/\/#\/code/g" start-electron.js
 
@@ -48,6 +51,9 @@ LINUX_NAME_2=gobstones-$TYPE-linux-$PACKAGE_VERSION.zip
 WINDOWS_NAME_2=gobstones-$TYPE-windows-$PACKAGE_VERSION.exe
 cd ./dist/linux-unpacked ; zip -r ../../$LINUX_NAME_2 . ; cd ../..
 cp "./dist/gobstones-web Setup 1.0.0.exe" $WINDOWS_NAME_2
+
+mv "node_modules/$LINUX_NAME_1" "$LINUX_NAME_1"
+mv "node_modules/$WINDOWS_NAME_1" "$WINDOWS_NAME_1"
 
 # ---
 
