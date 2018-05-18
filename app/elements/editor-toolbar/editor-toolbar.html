@@ -171,7 +171,7 @@
         }).subscribeTo("primitive-actions-off", () => {
           this.showProceduresHint = false;
         }).subscribeTo("load-project-from-file", () => {
-          // TODO: El gbs-editor-toolbar de select-mode queda activo por alguna razón
+          // TODO: (*1) El gbs-editor-toolbar de select-mode queda activo por alguna razón
           if (this.projectType === "none") return;
 
           this.loadProject();
@@ -248,6 +248,8 @@
       },
 
       _projectExtension: function(projectType) {
+        if (projectType === "none") return ""; // TODO: (*1)
+
         return this._projectLoader(projectType).EXTENSION;
       },
 

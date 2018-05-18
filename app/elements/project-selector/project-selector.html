@@ -73,6 +73,7 @@
 
     .no-exercises {
       margin-top: 40px;
+      color: cornflowerblue;
     }
 
     .guide-selector {
@@ -91,54 +92,68 @@
   <template>
     <h1>[[localize("select-an-exercise")]] <paper-icon-button suffix icon="folder-open" on-click="loadFromFile"></paper-icon-button></h1>
 
-    <paper-dropdown-menu class="guide-selector" no-animations no-label-float vertical-align="bottom" horizontal-align="right">
-      <paper-listbox class="dropdown-content" selected="{{selectedGuide}}">
-        <template is="dom-repeat" items="{{ guides }}">
-          <paper-item>{{item.name}}</paper-item>
+    <template is="dom-if" if="[[_isEmpty(guides)]]">
+      <h3 class="no-exercises">
+        <template is="dom-if" if="[[!_isDesktop()]]">
+          [[localize("no-guides-web")]]
         </template>
-      </paper-listbox>
-    </paper-dropdown-menu>
 
-    <div class="view-selector">
-      <paper-dropdown-menu no-animations no-label-float vertical-align="top" horizontal-align="right" id="viewModeSelector">
-        <paper-listbox class="dropdown-content" selected="{{selectedViewMode}}">
-          <template is="dom-repeat" items="{{ viewModes }}">
-            <paper-item>[[localize(item)]]</paper-item>
+        <template is="dom-if" if="[[_isDesktop()]]">
+          [[localize("no-guides-desktop")]]
+        </template>
+      </h3>
+    </template>
+
+    <template is="dom-if" if="[[!_isEmpty(guides)]]">
+      <paper-dropdown-menu class="guide-selector" no-animations no-label-float vertical-align="bottom" horizontal-align="right">
+        <paper-listbox class="dropdown-content" selected="{{selectedGuide}}">
+          <template is="dom-repeat" items="{{ guides }}">
+            <paper-item>{{item.name}}</paper-item>
           </template>
         </paper-listbox>
       </paper-dropdown-menu>
-    </div>
 
-    <div class="container">
-      <template is="dom-if" if="[[exercises]]">
-        <hr style="transform: translateY(9px)" class$="{{getSeparatorCssClass(selectedViewMode)}}">
-      </template>
-
-      <template is="dom-repeat" items="[[exercises]]">
-        <div class$="{{getExerciseCssClass(selectedViewMode)}}">
-          <a on-tap="goToExercise">
-            <template is="dom-if" if="[[!_isList(selectedViewMode)]]">
-              <h3 inner-h-t-m-l="[[getItemTitle(item, selectedViewMode)]]"></h3>
-              <img width$="{{getImageSize(selectedViewMode)}}" height$="{{getImageSize(selectedViewMode)}}" src="{{item.imageUrl}}" />
+      <div class="view-selector">
+        <paper-dropdown-menu no-animations no-label-float vertical-align="top" horizontal-align="right" id="viewModeSelector">
+          <paper-listbox class="dropdown-content" selected="{{selectedViewMode}}">
+            <template is="dom-repeat" items="{{ viewModes }}">
+              <paper-item>[[localize(item)]]</paper-item>
             </template>
+          </paper-listbox>
+        </paper-dropdown-menu>
+      </div>
 
-            <template is="dom-if" if="[[_isList(selectedViewMode)]]">
-              <img width$="{{getImageSize(selectedViewMode)}}" height$="{{getImageSize(selectedViewMode)}}" src="{{item.imageUrl}}" />
-              <h3 inner-h-t-m-l="[[getItemTitle(item, selectedViewMode)]]"></h3>
-            </template>
-          </a>
-        </div>
-        <template is="dom-if" if="[[_isList(selectedViewMode)]]">
-          <br>
+      <div class="container">
+        <template is="dom-if" if="[[exercises]]">
+          <hr style="transform: translateY(9px)" class$="{{getSeparatorCssClass(selectedViewMode)}}">
         </template>
-      </template>
 
-      <template is="dom-if" if="[[_isEmpty(exercises)]]">
-        <h3 class="no-exercises">
-          [[localize("no-exercises")]]
-        </h3>
-      </template>
-    </div>
+        <template is="dom-repeat" items="[[exercises]]">
+          <div class$="{{getExerciseCssClass(selectedViewMode)}}">
+            <a on-tap="goToExercise">
+              <template is="dom-if" if="[[!_isList(selectedViewMode)]]">
+                <h3 inner-h-t-m-l="[[getItemTitle(item, selectedViewMode)]]"></h3>
+                <img width$="{{getImageSize(selectedViewMode)}}" height$="{{getImageSize(selectedViewMode)}}" src="{{item.imageUrl}}" />
+              </template>
+
+              <template is="dom-if" if="[[_isList(selectedViewMode)]]">
+                <img width$="{{getImageSize(selectedViewMode)}}" height$="{{getImageSize(selectedViewMode)}}" src="{{item.imageUrl}}" />
+                <h3 inner-h-t-m-l="[[getItemTitle(item, selectedViewMode)]]"></h3>
+              </template>
+            </a>
+          </div>
+          <template is="dom-if" if="[[_isList(selectedViewMode)]]">
+            <br>
+          </template>
+        </template>
+
+        <template is="dom-if" if="[[_isEmpty(exercises)]]">
+          <h3 class="no-exercises">
+            [[localize("no-exercises")]]
+          </h3>
+        </template>
+      </div>
+    </template>
   </template>
 
   <script>
@@ -278,9 +293,13 @@
       },
 
       _guideLoader() {
-        return window.GBS_DESKTOP
+        return this._isDesktop()
           ? DesktopGuideLoader
           : GitHubGuideLoader;
+      },
+
+      _isDesktop() {
+        return window.GBS_DESKTOP;
       },
 
       _ide() {

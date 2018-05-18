@@ -12,8 +12,11 @@
       this.exercises = exercises;
     }
 
-    static download(onProgress) {
-      const url = "https://github.com/gobstones/proyectos-jr/archive/master.zip";
+    static download(courseSlug, onProgress) {
+      courseSlug = courseSlug || "gobstones/proyectos-jr";
+
+      const repoName = _.last(courseSlug.split("/"));
+      const url = `https://github.com/${courseSlug}/archive/master.zip`;
 
       const fs = window.GBS_REQUIRE("fs");
       const extract = window.GBS_REQUIRE("extract-zip");
@@ -48,7 +51,7 @@
           return deferred.promise();
         }).then(() => {
           const deferred = $.Deferred();
-          ncp(`${tmpPath}/proyectos-jr-master`, guidesPath, function(err) {
+          ncp(`${tmpPath}/${repoName}-master`, guidesPath, function(err) {
             if (err) deferred.reject(err); else deferred.resolve();
           });
           return deferred.promise();
