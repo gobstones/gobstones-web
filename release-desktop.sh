@@ -19,14 +19,14 @@ cp node_modules/icon.png icon.png
 
 npm install
 sed -i -e "s/'\.'/'\.\/resources\/app'/g" start-electron.js
+mkdir build
+mv icon.png build/
 
 # ---
 
 TYPE="blocks"
 
 echo "BUILDING '$TYPE' WITH ELECTRON..."
-mkdir build
-mv icon.png build/
 ./node_modules/.bin/electron-builder . gobstones-web -wl
 
 echo "CREATING '$TYPE' ONE-FILE PACKAGES..."
@@ -41,8 +41,6 @@ TYPE="code"
 sed -i -e "s/\/#\/blocks/\/#\/code/g" start-electron.js
 
 echo "BUILDING '$TYPE' WITH ELECTRON..."
-mkdir build
-mv icon.png build/
 ./node_modules/.bin/electron-builder . gobstones-web -wl
 
 echo "CREATING '$TYPE' ONE-FILE PACKAGES..."
