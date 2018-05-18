@@ -186,9 +186,12 @@
 
     <div class="more-links">
       <template is="dom-if" if="{{!_isDesktop()}}">
-        <a href="https://github.com/gobstones/gobstones-web-desktop/releases">[[localize("download-desktop")]]</a>
-        <br />
-        <br />
+        <template is="dom-if" if="{{_isCodeOrBlocksProject(projectType)}}">
+          [[localize("download-desktop")]]<br />
+          <a href="javascript: void(0)" on-click="_downloadDesktopWindows">Windows</a> <a href="javascript: void(0)" on-click="_downloadDesktopLinux">Linux</a>
+          <br />
+          <br />
+        </template>
       </template>
 
       <div>
@@ -336,6 +339,24 @@
 
       reportIssue: function() {
         this._ide().showReportIssueModal();
+      },
+
+      _downloadDesktopWindows: function() {
+        const ide = this._ide();
+
+        if (!ide.DESKTOP_RELEASE) return this._goToLatestRelease();
+        location.href = `https://github.com/gobstones/gobstones-web-desktop/releases/download/${ide.DESKTOP_RELEASE}/gobstones-${this.projectType}-windows-${ide.DESKTOP_RELEASE}.zip`;
+      },
+
+      _downloadDesktopLinux: function() {
+        const ide = this._ide();
+
+        if (!ide.DESKTOP_RELEASE) return this._goToLatestRelease();
+        location.href = `https://github.com/gobstones/gobstones-web-desktop/releases/download/${ide.DESKTOP_RELEASE}/gobstones-${this.projectType}-linux-${ide.DESKTOP_RELEASE}.zip`;
+      },
+
+      _goToLatestRelease: function() {
+        location.href = "https://github.com/gobstones/gobstones-web-desktop/releases/latest";
       },
 
       _onSelectedLanguageChanged: function(selectedLanguage) {

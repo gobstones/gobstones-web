@@ -193,6 +193,13 @@
           const isChrome = navigator.userAgent.toLowerCase().indexOf('chrome') > -1;
           if (!isChrome && !window.GBS_DESKTOP) alert(this.localize("chrome-warning"));
         });
+
+
+        if (!window.GBS_DESKTOP) {
+          GitHubLoader.getDesktopRelease().then((release) => {
+            this.DESKTOP_RELEASE = release.name;
+          });
+        }
       },
 
       setDescription: function(markdown) {

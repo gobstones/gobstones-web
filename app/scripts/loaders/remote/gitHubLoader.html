@@ -25,6 +25,12 @@
       });
     }
 
+    static getDesktopRelease() {
+      return $.get(
+        "https://api.github.com/repos/gobstones/gobstones-web-desktop/releases/latest?client_id=${GITHUB_CLIENT_ID}&client_secret=${GITHUB_CLIENT_SECRET}",
+      )
+    }
+
     load(getContext, callback) {
       return this._loadDir(this.initialPath).then(files => {
         if (this.initialPath !== undefined)
