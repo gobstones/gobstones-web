@@ -723,13 +723,22 @@
 
       _setFinalState: function(finalState) {
         const firstTime = !this.finalState;
+
         this.set("finalState", finalState);
         this._setSelectedTab(1);
 
-        setTimeout(() => {
+        const draw = () => {
           this.$$("#finalStateEditor").update(finalState.table, finalState.header);
-          if (firstTime) this._updateBoardStyles();
-        }, 1);
+        };
+
+        setTimeout(() => {
+          draw();
+
+          if (firstTime) {
+            this._updateBoardStyles();
+            setTimeout(draw);
+          }
+        });
       },
 
       _onBoardChanged: function(event) {
