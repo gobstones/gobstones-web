@@ -35,8 +35,8 @@ freeport((err, port) => {
     };
     promptResponse = null
     var promptWindow = new BrowserWindow({
-      width: 300,
-      height: 100,
+      width: 400,
+      height: 200,
       show: false,
       resizable: false,
       movable: false,

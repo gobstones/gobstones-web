@@ -313,17 +313,19 @@
         this.downloadProgress = "...";
         //this.downloadTotal = 0;
 
+        const courseSlug = prompt(this.localize("download-course-slug"));
         window.GBS_IS_DOWNLOADING_GUIDE = true;
-        DesktopGuideLoader.download((loaded, total) => {
+        DesktopGuideLoader.download(courseSlug, (loaded, total) => {
           this.downloadProgress = bytes(loaded);
           //this.downloadTotal = total;
-        }).catch((e) => {
-          console.warn(e);
-        })
-        .always(() => {
+        }).then(() => {
           this.isDownloadingExercises = false;
-          this._tryReload();
           window.GBS_IS_DOWNLOADING_GUIDE = false;
+          this._tryReload();
+        }).catch((e) => {
+          this.isDownloadingExercises = false;
+          window.GBS_IS_DOWNLOADING_GUIDE = false;
+          alert(this.localize("download-course-error"));
         });
       },
 
