@@ -188,6 +188,11 @@
         this._setUpKeys();
         this._setUpLoaders();
         this._setUpMouseWheel();
+
+        setTimeout(() => {
+          const isChrome = navigator.userAgent.toLowerCase().indexOf('chrome') > -1;
+          if (!isChrome && !window.GBS_DESKTOP) alert(this.localize("chrome-warning"));
+        });
       },
 
       setDescription: function(markdown) {
