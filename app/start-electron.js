@@ -75,7 +75,7 @@ freeport((err, port) => {
         webSecurity: false
       }
     });
-    mainWindow.loadURL(`http://localhost:${port}`);
+    mainWindow.loadURL(`http://localhost:${port}/#/blocks`);
     mainWindow.maximize();
     mainWindow.on('closed', () => mainWindow = null);
   }
