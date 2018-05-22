@@ -392,6 +392,8 @@
           this._setSolutionTeacher(code);
           editors[ID_BLOCKS].setCode(code, "teacher", false);
           editors[ID_CODE].setCode(code, "teacher", false);
+
+          editor.checkCompilationErrors();
         }
 
         this.async(() => {

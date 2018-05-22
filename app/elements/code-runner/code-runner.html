@@ -83,14 +83,15 @@
 
       ready: function() {
         this.subscribeTo("reset", () => this.reset());
+        this.gbsCodeRunner = this.$.playButton;
       },
 
       requestRun: function() {
-        this.$.playButton.requestRun();
+        this.gbsCodeRunner.requestRun();
       },
 
       stop: function() {
-        this.$.playButton.stop();
+        this.gbsCodeRunner.stop();
       },
 
       toggleRandom: function() {

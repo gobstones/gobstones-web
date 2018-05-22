@@ -92,7 +92,7 @@
     "speed-5": "Velocidad: instantánea",
     "students-library": "Biblioteca del alumno",
     "teachers-library": "Biblioteca del docente",
-    "teachers-library-has-errors": "La biblioteca del docente tiene errores. Revisa la consola.",
+    "teachers-library-has-errors": "La biblioteca del docente tiene errores.",
     "the-library-has-errors": "Cuidado: La biblioteca tiene errores",
     "the-program-has-errors": "El programa tiene errores",
     "tooltip-add-board": "Agregar tablero",

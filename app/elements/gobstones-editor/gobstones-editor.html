@@ -276,6 +276,21 @@
         }
       },
 
+      checkCompilationErrors: function() {
+        this.editor.getSession().clearAnnotations();
+
+        const parser = this.runner.gbsCodeRunner.parser;
+        const code = { main: "program {}\n" + this.code.main, library: "program {}" };
+        parser.parse(
+          code.main,
+          (e) => {
+            e.location = parser.getErrorLineAndMode(e, code, true);
+            this._reportError(e, "error", true);
+          },
+          () => {}
+        );
+      },
+
       _notify: function(state) {
         if (state.error) {
           this._reportError(state.error, "info");
@@ -284,17 +299,19 @@
           window.BUS.fire("execution-result", { board: state });
       },
 
-      _reportError: function(error, type) {
+      _reportError: function(error, type, onTheFly) {
         if (error.location.mode === "library") this._setMode("library");
 
-        this._setAnnotation(error, type);
+        this._setAnnotation(error, type, onTheFly);
       },
 
-      _setAnnotation(error, type) {
+      _setAnnotation(error, type, onTheFly = false) {
         const row = error.location.line - 1;
 
-        this.editor.selection.setRange({ start: { row, column: 0 }, end: { row, column: Infinity } });
-        this.editor.scrollToLine(row, true, true,  () => {});
+        if (!onTheFly) {
+          this.editor.selection.setRange({ start: { row, column: 0 }, end: { row, column: Infinity } });
+          this.editor.scrollToLine(row, true, true,  () => {});
+        }
 
         this.editor.getSession().setAnnotations([{
           row: row,
