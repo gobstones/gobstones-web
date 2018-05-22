@@ -291,8 +291,13 @@
       },
 
       _setAnnotation(error, type) {
+        const row = error.location.line - 1;
+
+        this.editor.selection.setRange({ start: { row, column: 0 }, end: { row, column: Infinity } });
+        this.editor.scrollToLine(row, true, true,  () => {});
+
         this.editor.getSession().setAnnotations([{
-          row: error.location.line - 1,
+          row: row,
           column: 0,
           text: error.message,
           type: type
