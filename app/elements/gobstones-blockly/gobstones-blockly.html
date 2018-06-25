@@ -161,6 +161,7 @@
         this.toolbox = null;
         this.$.blockly.primitiveProcedures = [];
         this.$.blockly.primitiveFunctions = [];
+        this.$.blockly.setDefaultToolbox();
       },
 
       generateCode(withRegions = true, blockly = this.$.blockly) {
