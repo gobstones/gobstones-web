@@ -210,6 +210,10 @@
       showDescriptionModal: function() {
         document.querySelector("#descriptionModal").open();
         $("paper-drawer-panel")[0].closeDrawer();
+
+        setTimeout(() => {
+          window.GobstonesBoard.updateAllBoards();
+        }, 500); // TODO: Deshacer hack
       },
 
       hideProjectSelectorModal: function() {
