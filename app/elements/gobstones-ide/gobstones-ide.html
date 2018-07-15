@@ -374,7 +374,7 @@
 
         let url = window.location.href;
         url = url.replace(/#\/?(blocks|code|teacher)/g, "");
-        if (this.projectTyle === "code")
+        if (this.projectType === "code")
           url = url.replace(/gobstones-web/g, "gobstones-sr");
         if (this.projectType === "blocks")
           url = url.replace(/gobstones-web/g, "gobstones-jr");
