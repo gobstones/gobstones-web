@@ -40,6 +40,10 @@
         <iron-autogrow-textarea rows="5" bind-value="{{body}}" placeholder$="{{localize('report-bug-description')}}"></iron-autogrow-textarea>
       </div>
 
+      <div>
+        <paper-input label$="{{localize('report-bug-email')}}" value="{{email}}"></paper-input>
+      </div>
+
       <div class="report-warning">[[localize("report-bug-public")]]<a target="_blank" href="https://github.com/gobstones/gobstones-issues/issues">issue tracker</a>.</div>
 
       <button class="submit" on-click="send" disabled$="{{isLoading}}">[[localize("report-bug-send")]]</button>
@@ -62,8 +66,14 @@
       send() {
         this.isLoading = true;
 
+        const body = `${this.body}
+----------
+Email: ${this.email || "?"}
+URL: ${document.location.href}
+Project: ${document.querySelector("gbs-editor-toolbar").projectName}`;
+
         GitHubLoader
-          .reportIssue(this.title, this.body)
+          .reportIssue(this.title, body)
           .then(() => {
             this.title = "";
             this.body = "";
