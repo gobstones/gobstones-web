@@ -37,11 +37,15 @@ l">
     }
 
     .button-blocks:after {
-      content: 'Usar bloques';
+      content: 'Gobstones JR';
     }
 
     .button-code:after {
-      content: 'Usar código';
+      content: 'Gobstones SR';
+    }
+
+    .button-teacher:after {
+      content: 'Gobstones Teacher';
     }
 
     .download-desktop {
@@ -51,27 +55,27 @@ l">
   </style>
 
   <template>
-    <template is="dom-if" if="{{isDesktop}}">
-      <gbs-editor-toolbar></gbs-editor-toolbar>
-      <div class="content">
-        <!--
-        <div class="download-desktop">
-          <a href="https://github.com/gobstones/gobstones-web-desktop/releases">[[localize("download-desktop")]]</a>
-        </div>
-        -->
+    <gbs-editor-toolbar></gbs-editor-toolbar>
+    <div class="content">
+      <!--
+      <div class="download-desktop">
+        <a href="https://github.com/gobstones/gobstones-web-desktop/releases">[[localize("download-desktop")]]</a>
+      </div>
+      -->
 
-        <div class="title">
-          <img class="logo" src="../../images/logo.png" />
-          <h1>Gobstones Web</h1>
-        </div>
-
-        <paper-icon-button class="button button-blocks" on-click="useBlocks" icon="icons:extension" alt="use blocks"> </paper-icon-button>
-
-        <paper-icon-button class="button button-code" on-click="useCode" icon="icons:code" alt="use code"> </paper-icon-button>
+      <div class="title">
+        <img class="logo" src="../../images/logo.png" />
+        <h1>Gobstones Web</h1>
       </div>
 
-      <input id="InitialBlocksProject" type="file" accept=".gbp" on-change="onInitialProjectLoad" style="display:none;" />
-    </template>
+      <paper-icon-button class="button button-blocks" on-click="useBlocks" icon="icons:extension" alt="use blocks"> </paper-icon-button>
+
+      <paper-icon-button class="button button-code" on-click="useCode" icon="icons:code" alt="use code"> </paper-icon-button>
+
+      <paper-icon-button class="button button-teacher" on-click="useTeacher" icon="icons:card-membership" alt="use teacher"> </paper-icon-button>
+    </div>
+
+    <input id="InitialBlocksProject" type="file" accept=".gbp" on-change="onInitialProjectLoad" style="display:none;" />
   </template>
 
   <script>
@@ -81,20 +85,11 @@ l">
         Polymer.LocalizationBehavior,
         Polymer.LoaderBehavior
       ],
-      properties: {
-        isDesktop: {
-          type: Boolean,
-          value: window.GBS_DESKTOP
-        },
-      },
 
       ready: function() {
         this.setUpLoaders({
           InitialBlocksProject: new ProjectBlocksLoader
         });
-
-
-        if (!this.isDesktop) this.async(() => { this.useCode(); });
       },
 
       useBlocks: function() {
@@ -104,6 +99,10 @@ l">
 
       useCode: function() {
         this._goTo("/code");
+      },
+
+      useTeacher: function() {
+        this._goTo("/teacher");
       },
 
       onInitialProjectLoad: function(event) {
