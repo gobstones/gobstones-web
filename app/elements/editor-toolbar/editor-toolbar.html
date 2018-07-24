@@ -63,9 +63,9 @@
 
       <template is="dom-if" if="{{_areToolsVisible(projectType)}}">
         <paper-input value="{{projectName}}" class="navbar-project-title" no-label-float>
-          <paper-icon-button suffix icon="description" on-click="newProject"></paper-icon-button>
-          <paper-icon-button suffix icon="folder-open" on-click="openProjectSelector"></paper-icon-button>
-          <paper-icon-button suffix icon="save" on-click="saveProject"></paper-icon-button>
+          <paper-icon-button id="loadProjectButton" suffix icon="assignment" on-click="openProjectSelector"></paper-icon-button>
+          <paper-icon-button id="loadCodeButton" suffix icon="folder-open" on-click="loadCode"></paper-icon-button>
+          <paper-icon-button suffix id="saveCodeButton" icon="save" on-click="saveCode"></paper-icon-button>
         </paper-input>
         <div style="position: relative">
           <div id="project-buttons-placeholder"></div>
@@ -156,8 +156,6 @@
       },
 
       ready: function() {
-        if (this.empty) return;
-
         this.subscribeTo("mode-change", mode => {
           this.showLibrary = mode === "library";
         }).subscribeTo("reset", () => {
@@ -175,6 +173,14 @@
           if (this.projectType === "none") return;
 
           this.loadProject();
+        }).subscribeTo("new-project", () => {
+          if (this.projectType === "none") return; // TODO: (*1)
+
+          this.newProject();
+        }).subscribeTo("save-project", () => {
+          if (this.projectType === "none") return; // TODO: (*1)
+
+          this.saveProject();
         });
 
         this.setUpLoaders({
@@ -215,6 +221,14 @@
 
       undo: function() {
         this._editor().undo();
+      },
+
+      loadCode: function() {
+        window.BUS.fire("load-code");
+      },
+
+      saveCode: function() {
+        window.BUS.fire("save-code");
       },
 
       _isCodeProject: function(projectType) {

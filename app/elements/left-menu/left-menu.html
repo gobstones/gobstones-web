@@ -70,6 +70,14 @@
     <div class="line-separator"></div>
 
     <div role="listbox">
+      <paper-item>
+        <paper-item-body>
+          <div>[[localize("project")]]</div>
+        </paper-item-body>
+        <paper-icon-button on-click="createNewProject" icon="icons:description" alt="new"> </paper-icon-button>
+        <paper-icon-button on-click="saveCurrentProject" icon="icons:save" alt="save"> </paper-icon-button>
+      </paper-item>
+
       <template is="dom-if" if="{{_isCodeOrTeacherProject(projectType)}}">
         <paper-item>
           <paper-item-body>
@@ -270,6 +278,10 @@
       attached: function() {
         this.subscribeTo("reset", () => {
           this.set("permissions.can_use_library", true);
+        }).subscribeTo("load-code", () => {
+          this[`load${_.capitalize(this.projectType)}`]();
+        }).subscribeTo("save-code", () => {
+          this[`save${_.capitalize(this.projectType)}`]();
         });
 
         const language = window.STORAGE.getItem("language") || "es";
@@ -339,6 +351,14 @@
 
       reportIssue: function() {
         this._ide().showReportIssueModal();
+      },
+
+      createNewProject: function() {
+        window.BUS.fire("new-project");
+      },
+
+      saveCurrentProject: function() {
+        window.BUS.fire("save-project");
       },
 
       _downloadDesktopWindows: function() {
