@@ -190,7 +190,10 @@
 
       openProjectSelector: function() {
         if (window.GBS_IS_RUNNING || window.GBS_IS_DOWNLOADING_GUIDE) return;
-        this._ide().showProjectSelectorModal();
+
+        const hasNoCourse = !window.GBS_DESKTOP && !getParameterByName("course");
+        if (hasNoCourse) window.BUS.fire("load-project-from-file");
+        else this._ide().showProjectSelectorModal();
       },
 
       togglePanel: function() {
