@@ -408,14 +408,21 @@
         const ide = this._ide();
 
         if (!ide.DESKTOP_RELEASE) return this._goToLatestRelease();
-        location.href = `https://github.com/gobstones/gobstones-web-desktop/releases/download/${ide.DESKTOP_RELEASE}/gobstones-${this.projectType}-windows-${ide.DESKTOP_RELEASE}.exe`;
+        location.href = `https://github.com/gobstones/gobstones-web-desktop/releases/download/${ide.DESKTOP_RELEASE}/gobstones-${this._getCommertialName()}-windows-${ide.DESKTOP_RELEASE}.exe`;
       },
 
       _downloadDesktopLinux: function() {
         const ide = this._ide();
 
         if (!ide.DESKTOP_RELEASE) return this._goToLatestRelease();
-        location.href = `https://github.com/gobstones/gobstones-web-desktop/releases/download/${ide.DESKTOP_RELEASE}/gobstones-${this.projectType}-linux-${ide.DESKTOP_RELEASE}.zip`;
+        location.href = `https://github.com/gobstones/gobstones-web-desktop/releases/download/${ide.DESKTOP_RELEASE}/gobstones-${this._getCommertialName()}-linux-${ide.DESKTOP_RELEASE}.zip`;
+      },
+
+      _getCommertialName: function() {
+        if (this.projectType === "blocks") return "jr";
+        if (this.projectType === "code") return "sr";
+
+        return "teacher";
       },
 
       _goToLatestRelease: function() {
