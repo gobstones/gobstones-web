@@ -196,12 +196,10 @@
 
     <div class="more-links">
       <template is="dom-if" if="{{!_isDesktop()}}">
-        <template is="dom-if" if="{{_isCodeOrBlocksProject(projectType)}}">
-          [[localize("download-desktop")]]<br />
-          <a href="javascript: void(0)" on-click="_downloadDesktopWindows">Windows</a> <a href="javascript: void(0)" on-click="_downloadDesktopLinux">Linux</a>
-          <br />
-          <br />
-        </template>
+        [[localize("download-desktop")]]<br />
+        <a href="javascript: void(0)" on-click="_downloadDesktopWindows">Windows</a> <a href="javascript: void(0)" on-click="_downloadDesktopLinux">Linux</a>
+        <br />
+        <br />
       </template>
 
       <div>
