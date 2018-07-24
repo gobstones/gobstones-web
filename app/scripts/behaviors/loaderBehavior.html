@@ -6,9 +6,9 @@
       this.loaders = loaders;
 
       _.keys(this.loaders).forEach(item => {
-        this[`save${item}`] = () => {
+        this[`save${item}`] = (name) => {
           if (window.GBS_IS_RUNNING) return;
-          this.loaders[item].save(this._context());
+          this.loaders[item].save(this._context(), name);
         };
 
         this[`load${item}`] = () => {

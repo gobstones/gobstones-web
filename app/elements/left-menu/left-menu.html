@@ -280,9 +280,9 @@
         this.subscribeTo("reset", () => {
           this.set("permissions.can_use_library", true);
         }).subscribeTo("load-code", () => {
-          this[`load${_.capitalize(this.projectType)}`]();
+          this.loadCodeOrBlocks();
         }).subscribeTo("save-code", () => {
-          this[`save${_.capitalize(this.projectType)}`]();
+          this.saveCodeOrBlocks();
         });
 
         const language = window.STORAGE.getItem("language") || "es";
@@ -352,6 +352,15 @@
 
       reportIssue: function() {
         this._ide().showReportIssueModal();
+      },
+
+      loadCodeOrBlocks: function() {
+        this[`load${_.capitalize(this.projectType)}`]();
+      },
+
+      saveCodeOrBlocks: function() {
+        const fileName = this._toolbar().projectName + (this.projectType === "code" ? ".gbs" : ".gbk");
+        this[`save${_.capitalize(this.projectType)}`](fileName);
       },
 
       createNewProject: function() {
@@ -431,6 +440,10 @@
 
       _isDesktop: function() {
         return window.GBS_DESKTOP;
+      },
+
+      _toolbar: function() {
+        return document.querySelector("#toolbar");
       }
     });
 

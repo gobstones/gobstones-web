@@ -63,9 +63,9 @@
 
       <template is="dom-if" if="{{_areToolsVisible(projectType)}}">
         <paper-input value="{{projectName}}" class="navbar-project-title" no-label-float>
-          <paper-icon-button id="loadProjectButton" suffix icon="assignment" on-click="openProjectSelector"></paper-icon-button>
-          <paper-icon-button id="loadCodeButton" suffix icon="folder-open" on-click="loadCode"></paper-icon-button>
-          <paper-icon-button suffix id="saveCodeButton" icon="save" on-click="saveCode"></paper-icon-button>
+          <paper-icon-button suffix icon="assignment" on-click="openProjectSelector"></paper-icon-button>
+          <paper-icon-button suffix icon="folder-open" on-click="load"></paper-icon-button>
+          <paper-icon-button suffix icon="save" on-click="save"></paper-icon-button>
         </paper-input>
         <div style="position: relative">
           <div id="project-buttons-placeholder"></div>
@@ -196,7 +196,7 @@
         if (window.GBS_IS_RUNNING || window.GBS_IS_DOWNLOADING_GUIDE) return;
 
         const hasNoCourse = !window.GBS_DESKTOP && !getParameterByName("course");
-        if (hasNoCourse) window.BUS.fire("load-project-from-file");
+        if (hasNoCourse) this.loadProject();
         else this._ide().showProjectSelectorModal();
       },
 
@@ -230,12 +230,14 @@
         this._editor().undo();
       },
 
-      loadCode: function() {
-        window.BUS.fire("load-code");
+      load: function() {
+        if (this.projectType === "teacher") this.loadProject();
+        else window.BUS.fire("load-code");
       },
 
-      saveCode: function() {
-        window.BUS.fire("save-code");
+      save: function() {
+        if (this.projectType === "teacher") this.saveProject();
+        else window.BUS.fire("save-code");
       },
 
       _isCodeProject: function(projectType) {
