@@ -75,6 +75,7 @@
           <div>[[localize("project")]]</div>
         </paper-item-body>
         <paper-icon-button on-click="createNewProject" icon="icons:description" alt="new"> </paper-icon-button>
+        <paper-icon-button on-click="openProjectSelector" icon="icons:folder-open" alt="open"> </paper-icon-button>
         <paper-icon-button on-click="saveCurrentProject" icon="icons:save" alt="save"> </paper-icon-button>
       </paper-item>
 
@@ -355,6 +356,10 @@
 
       createNewProject: function() {
         window.BUS.fire("new-project");
+      },
+
+      openProjectSelector: function() {
+        window.BUS.fire("open-project-selector");
       },
 
       saveCurrentProject: function() {

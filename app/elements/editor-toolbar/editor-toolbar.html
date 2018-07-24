@@ -173,6 +173,10 @@
           if (this.projectType === "none") return;
 
           this.loadProject();
+        }).subscribeTo("open-project-selector", () => {
+          if (this.projectType === "none") return; // TODO: (*1)
+
+          this.openProjectSelector();
         }).subscribeTo("new-project", () => {
           if (this.projectType === "none") return; // TODO: (*1)
 
