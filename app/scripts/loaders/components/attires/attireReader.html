@@ -54,7 +54,21 @@
         const attire = this._deserialize(json);
         if (!attire || !attire.name || !attire.rules) return;
 
+        const checkCompletion = () => {
+          const everyRuleIsLoaded = _.every(attire.rules, { loaded: true });
+          if (everyRuleIsLoaded) {
+            this._setAttire(context, attire);
+            callback();
+          }
+        };
+
         attire.rules.forEach(rule => {
+          if (!rule.image && rule.text) {
+            rule.loaded = true;
+            checkCompletion();
+            return;
+          }
+
           rule.fileName = rule.image;
 
           findImage(rule.fileName).async("binarystring").then(content => {
@@ -62,11 +76,7 @@
             rule.image = this.BASE64_PREFIX + imageBase64;
             rule.loaded = true;
 
-            const everyRuleIsLoaded = _.every(attire.rules, { loaded: true });
-            if (everyRuleIsLoaded) {
-              this._setAttire(context, attire);
-              callback();
-            }
+            checkCompletion();
           });
         });
       });

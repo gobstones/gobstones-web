@@ -7,6 +7,8 @@
 
       _.keys(this.loaders).forEach(item => {
         this[`save${item}`] = (name) => {
+          if (!_.isString(name)) name = undefined;
+
           if (window.GBS_IS_RUNNING) return;
           this.loaders[item].save(this._context(), name);
         };
