@@ -39,6 +39,8 @@ function commertialName() {
 # ---
 
 TYPE="blocks"
+sed -i -e "s/-web/-jr/g" package.json
+sed -i -e "s/Gobstones Web/Gobstones Jr/g" package.json
 
 echo "BUILDING '$TYPE' WITH ELECTRON..."
 ./node_modules/.bin/electron-builder . gobstones-$(commertialName $TYPE) -wl
@@ -55,6 +57,7 @@ mv "$WINDOWS_NAME_1" node_modules/
 
 TYPE="code"
 sed -i -e "s/\/#\/blocks/\/#\/code/g" start-electron.js
+sed -i -e "s/Gobstones Jr/Gobstones Sr/g" package.json
 
 echo "BUILDING '$TYPE' WITH ELECTRON..."
 ./node_modules/.bin/electron-builder . gobstones-$(commertialName $TYPE) -wl
@@ -71,6 +74,8 @@ mv "$WINDOWS_NAME_2" node_modules/
 
 TYPE="teacher"
 sed -i -e "s/\/#\/code/\/#\/teacher/g" start-electron.js
+sed -i -e "s/-jr/-teacher/g" package.json
+sed -i -e "s/Gobstones Sr/Gobstones Teacher/g" package.json
 
 echo "BUILDING '$TYPE' WITH ELECTRON..."
 ./node_modules/.bin/electron-builder . gobstones-$(commertialName $TYPE) -wl
@@ -103,5 +108,3 @@ echo "PUBLISHING..."
 ./node_modules/.bin/publish-release --token $TOKEN --owner gobstones --repo gobstones-web-desktop --tag "$PACKAGE_VERSION" --name "$PACKAGE_VERSION" --assets $LINUX_NAME_1,$WINDOWS_NAME_1,$LINUX_NAME_2,$WINDOWS_NAME_2,$LINUX_NAME_3,$WINDOWS_NAME_3 --notes "Gobstones Web - Desktop"
 
 echo "DONE."
-
-
