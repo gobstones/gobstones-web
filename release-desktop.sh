@@ -47,7 +47,7 @@ echo "CREATING '$TYPE' ONE-FILE PACKAGES..."
 LINUX_NAME_1=gobstones-$(commertialName $TYPE)-linux-$PACKAGE_VERSION.zip
 WINDOWS_NAME_1=gobstones-$(commertialName $TYPE)-windows-$PACKAGE_VERSION.exe
 cd ./dist/linux-unpacked ; zip -r ../../$LINUX_NAME_1 . ; cd ../..
-cp "./dist/gobstones-web Setup 1.0.0.exe" $WINDOWS_NAME_1
+cp "./dist/gobstones-$(commertialName $TYPE) Setup 1.0.0.exe" $WINDOWS_NAME_1
 mv "$LINUX_NAME_1" node_modules/
 mv "$WINDOWS_NAME_1" node_modules/
 
@@ -63,7 +63,7 @@ echo "CREATING '$TYPE' ONE-FILE PACKAGES..."
 LINUX_NAME_2=gobstones-$(commertialName $TYPE)-linux-$PACKAGE_VERSION.zip
 WINDOWS_NAME_2=gobstones-$(commertialName $TYPE)-windows-$PACKAGE_VERSION.exe
 cd ./dist/linux-unpacked ; zip -r ../../$LINUX_NAME_2 . ; cd ../..
-cp "./dist/gobstones-web Setup 1.0.0.exe" $WINDOWS_NAME_2
+cp "./dist/gobstones-$(commertialName $TYPE) Setup 1.0.0.exe" $WINDOWS_NAME_2
 mv "$LINUX_NAME_2" node_modules/
 mv "$WINDOWS_NAME_2" node_modules/
 
@@ -79,7 +79,7 @@ echo "CREATING '$TYPE' ONE-FILE PACKAGES..."
 LINUX_NAME_3=gobstones-$(commertialName $TYPE)-linux-$PACKAGE_VERSION.zip
 WINDOWS_NAME_3=gobstones-$(commertialName $TYPE)-windows-$PACKAGE_VERSION.exe
 cd ./dist/linux-unpacked ; zip -r ../../$LINUX_NAME_3 . ; cd ../..
-cp "./dist/gobstones-web Setup 1.0.0.exe" $WINDOWS_NAME_3
+cp "./dist/gobstones-$(commertialName $TYPE) Setup 1.0.0.exe" $WINDOWS_NAME_3
 mv "$LINUX_NAME_3" node_modules/
 mv "$WINDOWS_NAME_3" node_modules/
 
