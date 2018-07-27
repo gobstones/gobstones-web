@@ -41,7 +41,7 @@ function commertialName() {
 TYPE="blocks"
 
 echo "BUILDING '$TYPE' WITH ELECTRON..."
-./node_modules/.bin/electron-builder . gobstones-web -wl
+./node_modules/.bin/electron-builder . gobstones-$(commertialName $TYPE) -wl
 
 echo "CREATING '$TYPE' ONE-FILE PACKAGES..."
 LINUX_NAME_1=gobstones-$(commertialName $TYPE)-linux-$PACKAGE_VERSION.zip
@@ -57,7 +57,7 @@ TYPE="code"
 sed -i -e "s/\/#\/blocks/\/#\/code/g" start-electron.js
 
 echo "BUILDING '$TYPE' WITH ELECTRON..."
-./node_modules/.bin/electron-builder . gobstones-web -wl
+./node_modules/.bin/electron-builder . gobstones-$(commertialName $TYPE) -wl
 
 echo "CREATING '$TYPE' ONE-FILE PACKAGES..."
 LINUX_NAME_2=gobstones-$(commertialName $TYPE)-linux-$PACKAGE_VERSION.zip
@@ -73,7 +73,7 @@ TYPE="teacher"
 sed -i -e "s/\/#\/code/\/#\/teacher/g" start-electron.js
 
 echo "BUILDING '$TYPE' WITH ELECTRON..."
-./node_modules/.bin/electron-builder . gobstones-web -wl
+./node_modules/.bin/electron-builder . gobstones-$(commertialName $TYPE) -wl
 
 echo "CREATING '$TYPE' ONE-FILE PACKAGES..."
 LINUX_NAME_3=gobstones-$(commertialName $TYPE)-linux-$PACKAGE_VERSION.zip
