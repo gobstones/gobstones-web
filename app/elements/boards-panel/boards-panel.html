@@ -597,6 +597,8 @@
         this._fillTable();
         this._cleanState();
         this.selectedInitialState = 0;
+        this._initialRandomBoard = null;
+        this._lastRandomBoard = null;
         this.i++; // ^ to force computed update
         this.selectedAttire = 0;
 
@@ -676,8 +678,22 @@
         this._cleanState();
 
         const { useRandomBoard, controller } = options;
-        if (options.useRandomBoard)
-          this.selectedInitialState = _.random(0, this.availableInitialStates.length - 1);
+        if (options.useRandomBoard) {
+          if (
+            this._initialRandomBoard == null ||
+            this._lastRandomBoard + 1 === this._initialRandomBoard
+          ) {
+            this._initialRandomBoard = _.random(0, this.availableInitialStates.length - 1);
+            this._lastRandomBoard = this._initialRandomBoard;
+          } else {
+            this._lastRandomBoard++;
+
+            if (this._lastRandomBoard === this.availableInitialStates.length)
+              this._lastRandomBoard = 0;
+          }
+
+          this.selectedInitialState = this._lastRandomBoard;
+        }
 
         const initialState = {
           header: this.initialState.header,

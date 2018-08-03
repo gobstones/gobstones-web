@@ -114,7 +114,10 @@
       },
 
       _onRunRequest: function({ detail: controller }) {
-        this.fire("run", { useRandomBoard: this.useRandomBoard, controller });
+        this.fire("run", {
+          useRandomBoard: this.useRandomBoard,
+          controller
+        });
       },
 
       _onStart: function() {
