@@ -57,6 +57,7 @@ mv "$WINDOWS_NAME_1" node_modules/
 
 TYPE="code"
 sed -i -e "s/\/#\/blocks/\/#\/code/g" start-electron.js
+sed -i -e "s/-jr/-sr/g" package.json
 sed -i -e "s/Gobstones Jr/Gobstones Sr/g" package.json
 
 echo "BUILDING '$TYPE' WITH ELECTRON..."
@@ -74,7 +75,7 @@ mv "$WINDOWS_NAME_2" node_modules/
 
 TYPE="teacher"
 sed -i -e "s/\/#\/code/\/#\/teacher/g" start-electron.js
-sed -i -e "s/-jr/-teacher/g" package.json
+sed -i -e "s/-sr/-teacher/g" package.json
 sed -i -e "s/Gobstones Sr/Gobstones Teacher/g" package.json
 
 echo "BUILDING '$TYPE' WITH ELECTRON..."
