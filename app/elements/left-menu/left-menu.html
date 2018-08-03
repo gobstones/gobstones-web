@@ -383,16 +383,11 @@
         aleph.removeAttribute("height");
         aleph.removeAttribute("transform");
 
-        var cssContent = window.Blockly.Css.CONTENT.join('').replace(/font-family: sans-serif/g, "font-weight:bold;font-family: Arial");
+        var cssContent = window.Blockly.Css.CONTENT.join('').replace(/font-family: sans-serif/g, "font-family: Arial");
         var css = '<defs><style type="text/css" xmlns="http://www.w3.org/1999/xhtml"><![CDATA[' + cssContent + ']]></style></defs>';
 
         if (aleph.children[0] !== undefined) {
           aleph.children[0].removeAttribute("transform");
-        }
-
-        aleph.querySelectorAll(".blocklyPathLight").forEach(function (elem) { elem.setAttribute("fill", "none") });
-        if (document.getElementsByClassName("aplicar-modo-lectura-simple").length > 0) {
-          aleph.querySelectorAll(".blocklyText").forEach(function (elem) { elem.textContent = elem.textContent.toUpperCase() });
         }
 
         var bbox = document.getElementsByClassName("blocklyBlockCanvas")[0].getBBox();
