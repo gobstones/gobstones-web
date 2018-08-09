@@ -43,15 +43,18 @@ sed -i -e "s/-web/-jr/g" package.json
 sed -i -e "s/Gobstones Web/Gobstones Jr/g" package.json
 
 echo "BUILDING '$TYPE' WITH ELECTRON..."
-./node_modules/.bin/electron-builder . gobstones-$(commertialName $TYPE) -wl
+./node_modules/.bin/electron-builder . gobstones-$(commertialName $TYPE) -wl --x64 --ia32
 
 echo "CREATING '$TYPE' ONE-FILE PACKAGES..."
 LINUX_NAME_1=gobstones-$(commertialName $TYPE)-linux-$PACKAGE_VERSION.zip
 WINDOWS_NAME_1=gobstones-$(commertialName $TYPE)-windows-$PACKAGE_VERSION.exe
+WINDOWS32_NAME_1=gobstones-$(commertialName $TYPE)-windows-ia32-$PACKAGE_VERSION.zip
 cd ./dist/linux-unpacked ; zip -r ../../$LINUX_NAME_1 . ; cd ../..
+cd ./dist/win-ia32-unpacked ; zip -r ../../$WINDOWS32_NAME_1 . ; cd ../..
 cp "./dist/gobstones-$(commertialName $TYPE) Setup 1.0.0.exe" $WINDOWS_NAME_1
 mv "$LINUX_NAME_1" node_modules/
 mv "$WINDOWS_NAME_1" node_modules/
+mv "$WINDOWS32_NAME_1" node_modules/
 
 # ---
 
@@ -106,6 +109,6 @@ echo "GIVE ME THE GITHUB TOKEN"
 read TOKEN
 
 echo "PUBLISHING..."
-./node_modules/.bin/publish-release --token $TOKEN --owner gobstones --repo gobstones-web-desktop --tag "$PACKAGE_VERSION" --name "$PACKAGE_VERSION" --assets $LINUX_NAME_1,$WINDOWS_NAME_1,$LINUX_NAME_2,$WINDOWS_NAME_2,$LINUX_NAME_3,$WINDOWS_NAME_3 --notes "Gobstones Web - Desktop"
+./node_modules/.bin/publish-release --token $TOKEN --owner gobstones --repo gobstones-web-desktop --tag "$PACKAGE_VERSION" --name "$PACKAGE_VERSION" --assets $LINUX_NAME_1,$WINDOWS_NAME_1,$LINUX_NAME_2,$WINDOWS_NAME_2,$LINUX_NAME_3,$WINDOWS_NAME_3,$WINDOWS32_NAME_1 --notes "Gobstones Web - Desktop"
 
 echo "DONE."
