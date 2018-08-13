@@ -1,5 +1,6 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 <link rel="import" href="../../bower_components/gs-element-blockly/gs-element-blockly.html">
+<link rel="import" href="../../scripts/blockly-errors.html">
 <link rel="import" href="../../scripts/behaviors/busListenerBehavior.html">
 <link rel="import" href="../../scripts/behaviors/localizationBehavior.html">
 <link rel="import" href="../../scripts/jquery.html">
@@ -306,18 +307,23 @@
       _showError(region, error) {
         const { message, reason: { code, detail } } = error;
 
-        let kind = message;
-
-        if (code === "cannot-move-to" || code === "cannot-remove-stone")
-          kind = { kind: "PRECONDITION_ERROR", description: message };
-
-        if (code === "primitive-argument-type-mismatch")
-          kind = { kind: "TYPE_ERROR", expectedType: detail[2], actualType: detail[3] };
-
         const block = this.$.blockly.workspace.getBlockById(region);
+        error.message = this._findBestMessageFor(block, error, message);
+
         if (block) this._scrollToBlock(block, () => {
-          this.$.blockly.showBlockError(region, kind);
+          this.$.blockly.showBlockError(region, error.message);
         });
+      },
+
+      _findBestMessageFor(block, error, defaultMessage) {
+        const type = block.type;
+        const { code, detail } = error.reason;
+
+        const customError = window.GBS_BLOCKLY_ERRORS.find((it) => {
+          return _.toArray(it.when.block).includes(type) && it.when.error === code;
+        });
+
+        return customError && customError.message(detail) || defaultMessage;
       },
 
       _scrollToBlock(block, onComplete = () => {}) {
