@@ -9,18 +9,17 @@ This is a web IDE of the language [Gobstones](http://gobstones.github.io).
 
 ## install
 ```bash
-sudo npm install -g bower gulp
-npm install && bower install
+npm install
 ```
 
 ## run server
 ```bash
-gulp serve
+npm start
 ```
 
 ## run tests
 ```bash
-gulp jasmine
+npm test
 ```
 
 ## adding dependencies
