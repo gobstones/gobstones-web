@@ -66,7 +66,8 @@
             can_toggle_visibility: context.boards.permissions.can_toggle_attire_visibility
           }
         },
-        blocks: context.editor.toolbox
+        blocks: context.editor.toolbox,
+        customErrors: context.editor.customErrors
       });
     }
 
@@ -121,6 +122,7 @@
       context.boards.set("permissions.can_toggle_attire_visibility", metadata.attire.user_permissions.can_toggle_visibility);
 
       if (metadata.blocks) context.editor.toolbox = metadata.blocks;
+      if (metadata.customErrors) context.editor.customErrors = metadata.customErrors;
     }
 
     _buildYaml(metadata) {
