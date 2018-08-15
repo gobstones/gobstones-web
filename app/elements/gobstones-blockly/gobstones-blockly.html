@@ -312,11 +312,12 @@
         const block = this.$.blockly.workspace.getBlockById(region);
         error.message = this._findBestMessageFor(block, error, message);
 
-        console.warn({
+        window.lastError = {
           block: block.type,
           error: error.reason.code,
           args: error.reason.detail.map((it) => `${it}`)
-        });
+        }; // DEBUG
+        console.warn(window.lastError);
 
         if (block) this._scrollToBlock(block, () => {
           this.$.blockly.showBlockError(region, error.message);
