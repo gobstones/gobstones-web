@@ -306,9 +306,13 @@
 
         window.lastError = {
           error: error.reason.code,
-          args: error.reason.detail.map((it) => `${it}`)
+          args: error.reason.detail
         }; // DEBUG
-        console.warn(window.lastError);
+
+        console.warn({
+          error: error.reason.code,
+          args: error.reason.detail.map((it) => `${it}`)
+        });
 
         if (error.location.mode === "library") this._setMode("library");
 

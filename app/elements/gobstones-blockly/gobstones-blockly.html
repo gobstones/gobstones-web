@@ -313,9 +313,14 @@
         window.lastError = {
           block: block.type,
           error: error.reason.code,
-          args: error.reason.detail.map((it) => `${it}`)
+          args: error.reason.detail
         }; // DEBUG
-        console.warn(window.lastError);
+
+        console.warn({
+          block: block.type,
+          error: error.reason.code,
+          args: error.reason.detail.map((it) => `${it}`)
+        });
 
         if (block) this._scrollToBlock(block, () => {
           this.$.blockly.showBlockError(region, error.message);
