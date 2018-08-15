@@ -122,7 +122,8 @@
         withRunner: {
           type: Boolean,
           value: false
-        }
+        },
+        customErrors: Object
       },
       listeners: {
         "ace.editor-ready": "onAceReady",
@@ -221,6 +222,7 @@
         this.setCode("", "main");
         this.setCode("", "library");
         this.setCode("", "teacher");
+        this.customErrors = null;
       },
 
       _onRunRequest: function(options) {
@@ -300,9 +302,37 @@
       },
 
       _reportError: function(error, type, onTheFly) {
+        error.message = this._findBestMessageFor(error);
+
+        window.lastError = {
+          error: error.reason.code,
+          args: error.reason.detail.map((it) => `${it}`)
+        }; // DEBUG
+        console.warn(window.lastError);
+
         if (error.location.mode === "library") this._setMode("library");
 
         this._setAnnotation(error, type, onTheFly);
+      },
+
+      _findBestMessageFor(error, defaultMessage = error.message) {
+        const { code, detail: args } = error.reason;
+
+        const customErrors = this.customErrors || [];
+        const customError = customErrors.find((it) => {
+          return (it.when.error === "*" || _.castArray(it.when.error).includes(code)) &&
+                 (!it.when.condition || eval(it.when.condition));
+        });
+        if (customError && customError.transform) eval(customError.transform);
+
+        const customMessage = customError && _.template(customError.message)(
+          _(args)
+            .toPlainObject()
+            .mapKeys((v, k) => `arg${k}`)
+            .value()
+        );
+
+        return customMessage || defaultMessage;
       },
 
       _setAnnotation(error, type, onTheFly = false) {

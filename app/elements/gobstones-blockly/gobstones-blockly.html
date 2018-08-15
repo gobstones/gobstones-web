@@ -307,10 +307,8 @@
       },
 
       _showError(region, error) {
-        const { message, reason: { code, detail } } = error;
-
         const block = this.$.blockly.workspace.getBlockById(region);
-        error.message = this._findBestMessageFor(block, error, message);
+        error.message = this._findBestMessageFor(block, error);
 
         window.lastError = {
           block: block.type,
@@ -324,7 +322,7 @@
         });
       },
 
-      _findBestMessageFor(block, error, defaultMessage) {
+      _findBestMessageFor(block, error, defaultMessage = error.message) {
         const type = block.type;
         const { code, detail: args } = error.reason;
 
