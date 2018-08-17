@@ -154,6 +154,8 @@
       </template>
     </div>
 
+    <hr>
+
     <div class="language-selector">
       <div>
         <paper-dropdown-menu id="languageSelector" no-animations no-label-float vertical-align="bottom" horizontal-align="right">
@@ -173,6 +175,18 @@
       <paper-toggle-button checked="{{showTutorial}}" on-change="_onShowTutorialChanged"></paper-toggle-button>
     </paper-item>
 
+    <hr>
+
+    <paper-item>
+      <paper-item-body>
+        <div><strong>[[localize("course")]]:</strong></div> <i>[[getCourseName()]]</i>
+      </paper-item-body>
+      <paper-icon-button on-click="openCourseSelector" icon="icons:card-travel" alt="open"> </paper-icon-button>
+    </paper-item>
+
+    <hr>
+
+    <!-- // TODO: Borrar -->
     <template is="dom-if" if="{{_isDesktop()}}">
       <paper-item style="text-align: center; margin-top: 20px">
         <paper-item-body>
@@ -370,6 +384,10 @@
         window.BUS.fire("open-project-selector");
       },
 
+      openCourseSelector: function() {
+        this._ide().showCourseSelectorModal();
+      },
+
       saveCurrentProject: function() {
         window.BUS.fire("save-project");
       },
@@ -395,6 +413,10 @@
         var xml = '<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="' + bbox.width + '" height="' + bbox.height + '" viewBox="0 0 ' + bbox.width + ' ' + bbox.height + '">' + css + '<rect width="100%" height="100%" fill="white"></rect>' + xmlContent + '</svg>';
 
         new Loader()._saveBlob(new Blob([xml], { type: "image/svg+xml" }), 'blocks.svg');
+      },
+
+      getCourseName: function() {
+        return getParameterByName("course") || "---";
       },
 
       _downloadDesktopWindows: function() {
