@@ -149,17 +149,7 @@
         },
         availableSolutions: {
           type: Array,
-          value: [{
-            code: {
-              main: "",
-              library: "",
-              teacher: ""
-            },
-            workspace: {
-              main: "",
-              library: ""
-            }
-          }]
+          value: []
         },
 
         tooltipAnimation: Object
@@ -179,6 +169,20 @@
         this.BLOCKS_SYNC_ON_COLOR = "#03a9f4";
         this.BLOCKS_SYNC_OFF_COLOR = "#666666";
         this._setBlocksSyncOff();
+
+        setTimeout(() => {
+          this.push("availableSolutions", {
+            code: {
+              main: "",
+              library: "",
+              teacher: ""
+            },
+            workspace: {
+              main: "",
+              library: ""
+            }
+          });
+        });
 
         Object.defineProperty(this, "code", {
           get: function() {
