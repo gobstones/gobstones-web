@@ -8,7 +8,7 @@
 <link rel="import" href="../../scripts/loaders/remote/urlLoader.html">
 <link rel="import" href="../../scripts/loaders/remote/gitHubLoader.html">
 <link rel="import" href="../../scripts/loaders/remote/fsLoader.html">
-<link rel="import" href="../guide-selector/guide-selector.html">
+<link rel="import" href="../course-selector/course-selector.html">
 <link rel="import" href="../project-selector/project-selector.html">
 <link rel="import" href="../code-viewer/code-viewer.html">
 
@@ -132,11 +132,11 @@
         </paper-dialog-scrollable>
       </paper-dialog>
 
-      <paper-dialog id="guideSelectorModal" class="project-selector-modal">
+      <paper-dialog id="courseSelectorModal" class="project-selector-modal">
         <paper-button class="accept close" dialog-confirm autofocus><iron-icon icon="icons:close"></iron-icon></paper-button>
 
         <paper-dialog-scrollable>
-          <guide-selector></project-selector>
+          <course-selector></course-selector>
         </paper-dialog-scrollable>
       </paper-dialog>
 
@@ -234,12 +234,12 @@
         this._closeDrawer();
       },
 
-      hideGuideSelectorModal: function() {
-        document.querySelector("#guideSelectorModal").close();
+      hideCourseSelectorModal: function() {
+        document.querySelector("#courseSelectorModal").close();
       },
 
-      showGuideSelectorModal: function() {
-        document.querySelector("#guideSelectorModal").open();
+      showCourseSelectorModal: function() {
+        document.querySelector("#courseSelectorModal").open();
         this._closeDrawer();
       },
 

@@ -179,9 +179,9 @@
 
     <paper-item>
       <paper-item-body>
-        <div>[[localize("guides")]]</div>
+        <div><strong>[[localize("course")]]:</strong></div> <i>[[getCourseName()]]</i>
       </paper-item-body>
-      <paper-icon-button on-click="openGuideSelector" icon="icons:card-travel" alt="open"> </paper-icon-button>
+      <paper-icon-button on-click="openCourseSelector" icon="icons:card-travel" alt="open"> </paper-icon-button>
     </paper-item>
 
     <hr>
@@ -384,8 +384,8 @@
         window.BUS.fire("open-project-selector");
       },
 
-      openGuideSelector: function() {
-        this._ide().showGuideSelectorModal();
+      openCourseSelector: function() {
+        this._ide().showCourseSelectorModal();
       },
 
       saveCurrentProject: function() {
@@ -413,6 +413,10 @@
         var xml = '<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="' + bbox.width + '" height="' + bbox.height + '" viewBox="0 0 ' + bbox.width + ' ' + bbox.height + '">' + css + '<rect width="100%" height="100%" fill="white"></rect>' + xmlContent + '</svg>';
 
         new Loader()._saveBlob(new Blob([xml], { type: "image/svg+xml" }), 'blocks.svg');
+      },
+
+      getCourseName: function() {
+        return getParameterByName("course") || "---";
       },
 
       _downloadDesktopWindows: function() {
