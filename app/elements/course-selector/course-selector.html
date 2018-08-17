@@ -2,14 +2,43 @@
 
 <dom-module id="course-selector">
   <style>
-    .container {
-      margin: 0 auto;
-      width: 90%;
+    .input-course {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .input-course-input {
+      width: 70%;
+    }
+
+    .input-course-button {
+      margin-top: 15px;
+      margin-left: 15px;
+    }
+
+    .available-courses {
+      margin-top: 30px;
+      margin-bottom: 30px;
     }
   </style>
 
   <template>
-    <h1>Test</h1>
+    <h1>[[localize("course")]]</h1>
+
+    <form action="javascript:void(0);">
+      <div class="input-course">
+        <paper-input class="input-course-input" label$="{{localize('insert-course-slug')}}" value="{{slug}}"></paper-input>
+        <button class="input-course-button" class="submit" type="submit" on-click="goToCourse">[[localize("go-to-course")]]</button>
+      </div>
+    </form>
+
+    <template is="dom-if" if="{{availableCourses.length}}">
+      <h1 class="available-courses">[[localize("available-courses")]]</h1>
+      <template is="dom-repeat" items="{{availableCourses}}">
+        <li><a href="javascript: void(0);" on-click="onGoToClick">[[item.name]]</a></li>
+      </template>
+    </template>
   </template>
 
   <script>
@@ -19,9 +48,30 @@
         Polymer.LocalizationBehavior
       ],
       properties: {
+        slug: String,
+        availableCourses: []
       },
 
       ready: function() {
+        this.COURSES_URL = "https://raw.githubusercontent.com/wiki/gobstones/gobstones-web/Courses.md";
+
+        this.slug = getParameterByName("course");
+
+        $.getJSON(this.COURSES_URL).then((courses) => {
+          this.availableCourses = courses;
+        });
+      },
+
+      onGoToClick: function(event) {
+        this.goTo(event.model.item.course);
+      },
+
+      goToCourse: function() {
+        this.goTo(this.slug);
+      },
+
+      goTo: function(item) {
+        document.location.search = "?course=" + item;
       }
     });
   </script>
