@@ -75,7 +75,7 @@
 
         <template is="dom-if" if="{{_isCodeProject(projectType)}}">
           <template is="dom-if" if="{{showProceduresHint}}">
-            <iron-icon id="procedures-hint-button" class="procedures-hint-button" icon="icons:lightbulb-outline"></iron-icon></paper-button>
+            <iron-icon on-click="toggleProceduresHint" id="procedures-hint-button" class="procedures-hint-button" icon="icons:lightbulb-outline"></iron-icon>
             <paper-tooltip for="procedures-hint-button" position="left" animation-config="{{tooltipAnimation}}">
               <div class="procedures-hint-tooltip">
                 [[localize("you-have-available-actions")]]
@@ -224,6 +224,10 @@
 
       decreaseEditorFontSize: function() {
         this._editor().decreaseFontSize();
+      },
+
+      toggleProceduresHint: function() {
+        window.BUS.fire("toggle-procedures-hint");
       },
 
       undo: function() {

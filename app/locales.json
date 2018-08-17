@@ -127,7 +127,7 @@
     "view-large-icons": "Íconos grandes",
     "view-small-icons": "Íconos pequeños",
     "view-list": "Lista",
-    "you-have-available-actions": "¡Presiona CTRL para ver las acciones disponibles!",
+    "you-have-available-actions": "¡Presiona para ver las acciones disponibles!",
     "you-must-reload": "¿Deseas reiniciar ahora para ver los cambios? Se perderá todo el progreso no guardado."
   },
   "en": {
@@ -258,7 +258,7 @@
     "view-large-icons": "Large icons",
     "view-small-icons": "Small icons",
     "view-list": "List",
-    "you-have-available-actions": "Press CTRL to see the available actions!",
+    "you-have-available-actions": "Click to see the available actions!",
     "you-must-reload": "Do you want to restart now to see the changes? Unsaved data will be lost."
   }
 }

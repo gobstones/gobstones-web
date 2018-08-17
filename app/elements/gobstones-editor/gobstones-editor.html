@@ -163,6 +163,10 @@
           });
         }
 
+        this.subscribeTo("toggle-procedures-hint", () => {
+          this.isShowingProceduresHint = !this.isShowingProceduresHint;
+        });
+
         this.editor = this.$.ace.editor;
         this._setFatalities();
 
@@ -221,6 +225,7 @@
         this.setCode("", "main");
         this.setCode("", "library");
         this.setCode("", "teacher");
+        this.isShowingProceduresHint = false;
       },
 
       _onRunRequest: function(options) {
@@ -359,15 +364,6 @@
           name: "run-code",
           bindKey: { win: "ctrl+enter", mac: "command+enter" },
           exec: () => { this.runner.requestRun() }
-        });
-
-        const key = "Control";
-        $(window).keydown((event) => {
-          if (event.key === key) this.isShowingProceduresHint = true;
-        });
-
-        $(window).keyup((event) => {
-          if (event.key === key) this.isShowingProceduresHint = false;
         });
       },
 
