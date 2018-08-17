@@ -173,6 +173,18 @@
       <paper-toggle-button checked="{{showTutorial}}" on-change="_onShowTutorialChanged"></paper-toggle-button>
     </paper-item>
 
+    <hr>
+
+    <paper-item>
+      <paper-item-body>
+        <div>[[localize("guides")]]</div>
+      </paper-item-body>
+      <paper-icon-button on-click="openGuideSelector" icon="icons:card-travel" alt="open"> </paper-icon-button>
+    </paper-item>
+
+    <hr>
+
+    <!-- // TODO: Borrar -->
     <template is="dom-if" if="{{_isDesktop()}}">
       <paper-item style="text-align: center; margin-top: 20px">
         <paper-item-body>
@@ -368,6 +380,10 @@
 
       openProjectSelector: function() {
         window.BUS.fire("open-project-selector");
+      },
+
+      openGuideSelector: function() {
+        this._ide().showGuideSelectorModal();
       },
 
       saveCurrentProject: function() {
