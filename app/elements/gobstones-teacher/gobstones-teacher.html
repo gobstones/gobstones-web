@@ -171,7 +171,7 @@
         this._setBlocksSyncOff();
 
         setTimeout(() => {
-          this.push("availableSolutions", {
+          this.set("availableSolutions", [{
             code: {
               main: "",
               library: "",
@@ -181,7 +181,7 @@
               main: "",
               library: ""
             }
-          });
+          }]);
         });
 
         Object.defineProperty(this, "code", {
