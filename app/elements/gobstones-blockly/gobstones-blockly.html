@@ -64,6 +64,7 @@
           observer: "setAsDirty"
         },
         toolbox: Object,
+        customErrors: Object,
         workspace: {
           type: Object,
           value: { main: "" }
@@ -160,6 +161,7 @@
         this.setCode("", "library");
         this.setCode("", "teacher");
         this.toolbox = null;
+        this.customErrors = null;
         this.$.blockly.primitiveProcedures = [];
         this.$.blockly.primitiveFunctions = [];
         this.$.blockly.setDefaultToolbox();
@@ -305,25 +307,46 @@
       },
 
       _showError(region, error) {
-        const { message, reason: { code, detail } } = error;
-
         const block = this.$.blockly.workspace.getBlockById(region);
-        error.message = this._findBestMessageFor(block, error, message);
+        error.message = this._findBestMessageFor(block, error);
+
+        window.lastError = {
+          block: block.type,
+          error: error.reason.code,
+          args: error.reason.detail
+        }; // DEBUG
+
+        console.warn({
+          block: block.type,
+          error: error.reason.code,
+          args: error.reason.detail.map((it) => `${it}`)
+        });
 
         if (block) this._scrollToBlock(block, () => {
           this.$.blockly.showBlockError(region, error.message);
         });
       },
 
-      _findBestMessageFor(block, error, defaultMessage) {
+      _findBestMessageFor(block, error, defaultMessage = error.message) {
         const type = block.type;
-        const { code, detail } = error.reason;
+        const { code, detail: args } = error.reason;
 
-        const customError = window.GBS_BLOCKLY_ERRORS.find((it) => {
-          return _.toArray(it.when.block).includes(type) && it.when.error === code;
+        const customErrors = (this.customErrors || []).concat(window.GBS_BLOCKLY_ERRORS);
+        const customError = customErrors.find((it) => {
+          return (it.when.block === "*" || _.castArray(it.when.block).includes(type)) &&
+            (it.when.error === "*" || _.castArray(it.when.error).includes(code)) &&
+            (!it.when.condition || eval(it.when.condition));
         });
+        if (customError && customError.transform) eval(customError.transform);
 
-        return customError && customError.message(detail) || defaultMessage;
+        const customMessage = customError && _.template(customError.message)(
+          _(args)
+            .toPlainObject()
+            .mapKeys((v, k) => `arg${k}`)
+            .value()
+        );
+
+        return customMessage || defaultMessage;
       },
 
       _scrollToBlock(block, onComplete = () => {}) {
