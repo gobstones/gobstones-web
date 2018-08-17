@@ -1,5 +1,5 @@
 {
-  "name": "gobstones-web",
+  "name": "gobstones_web",
   "description": "Gobstones Web",
   "version": "2.7.5-rc",
   "private": true,
@@ -7,16 +7,21 @@
   "author": "Gobstones",
   "homepage": "https://gobstones.github.io",
   "repository": "https://github.com/gobstones/gobstones-web",
-  "main": "start-electron.js",
+  "main": "app/start-electron.js",
   "scripts": {
     "postinstall": "bower install",
-    "start": "gulp serve",
-    "test": "gulp jasmine"
+    "dev": "gulp serve",
+    "test": "gulp jasmine",
+    "start": "electron app/start-electron.js",
+    "pack": "env-cmd blocks electron-builder --dir",
+    "dist": "env-cmd blocks electron-builder",
+    "publish": ""
   },
   "engines": {
-    "node": ">=0.10.0"
+    "node": ">=7.0.0"
   },
   "dependencies": {
+    "args": "^5.0.0",
     "bytes": "^3.0.0",
     "extract-zip": "^1.6.5",
     "finalhandler": "^1.0.2",
@@ -35,6 +40,7 @@
     "del": "^2.0.2",
     "electron": "^1.6.6",
     "electron-builder": "^19.55.2",
+    "env-cmd": "^8.0.2",
     "es6-promise": "^3.1.2",
     "glob-all": "^3.0.1",
     "gulp": "^3.8.5",
@@ -76,6 +82,84 @@
     "position": "center"
   },
   "build": {
-    "asar": false
+    "appId": "org.gobstones.gobstones-web",
+    "productName": "gobstones-web",
+    "artifactName": "${env.GOBSSTONES_STARTUP_FILENAME}_${version}_${os}_${arch}.${ext}",
+    "asar": false,
+    "fileAssociations": [{
+        "ext": "gbp",
+        "name": "Gobstones Project File"
+      },{
+        "ext": "gbs",
+        "name": "Gobstones Sr. Code File"
+      },{
+        "ext": "gbk",
+        "name": "Gobstones Jr. Code File"
+      }],
+    "mac": {
+      "category": "public.app-category.developer-tools",
+      "icon": "icon.icns",
+      "target": "dmg"
+    },
+    "dmg": {
+      "icon": "dmgIcon.icns",
+      "window": {
+        "width": 507,
+        "height": 302
+      },
+      "background": "build/background.png",
+      "iconSize": 100,
+      "contents": [{
+        "x": 375,
+        "y": 150,
+        "type": "link",
+        "path": "/Applications"
+      }, {
+        "x": 150,
+        "y": 150,
+        "type": "file"
+      }]
+    },
+    "win": {
+      "target": [{
+          "target": "msi",
+          "arch": [
+            "x64",
+            "ia32"
+          ]
+        }, {
+          "target": "portable",
+          "arch": [
+            "x64",
+            "ia32"
+          ]
+        }
+      ]
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": true,
+      "allowElevation": true,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "installerIcon": "build/msiIcon.ico",
+      "uninstallerIcon": "build/msiIcon.ico"
+    },
+    "linux": {
+      "target": [
+        {
+          "target": "tar.gz",
+          "arch": [
+            "x64",
+            "ia32"
+          ]
+        }
+      ]
+    },
+    "deb": {},
+    "rpm": {},
+    "pacman": {},
+    "freebsd": {}
   }
 }

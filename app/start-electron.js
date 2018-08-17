@@ -1,29 +1,65 @@
 // start server
 
+const args = require('args');
 const finalhandler = require('finalhandler');
 const http = require('http');
 const serveStatic = require('serve-static');
 const freeport = require('freeport');
 const path = require('path');
+const {app, BrowserWindow, ipcMain} = require('electron');
 
-const serve = serveStatic('.', { 'index': ['index.html'] });
+// Server and Window are global objects
+const server = createServer();
+let mainWindow;
 
-const server = http.createServer((req, res) => {
-  serve(req, res, finalhandler(req, res));
-});
+args
+  .option('blocks', 'Start the program in block mode only', false)
+  .option('code', 'Start the program in code mode only', false)
+  .option('teacher', 'Start the program in teacher mode only', false)
+  .example(
+    'start-electron.js',
+    'Run the application allowing the user to choose how to start the app, blocks, code, or teacher mode'
+  )
+  .example(
+    'start-electron.js --code',
+    'Run the application as senior, only code mode'
+  )
 
-freeport((err, port) => {
-  if (err) throw err;
-  server.listen(port);
+// const flags = args.parse(process.argv)
+const flags = {
+  blocks: false,
+  code: false,
+  teacher: false
+}
+function runModeSuffix() {
+  return flags.blocks ? '#/blocks' : (flags.code ? '#/code' : (flags.teacher ? '#/teacher' : ''))
+}
 
-  // start electron
+function runModeTitle() {
+  return flags.blocks ? 'Gobstones Jr' : (flags.code ? 'Gobstones Sr' : (flags.teacher ? 'Gobstones Teacher' : 'Gobstones'))
+}
 
-  const electron = require('electron');
-  const app = electron.app;
-  const BrowserWindow = electron.BrowserWindow;
+function preloadScript() {
+  return path.join(appFolder(), 'start-electron-preload.js');
+}
 
-  // <CUSTOM prompt()>
-  var ipcMain = electron.ipcMain;
+function appFolder() {
+  return __dirname;
+}
+
+function serverAddress(port) {
+  return `http://localhost:${port}/` + runModeSuffix();
+}
+
+function createServer() {
+  const serve = serveStatic(appFolder(), { 'index': ['index.html'] });
+
+  return http.createServer((req, res) => {
+    serve(req, res, finalhandler(req, res));
+  });
+}
+
+function customPrompt() {
   var promptResponse;
   ipcMain.on('prompt', function(eventRet, arg) {
     var encodeHtmlEntity = function(str) {
@@ -60,34 +96,42 @@ freeport((err, port) => {
     if (arg === ''){ arg = null }
     promptResponse = arg
   })
-  // </CUSTOM prompt()>
+}
 
-  let mainWindow;
+function createWindow(port) {
+  let mainWindow = new BrowserWindow({
+    width: 1024,
+    height: 800,
+    icon: path.join(appFolder(), 'favicon.ico'),
+    title: runModeTitle(),
+    webPreferences: {
+      nodeIntegration: true,
+      preload: preloadScript(),
+      webSecurity: false
+    }
+  });
+  mainWindow.loadURL(serverAddress(port));
+  mainWindow.maximize();
+  mainWindow.on('closed', () => mainWindow = null);
+  mainWindow.on('page-title-updated', (ev) => ev.preventDefault());
+}
 
-  function createWindow() {
-    mainWindow = new BrowserWindow({
-      width: 1024,
-      height: 800,
-      icon: path.join(__dirname, 'favicon.ico'),
-      webPreferences: {
-        nodeIntegration: true,
-        preload: __dirname + "/start-electron-preload.js",
-        webSecurity: false
-      }
-    });
-    mainWindow.loadURL(`http://localhost:${port}/#/blocks`);
-    mainWindow.maximize();
-    mainWindow.on('closed', () => mainWindow = null);
-  }
-
-  app.on('ready', createWindow);
+// Run the application
+freeport((err, port) => {
+  if (err) throw err;
+  server.listen(port);
+  // Configure custom prompt
+  customPrompt()
+  // Configure electron app default actions
+  app.on('ready', () => {
+    mainWindow = createWindow(port)
+  });
 
   app.on('window-all-closed', () => {
     if (process.platform !== 'darwin') app.quit();
   });
 
   app.on('activate', () => {
-    if (mainWindow === null) createWindow();
+    if (mainWindow === null) { mainWindow = createWindow(port); }
   });
 })
-

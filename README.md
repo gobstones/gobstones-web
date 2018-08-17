@@ -12,9 +12,9 @@ This is a web IDE of the language [Gobstones](http://gobstones.github.io).
 npm install
 ```
 
-## run server
+## run server in development mode
 ```bash
-npm start
+npm dev
 ```
 
 ## run tests
@@ -61,18 +61,18 @@ makeself . gobstones-web.run "Gobstones Web" ./start-desktop.sh
 
 #### run locally
 ```bash
-# requires electron
-gulp
-cd dist/
-electron start-electron.js
+npm start
 ```
 
 #### generate native distributable binaries
 ```bash
-./release-desktop.sh
+npm run dist
 ```
 
-Single-file packages can be generated using [winrar](https://www.winrar.es/) (windows) and [makeself](https://github.com/megastep/makeself) (linux)
+#### generate native distiributables and publish them
+```bash
+npm publish
+```
 
 ## more docs
 
