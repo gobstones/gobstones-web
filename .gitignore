@@ -1,9 +1,21 @@
+# Node JS and project folders
 node_modules
-/dist
 bower_components
+/dist
 .tmp
 .publish/
+# OS Specific files
+thumbs.db
+*.DS_Store
+# IDE Specific files
 .idea
 *.sublime-workspace
+*.sublime-project
 *.nw
-*.DS_Store
+*.vscode
+# App specific
+app/guides.zip
+app/guides
+app/guides_tmp
+app/config.json
+app/cache_config.json

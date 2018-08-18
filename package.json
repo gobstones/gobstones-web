@@ -1,10 +1,10 @@
 {
-  "name": "gobstones_web",
+  "name": "gobstones-web",
   "description": "Gobstones Web",
   "version": "2.7.5-rc",
   "private": true,
   "licence": "GPLv3",
-  "author": "Gobstones",
+  "author": "Gobstones <info@gobstones.org> (https://gobstones.github.io)",
   "homepage": "https://gobstones.github.io",
   "repository": "https://github.com/gobstones/gobstones-web",
   "main": "app/start-electron.js",
@@ -12,16 +12,15 @@
     "postinstall": "bower install",
     "dev": "gulp serve",
     "test": "gulp jasmine",
-    "start": "electron app/start-electron.js",
-    "pack": "env-cmd blocks electron-builder --dir",
-    "dist": "env-cmd blocks electron-builder",
-    "publish": ""
+    "start": "electron build/start-electron.js",
+    "pack": "node build/builder.js --dir",
+    "dist": "node build/builder.js",
+    "publish": "node build/builder.js --publish"
   },
   "engines": {
     "node": ">=7.0.0"
   },
   "dependencies": {
-    "args": "^5.0.0",
     "bytes": "^3.0.0",
     "extract-zip": "^1.6.5",
     "finalhandler": "^1.0.2",
@@ -30,7 +29,8 @@
     "recursive-readdir-sync": "^1.0.6",
     "serve-static": "^1.12.2",
     "setimmediate": "^1.0.5",
-    "showdown": "^1.7.3"
+    "showdown": "^1.7.3",
+    "yargs": "^12.0.1"
   },
   "devDependencies": {
     "babel-preset-es2015": "^6.24.1",
@@ -84,18 +84,22 @@
   "build": {
     "appId": "org.gobstones.gobstones-web",
     "productName": "gobstones-web",
-    "artifactName": "${env.GOBSSTONES_STARTUP_FILENAME}_${version}_${os}_${arch}.${ext}",
+    "artifactName": "${productName}_${version}_${os}_${arch}.${ext}",
     "asar": false,
-    "fileAssociations": [{
+    "fileAssociations": [
+      {
         "ext": "gbp",
         "name": "Gobstones Project File"
-      },{
+      },
+      {
         "ext": "gbs",
         "name": "Gobstones Sr. Code File"
-      },{
+      },
+      {
         "ext": "gbk",
         "name": "Gobstones Jr. Code File"
-      }],
+      }
+    ],
     "mac": {
       "category": "public.app-category.developer-tools",
       "icon": "icon.icns",
@@ -109,25 +113,30 @@
       },
       "background": "build/background.png",
       "iconSize": 100,
-      "contents": [{
-        "x": 375,
-        "y": 150,
-        "type": "link",
-        "path": "/Applications"
-      }, {
-        "x": 150,
-        "y": 150,
-        "type": "file"
-      }]
+      "contents": [
+        {
+          "x": 375,
+          "y": 150,
+          "type": "link",
+          "path": "/Applications"
+        },
+        {
+          "x": 150,
+          "y": 150,
+          "type": "file"
+        }
+      ]
     },
     "win": {
-      "target": [{
+      "target": [
+        {
           "target": "msi",
           "arch": [
             "x64",
             "ia32"
           ]
-        }, {
+        },
+        {
           "target": "portable",
           "arch": [
             "x64",
@@ -147,6 +156,8 @@
       "uninstallerIcon": "build/msiIcon.ico"
     },
     "linux": {
+      "icon": "build/linuxIcons",
+      "executableName": "gobstones",
       "target": [
         {
           "target": "tar.gz",
@@ -154,12 +165,47 @@
             "x64",
             "ia32"
           ]
+        },
+        {
+          "target": "AppImage",
+          "arch": [
+            "x64",
+            "ia32"
+          ]
+        },
+        {
+          "target": "deb",
+          "arch": [
+            "x64",
+            "ia32"
+          ]
         }
       ]
     },
-    "deb": {},
-    "rpm": {},
-    "pacman": {},
-    "freebsd": {}
+    "deb": {
+      "depends": [
+        "gconf2",
+        "gconf-service",
+        "libnotify4",
+        "libappindicator1",
+        "libxtst6",
+        "libnss3",
+        "libcanberra-gtk3-module",
+        "libcanberra-gtk-module"
+      ],
+      "packageCategory": "Education"
+    },
+    "rpm": {
+      "packageCategory": "Education",
+      "compression": "gz"
+    },
+    "pacman": {
+      "packageCategory": "Education",
+      "compression": "gz"
+    },
+    "freebsd": {
+      "packageCategory": "Education",
+      "compression": "gz"
+    }
   }
 }
