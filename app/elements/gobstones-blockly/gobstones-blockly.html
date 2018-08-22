@@ -16,6 +16,14 @@
       ? route
       : `https://gobstones.github.io/gobstones-web/${route}`;
   }
+  
+  window.GBS_GET_BLOCKLY_LOCAL_MEDIA_DIR = function() {
+    const route = "bower_components/gs-element-blockly/media/";
+
+    return window.GBS_DESKTOP
+      ? route
+      : `https://gobstones.github.io/gobstones-web/${route}`;
+  }
 </script>
 
 <dom-module id="gobstones-blockly">
@@ -36,7 +44,7 @@
     <!-- TOAST -->
     <paper-toast class="toast" id="toast"></paper-toast>
 
-    <gs-element-blockly id="blockly" class="blockly" workspace-xml="{{workspaceXml}}" toolbox="{{toolbox}}" media="{{mediaDir}}"></gs-element-blockly>
+    <gs-element-blockly id="blockly" class="blockly" workspace-xml="{{workspaceXml}}" toolbox="{{toolbox}}" media="{{mediaDir}}" local-media="{{localMediaDir}}"></gs-element-blockly>
     <gs-element-blockly id="blocklytmp" style="visibility: hidden"></gs-element-blockly>
   </template>
 
@@ -53,6 +61,10 @@
         mediaDir: {
           type: String,
           value: window.GBS_GET_BLOCKLY_MEDIA_DIR()
+        },
+        localMediaDir: {
+          type: String,
+          value: window.GBS_GET_BLOCKLY_LOCAL_MEDIA_DIR()
         },
         mode: {
           type: String,
