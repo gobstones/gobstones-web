@@ -260,7 +260,7 @@
                 if (e.message === "missing-program")
                   e.message = this.localize("missing-program");
 
-                this._reportError(e, "error");
+                this.reportError(e, "error");
                 window.BUS.fire("compilation-error");
               },
               onTeacherCompilationError: (e) => {
@@ -292,21 +292,13 @@
           code.main,
           (e) => {
             e.location = parser.getErrorLineAndMode(e, code, true);
-            this._reportError(e, "error", true);
+            this.reportError(e, "error", true);
           },
           () => {}
         );
       },
 
-      _notify: function(state) {
-        if (state.error) {
-          this._reportError(state.error, "info");
-          window.BUS.fire("execution-error", state.error.message);
-        } else
-          window.BUS.fire("execution-result", { board: state });
-      },
-
-      _reportError: function(error, type, onTheFly) {
+      reportError: function(error, type, onTheFly) {
         error.message = this._findBestMessageFor(error);
 
         window.lastError = {
@@ -322,6 +314,15 @@
         if (error.location.mode === "library") this._setMode("library");
 
         this._setAnnotation(error, type, onTheFly);
+      },
+
+      _notify: function(state) {
+        if (state.error) {
+          this.reportError(state.error, "info");
+          window.BUS.fire("execution-full-error", state.error);
+          window.BUS.fire("execution-error", state.error.message);
+        } else
+          window.BUS.fire("execution-result", { board: state });
       },
 
       _findBestMessageFor(error, defaultMessage = error.message) {
@@ -344,7 +345,7 @@
         return customMessage || defaultMessage;
       },
 
-      _setAnnotation(error, type, onTheFly = false) {
+      _setAnnotation(error, type = "info", onTheFly = false) {
         const row = error.location.line - 1;
 
         if (!onTheFly) {

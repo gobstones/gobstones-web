@@ -223,7 +223,7 @@
             setTimeout(() => this._editors()[ID_BLOCKS].highlight(), 1000);
           });
 
-          this._editors()[ID_CODE]._reportError = (error, type) => {
+          this._editors()[ID_CODE].reportError = (error, type) => {
             if (error.location.mode === "library") {
               setTimeout(() => {
                 this.selectedTab = ID_LIBRARY;
@@ -239,6 +239,14 @@
 
         this.subscribeTo("initial-state", (event) => {
           this._currentEditor()._runCode(event, this.getCode(), true);
+        }).subscribeTo("execution-full-error", (error) => {
+          const teacherBoom = this._getTeacherBoomLocation(error);
+          if (!teacherBoom || this.selectedTab !== ID_CODE) return;
+
+          error.location.line = teacherBoom.line;
+
+          this.selectedTab = ID_TEACHER_LIBRARY;
+          this._editors()[ID_TEACHER_LIBRARY].reportError(error);
         });
       },
 
@@ -404,6 +412,16 @@
         this.async(() => {
           this.isSyncingBlocks = false;
         });
+      },
+
+      _getTeacherBoomLocation: function(error) {
+        const errorLine = error.on.range.start.row;
+        const mainLines = this.solution.code.main.split("\n").length;
+        const libraryLines = this.solution.code.library.split("\n").length;
+
+        return errorLine > mainLines + libraryLines
+          ? { line: errorLine - mainLines - libraryLines }
+          : null;
       },
 
       _setBlocksSyncOff: function() {
