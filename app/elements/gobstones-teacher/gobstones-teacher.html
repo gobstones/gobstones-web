@@ -196,6 +196,15 @@
           }
         });
 
+        Object.defineProperty(this, "toolbox", {
+          get: function() {
+            return this._editors()[ID_BLOCKS].toolbox;
+          },
+          set: function(value) {
+            this._editors()[ID_BLOCKS].toolbox = value;
+          }
+        });
+
         const boardsPanel = document.getElementById("boards");
         if (boardsPanel) {
           this.runner = boardsPanel.$.runner;

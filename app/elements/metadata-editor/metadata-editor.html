@@ -1,9 +1,11 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 <link rel="import" href="../../scripts/simplemde.html">
 <link rel="import" href="../../scripts/stylist.html">
+<link rel="import" href="../../scripts/loaders/components/metadataLoader.html">
 <link rel="import" href="../../scripts/behaviors/busListenerBehavior.html">
 <link rel="import" href="../../scripts/behaviors/permissionsBehavior.html">
 <link rel="import" href="../../scripts/behaviors/localizationBehavior.html">
+<link rel="import" href="../../scripts/behaviors/loaderBehavior.html">
 
 <dom-module id="metadata-editor">
   <template>
@@ -29,6 +31,14 @@
     </style>
 
     <div class="metadata-editor-options">
+      <paper-item>
+        <paper-item-body>
+          <div>([[localize("settings-preview-changes")]])</div>
+        </paper-item-body>
+        <paper-toggle-button checked="{{previewChanges}}"></paper-toggle-button>
+      </paper-item>
+      <br>
+
       <paper-item center-justified flex class="menu-header-gobstones">
         <div>[[localize("settings-library")]]</div>
       </paper-item>
@@ -137,15 +147,21 @@
         metadata: {
           type: Object,
           value: { }
+        },
+        previewChanges: {
+          type: Boolean,
+          value: true
         }
       },
       behaviors: [
         Polymer.BusListenerBehavior,
         Polymer.PermissionsBehavior,
-        Polymer.LocalizationBehavior
+        Polymer.LocalizationBehavior,
+        Polymer.LoaderBehavior
       ],
       observers: [
-        "_onMetadataChanged(metadata.*)"
+        "_onMetadataChanged(metadata.*)",
+        "_onPreviewChangesChanged(previewChanges)"
       ],
 
       ready: function() {
@@ -165,6 +181,7 @@
 
       reset: function() {
         this.setMetadata(this._defaultMetadata());
+        this.previewChanges = true;
       },
 
       grayedUnless: function({ base }, property) {
@@ -216,7 +233,19 @@
               }
             }));
           }
+
+          if (this.previewChanges) this._previewChanges(base);
         } catch(e) {}
+      },
+
+      _onPreviewChangesChanged(previewChanges) {
+        try {
+          if (previewChanges) this._previewChanges(this.metadata);
+        } catch(e) {}
+      },
+
+      _previewChanges(metadata) {
+        new MetadataLoader().readSecondaryOptions(this._context(), metadata);
       },
 
       _defaultMetadata() {

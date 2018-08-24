@@ -102,9 +102,7 @@
       return metadata;
     }
 
-    readContent(context, content, fileName) {
-      const metadata = this.readCoreOptions(context, content);
-
+    readSecondaryOptions(context, metadata) {
       // board
       context.boards.setShowCode(metadata.source.visible);
 
@@ -123,6 +121,11 @@
 
       if (metadata.blocks) context.editor.toolbox = metadata.blocks;
       if (metadata.customErrors) context.editor.customErrors = metadata.customErrors;
+    }
+
+    readContent(context, content, fileName) {
+      const metadata = this.readCoreOptions(context, content);
+      this.readSecondaryOptions(context, metadata);
     }
 
     _buildYaml(metadata) {
