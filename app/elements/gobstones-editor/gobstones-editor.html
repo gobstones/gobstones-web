@@ -257,8 +257,13 @@
             { initialState, code },
             {
               onCompilationError: (e) => {
-                if (e.message === "missing-program")
+                if (e.message === "missing-program") {
                   e.message = this.localize("missing-program");
+                  e.reason = {
+                    code: "missing-program",
+                    detail: []
+                  };
+                }
 
                 this.reportError(e, "error");
                 window.BUS.fire("compilation-error");
