@@ -17,6 +17,15 @@
         position: absolute;
         right: 0;
       }
+
+      .content {
+        margin-top: 20px;
+        margin-left: 20px;
+      }
+
+      .no-attires {
+        color: cornflowerblue;
+      }
     </style>
 
     <div class="buttons">
@@ -27,7 +36,6 @@
         </div>
       </paper-tooltip>
 
-
       <paper-button id="remove-attire-button" style="z-index: 99" on-click="removeAttire"><iron-icon class="black-button" icon="icons:remove"></iron-icon></paper-button>
       <paper-tooltip for="remove-attire-button" position="bottom" animation-config="{{tooltipAnimation}}">
         <div class="button-tooltip">
@@ -35,12 +43,32 @@
         </div>
       </paper-tooltip>
     </div>
+
+    <div class="content">
+      <template is="dom-if" if="{{attire}}">
+        <div>
+          <h3>Vestimenta: [[attire.name]]</h3>
+
+          <div>
+            cosas de edición
+          </div>
+        </div>
+      </template>
+
+      <template is="dom-if" if="{{!attire}}">
+        <h3 class="no-attires">Crea nuevas vestimentas con el ícono (+) de arriba a la derecha.</h3>
+      </template>
+    </div>
   </template>
 
   <script>
     Polymer({
       is: 'attire-editor',
       properties: {
+        attire: {
+          type: Object,
+          value: null
+        }
       },
       behaviors: [
         Polymer.BusListenerBehavior,
@@ -59,6 +87,9 @@
       },
 
       ready: function() {
+        this.subscribeTo("selected-attire", (attire) => {
+          this.attire = attire;
+        })
       },
 
       addAttire: function() {
@@ -70,6 +101,10 @@
           enabled: false,
           rules: []
         });
+      },
+
+      removeAttire: function() {
+        this._boards().removeCurrentAttire();
       },
 
       _getUniqueName: function() {
@@ -95,4 +130,4 @@
     });
   </script>
 </dom-module>
-<!-- // TODO: I18n -->
+<!-- // TODO: I18n, cambiar tooltips -->

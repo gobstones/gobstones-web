@@ -560,7 +560,19 @@
         if (this.setAttire(attire.name)) return;
 
         this.push("availableAttires", attire);
+        this.selectedAttire = -1;
         this.selectedAttire = this.availableAttires.length - 1;
+      },
+
+      removeCurrentAttire: function() {
+        const index = this.selectedAttire;
+        this.selectedAttire = Math.max(0, index - 1);
+
+        if (this.availableAttires.length === 1) {
+          this.showAttire = false;
+          this.attire.enabled = false;
+        }
+        this.splice("availableAttires", index, 1);
       },
 
       setAttire: function(name) {
@@ -821,6 +833,7 @@
 
       _computeAttire: function(selectedAttire, showAttire) {
         var attire = this.availableAttires[selectedAttire];
+        window.BUS.fire("selected-attire", attire);
         if (attire) attire.enabled = showAttire;
         return attire;
       },
