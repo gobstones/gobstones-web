@@ -565,26 +565,32 @@
       },
 
       removeCurrentAttire: function() {
-        const index = this.selectedAttire;
-        this.selectedAttire = Math.max(0, index - 1);
-
         if (this.availableAttires.length === 1) {
           this.showAttire = false;
           this.attire.enabled = false;
         }
-        this.splice("availableAttires", index, 1);
+
+        const index = this.selectedAttire;
+        const availableAttires = this.availableAttires;
+        this.selectedAttire = -1;
+        this.set("availableAttires", availableAttires.filter((it, i) => {
+          return i !== index;
+        }));
+        this.selectedAttire = Math.max(0, index - 1);
       },
 
       updateCurrentAttire: function(attire) {
-        Object.assign(this.attire, attire);
-        const selectedAttire = this.selectedAttire;
+        const index = this.selectedAttire;
         const availableAttires = this.availableAttires;
+
+        this.selectedAttire = -1;
         this.set("availableAttires", []);
         this.async(() => {
           this.set("availableAttires", availableAttires.map((it, i) => {
-            return i === selectedAttire ? attire : it;
+            return i === index ? attire : it;
           }));
-        });
+          this.selectedAttire = index;
+        })
       },
 
       setAttire: function(name) {
