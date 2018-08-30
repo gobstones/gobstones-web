@@ -1,0 +1,35 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../scripts/behaviors/busListenerBehavior.html">
+<link rel="import" href="../../scripts/behaviors/permissionsBehavior.html">
+<link rel="import" href="../../scripts/behaviors/localizationBehavior.html">
+
+<dom-module id="attire-editor">
+  <template>
+    <style>
+    </style>
+
+    <div>
+      <h1>Hola</h1>
+    </div>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'attire-editor',
+      properties: {
+      },
+      behaviors: [
+        Polymer.BusListenerBehavior,
+        Polymer.PermissionsBehavior,
+        Polymer.LocalizationBehavior
+      ],
+      observers: [
+      ],
+
+      ready: function() {
+      }
+    });
+  </script>
+</dom-module>
+
+

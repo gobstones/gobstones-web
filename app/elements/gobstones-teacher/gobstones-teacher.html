@@ -71,6 +71,7 @@
         <paper-tab>[[localize("teachers-library")]]</paper-tab>
         <paper-tab>[[localize("students-library")]]</paper-tab>
         <paper-tab>[[localize("description")]]</paper-tab>
+        <paper-tab>[[localize("attire")]]</paper-tab>
         <paper-tab>[[localize("settings")]]</paper-tab>
       </paper-tabs>
 
@@ -111,7 +112,9 @@
 
         <description-editor id="description-editor" class$="editor {{_descriptionClass(selectedTab)}}"></description-editor>
 
-        <metadata-editor id="metadata-editor" class$="editor {{_metadataClass(selectedTab)}}" />
+        <metadata-editor id="metadata-editor" class$="editor {{_metadataClass(selectedTab)}}"></metadata-editor>
+
+        <attire-editor id="attire-editor" class$="editor {{_attireClass(selectedTab)}}"></attire-editor>
       </div>
     </div>
 
@@ -124,7 +127,8 @@
     const ID_TEACHER_LIBRARY = 2;
     const ID_LIBRARY = 3;
     const ID_DESCRIPTION = 4;
-    const ID_METADATA = 5;
+    const ID_ATTIRE = 5;
+    const ID_METADATA = 6;
 
     Polymer({
       is: "gobstones-teacher",
@@ -472,6 +476,7 @@
       _teacherLibraryClass: (selectedTab) => selectedTab === ID_TEACHER_LIBRARY ? "visible" : "unvisible",
       _libraryClass: (selectedTab) => selectedTab === ID_LIBRARY ? "visible" : "unvisible",
       _descriptionClass: (selectedTab) => selectedTab === ID_DESCRIPTION ? "visible" : "unvisible",
+      _attireClass: (selectedTab) => selectedTab === ID_ATTIRE ? "visible" : "unvisible",
       _metadataClass: (selectedTab) => selectedTab === ID_METADATA ? "visible" : "unvisible",
 
       _editors: function() {
