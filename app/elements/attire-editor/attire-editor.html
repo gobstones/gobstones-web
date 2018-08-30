@@ -48,6 +48,12 @@
       <template is="dom-if" if="{{attire}}">
         <div>
           <h3>Vestimenta: [[attire.name]]</h3>
+          <paper-button id="rename-attire-button" style="z-index: 99" on-click="renameAttire"><iron-icon class="black-button" icon="icons:create"></iron-icon></paper-button>
+          <paper-tooltip for="rename-attire-button" position="bottom" animation-config="{{tooltipAnimation}}">
+            <div class="button-tooltip">
+              [[localize("tooltip-remove-board")]]
+            </div>
+          </paper-tooltip>
 
           <div>
             cosas de edición
@@ -106,6 +112,14 @@
 
       removeAttire: function() {
         this._boards().removeCurrentAttire();
+      },
+
+      renameAttire: function() {
+        const name = this._getUniqueName();
+        if (!name) return;
+
+        this.set("attire.name", name);
+        this._boards().updateCurrentAttire(this.attire);
       },
 
       _getUniqueName: function() {

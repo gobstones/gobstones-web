@@ -575,6 +575,18 @@
         this.splice("availableAttires", index, 1);
       },
 
+      updateCurrentAttire: function(attire) {
+        Object.assign(this.attire, attire);
+        const selectedAttire = this.selectedAttire;
+        const availableAttires = this.availableAttires;
+        this.set("availableAttires", []);
+        this.async(() => {
+          this.set("availableAttires", availableAttires.map((it, i) => {
+            return i === selectedAttire ? attire : it;
+          }));
+        });
+      },
+
       setAttire: function(name) {
         var availableAttire = _.find(this.availableAttires, { name });
         if (availableAttire)
