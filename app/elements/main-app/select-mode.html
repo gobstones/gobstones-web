@@ -91,6 +91,7 @@ l">
         this.setUpLoaders({
           InitialBlocksProject: new ProjectBlocksLoader
         });
+        setTimeout(() => { this.useTeacher(); }); // TODO: Borrar
       },
 
       useBlocks: function() {

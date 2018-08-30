@@ -2,14 +2,38 @@
 <link rel="import" href="../../scripts/behaviors/busListenerBehavior.html">
 <link rel="import" href="../../scripts/behaviors/permissionsBehavior.html">
 <link rel="import" href="../../scripts/behaviors/localizationBehavior.html">
+<link rel="import" href="../../scripts/behaviors/loaderBehavior.html">
 
 <dom-module id="attire-editor">
   <template>
     <style>
+      .button-tooltip {
+        font-size: 15px;
+        width: 150px;
+        text-align: center;
+      }
+
+      .buttons {
+        position: absolute;
+        right: 0;
+      }
     </style>
 
-    <div>
-      <h1>Hola</h1>
+    <div class="buttons">
+      <paper-button id="add-attire-button" style="z-index: 99" on-click="addAttire"><iron-icon class="black-button" icon="icons:add"></iron-icon></paper-button>
+      <paper-tooltip for="add-attire-button" position="bottom" animation-config="{{tooltipAnimation}}">
+        <div class="button-tooltip">
+          [[localize("tooltip-add-board")]]
+        </div>
+      </paper-tooltip>
+
+
+      <paper-button id="remove-attire-button" style="z-index: 99" on-click="removeAttire"><iron-icon class="black-button" icon="icons:remove"></iron-icon></paper-button>
+      <paper-tooltip for="remove-attire-button" position="bottom" animation-config="{{tooltipAnimation}}">
+        <div class="button-tooltip">
+          [[localize("tooltip-remove-board")]]
+        </div>
+      </paper-tooltip>
     </div>
   </template>
 
@@ -21,15 +45,54 @@
       behaviors: [
         Polymer.BusListenerBehavior,
         Polymer.PermissionsBehavior,
-        Polymer.LocalizationBehavior
+        Polymer.LocalizationBehavior,
+        Polymer.LoaderBehavior
       ],
       observers: [
       ],
 
+      attached: function() {
+        this.tooltipAnimation = {
+          "entry": [{"name": "fade-in-animation", "timing": {"delay": 0}}],
+          "exit": [{"name": "fade-out-animation", "timing": {"delay": 0}}]
+        };
+      },
+
       ready: function() {
+      },
+
+      addAttire: function() {
+        const name = this._getUniqueName();
+        if (!name) return;
+
+        this._boards().addOrSetAttire({
+          name: name,
+          enabled: false,
+          rules: []
+        });
+      },
+
+      _getUniqueName: function() {
+        let name = null;
+        let withExistsWarning = false;
+
+        while (!name) {
+          const input = prompt("Ingresa un nombre para la vestimenta" + (withExistsWarning ? " (que no esté siendo usado)" : ""));
+          if (!input) return;
+
+          const exists = this._boards().availableAttires.some((it) => it.name === input);
+
+          if (!exists) name = input;
+          else withExistsWarning = true;
+        }
+
+        return name;
+      },
+
+      _boards: function() {
+        return this._context().boards;
       }
     });
   </script>
 </dom-module>
-
-
+<!-- // TODO: I18n -->
