@@ -89,16 +89,16 @@
           <div class="rules-container">
             <template is="dom-repeat" items="{{ attire.rules }}">
               <img src="../../images/stones/red.svg" width="15" height="15" />
-              <paper-input class="balls-input" value="{{item.when.red}}" min="1" max="8"></paper-input>
+              <paper-input class="balls-input" value="{{item.when.red}}" on-change="_update" min="1" max="8"></paper-input>
 
               <img src="../../images/stones/green.svg" width="15" height="15" />
-              <paper-input class="balls-input" value="{{item.when.green}}" min="1" max="8"></paper-input>
+              <paper-input class="balls-input" value="{{item.when.green}}" on-change="_update" min="1" max="8"></paper-input>
 
               <img src="../../images/stones/blue.svg" width="15" height="15" />
-              <paper-input class="balls-input" value="{{item.when.blue}}" min="1" max="8"></paper-input>
+              <paper-input class="balls-input" value="{{item.when.blue}}" on-change="_update" min="1" max="8"></paper-input>
 
               <img src="../../images/stones/black.svg" width="15" height="15" />
-              <paper-input class="balls-input" value="{{item.when.black}}" min="1" max="8"></paper-input>
+              <paper-input class="balls-input" value="{{item.when.black}}" on-change="_update" min="1" max="8"></paper-input>
 
               <paper-button class="remove-rule-button" style="z-index: 99" on-click="removeRule"><iron-icon class="black-button" icon="icons:delete-forever"></iron-icon></paper-button>
 
@@ -134,8 +134,6 @@
         Polymer.PermissionsBehavior,
         Polymer.LocalizationBehavior,
         Polymer.LoaderBehavior
-      ],
-      observers: [
       ],
 
       attached: function() {
@@ -218,7 +216,6 @@
             this.currentRule.fileName = file.name;
             this.currentRule.image = base64;
             this.set("attire.rules", rules);
-            this._update();
           });
         };
         fileReader.readAsDataURL(file);
