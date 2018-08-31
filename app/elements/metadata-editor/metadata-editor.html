@@ -150,7 +150,7 @@
         },
         previewChanges: {
           type: Boolean,
-          value: true
+          value: false
         }
       },
       behaviors: [
@@ -181,7 +181,7 @@
 
       reset: function() {
         this.setMetadata(this._defaultMetadata());
-        this.previewChanges = true;
+        this.previewChanges = false;
       },
 
       grayedUnless: function({ base }, property) {
