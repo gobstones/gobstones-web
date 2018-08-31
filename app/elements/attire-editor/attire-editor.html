@@ -212,9 +212,14 @@
         fileReader.onload = (event) => {
           const base64 = event.target.result;
 
-          this.currentRule.fileName = file.name;
-          this.currentRule.image = base64;
-          this._update();
+          const rules = this.attire.rules;
+          this.set("attire.rules", []);
+          this.async(() => {
+            this.currentRule.fileName = file.name;
+            this.currentRule.image = base64;
+            this.set("attire.rules", rules);
+            this._update();
+          });
         };
         fileReader.readAsDataURL(file);
 
