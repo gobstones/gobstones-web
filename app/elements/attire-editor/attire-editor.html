@@ -96,16 +96,16 @@
               <paper-button style="z-index: 99; margin-right: 10px" on-click="downRule"><iron-icon class="black-button" icon="icons:arrow-drop-down"></iron-icon></paper-button>
 
               <img src="../../images/stones/red.svg" width="15" height="15" />
-              <paper-input class="balls-input" value="{{item.when.red}}" on-change="_update" min="1" max="8"></paper-input>
+              <paper-input class="balls-input" value="{{item.when.red}}" on-input="_update" min="1" max="8"></paper-input>
 
               <img src="../../images/stones/green.svg" width="15" height="15" />
-              <paper-input class="balls-input" value="{{item.when.green}}" on-change="_update" min="1" max="8"></paper-input>
+              <paper-input class="balls-input" value="{{item.when.green}}" on-input="_update" min="1" max="8"></paper-input>
 
               <img src="../../images/stones/blue.svg" width="15" height="15" />
-              <paper-input class="balls-input" value="{{item.when.blue}}" on-change="_update" min="1" max="8"></paper-input>
+              <paper-input class="balls-input" value="{{item.when.blue}}" on-input="_update" min="1" max="8"></paper-input>
 
               <img src="../../images/stones/black.svg" width="15" height="15" />
-              <paper-input class="balls-input" value="{{item.when.black}}" on-change="_update" min="1" max="8"></paper-input>
+              <paper-input class="balls-input" value="{{item.when.black}}" on-input="_update" min="1" max="8"></paper-input>
 
               <paper-button class="remove-rule-button" style="z-index: 99" on-click="removeRule"><iron-icon class="black-button" icon="icons:delete-forever"></iron-icon></paper-button>
 
