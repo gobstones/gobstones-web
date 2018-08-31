@@ -26,6 +26,19 @@
       .no-attires {
         color: cornflowerblue;
       }
+
+      .rules-container {
+        margin-left: 30px;
+      }
+
+      .balls-input {
+        display: inline-block;
+        width: 50px;
+      }
+
+      .remove-rule-button {
+        margin-left: 10px;
+      }
     </style>
 
     <div class="buttons">
@@ -53,10 +66,13 @@
               [[localize("tooltip-remove-board")]]
             </div>
           </paper-tooltip>
-          <br><br>
+          <br>
+
+          <hr>
+          <br>
 
           <div>
-            <paper-button id="add-rule-button" style="z-index: 99" on-click="addAttire"><iron-icon class="black-button" icon="icons:add"></iron-icon></paper-button>
+            <paper-button id="add-rule-button" style="z-index: 99" on-click="addRule"><iron-icon class="black-button" icon="icons:add"></iron-icon></paper-button>
             <paper-tooltip for="add-rule-button" position="right" animation-config="{{tooltipAnimation}}">
               <div class="button-tooltip">
                 [[localize("tooltip-add-board")]]
@@ -64,9 +80,24 @@
             </paper-tooltip>
           </div>
 
-          <br>
-          <div>
-            reglitas
+          <div class="rules-container">
+            <template is="dom-repeat" items="{{ attire.rules }}">
+              <img src="../../images/stones/red.svg" width="15" height="15" />
+              <paper-input class="balls-input" value="{{item.red}}" min="1" max="8"></paper-input>
+
+              <img src="../../images/stones/green.svg" width="15" height="15" />
+              <paper-input class="balls-input" value="{{item.green}}" min="1" max="8"></paper-input>
+
+              <img src="../../images/stones/blue.svg" width="15" height="15" />
+              <paper-input class="balls-input" value="{{item.blue}}" min="1" max="8"></paper-input>
+
+              <img src="../../images/stones/black.svg" width="15" height="15" />
+              <paper-input class="balls-input" value="{{item.black}}" min="1" max="8"></paper-input>
+
+              <paper-button class="remove-rule-button" style="z-index: 99" on-click="removeRule"><iron-icon class="black-button" icon="icons:delete-forever"></iron-icon></paper-button>
+
+              <br>
+            </template>
           </div>
         </div>
       </template>
@@ -130,7 +161,28 @@
         if (!name) return;
 
         this.set("attire.name", name);
-        this._boards().updateCurrentAttire(this.attire);
+        this._update();
+      },
+
+      addRule: function() {
+        this.push("attire.rules", {
+          when: {
+            red: "",
+            green: "",
+            blue: "",
+            black: ""
+          },
+          image: null
+        });
+        this._update();
+      },
+
+      removeRule: function(e) {
+        const index = e.model.index;
+        this.set("attire.rules", this.attire.rules.filter((it, i) => {
+          return i !== index;
+        }));
+        this._update();
       },
 
       _getUniqueName: function() {
@@ -147,7 +199,11 @@
           else withExistsWarning = true;
         }
 
-        return name;
+        return name.slice(0, 25);
+      },
+
+      _update: function() {
+        this._boards().updateCurrentAttire(this.attire);
       },
 
       _boards: function() {
