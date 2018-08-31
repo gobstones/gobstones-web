@@ -19,6 +19,11 @@
   <template>
 
     <style>
+      .menu-container {
+        overflow-x: hidden;
+        height: 100vh;
+      }
+
       .title {
         margin: 3px;
       }
@@ -62,189 +67,191 @@
       }
     </style>
 
-    <paper-item center-justified flex class="menu-header-gobstones">
-      <img class="app-logo" src="../../images/logo.png" />
-      <div class="app-name">Gobstones</div>
-    </paper-item>
-
-    <div class="line-separator"></div>
-
-    <div role="listbox">
-      <paper-item>
-        <paper-item-body>
-          <div>[[localize("project")]]</div>
-        </paper-item-body>
-        <paper-icon-button on-click="createNewProject" icon="icons:description" alt="new"> </paper-icon-button>
-        <paper-icon-button on-click="openProjectSelector" icon="icons:folder-open" alt="open"> </paper-icon-button>
-        <paper-icon-button on-click="saveCurrentProject" icon="icons:save" alt="save"> </paper-icon-button>
+    <div class="menu-container">
+      <paper-item center-justified flex class="menu-header-gobstones">
+        <img class="app-logo" src="../../images/logo.png" />
+        <div class="app-name">Gobstones</div>
       </paper-item>
 
-      <template is="dom-if" if="{{_isCodeOrTeacherProject(projectType)}}">
+      <div class="line-separator"></div>
+
+      <div role="listbox">
         <paper-item>
           <paper-item-body>
-            <div>[[localize("code")]]</div>
+            <div>[[localize("project")]]</div>
           </paper-item-body>
-          <paper-icon-button on-click="loadCode" icon="icons:folder-open" alt="open"> </paper-icon-button>
-          <paper-icon-button on-click="saveCode" icon="icons:save" alt="save"> </paper-icon-button>
+          <paper-icon-button on-click="createNewProject" icon="icons:description" alt="new"> </paper-icon-button>
+          <paper-icon-button on-click="openProjectSelector" icon="icons:folder-open" alt="open"> </paper-icon-button>
+          <paper-icon-button on-click="saveCurrentProject" icon="icons:save" alt="save"> </paper-icon-button>
         </paper-item>
-      </template>
 
-      <template is="dom-if" if="{{_isBlocksOrTeacherProject(projectType)}}">
-        <paper-item>
-          <paper-item-body>
-            <div>[[localize("blocks")]]</div>
-          </paper-item-body>
-          <paper-icon-button on-click="loadBlocks" icon="icons:folder-open" alt="open"> </paper-icon-button>
-          <paper-icon-button on-click="saveBlocks" icon="icons:save" alt="save"> </paper-icon-button>
-          <paper-icon-button on-click="exportBlocksToSvg" icon="icons:event-seat" alt="save"> </paper-icon-button>
-        </paper-item>
-      </template>
-
-      <template is="dom-if" if="{{_isCodeOrTeacherProject(projectType)}}">
-        <template is="dom-if" if="{{permissions.can_use_library}}">
+        <template is="dom-if" if="{{_isCodeOrTeacherProject(projectType)}}">
           <paper-item>
             <paper-item-body>
-              <div>[[localize("library")]]</div>
+              <div>[[localize("code")]]</div>
             </paper-item-body>
-            <paper-icon-button on-click="loadLibrary" icon="icons:folder-open" alt="open"> </paper-icon-button>
-            <paper-icon-button on-click="saveLibrary" icon="icons:save" alt="save"> </paper-icon-button>
+            <paper-icon-button on-click="loadCode" icon="icons:folder-open" alt="open"> </paper-icon-button>
+            <paper-icon-button on-click="saveCode" icon="icons:save" alt="save"> </paper-icon-button>
           </paper-item>
         </template>
-      </template>
 
-      <paper-item>
-        <paper-item-body>
-          <div>[[localize("initial-board")]]</div>
-        </paper-item-body>
-        <paper-icon-button on-click="loadInitialBoard" icon="icons:folder-open" alt="open"> </paper-icon-button>
-        <paper-icon-button on-click="saveInitialBoard" icon="icons:save" alt="save"> </paper-icon-button>
-      </paper-item>
-
-      <paper-item>
-        <paper-item-body>
-          <div>[[localize("attire")]]</div>
-        </paper-item-body>
-        <paper-icon-button on-click="loadAttire" icon="icons:folder-open" alt="open"> </paper-icon-button>
-        <paper-icon-button on-click="saveAttire" icon="icons:save" alt="save"> </paper-icon-button>
-      </paper-item>
-
-      <template is="dom-if" if="{{_isCodeOrBlocksProject(projectType)}}">
-        <paper-item>
-          <paper-item-body>
-            <div>[[localize("final-board")]]</div>
-          </paper-item-body>
-          <paper-icon-button on-click="saveFinalBoard" icon="icons:save" alt="save"> </paper-icon-button>
-        </paper-item>
-      </template>
-
-      <template is="dom-if" if="{{_isBlocksOrTeacherProject(projectType)}}">
-        <paper-item>
-          <paper-item-body>
-            <div>[[localize("generated-code")]]</div>
-          </paper-item-body>
-          <paper-icon-button on-click="seeGeneratedCode" icon="icons:code" alt="save"> </paper-icon-button>
-          <paper-icon-button on-click="saveGeneratedCode" icon="icons:save" alt="save"> </paper-icon-button>
-        </paper-item>
-        <paper-item>
-          <paper-item-body>
-            <div>[[localize("add-blocks")]]</div>
-          </paper-item-body>
-          <paper-icon-button on-click="loadAppendBlocks" icon="icons:folder-open" alt="open"> </paper-icon-button>
-        </paper-item>
-      </template>
-    </div>
-
-    <hr>
-
-    <div class="language-selector">
-      <div>
-        <paper-dropdown-menu id="languageSelector" no-animations no-label-float vertical-align="bottom" horizontal-align="right">
-          <paper-listbox class="dropdown-content" selected="{{selectedLanguage}}">
-            <template is="dom-repeat" items="{{languages}}">
-              <paper-item>[[localize(item)]]</paper-item>
-            </template>
-          </paper-listbox>
-        </paper-dropdown-menu>
-      </div>
-    </div>
-
-    <paper-item>
-      <paper-item-body>
-        <div>[[localize("show-tutorial")]]</div>
-      </paper-item-body>
-      <paper-toggle-button checked="{{showTutorial}}" on-change="_onShowTutorialChanged"></paper-toggle-button>
-    </paper-item>
-
-    <hr>
-
-    <paper-item>
-      <paper-item-body>
-        <div><strong>[[localize("course")]]:</strong></div> <i>[[getCourseName()]]</i>
-      </paper-item-body>
-      <paper-icon-button on-click="openCourseSelector" icon="icons:card-travel" alt="open"> </paper-icon-button>
-    </paper-item>
-
-    <hr>
-
-    <!-- // TODO: Borrar -->
-    <template is="dom-if" if="{{_isDesktop()}}">
-      <paper-item style="text-align: center; margin-top: 20px">
-        <paper-item-body>
-          <template is="dom-if" if="{{!isDownloadingExercises}}">
-            <div>
-              [[localize("update-exercises")]]
-            </div>
-          </template>
-          <template is="dom-if" if="{{isDownloadingExercises}}">
-            <div style="font-size: small; color: gray">
-              <span>[[localize("updating")]]</span>
-                <span>&nbsp;([[downloadProgress]])</span>
-            </div>
-          </template>
-        </paper-item-body>
-        <template is="dom-if" if="{{!isDownloadingExercises}}">
-          <paper-icon-button on-click="updateExercises" icon="icons:file-download" alt="refresh"> </paper-icon-button>
+        <template is="dom-if" if="{{_isBlocksOrTeacherProject(projectType)}}">
+          <paper-item>
+            <paper-item-body>
+              <div>[[localize("blocks")]]</div>
+            </paper-item-body>
+            <paper-icon-button on-click="loadBlocks" icon="icons:folder-open" alt="open"> </paper-icon-button>
+            <paper-icon-button on-click="saveBlocks" icon="icons:save" alt="save"> </paper-icon-button>
+            <paper-icon-button on-click="exportBlocksToSvg" icon="icons:event-seat" alt="save"> </paper-icon-button>
+          </paper-item>
         </template>
+
+        <template is="dom-if" if="{{_isCodeOrTeacherProject(projectType)}}">
+          <template is="dom-if" if="{{permissions.can_use_library}}">
+            <paper-item>
+              <paper-item-body>
+                <div>[[localize("library")]]</div>
+              </paper-item-body>
+              <paper-icon-button on-click="loadLibrary" icon="icons:folder-open" alt="open"> </paper-icon-button>
+              <paper-icon-button on-click="saveLibrary" icon="icons:save" alt="save"> </paper-icon-button>
+            </paper-item>
+          </template>
+        </template>
+
+        <paper-item>
+          <paper-item-body>
+            <div>[[localize("initial-board")]]</div>
+          </paper-item-body>
+          <paper-icon-button on-click="loadInitialBoard" icon="icons:folder-open" alt="open"> </paper-icon-button>
+          <paper-icon-button on-click="saveInitialBoard" icon="icons:save" alt="save"> </paper-icon-button>
+        </paper-item>
+
+        <paper-item>
+          <paper-item-body>
+            <div>[[localize("attire")]]</div>
+          </paper-item-body>
+          <paper-icon-button on-click="loadAttire" icon="icons:folder-open" alt="open"> </paper-icon-button>
+          <paper-icon-button on-click="saveAttire" icon="icons:save" alt="save"> </paper-icon-button>
+        </paper-item>
+
+        <template is="dom-if" if="{{_isCodeOrBlocksProject(projectType)}}">
+          <paper-item>
+            <paper-item-body>
+              <div>[[localize("final-board")]]</div>
+            </paper-item-body>
+            <paper-icon-button on-click="saveFinalBoard" icon="icons:save" alt="save"> </paper-icon-button>
+          </paper-item>
+        </template>
+
+        <template is="dom-if" if="{{_isBlocksOrTeacherProject(projectType)}}">
+          <paper-item>
+            <paper-item-body>
+              <div>[[localize("generated-code")]]</div>
+            </paper-item-body>
+            <paper-icon-button on-click="seeGeneratedCode" icon="icons:code" alt="save"> </paper-icon-button>
+            <paper-icon-button on-click="saveGeneratedCode" icon="icons:save" alt="save"> </paper-icon-button>
+          </paper-item>
+          <paper-item>
+            <paper-item-body>
+              <div>[[localize("add-blocks")]]</div>
+            </paper-item-body>
+            <paper-icon-button on-click="loadAppendBlocks" icon="icons:folder-open" alt="open"> </paper-icon-button>
+          </paper-item>
+        </template>
+      </div>
+
+      <hr>
+
+      <div class="language-selector">
+        <div>
+          <paper-dropdown-menu id="languageSelector" no-animations no-label-float vertical-align="bottom" horizontal-align="right">
+            <paper-listbox class="dropdown-content" selected="{{selectedLanguage}}">
+              <template is="dom-repeat" items="{{languages}}">
+                <paper-item>[[localize(item)]]</paper-item>
+              </template>
+            </paper-listbox>
+          </paper-dropdown-menu>
+        </div>
+      </div>
+
+      <paper-item>
+        <paper-item-body>
+          <div>[[localize("show-tutorial")]]</div>
+        </paper-item-body>
+        <paper-toggle-button checked="{{showTutorial}}" on-change="_onShowTutorialChanged"></paper-toggle-button>
       </paper-item>
-    </template>
 
-    <div class="more-links">
-      <template is="dom-if" if="{{!_isDesktop()}}">
-        [[localize("download-desktop")]]<br />
-        <a href="javascript: void(0)" on-click="_downloadDesktopWindows">Windows</a> <a href="javascript: void(0)" on-click="_downloadDesktopLinux">Linux</a>
-        <br />
-        <br />
+      <hr>
+
+      <paper-item>
+        <paper-item-body>
+          <div><strong>[[localize("course")]]:</strong></div> <i>[[getCourseName()]]</i>
+        </paper-item-body>
+        <paper-icon-button on-click="openCourseSelector" icon="icons:card-travel" alt="open"> </paper-icon-button>
+      </paper-item>
+
+      <hr>
+
+      <!-- // TODO: Borrar -->
+      <template is="dom-if" if="{{_isDesktop()}}">
+        <paper-item style="text-align: center; margin-top: 20px">
+          <paper-item-body>
+            <template is="dom-if" if="{{!isDownloadingExercises}}">
+              <div>
+                [[localize("update-exercises")]]
+              </div>
+            </template>
+            <template is="dom-if" if="{{isDownloadingExercises}}">
+              <div style="font-size: small; color: gray">
+                <span>[[localize("updating")]]</span>
+                  <span>&nbsp;([[downloadProgress]])</span>
+              </div>
+            </template>
+          </paper-item-body>
+          <template is="dom-if" if="{{!isDownloadingExercises}}">
+            <paper-icon-button on-click="updateExercises" icon="icons:file-download" alt="refresh"> </paper-icon-button>
+          </template>
+        </paper-item>
       </template>
 
-      <div>
-        <iron-icon icon="icons:info-outline"></iron-icon>
-        <a href="https://github.com/gobstones/gobstones-web/wiki/Acerca-de-Gobstones-Web" target="_blank">[[localize("about-gobstones-web")]]</a>
+      <div class="more-links">
+        <template is="dom-if" if="{{!_isDesktop()}}">
+          [[localize("download-desktop")]]<br />
+          <a href="javascript: void(0)" on-click="_downloadDesktopWindows">Windows</a> <a href="javascript: void(0)" on-click="_downloadDesktopLinux">Linux</a>
+          <br />
+          <br />
+        </template>
+
+        <div>
+          <iron-icon icon="icons:info-outline"></iron-icon>
+          <a href="https://github.com/gobstones/gobstones-web/wiki/Acerca-de-Gobstones-Web" target="_blank">[[localize("about-gobstones-web")]]</a>
+        </div>
+
+        <div>
+          <iron-icon icon="icons:bug-report"></iron-icon>
+          <a href="javascript:void(0)" on-click="reportIssue">[[localize("report-bug")]]</a>
+        </div>
       </div>
 
-      <div>
-        <iron-icon icon="icons:bug-report"></iron-icon>
-        <a href="javascript:void(0)" on-click="reportIssue">[[localize("report-bug")]]</a>
+      <div class="items" style="position: absolute;">
+        <template is="dom-if" if="{{_isCodeOrTeacherProject(projectType)}}">
+          <input id="Code" type="file" accept=".gbs" on-change="onLoadedCode" style="visibility: hidden;" />
+
+          <input id="Library" type="file" accept=".gbs" on-change="onLoadedLibrary" style="visibility: hidden;" />
+        </template>
+
+        <template is="dom-if" if="{{_isBlocksOrTeacherProject(projectType)}}">
+          <input id="Blocks" type="file" accept=".gbk" on-change="onLoadedBlocks" style="visibility: hidden;" />
+
+          <input id="Library" type="file" accept=".gbk" on-change="onLoadedLibrary" style="visibility: hidden;" />
+
+          <input id="AppendBlocks" type="file" accept=".gbk" on-change="onLoadedAppendBlocks" style="visibility: hidden;" />
+        </template>
+
+        <input id="InitialBoard" type="file" accept=".gbb" on-change="onLoadedInitialBoard" style="visibility: hidden;" />
+
+        <input id="Attire" type="file" accept=".zip" on-change="onLoadedAttire" style="visibility: hidden;" />
       </div>
-    </div>
-
-    <div class="items">
-      <template is="dom-if" if="{{_isCodeOrTeacherProject(projectType)}}">
-        <input id="Code" type="file" accept=".gbs" on-change="onLoadedCode" style="visibility: hidden;" />
-
-        <input id="Library" type="file" accept=".gbs" on-change="onLoadedLibrary" style="visibility: hidden;" />
-      </template>
-
-      <template is="dom-if" if="{{_isBlocksOrTeacherProject(projectType)}}">
-        <input id="Blocks" type="file" accept=".gbk" on-change="onLoadedBlocks" style="visibility: hidden;" />
-
-        <input id="Library" type="file" accept=".gbk" on-change="onLoadedLibrary" style="visibility: hidden;" />
-
-        <input id="AppendBlocks" type="file" accept=".gbk" on-change="onLoadedAppendBlocks" style="visibility: hidden;" />
-      </template>
-
-      <input id="InitialBoard" type="file" accept=".gbb" on-change="onLoadedInitialBoard" style="visibility: hidden;" />
-
-      <input id="Attire" type="file" accept=".zip" on-change="onLoadedAttire" style="visibility: hidden;" />
     </div>
   </template>
 
