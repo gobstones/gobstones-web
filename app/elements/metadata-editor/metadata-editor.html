@@ -133,6 +133,17 @@
       </paper-item>
 
       <paper-item center-justified flex class="menu-header-gobstones">
+        <paper-item-body>
+          <div>[[localize("settings-cover")]]</div>
+        </paper-item-body>
+        <paper-icon-button on-click="loadImage" icon="icons:folder-open" alt="open"> </paper-icon-button>
+        <template is="dom-if" if="{{cover}}">
+          <img src="{{cover}}" width="30" height="30" />
+        </template>
+      </paper-item>
+      <input id="image" type="file" accept=".png" on-change="onLoadedImage" style="visibility: hidden;" />
+
+      <paper-item center-justified flex class="menu-header-gobstones">
         <div>[[localize("settings-blocks")]]</div>
       </paper-item>
 
@@ -147,6 +158,10 @@
         metadata: {
           type: Object,
           value: { }
+        },
+        cover: {
+          type: String,
+          value: null
         },
         previewChanges: {
           type: Boolean,
@@ -182,10 +197,28 @@
       reset: function() {
         this.setMetadata(this._defaultMetadata());
         this.previewChanges = false;
+        this.cover = null;
       },
 
       grayedUnless: function({ base }, property) {
         return !_.get(base, property) ? "gray" : "";
+      },
+
+      loadImage: function(e) {
+        $(this.$.image).click()
+      },
+
+      onLoadedImage: function(event) {
+        const file = _.first(event.target.files);
+
+        const fileReader = new FileReader();
+        fileReader.onload = (event) => {
+          const base64 = event.target.result;
+          this.set("cover", base64);
+        };
+        fileReader.readAsDataURL(file);
+
+        event.target.value = null;
       },
 
       _onMetadataChanged: function({ base }) {

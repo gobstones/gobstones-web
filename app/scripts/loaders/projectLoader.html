@@ -92,7 +92,7 @@
     _loadComponent(context, loaders, { relativePath, zipEntry }, callback) {
       let handled = false;
       loaders.forEach(loader => {
-        const getContent = () => zipEntry.async("string");
+        const getContent = () => zipEntry.async(this._getContentType(relativePath));
         if (!loader.shouldHandle(relativePath)) return;
 
         console.log("Reading '" + relativePath + "'...");
@@ -104,13 +104,18 @@
             loader.readProjectContent(context, content, relativePath);
           } catch(e) {
             console.error(loader, e);
-            alert(`Hubo un error al cargar ${relativePath}`);
+            alert(`Error loading file ${relativePath}`);
           }
           callback();
         });
       });
 
       if (!handled) callback();
+    }
+
+    _getContentType(relativePath) {
+      const extension = _.last(relativePath.split("."));
+      return extension === 'png' ? 'binarystring' : 'string';
     }
 
     _removeUtf8Bom(content) {

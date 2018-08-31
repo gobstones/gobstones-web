@@ -209,6 +209,15 @@
           }
         });
 
+        Object.defineProperty(this, "cover", {
+          get: function() {
+            return this._editors()[ID_METADATA].cover;
+          },
+          set: function(value) {
+            this._editors()[ID_METADATA].cover = value;
+          }
+        });
+
         const boardsPanel = document.getElementById("boards");
         if (boardsPanel) {
           this.runner = boardsPanel.$.runner;

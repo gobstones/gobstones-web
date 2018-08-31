@@ -2,19 +2,6 @@
 <link rel="import" href="../../../js-yaml.html">
 
 <script>
-  const toBinary = base64 => {
-    const raw = atob(base64);
-    const rawLength = raw.length;
-    const array = new Uint8Array(new ArrayBuffer(rawLength));
-
-    var i;
-    for(i = 0; i < rawLength; i++) {
-      array[i] = raw.charCodeAt(i);
-    }
-
-    return array;
-  };
-
   class AttireReader {
     constructor(isAnAttire) {
       this.FILENAME = "config.yml";

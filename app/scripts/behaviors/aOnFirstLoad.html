@@ -43,6 +43,21 @@
     return arr;
   }
 
+  // Base64 image to PNG
+  function toBinary(base64) {
+    const raw = atob(base64);
+    const rawLength = raw.length;
+    const array = new Uint8Array(new ArrayBuffer(rawLength));
+
+    var i;
+    for(i = 0; i < rawLength; i++) {
+      array[i] = raw.charCodeAt(i);
+    }
+
+    return array;
+  };
+
+  // Promisify
   function promisify(value) {
     const deferred = new $.Deferred();
     deferred.resolve(value);

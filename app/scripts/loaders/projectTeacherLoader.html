@@ -8,6 +8,7 @@
 <link rel="import" href="components/metadataTeacherLoader.html">
 <link rel="import" href="components/solutionsMetadataLoader.html">
 <link rel="import" href="components/solutionsLoader.html">
+<link rel="import" href="components/coverLoader.html">
 
 <script>
   class ProjectTeacherLoader extends ProjectLoader {
@@ -22,7 +23,8 @@
         new CodeLoader,
         new InitialBoardLoader,
         new SolutionsMetadataLoader,
-        new SolutionsLoader
+        new SolutionsLoader,
+        new CoverLoader
       ];
 
       this.metadataLoader = new MetadataTeacherLoader()
