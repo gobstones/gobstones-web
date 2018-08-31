@@ -89,20 +89,25 @@
           <div class="rules-container">
             <template is="dom-repeat" items="{{ attire.rules }}">
               <img src="../../images/stones/red.svg" width="15" height="15" />
-              <paper-input class="balls-input" value="{{item.red}}" min="1" max="8"></paper-input>
+              <paper-input class="balls-input" value="{{item.when.red}}" min="1" max="8"></paper-input>
 
               <img src="../../images/stones/green.svg" width="15" height="15" />
-              <paper-input class="balls-input" value="{{item.green}}" min="1" max="8"></paper-input>
+              <paper-input class="balls-input" value="{{item.when.green}}" min="1" max="8"></paper-input>
 
               <img src="../../images/stones/blue.svg" width="15" height="15" />
-              <paper-input class="balls-input" value="{{item.blue}}" min="1" max="8"></paper-input>
+              <paper-input class="balls-input" value="{{item.when.blue}}" min="1" max="8"></paper-input>
 
               <img src="../../images/stones/black.svg" width="15" height="15" />
-              <paper-input class="balls-input" value="{{item.black}}" min="1" max="8"></paper-input>
+              <paper-input class="balls-input" value="{{item.when.black}}" min="1" max="8"></paper-input>
 
               <paper-button class="remove-rule-button" style="z-index: 99" on-click="removeRule"><iron-icon class="black-button" icon="icons:delete-forever"></iron-icon></paper-button>
 
               <paper-icon-button class="load-button" on-click="loadImage" icon="icons:folder-open" alt="open"> </paper-icon-button>
+
+              <template is="dom-if" if="{{item.fileName}}">
+                [[item.fileName]]
+              </template>
+
               <br>
             </template>
           </div>
@@ -203,9 +208,11 @@
 
         const fileReader = new FileReader();
         fileReader.onload = (event) => {
-          const filename = file.name;
           const base64 = event.target.result;
-          debugger;
+
+          this.currentRule.fileName = file.name;
+          this.currentRule.image = base64;
+          this._update();
         };
         fileReader.readAsDataURL(file);
 
@@ -230,7 +237,31 @@
       },
 
       _update: function() {
-        this._boards().updateCurrentAttire(this.attire);
+        this._boards().updateCurrentAttire(this._sanitizeAttire(this.attire));
+      },
+
+      _sanitizeAttire: function() {
+        const attire = _.cloneDeep(this.attire);
+        attire.rules = attire.rules.filter((it) => {
+          return this._isValid(it.when.red) && this._isValid(it.when.green) && this._isValid(it.when.blue) && this._isValid(it.when.black) && it.image !== null;
+        }).map((it) => {
+          it.when.red = this._sanitizeValue(it.when.red);
+          it.when.green = this._sanitizeValue(it.when.green);
+          it.when.blue = this._sanitizeValue(it.when.blue);
+          it.when.black = this._sanitizeValue(it.when.black);
+
+          return it;
+        });
+        return attire;
+      },
+
+      _sanitizeValue: function(v) {
+        if (v === "*" || v === "+") return v;
+        return parseInt(v);
+      },
+
+      _isValid: function(v) {
+        return _.isFinite(parseInt(v)) || v === "*" || v === "*"
       },
 
       _boards: function() {

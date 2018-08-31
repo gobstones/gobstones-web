@@ -583,6 +583,8 @@
         const index = this.selectedAttire;
         const availableAttires = this.availableAttires;
 
+        this._updatingAttire = true;
+
         this.selectedAttire = -1;
         this.set("availableAttires", []);
         this.async(() => {
@@ -590,6 +592,8 @@
             return i === index ? attire : it;
           }));
           this.selectedAttire = index;
+
+          this._updatingAttire = false;
         })
       },
 
@@ -851,7 +855,7 @@
 
       _computeAttire: function(selectedAttire, showAttire) {
         var attire = this.availableAttires[selectedAttire];
-        window.BUS.fire("selected-attire", attire);
+        if (!this._updatingAttire) window.BUS.fire("selected-attire", attire);
         if (attire) attire.enabled = showAttire;
         return attire;
       },
