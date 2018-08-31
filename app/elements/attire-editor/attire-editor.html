@@ -147,6 +147,8 @@
 
       ready: function() {
         this.subscribeTo("selected-attire", (attire) => {
+          if (this.attire && _.isEqual(_.omit(attire, 'enabled'), _.omit(this._sanitizeAttire(this.attire), 'enabled'))) return;
+
           if (_.isEqual(attire, {})) attire = null;
           this.attire = attire;
         })
