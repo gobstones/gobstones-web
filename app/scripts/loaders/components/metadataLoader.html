@@ -123,6 +123,23 @@
       if (metadata.customErrors) context.editor.customErrors = metadata.customErrors;
     }
 
+    resetSecondaryOptions(context) {
+      context.boards.setShowCode(true);
+      context.toolbar.set("permissions.can_use_library", true);
+      context.menu.set("permissions.can_use_library", true);
+      context.boards.set("permissions.can_view_edition_panel", true);
+      context.boards.toggleToolbox(true);
+      context.editor.runner.set("permissions.can_change_source", true);
+      context.boards.set("permissions.can_change_initial_board", true);
+      context.boards.set("permissions.can_edit_board", true);
+      context.boards.set("permissions.can_view_size_section", true);
+      context.boards.set("permissions.can_view_attire_section", true);
+      context.editor.runner.set("permissions.can_change_speed", true);
+      context.boards.set("permissions.can_toggle_attire_visibility", true);
+      context.editor.toolbox = null;
+      context.editor.customErrors = null;
+    }
+
     readContent(context, content, fileName) {
       const metadata = this.readCoreOptions(context, content);
       this.readSecondaryOptions(context, metadata);

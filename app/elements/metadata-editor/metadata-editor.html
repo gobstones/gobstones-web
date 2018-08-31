@@ -274,11 +274,16 @@
       _onPreviewChangesChanged(previewChanges) {
         try {
           if (previewChanges) this._previewChanges(this.metadata);
+          else this._resetPreview();
         } catch(e) {}
       },
 
       _previewChanges(metadata) {
         new MetadataLoader().readSecondaryOptions(this._context(), metadata);
+      },
+
+      _resetPreview() {
+        new MetadataLoader().resetSecondaryOptions(this._context());
       },
 
       _defaultMetadata() {
