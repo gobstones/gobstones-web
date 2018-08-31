@@ -39,6 +39,10 @@
       .remove-rule-button {
         margin-left: 10px;
       }
+
+      .load-button {
+        margin-left: 30px;
+      }
     </style>
 
     <div class="buttons">
@@ -56,6 +60,8 @@
         </div>
       </paper-tooltip>
     </div>
+
+    <input id="image" type="file" accept=".png" on-change="onLoadedImage" style="visibility: hidden;" />
 
     <div class="content">
       <template is="dom-if" if="{{attire}}">
@@ -96,6 +102,7 @@
 
               <paper-button class="remove-rule-button" style="z-index: 99" on-click="removeRule"><iron-icon class="black-button" icon="icons:delete-forever"></iron-icon></paper-button>
 
+              <paper-icon-button class="load-button" on-click="loadImage" icon="icons:folder-open" alt="open"> </paper-icon-button>
               <br>
             </template>
           </div>
@@ -149,6 +156,7 @@
           enabled: false,
           rules: []
         });
+        this.addRule();
         this._boards().showAttire = true;
       },
 
@@ -183,6 +191,25 @@
           return i !== index;
         }));
         this._update();
+      },
+
+      loadImage: function(e) {
+        this.currentRule = e.model.item;
+        $(this.$.image).click()
+      },
+
+      onLoadedImage: function(event) {
+        const file = _.first(event.target.files);
+
+        const fileReader = new FileReader();
+        fileReader.onload = (event) => {
+          const filename = file.name;
+          const base64 = event.target.result;
+          debugger;
+        };
+        fileReader.readAsDataURL(file);
+
+        event.target.value = null;
       },
 
       _getUniqueName: function() {
