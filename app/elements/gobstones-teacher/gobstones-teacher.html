@@ -112,9 +112,9 @@
 
         <description-editor id="description-editor" class$="editor {{_descriptionClass(selectedTab)}}"></description-editor>
 
-        <metadata-editor id="metadata-editor" class$="editor {{_metadataClass(selectedTab)}}"></metadata-editor>
-
         <attire-editor id="attire-editor" class$="editor {{_attireClass(selectedTab)}}"></attire-editor>
+
+        <metadata-editor id="metadata-editor" class$="editor {{_metadataClass(selectedTab)}}"></metadata-editor>
       </div>
     </div>
 
@@ -483,7 +483,8 @@
         return [
           "blocks-editor", "code-editor",
           "teacher-library-editor", "library-editor",
-          "description-editor", "metadata-editor"
+          "description-editor", "attire-editor",
+          "metadata-editor"
         ].map((it) => this.$[it]);
       },
 
