@@ -91,6 +91,10 @@
 
           <div class="rules-container">
             <template is="dom-repeat" items="{{ attire.rules }}">
+              <paper-button style="z-index: 99" on-click="upRule"><iron-icon class="black-button" icon="icons:arrow-drop-up"></iron-icon></paper-button>
+
+              <paper-button style="z-index: 99; margin-right: 10px" on-click="downRule"><iron-icon class="black-button" icon="icons:arrow-drop-down"></iron-icon></paper-button>
+
               <img src="../../images/stones/red.svg" width="15" height="15" />
               <paper-input class="balls-input" value="{{item.when.red}}" on-change="_update" min="1" max="8"></paper-input>
 
@@ -201,6 +205,18 @@
         this._update();
       },
 
+      downRule: function(e) {
+        const index = e.model.index;
+        if (index === this.attire.rules.length - 1) return;
+        this._moveRule(index, index + 1);
+      },
+
+      upRule: function(e) {
+        const index = e.model.index;
+        if (index === 0) return;
+        this._moveRule(index, index - 1);
+      },
+
       loadImage: function(e) {
         this.currentRule = e.model.item;
         $(this.$.image).click()
@@ -247,6 +263,14 @@
         this._boards().updateCurrentAttire(this._sanitizeAttire(this.attire));
       },
 
+      _moveRule: function(oldIndex, newIndex) {
+        const rules = arrayMove(this.attire.rules, oldIndex, newIndex);
+        this.set("attire.rules", []);
+        this.async(() => {
+          this.set("attire.rules", rules);
+        });
+      },
+
       _sanitizeAttire: function() {
         const attire = _.cloneDeep(this.attire);
         attire.rules = attire.rules.filter((it) => {
@@ -278,4 +302,3 @@
   </script>
 </dom-module>
 <!-- // TODO: I18n, cambiar tooltips -->
-<!-- // TODO: Orden -->
