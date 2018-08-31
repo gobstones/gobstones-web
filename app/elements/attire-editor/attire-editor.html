@@ -52,14 +52,14 @@
       <paper-button id="add-attire-button" style="z-index: 99" on-click="addAttire"><iron-icon class="black-button" icon="icons:add"></iron-icon></paper-button>
       <paper-tooltip for="add-attire-button" position="bottom" animation-config="{{tooltipAnimation}}">
         <div class="button-tooltip">
-          [[localize("tooltip-add-board")]]
+          [[localize("attire-editor-tooltip-add-attire")]]
         </div>
       </paper-tooltip>
 
       <paper-button id="remove-attire-button" style="z-index: 99" on-click="removeAttire"><iron-icon class="black-button" icon="icons:remove"></iron-icon></paper-button>
       <paper-tooltip for="remove-attire-button" position="bottom" animation-config="{{tooltipAnimation}}">
         <div class="button-tooltip">
-          [[localize("tooltip-remove-board")]]
+          [[localize("attire-editor-tooltip-remove-attire")]]
         </div>
       </paper-tooltip>
     </div>
@@ -69,10 +69,10 @@
     <div class="content">
       <template is="dom-if" if="{{attire}}">
         <div>
-          <span><strong>Vestimenta:</strong> <i>[[attire.name]]</i> <paper-button id="rename-attire-button" style="z-index: 99" on-click="renameAttire"><iron-icon class="black-button" icon="icons:create"></iron-icon></paper-button></span>
+          <span><strong>[[localize("attire")]]:</strong> <i>[[attire.name]]</i> <paper-button id="rename-attire-button" style="z-index: 99" on-click="renameAttire"><iron-icon class="black-button" icon="icons:create"></iron-icon></paper-button></span>
           <paper-tooltip for="rename-attire-button" position="bottom" animation-config="{{tooltipAnimation}}">
             <div class="button-tooltip">
-              [[localize("tooltip-remove-board")]]
+              [[localize("attire-editor-tooltip-rename-attire")]]
             </div>
           </paper-tooltip>
           <br>
@@ -84,7 +84,7 @@
             <paper-button id="add-rule-button" style="z-index: 99" on-click="addRule"><iron-icon class="black-button" icon="icons:add"></iron-icon></paper-button>
             <paper-tooltip for="add-rule-button" position="right" animation-config="{{tooltipAnimation}}">
               <div class="button-tooltip">
-                [[localize("tooltip-add-board")]]
+                [[localize("attire-editor-tooltip-add-rule")]]
               </div>
             </paper-tooltip>
           </div>
@@ -122,7 +122,7 @@
       </template>
 
       <template is="dom-if" if="{{!attire}}">
-        <h3 class="no-attires">Crea nuevas vestimentas con el ícono (+) de arriba a la derecha.</h3>
+        <h3 class="no-attires">[[localize("attire-editor-add-new-attires")]]</h3>
       </template>
     </div>
   </template>
@@ -247,7 +247,7 @@
         let withExistsWarning = false;
 
         while (!name) {
-          const input = prompt("Ingresa un nombre para la vestimenta" + (withExistsWarning ? " (que no esté siendo usado)" : ""));
+          const input = prompt(this.localize("attire-editor-add-new-attires-message") + (withExistsWarning ? this.localize("attire-editor-add-new-attires-message-warning") : ""));
           if (!input) return;
 
           const exists = this._boards().availableAttires.some((it) => it.name === input);
@@ -301,4 +301,3 @@
     });
   </script>
 </dom-module>
-<!-- // TODO: I18n, cambiar tooltips -->
