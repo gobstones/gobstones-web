@@ -30,7 +30,7 @@ const AVAILABLE_ARCHS = ['x64', 'ia32'];
 const AVAILABLE_PLATFORMS = ['freebsd', 'linux', 'mac', 'win'];
 const AVAILABLE_TARGETS = {
     linux: ['AppImage', 'deb', 'rpm', 'pacman'],
-    mac: ['app', 'dmg'],
+    mac: ['mac', 'dmg'],
     win: ['nsis', 'portable'],
     freebsd: ['freebsd']
 }
