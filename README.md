@@ -41,7 +41,8 @@ Clone the repository on your system and open a terminal in the project's directo
 ## prepare the application and dependencies
 
 ```bash
-npm install --global yarn
+npm install --global yarn # install yarn, the package manager
+git update-index --assume-unchanged app/config.json # ignore config changes in VCS
 ```
 
 And then install all project dependecies

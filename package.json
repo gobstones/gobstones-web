@@ -11,13 +11,13 @@
   "scripts": {
     "postinstall": "bower install --allow-root",
     "dev": "gulp serve",
-    "test": "gulp jasmine",
-    "start": "electron build/start-electron.js",
+    "start": "electron build/start-full.js",
     "build": "electron-builder",
     "dist": "node build/builder.js",
     "dist:all": "node build/builder.js -p all -t all -a all -v",
     "dist:docker": "sh build/docker_build.sh",
-    "publish": "node build/builder.js --publish"
+    "publish": "node build/builder.js --publish",
+    "test": "echo 'Oops, no tests here... :('"
   },
   "engines": {
     "node": ">=7.0.0"
