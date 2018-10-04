@@ -65,7 +65,8 @@
   };
 
   // Set isomorphic local storage method
-  const getDataPath = () => window.GBS_DIRNAME + "/config.json";
+  const getDataPath = () =>
+    window.GBS_REQUIRE("electron").remote.app.getPath("appData") + "/gobstones-web-config.json";
   const readData = () => JSON.parse(window.GBS_REQUIRE("fs").readFileSync(getDataPath(), "utf-8"));
   const writeData = (data) => window.GBS_REQUIRE("fs").writeFileSync(getDataPath(), JSON.stringify(data));
   const webStorage = {
