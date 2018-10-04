@@ -16,13 +16,12 @@ The application comes in three flavors:
 
 * **Gobstones Teacher**: Crafted for the teachers, allowing them to create their own guides and exercises.
 
-
-
-How to run this app
-===================
+Application URLs
+================
 
 This project is hosted online at
 * [https://gobstones.github.io/gobstones-web](https://gobstones.github.io/gobstones-web)
+* [https://gobstones.github.io/gobstones-web-staging](https://gobstones.github.io/gobstones-web-staging)
 
 You can test the different flavors of the app at:
 
@@ -30,9 +29,10 @@ You can test the different flavors of the app at:
 * [https://gobstones.github.io/gobstones-sr](https://gobstones.github.io/gobstones-sr)
 * [https://gobstones.github.io/gobstones-teacher](https://gobstones.github.io/gobstones-teacher)
 
-
 How to run this project
 =======================
+
+[Check out the docs!](https://github.com/gobstones/gobstones-web/wiki/Manual-t%C3%A9cnico)
 
 If you want to run the code you will need to install project dependencies first.
 Make sure you have Node.js version 7.x or above installed and correctly configured in your system.
@@ -55,6 +55,12 @@ yarn install
 yarn dev
 ```
 
+## Run as a local application with electron
+
+```bash
+yarn start
+```
+
 ## run tests
 ```bash
 yarn test
@@ -62,26 +68,6 @@ yarn test
 
 ## adding dependencies
 **Remember** to remove the `.tmp` and `dist` directories!
-
-## deploying
-This project is hosted on GitHub Pages at:
-* **Production:** [https://gobstones.github.io/gobstones-web](https://gobstones.github.io/gobstones-web)
-* **Staging:** [https://gobstones.github.io/gobstones-web-staging](https://gobstones.github.io/gobstones-web-staging)
-
-Pushing to `master` will deploy to **staging** and creating new tags will deploy to **production**.
-
-To deploy manually:
-```bash
-export GH_TOKEN="{your_username}:{your_password}"
-./deploy.sh staging
-# or ./deploy.sh production
-```
-
-#### Run as a local application with electron
-
-```bash
-yarn start
-```
 
 ## build a desktop/offline version
 
@@ -147,7 +133,7 @@ If you are planning to build for multiple targets consider installing the follow
 
 You should also perform a chmod to a file
 ```bash
-chmod +x node_modules7zip-bin/compress.sh
+chmod +x node_modules/zip-bin/compress.sh
 ```
 
 After that you may build as described above.
@@ -167,4 +153,15 @@ After downloading the images, the terminal on the docker container will be open 
 
 ```bash
 yarn dist:all
+```
+
+## deploying
+
+This project is hosted on GitHub Pages. Pushing to `master` will deploy to **staging** and creating new tags will deploy to **production**.
+
+To deploy manually:
+```bash
+export GH_TOKEN="{your_username}:{your_password}"
+./deploy.sh staging
+# or ./deploy.sh production
 ```
