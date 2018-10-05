@@ -91,7 +91,7 @@ function start(mode) {
       width: 1024,
       height: 800,
       icon: path.join(appFolder(), 'favicon.ico'),
-      title: runModeTitle(mode),
+      title: runModeTitle(mode) + " " + `v${app.getVersion()}`,
       webPreferences: {
         nodeIntegration: true,
         preload: preloadScript(),
