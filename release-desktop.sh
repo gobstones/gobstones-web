@@ -36,7 +36,7 @@ function try {
 
 function build() {
   unset GH_TOKEN
-  rm -rf ./dist/
+  sudo rm -rf ./dist/
 
   try yarn dist:docker "yarn dist --mode $TYPE --platform linux --arch x64 --target AppImage"
   try yarn dist:docker "yarn dist --mode $TYPE --platform win --arch ia32 --target nsis"
