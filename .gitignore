@@ -17,5 +17,4 @@ thumbs.db
 # App specific
 app/guides.zip
 app/guides
-app/guides_tmp
 app/cache_config.json

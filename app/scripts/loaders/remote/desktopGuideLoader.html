@@ -3,9 +3,11 @@
 <link rel="import" href="../../jquery.html">
 
 <script>
+  // TODO: Use configurable directory and destroy GBS_DIRNAME
   const guidesPath = `${window.GBS_DIRNAME}/guides`;
-  const jsonPath = `${window.GBS_DIRNAME}/guides/guides.json`;
-  const tmpPath = `${window.GBS_DIRNAME}/guides_tmp`;
+  const zipPath = `${window.GBS_DIRNAME}/guides.zip`;
+  const contentPath = `${guidesPath}/content`;
+  const jsonPath = `${contentPath}/guides.json`;
 
   class DesktopGuideLoader {
     constructor({ exercises }) {
@@ -19,8 +21,7 @@
       const url = `https://github.com/${courseSlug}/archive/master.zip`;
 
       const fs = window.GBS_REQUIRE("fs");
-      const extract = window.GBS_REQUIRE("extract-zip");
-      const ncp = window.GBS_REQUIRE("ncp");
+      const unzipper = new (window.GBS_REQUIRE("decompress-zip"))(zipPath);
       window.GBS_REQUIRE("setimmediate");
 
       const deferred = new $.Deferred();
@@ -39,22 +40,28 @@
 
       return deferred.promise()
         .then((file) => {
-          const zipPath = `${window.GBS_DIRNAME}/guides.zip`;
           fs.writeFileSync(zipPath, new Buffer(file));
-          try { fs.rmdirSync(tmpPath); } catch (e) { }
+
           try { fs.rmdirSync(guidesPath); } catch (e) { }
           try { fs.mkdirSync(guidesPath); } catch (e) { }
+
           const deferred = new $.Deferred();
-          extract(zipPath, { dir: tmpPath }, function(err) {
-            if (err) deferred.reject(err); else deferred.resolve();
+          unzipper.on("error", (err) => {
+            deferred.reject(err);
           });
-          return deferred.promise();
-        }).then(() => {
-          const deferred = $.Deferred();
-          ncp(`${tmpPath}/${repoName}-master`, guidesPath, function(err) {
-            if (err) deferred.reject(err); else deferred.resolve();
+
+          unzipper.on("extract", () => {
+            deferred.resolve();
           });
+
+          unzipper.extract({
+            path: guidesPath
+          });
+
           return deferred.promise();
+        }).then((r) => {
+          fs.renameSync(`${guidesPath}/${repoName}-master`, contentPath);
+          return r;
         });
     }
 
@@ -73,7 +80,7 @@
     }
 
     static makeUrlFor(guide, exercise) {
-      const path = `${guidesPath}/${exercise.path}`;
+      const path = `${contentPath}/${exercise.path}`;
       return `/${window.GBS_PROJECT_TYPE}?fs=${path}`;
     }
 
@@ -87,7 +94,7 @@
 
     _makeImageUrl(exercisePath) {
       try {
-        const path = `${guidesPath}/${exercisePath}`;
+        const path = `${contentPath}/${exercisePath}`;
 
         const bitmap = window.GBS_REQUIRE("fs")
           .readFileSync(`${path}/cover.png`)
