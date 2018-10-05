@@ -1,8 +1,13 @@
 #!/bin/bash
 
-echo "REMEMBER TO USE NODE 7 (nvm use >=7) - ¿ARE YOU USING IT?"
-read _NOTHING_
+echo "Remember: This requires node.js >= 7..."
 
+if [[ -z "$1" ]]; then
+    echo "Error: Missing argument 'GitHub token'!";
+    exit;
+fi;
+
+GITHUB_TOKEN="$1"
 PACKAGE_VERSION=`git describe --tags $(git rev-list --tags --max-count=1)`
 
 function commertialName() {
@@ -21,9 +26,9 @@ function commertialName() {
 
 function build() {
   rm -rf ./dist/
-  yarn dist --mode "$TYPE" --platform linux --arch x64 --target AppImage
-  yarn dist --mode "$TYPE" --platform win --arch ia32 --target nsis
-  yarn dist --mode "$TYPE" --platform win --arch x64 --target nsis
+  npm run dist --mode "$TYPE" --platform linux --arch x64 --target AppImage
+  npm run dist --mode "$TYPE" --platform win --arch ia32 --target nsis
+  npm run dist --mode "$TYPE" --platform win --arch x64 --target nsis
 }
 
 # ---
@@ -85,10 +90,7 @@ mv "node_modules/$WINDOWS_NAME_3" "$WINDOWS_NAME_3"
 
 echo "DEPLOYING DESKTOP VERSION $PACKAGE_VERSION..."
 
-echo "GIVE ME THE GITHUB TOKEN"
-read TOKEN
-
 echo "PUBLISHING..."
-./node_modules/.bin/publish-release --token $TOKEN --owner gobstones --repo gobstones-web-desktop --tag "$PACKAGE_VERSION" --name "$PACKAGE_VERSION" --assets $LINUX_NAME_1,$WINDOWS_NAME_1,$LINUX_NAME_2,$WINDOWS_NAME_2,$LINUX_NAME_3,$WINDOWS_NAME_3,$WINDOWS32_NAME_1 --notes "Gobstones Web - Desktop"
+./node_modules/.bin/publish-release --token $GITHUB_TOKEN --owner gobstones --repo gobstones-web-desktop --tag "$PACKAGE_VERSION" --name "$PACKAGE_VERSION" --assets $LINUX_NAME_1,$WINDOWS_NAME_1,$LINUX_NAME_2,$WINDOWS_NAME_2,$LINUX_NAME_3,$WINDOWS_NAME_3,$WINDOWS32_NAME_1 --notes "Gobstones Web - Desktop"
 
 echo "DONE."
