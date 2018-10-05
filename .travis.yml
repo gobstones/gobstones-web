@@ -26,6 +26,7 @@ deploy:
       tags: true
 
   - provider: script
+    skip_cleanup: true
     script: ./release-desktop.sh $GH_TOKEN
     on:
       tags: true

@@ -24,11 +24,21 @@ function commertialName() {
   fi
 }
 
+function try {
+  "$@"
+  local status=$?
+  if [ $status -ne 0 ]; then
+      echo "!!!Error!!! with $1" >&2
+      exit $?
+  fi
+  return $status
+}
+
 function build() {
   rm -rf ./dist/
-  npm run dist --mode "$TYPE" --platform linux --arch x64 --target AppImage
-  npm run dist --mode "$TYPE" --platform win --arch ia32 --target nsis
-  npm run dist --mode "$TYPE" --platform win --arch x64 --target nsis
+  try npm run dist --mode "$TYPE" --platform linux --arch x64 --target AppImage
+  try npm run dist --mode "$TYPE" --platform win --arch ia32 --target nsis
+  try npm run dist --mode "$TYPE" --platform win --arch x64 --target nsis
 }
 
 # ---
