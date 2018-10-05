@@ -4,12 +4,8 @@ node_js:
 cache:
   directories:
     - node_modules
-before_install:
-  - wget https://dl.winehq.org/wine-builds/Release.key
-  - sudo apt-key add Release.key
-  - sudo apt-add-repository 'https://dl.winehq.org/wine-builds/ubuntu/'
-  - sudo apt-get update
-  - sudo apt-get install --install-recommends -y winehq-stable
+services:
+  - docker
 before_deploy:
   - npm i -g bower@1.8.4 gulp@3.9.0
   - rm -rf .tmp dist
