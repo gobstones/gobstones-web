@@ -1,7 +1,7 @@
 {
   "name": "gobstones-web",
   "description": "Gobstones Web",
-  "version": "2.8.6",
+  "version": "2.8.7",
   "private": true,
   "licence": "GPLv3",
   "author": "Gobstones <info@gobstones.org> (https://gobstones.github.io)",
@@ -24,10 +24,9 @@
   },
   "dependencies": {
     "bytes": "^3.0.0",
-    "extract-zip": "^1.6.5",
+    "decompress-zip": "^0.3.1",
     "finalhandler": "^1.0.2",
     "freeport": "^1.0.5",
-    "ncp": "^2.0.0",
     "recursive-readdir-sync": "^1.0.6",
     "serve-static": "^1.12.2",
     "setimmediate": "^1.0.5",
