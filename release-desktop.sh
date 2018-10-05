@@ -38,9 +38,9 @@ function build() {
   unset GH_TOKEN
   rm -rf ./dist/
 
-  try npm run dist --mode "$TYPE" --platform linux --arch x64 --target AppImage
-  try npm run dist --mode "$TYPE" --platform win --arch ia32 --target nsis
-  try npm run dist --mode "$TYPE" --platform win --arch x64 --target nsis
+  try yarn dist --mode "$TYPE" --platform linux --arch x64 --target AppImage
+  try yarn dist --mode "$TYPE" --platform win --arch ia32 --target nsis
+  try yarn dist --mode "$TYPE" --platform win --arch x64 --target nsis
 }
 
 # ---
