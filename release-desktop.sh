@@ -53,7 +53,7 @@ echo "CREATING '$TYPE' ONE-FILE PACKAGES..."
 LINUX_NAME_1=gobstones-$(commertialName $TYPE)-linux-$PACKAGE_VERSION.AppImage
 WINDOWS_NAME_1=gobstones-$(commertialName $TYPE)-windows-$PACKAGE_VERSION.exe
 WINDOWS32_NAME_1=gobstones-$(commertialName $TYPE)-windows-ia32-$PACKAGE_VERSION.zip
-cd "./dist/gobstones-$(commertialName $TYPE)_$(echo $PACKAGE_VERSION)_linux_x86_64.AppImage" $LINUX_NAME_1
+cp "./dist/gobstones-$(commertialName $TYPE)_$(echo $PACKAGE_VERSION)_linux_x86_64.AppImage" $LINUX_NAME_1
 cd ./dist/win-ia32-unpacked ; zip -rq ../../$WINDOWS32_NAME_1 . ; cd ../..
 cp "./dist/gobstones-$(commertialName $TYPE)_$(echo $PACKAGE_VERSION)_win.exe" $WINDOWS_NAME_1
 mv "$LINUX_NAME_1" node_modules/
@@ -69,7 +69,7 @@ build
 echo "CREATING '$TYPE' ONE-FILE PACKAGES..."
 LINUX_NAME_2=gobstones-$(commertialName $TYPE)-linux-$PACKAGE_VERSION.AppImage
 WINDOWS_NAME_2=gobstones-$(commertialName $TYPE)-windows-$PACKAGE_VERSION.exe
-cd "./dist/gobstones-$(commertialName $TYPE)_$(echo $PACKAGE_VERSION)_linux_x86_64.AppImage" $LINUX_NAME_2
+cp "./dist/gobstones-$(commertialName $TYPE)_$(echo $PACKAGE_VERSION)_linux_x86_64.AppImage" $LINUX_NAME_2
 cp "./dist/gobstones-$(commertialName $TYPE)_$(echo $PACKAGE_VERSION)_win.exe" $WINDOWS_NAME_2
 mv "$LINUX_NAME_2" node_modules/
 mv "$WINDOWS_NAME_2" node_modules/
@@ -83,7 +83,7 @@ build
 echo "CREATING '$TYPE' ONE-FILE PACKAGES..."
 LINUX_NAME_3=gobstones-$(commertialName $TYPE)-linux-$PACKAGE_VERSION.AppImage
 WINDOWS_NAME_3=gobstones-$(commertialName $TYPE)-windows-$PACKAGE_VERSION.exe
-cd "./dist/gobstones-$(commertialName $TYPE)_$(echo $PACKAGE_VERSION)_linux_x86_64.AppImage" $LINUX_NAME_3
+cp "./dist/gobstones-$(commertialName $TYPE)_$(echo $PACKAGE_VERSION)_linux_x86_64.AppImage" $LINUX_NAME_3
 cp "./dist/gobstones-$(commertialName $TYPE)_$(echo $PACKAGE_VERSION)_win.exe" $WINDOWS_NAME_3
 mv "$LINUX_NAME_3" node_modules/
 mv "$WINDOWS_NAME_3" node_modules/
