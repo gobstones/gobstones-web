@@ -3,19 +3,25 @@
 <link rel="import" href="../../jquery.html">
 
 <script>
-  // TODO: Use configurable directory and destroy GBS_DIRNAME
-  const guidesPath = `${window.GBS_DIRNAME}/guides`;
-  const zipPath = `${window.GBS_DIRNAME}/guides.zip`;
-  const contentPath = `${guidesPath}/content`;
-  const jsonPath = `${contentPath}/guides.json`;
+  const ZIP_NAME = "guides.zip";
+  const CONTENT_NAME = "content";
+
+  const PATH = () => {
+    const courses = window.STORAGE.getItem("courses") || [];
+    const course = _.find(courses, { course: COURSE() });
+    if (!course) return null;
+
+    return `${course.path}/${CONTENT_NAME}`;
+  };
 
   class DesktopGuideLoader {
     constructor({ exercises }) {
       this.exercises = exercises;
     }
 
-    static download(courseSlug, onProgress) {
-      courseSlug = courseSlug || "gobstones/proyectos-jr";
+    static download(courseSlug, onProgress, path) {
+      const zipPath = `${path}/${ZIP_NAME}`;
+      const contentPath = `${path}/${CONTENT_NAME}`;
 
       const repoName = _.last(courseSlug.split("/"));
       const url = `https://github.com/${courseSlug}/archive/master.zip`;
@@ -42,8 +48,7 @@
         .then((file) => {
           fs.writeFileSync(zipPath, new Buffer(file));
 
-          try { fs.rmdirSync(guidesPath); } catch (e) { }
-          try { fs.mkdirSync(guidesPath); } catch (e) { }
+          try { fs.mkdirSync(path); } catch (e) { }
 
           const deferred = new $.Deferred();
           unzipper.on("error", (err) => {
@@ -55,18 +60,22 @@
           });
 
           unzipper.extract({
-            path: guidesPath
+            path: path
           });
 
           return deferred.promise();
         }).then((r) => {
-          fs.renameSync(`${guidesPath}/${repoName}-master`, contentPath);
+          fs.renameSync(`${path}/${repoName}-master`, contentPath);
           return r;
         });
     }
 
     static all() {
       try {
+        const path = PATH();
+        if (!path) return promisify([]);
+
+        const jsonPath = `${path}/guides.json`;
         const json = window.GBS_REQUIRE("fs").readFileSync(
           jsonPath
         );
@@ -80,7 +89,7 @@
     }
 
     static makeUrlFor(guide, exercise) {
-      const path = `${contentPath}/${exercise.path}`;
+      const path = `${PATH()}/${exercise.path}`;
       return `/${window.GBS_PROJECT_TYPE}?fs=${path}`;
     }
 
@@ -94,7 +103,7 @@
 
     _makeImageUrl(exercisePath) {
       try {
-        const path = `${contentPath}/${exercisePath}`;
+        const path = `${PATH()}/${exercisePath}`;
 
         const bitmap = window.GBS_REQUIRE("fs")
           .readFileSync(`${path}/cover.png`)

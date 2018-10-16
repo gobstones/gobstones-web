@@ -64,7 +64,7 @@
             <span hidden$="{{!item.isDownloading}}">
               <span style="font-size: small; color: gray">
                 <span>[[localize("updating")]]</span>
-                <span>&nbsp;([[item.downloadProgress]])</span>
+                <span>([[item.downloadProgress]])</span>
               </span>
             </span>
           </span>
@@ -91,6 +91,18 @@
         this._loadCourses();
       },
 
+      goToCourse: function() {
+        if (_.isEmpty(this.slug)) return;
+
+        this.goTo(this.slug);
+      },
+
+      downloadCourse: function() {
+        if (_.isEmpty(this.slug)) return;
+
+        this.requestDownload({ course: this.slug });
+      },
+
       onGoToClick: function(event) {
         this.goTo(event.model.item.course);
       },
@@ -104,14 +116,6 @@
         this._saveCourses(this.availableCourses.filter((it) => it !== course));
       },
 
-      goToCourse: function() {
-        this.goTo(this.slug);
-      },
-
-      downloadCourse: function() {
-        this.requestDownload({ course: this.slug });
-      },
-
       goTo: function(slug) {
         document.location.search = "?course=" + slug;
       },
@@ -119,6 +123,7 @@
       requestDownload: function(course) {
         const slug = course.course;
         const dialog = window.GBS_REQUIRE("electron").remote.dialog;
+        const fs = window.GBS_REQUIRE("fs");
 
         const paths = dialog.showOpenDialog({
           title: "DAME EL PATH DONDE LO QUERÉS PONER", // TODO: i18n
@@ -130,12 +135,22 @@
         if (!paths || !paths[0]) return;
         const path = paths[0];
 
+        // TODO: Empezar a usar AppImage ahora que ya no usamos más GBS_DIRNAME
+        // TODO: Agregar botón para cambiar de directorio
+        // TODO: Arreglar descargas simultáneas
+        // TODO: Recordar el último curso abierto
+
+        if (fs.existsSync(`${path}/content`)) {
+          alert("El directorio ya tiene contenido. Asegurate de que esté vacío."); // TODO: i18n
+          return;
+        }
+
         this._saveCourses(_.uniqBy(this.availableCourses.concat({
           name: slug,
           course: slug
         }), "course"));
 
-        this._download(this._getCourse(slug));
+        this._download(this._getCourse(slug), path);
       },
 
       isDesktop: function() {
@@ -148,17 +163,21 @@
         course.isDownloading = true;
         course.downloadProgress = "...";
 
-        const courseSlug = prompt(this.localize("download-course-slug"));
+        const courseSlug = course.course;
         this._updateGlobalDownloadState();
         DesktopGuideLoader.download(courseSlug, (loaded, total) => {
-          this.downloadProgress = bytes(loaded);
-        }).then(() => {
-          course.path = path;
-          course.isDownloading = false;
-          this._updateGlobalDownloadState();
+          this._changeCourse(course, (it) => it.downloadProgress = bytes(loaded));
+        }, path).then(() => {
+          this._changeCourse(course, (it) => {
+            it.path = path;
+            it.isDownloading = false;
+          });
           this._saveCourses();
+          this._updateGlobalDownloadState(true);
         }).catch((e) => {
-          course.isDownloading = false;
+          this._changeCourse(course, (it) => {
+            it.isDownloading = false;
+          });
           this._updateGlobalDownloadState();
           alert(this.localize("download-course-error"));
         });
@@ -184,15 +203,23 @@
         this._loadCourses();
       },
 
-      _updateGlobalDownloadState: function() {
+      _updateGlobalDownloadState: function(tryReload = false) {
         const wasEnabled = window.GBS_IS_DOWNLOADING_GUIDE;
         window.GBS_IS_DOWNLOADING_GUIDE = this.availableCourses.some((it) => it.isDownloading);
-        if (wasEnabled && !window.GBS_IS_DOWNLOADING_GUIDE) this._tryReload();
+        if (tryReload && wasEnabled && !window.GBS_IS_DOWNLOADING_GUIDE) this._tryReload();
       },
 
       _tryReload: function() {
         if (!confirm(this.localize("you-must-reload"))) return;
         location.reload();
+      },
+
+      _changeCourse: function(course, func) {
+        this.availableCourses = this.availableCourses.map((it) => {
+          const newCourse = _.clone(it);
+          if (it.course === course.course) func(newCourse);
+          return newCourse;
+        });
       },
 
       _getCourse: function(slug) {
