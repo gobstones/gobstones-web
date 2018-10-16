@@ -109,7 +109,7 @@
       </div>
 
       <div class="panel-right">
-        <boards-panel id="boards" project-type="[[projectType]]"></boards-panel>
+        <boards-panel id="boards" project-type="[[projectType]]" with-runner="{{isTeacherProject(projectType)}}"></boards-panel>
       </div>
 
       <paper-dialog class="description-dialog" id="descriptionModal" on-iron-overlay-closed="_onCloseDescriptionModal" class="ide-modal">

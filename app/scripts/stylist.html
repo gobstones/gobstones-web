@@ -102,6 +102,14 @@
         // fix for white overlay in procedure comments:
         $("#blocklyDiv").unbind("click");
         $("#blocklyDiv").click(() => $(".blocklyMinimalBody").height("100%"));
+
+        // fix buttons position:
+        var width = $('#blocklyDiv').width() - 92;
+        var height = $('#blocklyDiv').height() - 174;
+        $('.blocklyTrash').css("transform", `translate(${width}px, ${height}px)`);
+        $('.blocklyTrash').css("display", "unset");
+        $('.blocklyZoom').css("transform", `translate(${width + 8}px, ${height - 120}px)`);
+        $('.blocklyZoom').css("display", "unset");
       };
 
       setTimeout(resize, 0);

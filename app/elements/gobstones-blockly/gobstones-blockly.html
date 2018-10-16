@@ -39,6 +39,13 @@
         --paper-toast-background-color: rgba(8, 0, 255, 0.8);
         margin-left: 10px !important;
       }
+
+      .run-button {
+        position: absolute;
+        bottom: 16px;
+        right: 16px;
+        z-index: 99;
+      }
     </style>
 
     <!-- TOAST -->
@@ -46,6 +53,10 @@
 
     <gs-element-blockly id="blockly" class="blockly" workspace-xml="{{workspaceXml}}" toolbox="{{toolbox}}" media="{{mediaDir}}" local-media="{{localMediaDir}}"></gs-element-blockly>
     <gs-element-blockly id="blocklytmp" style="visibility: hidden"></gs-element-blockly>
+
+    <template is="dom-if" if="{{withRunner}}">
+      <code-runner class="run-button" id="runner"></code-runner>
+    </template>
   </template>
 
   <script>
@@ -92,10 +103,9 @@
       },
 
       ready: function() {
-        if (this.withRunner) {
-          const boardsPanel = document.getElementById("boards");
-          if (boardsPanel) {
-            this.runner = boardsPanel.$.runner;
+        setTimeout(() => {
+          if (this.withRunner) {
+            this.runner = this.$$("#runner");
             this.runner.addEventListener("run", ({ detail }) => {
               this._onRunRequest(detail)
             });
@@ -109,14 +119,14 @@
               }
               window.BUS.fire("cancel-request");
             });
-          }
 
-          this.subscribeTo("initial-state", (event) => {
-            this._runCode(event);
-          }).subscribeTo("interactive-run", () => {
-            this.isInteractiveOn = true;
-          });
-        }
+            this.subscribeTo("initial-state", (event) => {
+              this._runCode(event);
+            }).subscribeTo("interactive-run", () => {
+              this.isInteractiveOn = true;
+            });
+          }
+        });
 
         this.stylist = new Stylist();
         this.stylist.setUpBlocklyCustomizations();

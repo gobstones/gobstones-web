@@ -218,46 +218,48 @@
           }
         });
 
-        const boardsPanel = document.getElementById("boards");
-        if (boardsPanel) {
-          this.runner = boardsPanel.$.runner;
-          this._editors()[ID_BLOCKS].runner = this.runner;
-          this._editors()[ID_CODE].runner = this.runner;
-          this._editors()[ID_TEACHER_LIBRARY].runner = this.runner;
-          this._editors()[ID_LIBRARY].runner = this.runner;
+        setTimeout(() => {
+          const boardsPanel = document.getElementById("boards");
+          if (boardsPanel) {
+            this.runner = boardsPanel.$$("#runner");
+            this._editors()[ID_BLOCKS].runner = this.runner;
+            this._editors()[ID_CODE].runner = this.runner;
+            this._editors()[ID_TEACHER_LIBRARY].runner = this.runner;
+            this._editors()[ID_LIBRARY].runner = this.runner;
 
-          this.runner.addEventListener("run", ({ detail }) => {
-            if (!this.isBlocksOrCodeTabSelected(this.selectedTab)) {
-              this.runner.showToast(this.localize("go-to-first-tabs"));
-              this.runner.stop();
-              return;
+            this.runner.addEventListener("run", ({ detail }) => {
+              if (!this.isBlocksOrCodeTabSelected(this.selectedTab)) {
+                this.runner.showToast(this.localize("go-to-first-tabs"));
+                this.runner.stop();
+                return;
+              };
+
+              this._currentEditor()._onRunRequest(detail)
+              this._editors()[ID_CODE].readonly = true;
+            });
+            this.runner.addEventListener("cancel", () => {
+              window.BUS.fire("cancel-request");
+              this._editors()[ID_CODE].readonly = false;
+            });
+            this.runner.addEventListener("end", () => {
+              this._editors()[ID_CODE].readonly = false;
+              setTimeout(() => this._editors()[ID_BLOCKS].highlight(), 1000);
+            });
+
+            this._editors()[ID_CODE].reportError = (error, type) => {
+              if (error.location.mode === "library") {
+                setTimeout(() => {
+                  this.selectedTab = ID_LIBRARY;
+
+                  this._editors()[ID_LIBRARY]._setAnnotation(error, type);
+                });
+              } else {
+                this._editors()[ID_CODE]._setAnnotation(error, type);
+              }
             };
-
-            this._currentEditor()._onRunRequest(detail)
-            this._editors()[ID_CODE].readonly = true;
-          });
-          this.runner.addEventListener("cancel", () => {
-            window.BUS.fire("cancel-request");
-            this._editors()[ID_CODE].readonly = false;
-          });
-          this.runner.addEventListener("end", () => {
-            this._editors()[ID_CODE].readonly = false;
-            setTimeout(() => this._editors()[ID_BLOCKS].highlight(), 1000);
-          });
-
-          this._editors()[ID_CODE].reportError = (error, type) => {
-            if (error.location.mode === "library") {
-              setTimeout(() => {
-                this.selectedTab = ID_LIBRARY;
-
-                this._editors()[ID_LIBRARY]._setAnnotation(error, type);
-              });
-            } else {
-              this._editors()[ID_CODE]._setAnnotation(error, type);
-            }
-          };
-          this._editors()[ID_CODE]._setMode = _.noop;
-        }
+            this._editors()[ID_CODE]._setMode = _.noop;
+          }
+        });
 
         this.subscribeTo("initial-state", (event) => {
           this._currentEditor()._runCode(event, this.getCode(), true);

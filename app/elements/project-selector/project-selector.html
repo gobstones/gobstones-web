@@ -132,8 +132,9 @@
           <div class$="{{getExerciseCssClass(selectedViewMode)}}">
             <a on-tap="goToExercise">
               <template is="dom-if" if="[[!_isList(selectedViewMode)]]">
-                <h3 inner-h-t-m-l="[[getItemTitle(item, selectedViewMode)]]"></h3>
                 <img width$="{{getImageSize(selectedViewMode)}}" height$="{{getImageSize(selectedViewMode)}}" src="{{item.imageUrl}}" />
+                <h3 inner-h-t-m-l="[[getItemTitle(item, selectedViewMode)]]"
+                ></h3>
               </template>
 
               <template is="dom-if" if="[[_isList(selectedViewMode)]]">
@@ -238,7 +239,7 @@
       },
 
       getItemTitle: function({ id, name }, selectedViewMode) {
-        return "<strong>" + id + "</strong>" + (selectedViewMode !== 2 ? "<br>" : " ") + name;
+        return /*"<strong>" + id + "</strong>" + (selectedViewMode !== 2 ? "<br>" : " ") +*/ name;
       },
 
       _loadCurrentGuide: function() {
