@@ -87,7 +87,7 @@
       ready: function() {
         this.COURSES_URL = "https://raw.githubusercontent.com/wiki/gobstones/gobstones-web/Courses.md";
 
-        this.slug = getParameterByName("course");
+        this.slug = window.COURSE();
         this._loadCourses();
       },
 
@@ -134,8 +134,6 @@
 
         if (!paths || !paths[0]) return;
         const path = paths[0];
-
-        // TODO: Empezar a usar AppImage ahora que ya no usamos más GBS_DIRNAME
 
         if (fs.existsSync(`${path}/content`)) {
           alert(this.localize("download-course-folder-not-empty"));

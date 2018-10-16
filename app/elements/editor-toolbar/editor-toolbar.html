@@ -195,7 +195,7 @@
       openProjectSelector: function() {
         if (window.GBS_IS_RUNNING || window.GBS_IS_DOWNLOADING_GUIDE) return;
 
-        const hasNoCourse = !window.GBS_DESKTOP && !getParameterByName("course");
+        const hasNoCourse = !window.GBS_DESKTOP && !window.COURSE();
         if (hasNoCourse) this.loadProject();
         else this._ide().showProjectSelectorModal();
       },

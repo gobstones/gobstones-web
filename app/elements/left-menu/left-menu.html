@@ -356,7 +356,7 @@
       },
 
       getCourseName: function() {
-        return getParameterByName("course") || "---";
+        return window.COURSE() || "---";
       },
 
       _downloadDesktopWindows: function() {
