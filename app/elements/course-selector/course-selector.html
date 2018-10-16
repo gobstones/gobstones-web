@@ -31,7 +31,7 @@
         <paper-input class="input-course-input" label$="{{localize('insert-course-slug')}}" value="{{slug}}"></paper-input>
 
         <template is="dom-if" if="{{isDesktop()}}">
-          <paper-button class="input-course-button" style="z-index: 99" on-click="onDownloadCurrentCourse"><iron-icon class="black-button" icon="icons:file-download"></iron-icon></paper-button>
+          <button class="input-course-button" class="submit" type="submit" on-click="downloadCourse">Descargar curso</button> <!-- // TODO: i18n -->
         </template>
         <template is="dom-if" if="{{!isDesktop()}}">
           <button class="input-course-button" class="submit" type="submit" on-click="goToCourse">[[localize("go-to-course")]]</button>
@@ -88,7 +88,6 @@
         this.COURSES_URL = "https://raw.githubusercontent.com/wiki/gobstones/gobstones-web/Courses.md";
 
         this.slug = getParameterByName("course");
-
         this._loadCourses();
       },
 
@@ -96,12 +95,8 @@
         this.goTo(event.model.item.course);
       },
 
-      onDownloadCurrentCourse: function() {
-        this.download({ course: this.slug });
-      },
-
       onDownloadCourse: function(event) {
-        this.download(event.model.item);
+        this.requestDownload(event.model.item);
       },
 
       onDeleteCourse: function(event) {
@@ -113,11 +108,15 @@
         this.goTo(this.slug);
       },
 
+      downloadCourse: function() {
+        this.requestDownload({ course: this.slug });
+      },
+
       goTo: function(slug) {
         document.location.search = "?course=" + slug;
       },
 
-      download: function(course) {
+      requestDownload: function(course) {
         const slug = course.course;
         const dialog = window.GBS_REQUIRE("electron").remote.dialog;
 
@@ -131,21 +130,38 @@
         if (!paths || !paths[0]) return;
         const path = paths[0];
 
-        debugger
-
         this._saveCourses(_.uniqBy(this.availableCourses.concat({
           name: slug,
           course: slug
-        }), "slug"));
+        }), "course"));
 
-        course = this._getCourse(slug);
-        course.isDownloading = true;
-        course.downloadProgress = "...";
-        //course.path = path; // TODO: AL TERMINAR
+        this._download(this._getCourse(slug));
       },
 
       isDesktop: function() {
         return window.GBS_DESKTOP;
+      },
+
+      _download: function(course, path) {
+        const bytes = window.GBS_REQUIRE("bytes");
+
+        course.isDownloading = true;
+        course.downloadProgress = "...";
+
+        const courseSlug = prompt(this.localize("download-course-slug"));
+        this._updateGlobalDownloadState();
+        DesktopGuideLoader.download(courseSlug, (loaded, total) => {
+          this.downloadProgress = bytes(loaded);
+        }).then(() => {
+          course.path = path;
+          course.isDownloading = false;
+          this._updateGlobalDownloadState();
+          this._saveCourses();
+        }).catch((e) => {
+          course.isDownloading = false;
+          this._updateGlobalDownloadState();
+          alert(this.localize("download-course-error"));
+        });
       },
 
       _loadCourses: function() {
@@ -158,7 +174,7 @@
         }
       },
 
-      _saveCourses: function(courses) {
+      _saveCourses: function(courses = this.availableCourses) {
         window.STORAGE.setItem("courses", courses.map((it) => {
           it.isDownloading = undefined;
           it.downloadProgress = undefined;
@@ -166,6 +182,17 @@
         }));
 
         this._loadCourses();
+      },
+
+      _updateGlobalDownloadState: function() {
+        const wasEnabled = window.GBS_IS_DOWNLOADING_GUIDE;
+        window.GBS_IS_DOWNLOADING_GUIDE = this.availableCourses.some((it) => it.isDownloading);
+        if (wasEnabled && !window.GBS_IS_DOWNLOADING_GUIDE) this._tryReload();
+      },
+
+      _tryReload: function() {
+        if (!confirm(this.localize("you-must-reload"))) return;
+        location.reload();
       },
 
       _getCourse: function(slug) {

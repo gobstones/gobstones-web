@@ -248,10 +248,6 @@
           type: Object,
           value: { can_use_library: true }
         }
-        // downloadTotal: {
-        //   type: Number,
-        //   value: 0
-        // }
       },
       observers: [
         "_onSelectedLanguageChanged(selectedLanguage)"
@@ -300,29 +296,6 @@
               } : {})
             .value()
         );
-      },
-
-      updateExercises: function() {
-        const bytes = window.GBS_REQUIRE("bytes");
-
-        this.isDownloadingExercises = true;
-        this.downloadProgress = "...";
-        //this.downloadTotal = 0;
-
-        const courseSlug = prompt(this.localize("download-course-slug"));
-        window.GBS_IS_DOWNLOADING_GUIDE = true;
-        DesktopGuideLoader.download(courseSlug, (loaded, total) => {
-          this.downloadProgress = bytes(loaded);
-          //this.downloadTotal = total;
-        }).then(() => {
-          this.isDownloadingExercises = false;
-          window.GBS_IS_DOWNLOADING_GUIDE = false;
-          this._tryReload();
-        }).catch((e) => {
-          this.isDownloadingExercises = false;
-          window.GBS_IS_DOWNLOADING_GUIDE = false;
-          alert(this.localize("download-course-error"));
-        });
       },
 
       seeGeneratedCode: function() {
