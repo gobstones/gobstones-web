@@ -32,6 +32,7 @@
 
         <template is="dom-if" if="{{isDesktop()}}">
           <button class="input-course-button" class="submit" type="submit" on-click="downloadCourse">[[localize("download-course")]]</button>
+          <button class="input-course-button" class="submit" type="submit" on-click="importCourse">[[localize("download-course-import")]]</button>
         </template>
         <template is="dom-if" if="{{!isDesktop()}}">
           <button class="input-course-button" class="submit" type="submit" on-click="goToCourse">[[localize("go-to-course")]]</button>
@@ -103,6 +104,33 @@
         this.requestDownload({ course: this.slug });
       },
 
+      importCourse: function() {
+        if (_.isEmpty(this.slug)) return;
+
+        const dialog = window.GBS_REQUIRE("electron").remote.dialog;
+        const fs = window.GBS_REQUIRE("fs");
+
+        const paths = dialog.showOpenDialog({
+          title: this.localize("download-course-select-path"),
+          buttonLabel: this.localize("download-course-import"),
+          properties: ["openDirectory"]
+        });
+
+        if (!paths || !paths[0]) return;
+        const path = paths[0];
+
+        if (!fs.existsSync(`${path}/content`)) {
+          alert(this.localize("download-course-folder-empty"));
+          return;
+        }
+
+        this._addCourse({
+          name: this.slug,
+          course: this.slug,
+          path: path
+        });
+      },
+
       onGoToClick: function(event) {
         this.goTo(event.model.item.course);
       },
@@ -113,6 +141,8 @@
 
       onDeleteCourse: function(event) {
         const course = event.model.item;
+        if (course.course === window.STORAGE.getItem("lastCourse"))
+          window.STORAGE.setItem("lastCourse", null);
         this._saveCourses(this.availableCourses.filter((it) => it !== course));
       },
 
@@ -140,10 +170,10 @@
           return;
         }
 
-        this._saveCourses(_.uniqBy(this.availableCourses.concat({
+        this._addCourse({
           name: slug,
           course: slug
-        }), "course"));
+        });
 
         this._download(this._getCourse(slug), path);
       },
@@ -198,6 +228,10 @@
 
         this.availableCourses = [];
         this.availableCourses = courses;
+      },
+
+      _addCourse: function(course) {
+        this._saveCourses(_.uniqBy(this.availableCourses.concat(course), "course"));
       },
 
       _updateGlobalDownloadState: function(tryReload = false) {
