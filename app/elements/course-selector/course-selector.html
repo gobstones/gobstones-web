@@ -43,10 +43,29 @@
       <h1 class="available-courses">[[localize("available-courses")]]</h1>
       <template is="dom-repeat" items="{{availableCourses}}">
         <li>
-          <a href="javascript: void(0);" on-click="onGoToClick">[[item.name]]</a>
+          <span hidden$="{{isDesktop()}}">
+            <a href="javascript: void(0);" on-click="onGoToClick">[[item.name]]</a>
+          </span>
           <span hidden$="{{!isDesktop()}}">
-            <span hidden$="{{hasCourse(item)}}">
+            <span hidden$="{{!item.path}}">
+              <a href="javascript: void(0);" on-click="onGoToClick">[[item.name]]</a>
+            </span>
+            <span hidden$="{{item.path}}">
+              [[item.name]]
+            </span>
+          </span>
+
+          <span hidden$="{{!isDesktop()}}">
+            <span hidden$="{{item.isDownloading}}">
               <paper-button style="z-index: 99" on-click="onDownloadCourse"><iron-icon class="black-button" icon="icons:file-download"></iron-icon></paper-button>
+              <paper-button style="z-index: 99" on-click="onDeleteCourse"><iron-icon class="black-button" icon="icons:remove"></iron-icon></paper-button>
+            </span>
+
+            <span hidden$="{{!item.isDownloading}}">
+              <span style="font-size: small; color: gray">
+                <span>[[localize("updating")]]</span>
+                <span>&nbsp;([[item.downloadProgress]])</span>
+              </span>
             </span>
           </span>
         </li>
@@ -85,6 +104,11 @@
         this.download(event.model.item);
       },
 
+      onDeleteCourse: function(event) {
+        const course = event.model.item;
+        this._saveCourses(this.availableCourses.filter((it) => it !== course));
+      },
+
       goToCourse: function() {
         this.goTo(this.slug);
       },
@@ -95,11 +119,29 @@
 
       download: function(course) {
         const slug = course.course;
-        alert("VOY A DESCARGAR " + slug);
-      },
+        const dialog = window.GBS_REQUIRE("electron").remote.dialog;
 
-      hasCourse: function(item) {
-        return item.path != null;
+        const paths = dialog.showOpenDialog({
+          title: "DAME EL PATH DONDE LO QUERÉS PONER", // TODO: i18n
+          buttonLavel: "GUARDARLO ACÁ",
+          properties: ["openDirectory"],
+          defaultPath: course.path
+        });
+
+        if (!paths || !paths[0]) return;
+        const path = paths[0];
+
+        debugger
+
+        this._saveCourses(_.uniqBy(this.availableCourses.concat({
+          name: slug,
+          course: slug
+        }), "slug"));
+
+        course = this._getCourse(slug);
+        course.isDownloading = true;
+        course.downloadProgress = "...";
+        //course.path = path; // TODO: AL TERMINAR
       },
 
       isDesktop: function() {
@@ -107,16 +149,27 @@
       },
 
       _loadCourses: function() {
-        const savedCourses = this._getSavedCourses();
-
-        if (_.isEmpty(savedCourses)) {
+        if (this.isDesktop()) {
+          this.availableCourses = this._getSavedCourses();
+        } else {
           $.getJSON(this.COURSES_URL).then((availableCourses) => {
-            window.STORAGE.setItem("courses", availableCourses);
             this.availableCourses = availableCourses;
           });
-        } else {
-          this.availableCourses = savedCourses;
         }
+      },
+
+      _saveCourses: function(courses) {
+        window.STORAGE.setItem("courses", courses.map((it) => {
+          it.isDownloading = undefined;
+          it.downloadProgress = undefined;
+          return it;
+        }));
+
+        this._loadCourses();
+      },
+
+      _getCourse: function(slug) {
+        return _.find(this.availableCourses, { course: slug });
       },
 
       _getSavedCourses: function() {
