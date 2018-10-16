@@ -136,9 +136,6 @@
         const path = paths[0];
 
         // TODO: Empezar a usar AppImage ahora que ya no usamos más GBS_DIRNAME
-        // TODO: Agregar botón para cambiar de directorio
-        // TODO: Arreglar descargas simultáneas
-        // TODO: Recordar el último curso abierto
 
         if (fs.existsSync(`${path}/content`)) {
           alert(this.localize("download-course-folder-not-empty"));
@@ -195,12 +192,14 @@
 
       _saveCourses: function(courses = this.availableCourses) {
         window.STORAGE.setItem("courses", courses.map((it) => {
-          it.isDownloading = undefined;
-          it.downloadProgress = undefined;
-          return it;
+          const course = _.clone(it);
+          course.isDownloading = undefined;
+          course.downloadProgress = undefined;
+          return course;
         }));
 
-        this._loadCourses();
+        this.availableCourses = [];
+        this.availableCourses = courses;
       },
 
       _updateGlobalDownloadState: function(tryReload = false) {

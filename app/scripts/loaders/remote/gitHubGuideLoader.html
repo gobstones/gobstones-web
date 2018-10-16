@@ -2,8 +2,16 @@
 
 <script>
   const COURSE = () => {
-    if (!window.GBS_COURSE)
+    if (!window.GBS_COURSE) {
       window.GBS_COURSE = getParameterByName("course") || "";
+
+      if (window.GBS_DESKTOP) {
+        const lastCourse = window.STORAGE.getItem("lastCourse");
+
+        if (!window.GBS_COURSE && lastCourse) document.location.search = "?course=" + lastCourse;
+        else window.STORAGE.setItem("lastCourse", window.GBS_COURSE);
+      }
+    }
 
     return window.GBS_COURSE;
   };
