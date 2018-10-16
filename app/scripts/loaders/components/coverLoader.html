@@ -11,6 +11,8 @@
     }
 
     buildContent(context) {
+      if (!context.editor.cover) return null;
+
       return toBinary(context.editor.cover.replace(this.BASE64_PREFIX, ""));
     }
 
