@@ -27,7 +27,7 @@
     "tweenjs": "@tweenjs/tweenjs#v16.3.0",
     "juicy-jsoneditor": "~1.2.0",
     "simplemde": "~1.11.2",
-    "gobstones-code-runner": "gobstones/gobstones-code-runner#0.5.4",
+    "gobstones-code-runner": "gobstones/gobstones-code-runner#0.6.0",
     "paper-tristate-checkbox": "*"
   },
   "ignore": [],
