@@ -185,28 +185,6 @@
 
       <hr>
 
-      <!-- // TODO: Borrar -->
-      <template is="dom-if" if="{{_isDesktop()}}">
-        <paper-item style="text-align: center; margin-top: 20px">
-          <paper-item-body>
-            <template is="dom-if" if="{{!isDownloadingExercises}}">
-              <div>
-                [[localize("update-exercises")]]
-              </div>
-            </template>
-            <template is="dom-if" if="{{isDownloadingExercises}}">
-              <div style="font-size: small; color: gray">
-                <span>[[localize("updating")]]</span>
-                  <span>&nbsp;([[downloadProgress]])</span>
-              </div>
-            </template>
-          </paper-item-body>
-          <template is="dom-if" if="{{!isDownloadingExercises}}">
-            <paper-icon-button on-click="updateExercises" icon="icons:file-download" alt="refresh"> </paper-icon-button>
-          </template>
-        </paper-item>
-      </template>
-
       <div class="more-links">
         <template is="dom-if" if="{{!_isDesktop()}}">
           [[localize("download-desktop")]]<br />
@@ -266,22 +244,10 @@
           value: true
         },
         selectedLanguage: Number,
-        isDownloadingExercises: {
-          type: Boolean,
-          value: false
-        },
-        downloadProgress: {
-          type: String,
-          value: "0"
-        },
         permissions: {
           type: Object,
           value: { can_use_library: true }
         }
-        // downloadTotal: {
-        //   type: Number,
-        //   value: 0
-        // }
       },
       observers: [
         "_onSelectedLanguageChanged(selectedLanguage)"
@@ -330,29 +296,6 @@
               } : {})
             .value()
         );
-      },
-
-      updateExercises: function() {
-        const bytes = window.GBS_REQUIRE("bytes");
-
-        this.isDownloadingExercises = true;
-        this.downloadProgress = "...";
-        //this.downloadTotal = 0;
-
-        const courseSlug = prompt(this.localize("download-course-slug"));
-        window.GBS_IS_DOWNLOADING_GUIDE = true;
-        DesktopGuideLoader.download(courseSlug, (loaded, total) => {
-          this.downloadProgress = bytes(loaded);
-          //this.downloadTotal = total;
-        }).then(() => {
-          this.isDownloadingExercises = false;
-          window.GBS_IS_DOWNLOADING_GUIDE = false;
-          this._tryReload();
-        }).catch((e) => {
-          this.isDownloadingExercises = false;
-          window.GBS_IS_DOWNLOADING_GUIDE = false;
-          alert(this.localize("download-course-error"));
-        });
       },
 
       seeGeneratedCode: function() {
@@ -413,7 +356,7 @@
       },
 
       getCourseName: function() {
-        return getParameterByName("course") || "---";
+        return window.COURSE() || "---";
       },
 
       _downloadDesktopWindows: function() {

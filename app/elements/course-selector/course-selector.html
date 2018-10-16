@@ -29,14 +29,46 @@
     <form action="javascript:void(0);">
       <div class="input-course">
         <paper-input class="input-course-input" label$="{{localize('insert-course-slug')}}" value="{{slug}}"></paper-input>
-        <button class="input-course-button" class="submit" type="submit" on-click="goToCourse">[[localize("go-to-course")]]</button>
+
+        <template is="dom-if" if="{{isDesktop()}}">
+          <button class="input-course-button" class="submit" type="submit" on-click="downloadCourse">[[localize("download-course")]]</button>
+        </template>
+        <template is="dom-if" if="{{!isDesktop()}}">
+          <button class="input-course-button" class="submit" type="submit" on-click="goToCourse">[[localize("go-to-course")]]</button>
+        </template>
       </div>
     </form>
 
     <template is="dom-if" if="{{availableCourses.length}}">
       <h1 class="available-courses">[[localize("available-courses")]]</h1>
       <template is="dom-repeat" items="{{availableCourses}}">
-        <li><a href="javascript: void(0);" on-click="onGoToClick">[[item.name]]</a></li>
+        <li>
+          <span hidden$="{{isDesktop()}}">
+            <a href="javascript: void(0);" on-click="onGoToClick">[[item.name]]</a>
+          </span>
+          <span hidden$="{{!isDesktop()}}">
+            <span hidden$="{{!item.path}}">
+              <a href="javascript: void(0);" on-click="onGoToClick">[[item.name]]</a>
+            </span>
+            <span hidden$="{{item.path}}">
+              [[item.name]]
+            </span>
+          </span>
+
+          <span hidden$="{{!isDesktop()}}">
+            <span hidden$="{{item.isDownloading}}">
+              <paper-button style="z-index: 99" on-click="onDownloadCourse"><iron-icon class="black-button" icon="icons:refresh"></iron-icon></paper-button>
+              <paper-button style="z-index: 99" on-click="onDeleteCourse"><iron-icon class="black-button" icon="icons:remove"></iron-icon></paper-button>
+            </span>
+
+            <span hidden$="{{!item.isDownloading}}">
+              <span style="font-size: small; color: gray">
+                <span>[[localize("updating")]]</span>
+                <span>([[item.downloadProgress]])</span>
+              </span>
+            </span>
+          </span>
+        </li>
       </template>
     </template>
   </template>
@@ -55,23 +87,144 @@
       ready: function() {
         this.COURSES_URL = "https://raw.githubusercontent.com/wiki/gobstones/gobstones-web/Courses.md";
 
-        this.slug = getParameterByName("course");
+        this.slug = window.COURSE();
+        this._loadCourses();
+      },
 
-        $.getJSON(this.COURSES_URL).then((courses) => {
-          this.availableCourses = courses;
-        });
+      goToCourse: function() {
+        if (_.isEmpty(this.slug)) return;
+
+        this.goTo(this.slug);
+      },
+
+      downloadCourse: function() {
+        if (_.isEmpty(this.slug)) return;
+
+        this.requestDownload({ course: this.slug });
       },
 
       onGoToClick: function(event) {
         this.goTo(event.model.item.course);
       },
 
-      goToCourse: function() {
-        this.goTo(this.slug);
+      onDownloadCourse: function(event) {
+        this.requestDownload(event.model.item);
       },
 
-      goTo: function(item) {
-        document.location.search = "?course=" + item;
+      onDeleteCourse: function(event) {
+        const course = event.model.item;
+        this._saveCourses(this.availableCourses.filter((it) => it !== course));
+      },
+
+      goTo: function(slug) {
+        document.location.search = "?course=" + slug;
+      },
+
+      requestDownload: function(course) {
+        const slug = course.course;
+        const dialog = window.GBS_REQUIRE("electron").remote.dialog;
+        const fs = window.GBS_REQUIRE("fs");
+
+        const paths = dialog.showOpenDialog({
+          title: this.localize("download-course-path"),
+          buttonLabel: this.localize("download-course-save"),
+          properties: ["openDirectory"],
+          defaultPath: course.path
+        });
+
+        if (!paths || !paths[0]) return;
+        const path = paths[0];
+
+        if (fs.existsSync(`${path}/content`)) {
+          alert(this.localize("download-course-folder-not-empty"));
+          return;
+        }
+
+        this._saveCourses(_.uniqBy(this.availableCourses.concat({
+          name: slug,
+          course: slug
+        }), "course"));
+
+        this._download(this._getCourse(slug), path);
+      },
+
+      isDesktop: function() {
+        return window.GBS_DESKTOP;
+      },
+
+      _download: function(course, path) {
+        const bytes = window.GBS_REQUIRE("bytes");
+
+        course.isDownloading = true;
+        course.downloadProgress = "...";
+
+        const courseSlug = course.course;
+        this._updateGlobalDownloadState();
+        DesktopGuideLoader.download(courseSlug, (loaded, total) => {
+          this._changeCourse(course, (it) => it.downloadProgress = bytes(loaded));
+        }, path).then(() => {
+          this._changeCourse(course, (it) => {
+            it.path = path;
+            it.isDownloading = false;
+          });
+          this._saveCourses();
+          this._updateGlobalDownloadState(true);
+        }).catch((e) => {
+          this._changeCourse(course, (it) => {
+            it.isDownloading = false;
+          });
+          this._updateGlobalDownloadState();
+          alert(this.localize("download-course-error"));
+        });
+      },
+
+      _loadCourses: function() {
+        if (this.isDesktop()) {
+          this.availableCourses = this._getSavedCourses();
+        } else {
+          $.getJSON(this.COURSES_URL).then((availableCourses) => {
+            this.availableCourses = availableCourses;
+          });
+        }
+      },
+
+      _saveCourses: function(courses = this.availableCourses) {
+        window.STORAGE.setItem("courses", courses.map((it) => {
+          const course = _.clone(it);
+          course.isDownloading = undefined;
+          course.downloadProgress = undefined;
+          return course;
+        }));
+
+        this.availableCourses = [];
+        this.availableCourses = courses;
+      },
+
+      _updateGlobalDownloadState: function(tryReload = false) {
+        const wasEnabled = window.GBS_IS_DOWNLOADING_GUIDE;
+        window.GBS_IS_DOWNLOADING_GUIDE = this.availableCourses.some((it) => it.isDownloading);
+        if (tryReload && wasEnabled && !window.GBS_IS_DOWNLOADING_GUIDE) this._tryReload();
+      },
+
+      _tryReload: function() {
+        if (!confirm(this.localize("you-must-reload"))) return;
+        location.reload();
+      },
+
+      _changeCourse: function(course, func) {
+        this.availableCourses = this.availableCourses.map((it) => {
+          const newCourse = _.clone(it);
+          if (it.course === course.course) func(newCourse);
+          return newCourse;
+        });
+      },
+
+      _getCourse: function(slug) {
+        return _.find(this.availableCourses, { course: slug });
+      },
+
+      _getSavedCourses: function() {
+        return window.STORAGE.getItem("courses") || [];
       }
     });
   </script>
