@@ -9,7 +9,6 @@
 <link rel="import" href="../../scripts/loaders/components/libraryLoader.html">
 <link rel="import" href="../../scripts/loaders/components/codeBlocksLoader.html">
 <link rel="import" href="../../scripts/loaders/components/libraryBlocksLoader.html">
-<link rel="import" href="../../scripts/loaders/components/appendBlocksLoader.html"
 <link rel="import" href="../../scripts/loaders/components/initialBoardLoader.html">
 <link rel="import" href="../../scripts/loaders/components/attires/individualAttireLoader.html">
 <link rel="import" href="../../scripts/loaders/components/finalBoardLoader.html">
@@ -151,12 +150,6 @@
             <paper-icon-button on-click="seeGeneratedCode" icon="icons:code" alt="save"> </paper-icon-button>
             <paper-icon-button on-click="saveGeneratedCode" icon="icons:save" alt="save"> </paper-icon-button>
           </paper-item>
-          <paper-item>
-            <paper-item-body>
-              <div>[[localize("add-blocks")]]</div>
-            </paper-item-body>
-            <paper-icon-button on-click="loadAppendBlocks" icon="icons:folder-open" alt="open"> </paper-icon-button>
-          </paper-item>
         </template>
       </div>
 
@@ -244,8 +237,6 @@
           <input id="Blocks" type="file" accept=".gbk" on-change="onLoadedBlocks" style="visibility: hidden;" />
 
           <input id="Library" type="file" accept=".gbk" on-change="onLoadedLibrary" style="visibility: hidden;" />
-
-          <input id="AppendBlocks" type="file" accept=".gbk" on-change="onLoadedAppendBlocks" style="visibility: hidden;" />
         </template>
 
         <input id="InitialBoard" type="file" accept=".gbb" on-change="onLoadedInitialBoard" style="visibility: hidden;" />
@@ -335,8 +326,7 @@
             .assign(
               this._isBlocksOrTeacherProject(this.projectType) ? {
                 Blocks: new CodeBlocksLoader,
-                GeneratedCode: generatedCodeLoader,
-                AppendBlocks: new AppendBlocksLoader
+                GeneratedCode: generatedCodeLoader
               } : {})
             .value()
         );
