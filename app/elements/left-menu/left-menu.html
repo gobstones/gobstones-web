@@ -185,28 +185,6 @@
 
       <hr>
 
-      <!-- // TODO: Borrar -->
-      <template is="dom-if" if="{{_isDesktop()}}">
-        <paper-item style="text-align: center; margin-top: 20px">
-          <paper-item-body>
-            <template is="dom-if" if="{{!isDownloadingExercises}}">
-              <div>
-                [[localize("update-exercises")]]
-              </div>
-            </template>
-            <template is="dom-if" if="{{isDownloadingExercises}}">
-              <div style="font-size: small; color: gray">
-                <span>[[localize("updating")]]</span>
-                  <span>&nbsp;([[downloadProgress]])</span>
-              </div>
-            </template>
-          </paper-item-body>
-          <template is="dom-if" if="{{!isDownloadingExercises}}">
-            <paper-icon-button on-click="updateExercises" icon="icons:file-download" alt="refresh"> </paper-icon-button>
-          </template>
-        </paper-item>
-      </template>
-
       <div class="more-links">
         <template is="dom-if" if="{{!_isDesktop()}}">
           [[localize("download-desktop")]]<br />
@@ -266,14 +244,6 @@
           value: true
         },
         selectedLanguage: Number,
-        isDownloadingExercises: {
-          type: Boolean,
-          value: false
-        },
-        downloadProgress: {
-          type: String,
-          value: "0"
-        },
         permissions: {
           type: Object,
           value: { can_use_library: true }

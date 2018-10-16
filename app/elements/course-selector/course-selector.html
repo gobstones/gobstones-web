@@ -29,14 +29,27 @@
     <form action="javascript:void(0);">
       <div class="input-course">
         <paper-input class="input-course-input" label$="{{localize('insert-course-slug')}}" value="{{slug}}"></paper-input>
-        <button class="input-course-button" class="submit" type="submit" on-click="goToCourse">[[localize("go-to-course")]]</button>
+
+        <template is="dom-if" if="{{isDesktop()}}">
+          <paper-button class="input-course-button" style="z-index: 99" on-click="onDownloadCurrentCourse"><iron-icon class="black-button" icon="icons:file-download"></iron-icon></paper-button>
+        </template>
+        <template is="dom-if" if="{{!isDesktop()}}">
+          <button class="input-course-button" class="submit" type="submit" on-click="goToCourse">[[localize("go-to-course")]]</button>
+        </template>
       </div>
     </form>
 
     <template is="dom-if" if="{{availableCourses.length}}">
       <h1 class="available-courses">[[localize("available-courses")]]</h1>
       <template is="dom-repeat" items="{{availableCourses}}">
-        <li><a href="javascript: void(0);" on-click="onGoToClick">[[item.name]]</a></li>
+        <li>
+          <a href="javascript: void(0);" on-click="onGoToClick">[[item.name]]</a>
+          <span hidden$="{{!isDesktop()}}">
+            <span hidden$="{{hasCourse(item)}}">
+              <paper-button style="z-index: 99" on-click="onDownloadCourse"><iron-icon class="black-button" icon="icons:file-download"></iron-icon></paper-button>
+            </span>
+          </span>
+        </li>
       </template>
     </template>
   </template>
@@ -57,21 +70,57 @@
 
         this.slug = getParameterByName("course");
 
-        $.getJSON(this.COURSES_URL).then((courses) => {
-          this.availableCourses = courses;
-        });
+        this._loadCourses();
       },
 
       onGoToClick: function(event) {
         this.goTo(event.model.item.course);
       },
 
+      onDownloadCurrentCourse: function() {
+        this.download({ course: this.slug });
+      },
+
+      onDownloadCourse: function(event) {
+        this.download(event.model.item);
+      },
+
       goToCourse: function() {
         this.goTo(this.slug);
       },
 
-      goTo: function(item) {
-        document.location.search = "?course=" + item;
+      goTo: function(slug) {
+        document.location.search = "?course=" + slug;
+      },
+
+      download: function(course) {
+        const slug = course.course;
+        alert("VOY A DESCARGAR " + slug);
+      },
+
+      hasCourse: function(item) {
+        return item.path != null;
+      },
+
+      isDesktop: function() {
+        return window.GBS_DESKTOP;
+      },
+
+      _loadCourses: function() {
+        const savedCourses = this._getSavedCourses();
+
+        if (_.isEmpty(savedCourses)) {
+          $.getJSON(this.COURSES_URL).then((availableCourses) => {
+            window.STORAGE.setItem("courses", availableCourses);
+            this.availableCourses = availableCourses;
+          });
+        } else {
+          this.availableCourses = savedCourses;
+        }
+      },
+
+      _getSavedCourses: function() {
+        return window.STORAGE.getItem("courses") || [];
       }
     });
   </script>
