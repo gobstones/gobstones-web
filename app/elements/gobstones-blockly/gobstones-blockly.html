@@ -16,7 +16,7 @@
       ? route
       : `https://gobstones.github.io/gobstones-web/${route}`;
   }
-  
+
   window.GBS_GET_BLOCKLY_LOCAL_MEDIA_DIR = function() {
     const route = "bower_components/gs-element-blockly/media/";
 
@@ -135,7 +135,7 @@
           this._setEmptyProceduresMessageListener();
         }, 0)
 
-        window.blockly = this.$.blockly; // TODO: Es para debuggear
+        window.blockly = this.$.blockly;
       },
 
       addCode: function(xml) {

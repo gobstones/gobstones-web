@@ -636,6 +636,10 @@
         this.i++; // ^ to force computed update
         this.selectedAttire = 0;
 
+        // TODO: Unhack - refresh computed attributes
+        this._bootstrap();
+        this.removeCurrentBoard();
+
         window.BUS.fire("reset");
       },
 
