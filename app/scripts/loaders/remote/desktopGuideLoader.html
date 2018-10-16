@@ -48,7 +48,8 @@
         .then((file) => {
           fs.writeFileSync(zipPath, new Buffer(file));
 
-          try { fs.mkdirSync(path); } catch (e) { }
+          try { fs.rmdirSync(contentPath); } catch (e) { }
+          try { fs.mkdirSync(contentPath); } catch (e) { }
 
           const deferred = new $.Deferred();
           unzipper.on("error", (err) => {

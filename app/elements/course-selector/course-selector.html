@@ -31,7 +31,7 @@
         <paper-input class="input-course-input" label$="{{localize('insert-course-slug')}}" value="{{slug}}"></paper-input>
 
         <template is="dom-if" if="{{isDesktop()}}">
-          <button class="input-course-button" class="submit" type="submit" on-click="downloadCourse">Descargar curso</button> <!-- // TODO: i18n -->
+          <button class="input-course-button" class="submit" type="submit" on-click="downloadCourse">[[localize("download-course")]]</button>
         </template>
         <template is="dom-if" if="{{!isDesktop()}}">
           <button class="input-course-button" class="submit" type="submit" on-click="goToCourse">[[localize("go-to-course")]]</button>
@@ -57,7 +57,7 @@
 
           <span hidden$="{{!isDesktop()}}">
             <span hidden$="{{item.isDownloading}}">
-              <paper-button style="z-index: 99" on-click="onDownloadCourse"><iron-icon class="black-button" icon="icons:file-download"></iron-icon></paper-button>
+              <paper-button style="z-index: 99" on-click="onDownloadCourse"><iron-icon class="black-button" icon="icons:refresh"></iron-icon></paper-button>
               <paper-button style="z-index: 99" on-click="onDeleteCourse"><iron-icon class="black-button" icon="icons:remove"></iron-icon></paper-button>
             </span>
 
@@ -126,8 +126,8 @@
         const fs = window.GBS_REQUIRE("fs");
 
         const paths = dialog.showOpenDialog({
-          title: "DAME EL PATH DONDE LO QUERÉS PONER", // TODO: i18n
-          buttonLavel: "GUARDARLO ACÁ",
+          title: this.localize("download-course-path"),
+          buttonLabel: this.localize("download-course-save"),
           properties: ["openDirectory"],
           defaultPath: course.path
         });
@@ -141,7 +141,7 @@
         // TODO: Recordar el último curso abierto
 
         if (fs.existsSync(`${path}/content`)) {
-          alert("El directorio ya tiene contenido. Asegurate de que esté vacío."); // TODO: i18n
+          alert(this.localize("download-course-folder-not-empty"));
           return;
         }
 
