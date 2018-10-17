@@ -351,9 +351,7 @@
       </div>
     </div>
 
-    <template is="dom-if" if="{{withRunner}}">
-      <code-runner class="run-button" id="runner"></code-runner>
-    </template>
+    <code-runner class="run-button" id="runner"></code-runner>
 
     <paper-dialog id="inspectResultsModal" class="inspect-results-modal">
       <paper-button class="accept close" dialog-confirm autofocus><iron-icon icon="icons:close"></iron-icon></paper-button>
@@ -388,10 +386,6 @@
             running: false,
             wasShowingCode: false
           }
-        },
-        withRunner: {
-          type: Boolean,
-          value: false
         },
         selectedTab: {
           type: Number,

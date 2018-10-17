@@ -40,13 +40,6 @@
         padding-bottom: 15px;
         color: black;
       }
-
-      .run-button {
-        position: absolute;
-        bottom: 16px;
-        right: 16px;
-        z-index: 99;
-      }
     </style>
 
     <iron-localstorage name="font-size" value="{{fontSize}}" on-iron-localstorage-load-empty="_initializeDefaultFontSize"></iron-localstorage>
@@ -89,10 +82,6 @@
           </template>
         </div>
       </template>
-    </template>
-
-    <template is="dom-if" if="{{withRunner}}">
-      <code-runner class="run-button" id="runner"></code-runner>
     </template>
   </template>
 
@@ -146,9 +135,10 @@
         this.DEFAULT_FONT_SIZE = 17;
         this.HOP_SIZE = 3;
 
-        setTimeout(() => {
-          if (this.withRunner) {
-            this.runner = this.$$("#runner");
+        if (this.withRunner) {
+          const boardsPanel = document.getElementById("boards");
+          if (boardsPanel) {
+            this.runner = boardsPanel.$.runner;
             this.runner.addEventListener("run", ({ detail }) => {
               this._onRunRequest(detail)
               this.readonly = true;
@@ -165,14 +155,14 @@
             this.runner.addEventListener("end", () => {
               this.readonly = false;
             });
-
-            this.subscribeTo("initial-state", (event) => {
-              this._runCode(event);
-            }).subscribeTo("interactive-run", () => {
-              this.isInteractiveOn = true;
-            });
           }
-        });
+
+          this.subscribeTo("initial-state", (event) => {
+            this._runCode(event);
+          }).subscribeTo("interactive-run", () => {
+            this.isInteractiveOn = true;
+          });
+        }
 
         this.subscribeTo("toggle-procedures-hint", () => {
           this.isShowingProceduresHint = !this.isShowingProceduresHint;
