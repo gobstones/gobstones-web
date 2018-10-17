@@ -125,3 +125,15 @@ blockquote {
 iron-dropdown > #contentWrapper {
   width: 350px;
 }
+
+.gbs_gh {
+  outline: 3px solid #129841 !important;
+}
+
+.paper-fab-0 {
+  background: #129841 !important;
+}
+
+.boards-tabs {
+  background: #b50909 !important;
+}
