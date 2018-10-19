@@ -370,7 +370,7 @@
         const ide = this._ide();
 
         if (!ide.DESKTOP_RELEASE) return this._goToLatestRelease();
-        location.href = `https://github.com/gobstones/gobstones-web-desktop/releases/download/${ide.DESKTOP_RELEASE}/gobstones-${this._getCommertialName()}-linux-${ide.DESKTOP_RELEASE}.zip`;
+        location.href = `https://github.com/gobstones/gobstones-web-desktop/releases/download/${ide.DESKTOP_RELEASE}/gobstones-${this._getCommertialName()}-linux-${ide.DESKTOP_RELEASE}.AppImage`;
       },
 
       _getCommertialName: function() {
