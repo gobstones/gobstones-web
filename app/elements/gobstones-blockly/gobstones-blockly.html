@@ -264,6 +264,7 @@
         this.code[this.mode] = newCode;
 
         this.fire("content-change");
+        this.$.blockly.workspace.removeBlockErrors();
       },
 
       _onTeacherLibraryChange: function(teacherCode, withErrorReport = false) {
