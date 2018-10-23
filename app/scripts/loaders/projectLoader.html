@@ -71,7 +71,8 @@
         context.boards.removeFirstBoard();
 
         console.log("Reading attires...");
-        this.attireLoader.readFromZip(context, zip, () => {
+        this.attireLoader.readFromZip(context, zip, (err) => {
+          if (err) this._reportError(err);
           this._loadFilesWithLoaders(context, zip, [this.metadataLoader, this.descriptionLoader], callback);
         });
       });
@@ -104,13 +105,17 @@
             loader.readProjectContent(context, content, relativePath);
           } catch(e) {
             console.error(loader, e);
-            alert(`Error loading file ${relativePath}`);
+            this._reportError(`Error loading file ${relativePath}`);
           }
           callback();
         });
       });
 
       if (!handled) callback();
+    }
+
+    _reportError(message) {
+      alert(message);
     }
 
     _getContentType(relativePath) {

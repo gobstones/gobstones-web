@@ -33,7 +33,7 @@
     _processAttire(context, zipEntry, zip, pathPrefix, callback) {
       const findImage = path => {
         const imageZipEntry = zip.files[pathPrefix + path];
-        if (!imageZipEntry) throw new Error("Missing file in attire: " + path);
+        if (!imageZipEntry) callback("Missing file in attire: " + path);
         return imageZipEntry;
       };
 
