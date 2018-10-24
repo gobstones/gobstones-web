@@ -174,14 +174,16 @@
         <paper-toggle-button checked="{{showTutorial}}" on-change="_onShowTutorialChanged"></paper-toggle-button>
       </paper-item>
 
-      <hr>
+      <template is="dom-if" if="{{!isEmbedded()}}">
+        <hr>
 
-      <paper-item>
-        <paper-item-body>
-          <div><strong>[[localize("course")]]:</strong></div> <i>[[getCourseName()]]</i>
-        </paper-item-body>
-        <paper-icon-button on-click="openCourseSelector" icon="icons:card-travel" alt="open"> </paper-icon-button>
-      </paper-item>
+        <paper-item>
+          <paper-item-body>
+            <div><strong>[[localize("course")]]:</strong></div> <i>[[getCourseName()]]</i>
+          </paper-item-body>
+          <paper-icon-button on-click="openCourseSelector" icon="icons:card-travel" alt="open"> </paper-icon-button>
+        </paper-item>
+      </template>
 
       <hr>
 
@@ -357,6 +359,10 @@
 
       getCourseName: function() {
         return window.COURSE() || "---";
+      },
+
+      isEmbedded: function() {
+        return getParameterByName("embed") === "true";
       },
 
       _downloadDesktopWindows: function() {
