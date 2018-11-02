@@ -10,6 +10,7 @@
 <link rel="import" href="../../scripts/loaders/remote/fsLoader.html">
 <link rel="import" href="../course-selector/course-selector.html">
 <link rel="import" href="../project-selector/project-selector.html">
+<link rel="import" href="../about-gobstones/about-gobstones.html">
 <link rel="import" href="../code-viewer/code-viewer.html">
 
 <link rel="stylesheet" href="../../bower_components/material-walkthrough/dist/material-walkthrough.min.css">
@@ -124,6 +125,14 @@
         </div>
       </paper-dialog>
 
+      <paper-dialog id="aboutModal" class="about-modal">
+        <paper-button class="accept close" dialog-confirm autofocus><iron-icon icon="icons:close"></iron-icon></paper-button>
+
+        <paper-dialog-scrollable>
+          <about-gobstones></about-gobstones>
+        </paper-dialog-scrollable>
+      </paper-dialog>
+
       <paper-dialog id="projectSelectorModal" class="project-selector-modal">
         <paper-button class="accept close" dialog-confirm autofocus><iron-icon icon="icons:close"></iron-icon></paper-button>
 
@@ -223,6 +232,15 @@
         setTimeout(() => {
           window.GobstonesBoard.updateAllBoards();
         }, 500); // TODO: Deshacer hack
+      },
+
+      hideAboutModal: function() {
+        document.querySelector("#aboutModal").close();
+      },
+
+      showAboutModal: function() {
+        document.querySelector("#aboutModal").open();
+        this._closeDrawer();
       },
 
       hideProjectSelectorModal: function() {

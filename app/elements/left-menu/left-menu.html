@@ -200,7 +200,7 @@
 
         <div>
           <iron-icon icon="icons:info-outline"></iron-icon>
-          <a href="https://github.com/gobstones/gobstones-web/wiki/Acerca-de-Gobstones-Web" target="_blank">[[localize("about-gobstones-web")]]</a>
+          <a href="javascript: void(0)" on-click="_openAbout" target="_blank">[[localize("about-gobstones-web")]]</a>
         </div>
 
         <div>
@@ -398,6 +398,10 @@
 
       _goToLatestRelease: function() {
         location.href = "https://github.com/gobstones/gobstones-web-desktop/releases/latest";
+      },
+
+      _openAbout: function() {
+        this._ide().showAboutModal();
       },
 
       _onSelectedLanguageChanged: function(selectedLanguage) {
