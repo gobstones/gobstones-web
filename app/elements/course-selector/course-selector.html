@@ -147,7 +147,9 @@
       },
 
       goTo: function(slug) {
-        document.location.search = "?course=" + slug;
+        window.STORAGE.setItem("selected-guide", 0);
+        history.replaceState({}, '', '/')
+        location.href = `/#/${window.GBS_PROJECT_TYPE}?course=${slug}`;
       },
 
       requestDownload: function(course) {

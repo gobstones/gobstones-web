@@ -87,6 +87,15 @@
       transform: scale(0.8);
       width: 150px;
     }
+
+    .course-name {
+      position: absolute;
+      left: 16px;
+      top: -14px;
+      color: #0b465d;
+      font-family: monospace;
+      font-weight: 800;
+    }
   </style>
 
   <template>
@@ -122,6 +131,8 @@
           </paper-listbox>
         </paper-dropdown-menu>
       </div>
+
+      <span class="course-name">[[getCourseName()]]</span>
 
       <div class="container">
         <template is="dom-if" if="[[exercises]]">
@@ -240,6 +251,10 @@
 
       getItemTitle: function({ id, name }, selectedViewMode) {
         return /*"<strong>" + id + "</strong>" + (selectedViewMode !== 2 ? "<br>" : " ") +*/ name;
+      },
+
+      getCourseName: function() {
+        return window.COURSE() || "---";
       },
 
       _loadCurrentGuide: function() {
