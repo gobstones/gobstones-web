@@ -154,10 +154,9 @@
       const assets = inherit.$assets;
 
       if (inherit.$course && window.COURSE() !== inherit.$course) {
-        alert("Necesitas estar en el curso inherit.$course para hacer este ejercicio");
+        alert(context.ide.localize("course-needed-for-this-exercise") + inherit.$course);
         return;
       }
-      // TODO: Mejorar mensaje, i18n, etc
 
       const defaults = window.GBS_COURSE_ASSETS;
       if (!defaults) return;
