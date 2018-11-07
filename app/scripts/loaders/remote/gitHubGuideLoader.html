@@ -26,15 +26,16 @@
       if (!COURSE()) return $.Deferred().reject().promise();
 
       const guides = $.getJSON(`https://raw.githubusercontent.com/${COURSE()}/master/guides.json`);
-      const assets = new GitHubLoader(window.GBS_PROJECT_TYPE, COURSE()).loadDir("assets");
+      const assets = new GitHubLoader(window.GBS_PROJECT_TYPE, COURSE())
+        .loadDir("assets")
+        .then((assets) => {
+          window.GBS_COURSE_ASSETS = assets;
+        })
+        .catch(() => {});
 
-      assets.then((assets) => {
-        window.GBS_COURSE_ASSETS = assets;
+      return $.when.apply($, [guides, assets]).then(() => {
+        return guides;
       });
-
-      // TODO: No retornar hasta cargar todo
-
-      return guides;
     }
 
     static makeUrlFor(guide, exercise) {

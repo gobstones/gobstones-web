@@ -122,15 +122,7 @@
         this.stylist.setUpBlocklyCustomizations();
 
         setTimeout(() => {
-          if (window.LOAD_PENDING_PROJECT) {
-            window.LOAD_PENDING_PROJECT()
-            window.LOAD_PENDING_PROJECT = undefined;
-          } else {
-            this.fire("open-blocks-project-selector");
-          }
-        }, 0);
-
-        setTimeout(() => {
+          this.fire("open-blocks-project-selector");
           $(window).trigger("resize");
           this._setEmptyProceduresMessageListener();
         }, 0)
