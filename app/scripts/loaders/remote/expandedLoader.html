@@ -2,7 +2,7 @@
 
 <script>
   class ExpandedLoader extends RemoteLoader {
-    _createZip(files) {
+    createZip(files) {
       const entries = files.map(it => this._createZipEntry(it));
       const zip = _.clone(entries);
       zip.forEach = function(fn) {

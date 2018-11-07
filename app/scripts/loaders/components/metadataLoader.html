@@ -160,23 +160,23 @@
       // TODO: Mejorar mensaje, i18n, etc
       // TODO: Asegurarse que cargue primero esto
 
-      this._readInheritedOptions(context, options, metadata);
-      this._readInheritedAssets(context, assets);
+      const defaults = window.GBS_COURSE_ASSETS;
+      if (!defaults) return;
+
+      this._readInheritedOptions(context, defaults, options, metadata);
+      this._readInheritedAssets(context, defaults, assets);
     }
 
-    _readInheritedOptions(context, options, originalMetadata) {
+    _readInheritedOptions(context, defaults, options, originalMetadata) {
       const mapValuesDeep = (v, parentKey = '', callback) => {
         return _.isObject(v)
           ? _.mapValues(v, (v, k) => mapValuesDeep(v, _.compact([parentKey, k]).join('.'), callback))
           : callback(v, parentKey)
       };
 
-      const defaults = window.GBS_COURSE_ASSETS;
-      if (!defaults) return;
-
       let metadata = _.find(defaults, { relativePath: "assets/defaults.yml" });
       if (!metadata) return;
-      metadata = jsyaml.safeLoad(new TextDecoder("utf-8").decode(metadata.content));
+      metadata = jsyaml.safeLoad(this._asText(metadata.content));
 
       const defaultsToMerge = mapValuesDeep(options, undefined, (v, k) => {
         if (!v) return undefined;
@@ -187,9 +187,30 @@
       _.merge(originalMetadata, defaultsToMerge);
     }
 
-    _readInheritedAssets(context, assets) {
+    _readInheritedAssets(context, defaults, assets) {
       if (!assets) return;
 
+      if (assets.extra) {
+        let extraCode = _.find(defaults, { relativePath: "assets/extra.gbs" });
+        if (!extraCode) return;
+        extraCode = this._asText(extraCode.content);
+        new TeacherLoader().prependContent(context, extraCode);
+      }
+
+      if (assets.attires) {
+        const attireFiles = defaults.filter((it) => {
+          return _.some(assets.attires, (attireName) => {
+            return it.relativePath.startsWith(`assets/attires/${attireName}`);
+          })
+        });
+
+        const attiresZip = new ExpandedLoader().createZip(attireFiles);
+        new ProjectAttireLoader().readFromZip(context, attiresZip, () => {});
+      }
+    }
+
+    _asText(buffer) {
+      return new TextDecoder("utf-8").decode(buffer);
     }
 
     _buildYaml(metadata) {

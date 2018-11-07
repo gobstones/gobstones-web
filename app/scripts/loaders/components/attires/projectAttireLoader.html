@@ -2,7 +2,7 @@
 
 <script>
   class ProjectAttireLoader {
-    constructor(pathPrefix) {
+    constructor(pathPrefix = "assets/attires/") {
       this.FILENAME = "config.yml";
 
       this.reader = new AttireReader(relativePath => {

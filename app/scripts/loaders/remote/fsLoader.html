@@ -23,7 +23,7 @@
 
       try {
         const files = this.loadDir(this.path);
-        this.loader.readRaw(getContext(), this._createZip(files), callback);
+        this.loader.readRaw(getContext(), this.createZip(files), callback);
         deferred.resolve();
       } catch(e) {
         deferred.reject(e);

@@ -36,7 +36,7 @@
         if (this.initialPath !== undefined)
           files.forEach(it => it.relativePath = it.relativePath.replaceAll(`${this.initialPath}/`, ""));
 
-        this.loader.readRaw(getContext(), this._createZip(files), callback);
+        this.loader.readRaw(getContext(), this.createZip(files), callback);
       });
     }
 
