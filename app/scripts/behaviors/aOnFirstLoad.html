@@ -75,6 +75,8 @@
   };
   const desktopStorage = {
     setItem(key, value) {
+      if (typeof value === "boolean") value = value.toString();
+
       try {
         const data = readData();
         data[key] = value;
