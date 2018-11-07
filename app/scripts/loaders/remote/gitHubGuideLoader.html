@@ -23,7 +23,18 @@
     }
 
     static all() {
-      return $.getJSON(`https://raw.githubusercontent.com/${COURSE()}/master/guides.json`);
+      if (!COURSE()) return $.Deferred().reject().promise();
+
+      const guides = $.getJSON(`https://raw.githubusercontent.com/${COURSE()}/master/guides.json`);
+      const assets = new GitHubLoader(window.GBS_PROJECT_TYPE, COURSE()).loadDir("assets");
+
+      assets.then((assets) => {
+        window.GBS_COURSE_ASSETS = assets;
+      });
+
+      // TODO: No retornar hasta cargar todo
+
+      return guides;
     }
 
     static makeUrlFor(guide, exercise) {
