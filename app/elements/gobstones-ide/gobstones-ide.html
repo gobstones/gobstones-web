@@ -49,7 +49,7 @@
     }
 
     .gray {
-      filter: grayscale(100%);
+      filter: blur(10px);
     }
 
     .ide-modal {
@@ -176,13 +176,17 @@
         projectType: String,
         showIsLoading: {
           type: Boolean,
-          computed: "_computeShowIsLoading(isLoading, isLoadingProjects)",
+          computed: "_computeShowIsLoading(isLoading, isLoadingProjects, isLoadingAssets)",
         },
         isLoading: {
           type: Boolean,
           value: false
         },
         isLoadingProjects: {
+          type: Boolean,
+          value: false
+        },
+        isLoadingAssets: {
           type: Boolean,
           value: false
         },
@@ -405,8 +409,8 @@
         return showIsLoading ? "gray" : "";
       },
 
-      _computeShowIsLoading: function(isLoading, isLoadingProjects) {
-        return isLoading || isLoadingProjects;
+      _computeShowIsLoading: function(isLoading, isLoadingProjects, isLoadingAssets) {
+        return isLoading || isLoadingProjects || isLoadingAssets;
       },
 
       _setTheRightUrl() {

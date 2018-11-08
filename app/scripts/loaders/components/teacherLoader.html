@@ -16,5 +16,10 @@
     readContent(context, content) {
       this._setCode(context, content, "teacher");
     }
+
+    prependContent(context, content) {
+      const finalContent = `${content}\n${context.editor.code.teacher}`;
+      this._setCode(context, finalContent, "teacher");
+    }
   }
 </script>

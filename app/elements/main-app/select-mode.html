@@ -75,26 +75,19 @@ l">
 
       <paper-icon-button class="button button-teacher" on-click="useTeacher" icon="icons:card-membership" alt="use teacher"> </paper-icon-button>
     </div>
-
-    <input id="InitialBlocksProject" type="file" accept=".gbp" on-change="onInitialProjectLoad" style="display:none;" />
   </template>
 
   <script>
     Polymer({
       is: 'select-mode',
       behaviors: [
-        Polymer.LocalizationBehavior,
-        Polymer.LoaderBehavior
+        Polymer.LocalizationBehavior
       ],
 
       ready: function() {
-        this.setUpLoaders({
-          InitialBlocksProject: new ProjectBlocksLoader
-        });
       },
 
       useBlocks: function() {
-        //this.loadInitialBlocksProject();
         this._goTo("/blocks");
       },
 
@@ -104,14 +97,6 @@ l">
 
       useTeacher: function() {
         this._goTo("/teacher");
-      },
-
-      onInitialProjectLoad: function(event) {
-        this._goTo("/blocks");
-
-        window.LOAD_PENDING_PROJECT = () => {
-          this.onLoadedInitialBlocksProject(event);
-        };
       },
 
       _goTo: function(route) {

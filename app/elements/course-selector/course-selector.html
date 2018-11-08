@@ -148,8 +148,9 @@
 
       goTo: function(slug) {
         window.STORAGE.setItem("selected-guide", 0);
-        history.replaceState({}, '', '/')
-        location.href = `/#/${window.GBS_PROJECT_TYPE}?course=${slug}`;
+        cleanQueryString();
+        document.querySelector("app-router").go(`/${window.GBS_PROJECT_TYPE}?course=${slug}`);
+        location.reload();
       },
 
       requestDownload: function(course) {

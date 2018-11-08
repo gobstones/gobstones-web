@@ -32,23 +32,15 @@
     }
 
     load(getContext, callback) {
-      return this._loadDir(this.initialPath).then(files => {
+      return this.loadDir(this.initialPath).then(files => {
         if (this.initialPath !== undefined)
           files.forEach(it => it.relativePath = it.relativePath.replaceAll(`${this.initialPath}/`, ""));
 
-        this.loader.readRaw(getContext(), this._createZip(files), callback);
+        this.loader.readRaw(getContext(), this.createZip(files), callback);
       });
     }
 
-    scanDir(path = this.initialPath || "") {
-      const [ username, repoName ] = this.slug.split("/");
-
-      return $.get(
-        `https://api.github.com/repos/${username}/${repoName}/contents/${path}?client_id=${GITHUB_CLIENT_ID}&client_secret=${GITHUB_CLIENT_SECRET}`
-      );
-    }
-
-    _loadDir(path = "") {
+    loadDir(path = "") {
       return this.scanDir(path).then(entries => {
         const $files = entries.map(it =>
           this._loadEntry(it, path)
@@ -60,9 +52,17 @@
       });
     }
 
+    scanDir(path = this.initialPath || "") {
+      const [ username, repoName ] = this.slug.split("/");
+
+      return $.get(
+        `https://api.github.com/repos/${username}/${repoName}/contents/${path}?client_id=${GITHUB_CLIENT_ID}&client_secret=${GITHUB_CLIENT_SECRET}`
+      );
+    }
+
     _loadEntry(entry, path) {
       return entry.type === "dir"
-        ? this._loadDir(`${path}/${entry.name}`)
+        ? this.loadDir(`${path}/${entry.name}`)
         : this._downloadFile(entry.download_url, entry.path);
     }
 
