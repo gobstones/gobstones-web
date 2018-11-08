@@ -81,6 +81,10 @@
         );
         const guides = JSON.parse(json);
 
+        try {
+          window.GBS_COURSE_ASSETS = new FsLoader(window.GBS_PROJECT_TYPE, path).loadDir(`${path}/assets`);
+        } catch(e) { console.warn(e); }
+
         return promisify(guides);
       } catch(e) {
         console.warn(e);
