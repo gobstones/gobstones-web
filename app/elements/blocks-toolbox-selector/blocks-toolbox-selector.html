@@ -1,4 +1,5 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../scripts/behaviors/localizationBehavior.html">
 
 <dom-module id="blocks-toolbox-item">
   <template>
@@ -103,6 +104,11 @@
       ul {
         list-style-type: none;
       }
+
+      .toolbox-xml-container {
+        display: flex;
+        justify-content: center;
+      }
     </style>
 
     <ul>
@@ -110,26 +116,37 @@
         <blocks-toolbox-item item="{{item}}"></blocks-toolbox-item>
       </template>
     </ul>
+
+    <div class="toolbox-xml-container">
+      <iron-autogrow-textarea rows="5" bind-value="{{defaultToolbox}}" placeholder$="{{localize('insert-default-toolbox')}}"></iron-autogrow-textarea>
+    </div>
   </template>
 
   <script>
     Polymer({
       is: 'blocks-toolbox-selector',
       properties: {
+        defaultToolbox: {
+          type: String,
+          notify: String
+        },
         blocks: {
           type: Object,
           notify: true
         },
         _blocks: Array
       },
+      behaviors: [
+        Polymer.LocalizationBehavior
+      ],
       listeners: {
         "toolbox-changed": "_onBlocksUpdate"
       },
       observers: [
-        "onBlocksChanged(blocks.*)"
+        "onBlocksChanged(blocks.*, defaultToolbox)"
       ],
 
-      onBlocksChanged({ base: blocks }) {
+      onBlocksChanged({ base: blocks }, defaultToolbox) {
         if (this._isEditingBlocks) return;
 
         const forEachBlock = (array, func) => {
@@ -147,6 +164,18 @@
       },
 
       _getTree() {
+        const customDefaultToolbox = this.defaultToolbox;
+        const hasCustomDefaultToolbox = _.trim(customDefaultToolbox) !== "";
+        if (!hasCustomDefaultToolbox) return this._defaultTree();
+
+        return Blockly.Xml.textToDom(`
+          <xml id="toolbox" style="display: none">
+            ${customDefaultToolbox}
+          </xml>
+        `);
+      },
+
+      _defaultTree() {
         return Blockly.Xml.textToDom(`
           <xml id="toolbox" style="display: none">
             <category name="Comandos">
@@ -305,7 +334,8 @@
             this._isEditingBlocks = true;
             this.blocks = {
               visible: this._getVisibleBlocks(this._blocks),
-              disabled: this._getDisabledBlocks(this._blocks)
+              disabled: this._getDisabledBlocks(this._blocks),
+              defaultToolbox: _.trim(this.defaultToolbox) !== "" ? this.defaultToolbox : undefined
             };
             this._isEditingBlocks = false;
           }, 100);

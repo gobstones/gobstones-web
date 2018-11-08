@@ -147,7 +147,7 @@
         <div>[[localize("settings-blocks")]]</div>
       </paper-item>
 
-      <blocks-toolbox-selector blocks="{{metadata.blocks}}"></blocks-toolbox-selector>
+      <blocks-toolbox-selector default-toolbox="{{defaultToolbox}}" blocks="{{metadata.blocks}}"></blocks-toolbox-selector>
     </div>
   </template>
 
@@ -159,6 +159,7 @@
           type: Object,
           value: { }
         },
+        defaultToolbox: String,
         cover: {
           type: String,
           value: null
@@ -196,6 +197,7 @@
 
       reset: function() {
         this.setMetadata(this._defaultMetadata());
+        this.defaultToolbox = "";
         this.previewChanges = false;
         this.cover = null;
       },
@@ -236,6 +238,8 @@
 
         const editionFieldsOn = FIELDS_OF_EDITION_SECTION.some((it) => _.get(base, it));
         const attireFieldsOn = FIELDS_OF_ATTIRE_SECTION.some((it) => _.get(base, it));
+
+        this.defaultToolbox = base.blocks && base.blocks.defaultToolbox;
 
         try {
           if (!base.board.visible_edition && editionFieldsOn) {
