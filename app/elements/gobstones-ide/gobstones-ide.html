@@ -390,7 +390,7 @@
             parent = parent.parentElement;
           }
 
-          if ((!isBlocklyChild && event.ctrlKey) || isBlocklyToolboxChild) {
+          if (isBlocklyToolboxChild) {
             event.preventDefault();
             event.stopPropagation();
           }
