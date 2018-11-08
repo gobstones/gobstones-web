@@ -11,6 +11,7 @@
 
       this.SCALE = 0.8;
       this.DEFAULT_PERCENTAGE = 0.6;
+      this.MAX_PERCENTAGE = 0.9;
       this.TOOLBAR_HEIGHT = 64;
       this.IS_TOOLBOX_VISIBLE = () => this.toolboxVisible && (this.sizeVisible || this.attireVisible);
       this.TOOLBOX_HEIGHT = () =>
@@ -84,7 +85,7 @@
 
       $(window).resize(() => {
         const percentage = this._getPercentage();
-        const isBorder = Math.abs(1 - percentage) < 0.0001 || Math.abs(percentage) < 0.0001;
+        const isBorder = this._isBorder(percentage);
 
         if (!isBorder)
           window.STORAGE.setItem("code-panel-percentage", this._getPercentage());
@@ -211,7 +212,13 @@
 
     _getPercentage() {
       const leftPanel = $(this.LEFT_PANEL_CSS_CLASS);
-      return leftPanel.width() / this.lastDocumentWidth;
+      const percentage = leftPanel.width() / this.lastDocumentWidth;
+
+      return this._isBorder(percentage) ? percentage : Math.min(percentage, this.MAX_PERCENTAGE);
+    }
+
+    _isBorder(percentage) {
+      return Math.abs(1 - percentage) < 0.0001 || Math.abs(percentage) < 0.0001;
     }
 
     _getRightPanelWidth(percentage) {
