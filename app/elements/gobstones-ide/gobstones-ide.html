@@ -222,6 +222,10 @@
             this.DESKTOP_RELEASE = release.name;
           });
         }
+
+        // Hack de "necesitamos esto ya":
+        // TODO: Hacer timeout configurable en gobstones-code-runner y sacar esto.
+        Parser.prototype.hasFailed = function(result) { this.interpreter.config.setInfiniteLoopTimeout(10000); return result.reason };
       },
 
       setDescription: function(markdown) {
