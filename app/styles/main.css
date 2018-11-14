@@ -137,3 +137,19 @@ iron-dropdown > #contentWrapper {
 .boards-tabs {
   background: #b50909 !important;
 }
+
+.blocklyFlyoutBackground {
+  fill: #dcedf5 !important;
+}
+
+.blocklyToolboxDiv {
+  background-color: #dcedf5 !important;
+}
+
+.blocklyTreeRow:not(.blocklyTreeSelected):hover {
+  background-color: #ebf5f9 !important;
+}
+
+.blocklyTreeSelected {
+  background-color: #4ea7ca !important;
+}
