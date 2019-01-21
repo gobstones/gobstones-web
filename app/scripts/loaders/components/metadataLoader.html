@@ -172,7 +172,7 @@
           : callback(v, parentKey)
       };
 
-      let metadata = _.find(defaults, { relativePath: "assets/defaults.yml" });
+      let metadata = _.find(defaults, { relativePath: "assets/meta-defaults.yml" });
       if (!metadata) return;
       metadata = jsyaml.safeLoad(this._asText(metadata.content));
 
