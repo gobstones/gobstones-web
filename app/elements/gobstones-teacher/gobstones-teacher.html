@@ -270,6 +270,8 @@
           this.selectedTab = ID_TEACHER_LIBRARY;
           this._editors()[ID_TEACHER_LIBRARY].reportError(error);
         });
+
+        this._patchBlocklyPlaceholderBlocks();
       },
 
       preSave: function() {
@@ -478,6 +480,26 @@
       _onBlocksSyncClick: function() {
         if (this.blocksSyncEnabled) this._setBlocksSyncOff();
         else this._setBlocksSyncOn();
+      },
+
+      _patchBlocklyPlaceholderBlocks: function() {
+        const comandoCompletar = Blockly.Blocks.ComandoCompletar.init;
+        Blockly.Blocks.ComandoCompletar.init = function() {
+          comandoCompletar.call(this);
+          this.inputList[0].fieldRow[0].setText("COMPLETAR COMANDO");
+        }
+
+        const expresionCompletar = Blockly.Blocks.ExpresionCompletar.init;
+        Blockly.Blocks.ExpresionCompletar.init = function() {
+          expresionCompletar.call(this);
+          this.inputList[0].fieldRow[0].setText("COMPLETAR EXPRESIÓN");
+        }
+
+        const asociacionDeTeclaCompletar = Blockly.Blocks.AsociacionDeTeclaCompletar.init;
+        Blockly.Blocks.AsociacionDeTeclaCompletar.init = function() {
+          asociacionDeTeclaCompletar.call(this);
+          this.inputList[0].fieldRow[0].setText("COMPLETAR EVENTO");
+        }
       },
 
       _blocksClass: (selectedTab) => selectedTab === ID_BLOCKS ? "visible" : "unvisible",
