@@ -222,5 +222,8 @@
     "freebsd": {
       "packageCategory": "Education"
     }
+  },
+  "resolutions": {
+    "**/event-stream": "^4.0.1"
   }
 }
