@@ -1,4 +1,4 @@
-<script src="../../bower_components/file-saver/FileSaver.min.js"></script>
+<script src="../../bower_components/file-saver/dist/FileSaver.min.js"></script>
 
 <script>
   class Loader {
@@ -29,7 +29,7 @@
 
     _saveBlob(content, name) {
       const blob = new Blob([content]);
-      saveAs(blob, _.last(name.split("/")));
+      window.saveAs(blob, _.last(name.split("/")));
     }
 
     _clean(event) {
