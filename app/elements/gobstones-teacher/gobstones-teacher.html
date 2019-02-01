@@ -94,7 +94,7 @@
             </paper-tooltip>
           </template>
 
-          <paper-button id="add-solution-button" style="z-index: 99" on-click="addSolution"><iron-icon class="black-button" icon="icons:add"></iron-icon></paper-button>
+          <paper-button id="add-solution-button" style="z-index: 99" on-click="addSolutionByName"><iron-icon class="black-button" icon="icons:add"></iron-icon></paper-button>
           <paper-tooltip for="add-solution-button" position="bottom" animation-config="{{tooltipAnimation}}">
             <div class="button-tooltip">
               [[localize("tooltip-add-solution")]]
@@ -367,14 +367,21 @@
         this.selectedSolution = index;
       },
 
-      addSolution: function() {
+      addSolution: function(name = null) {
         const index = this.availableSolutions.length;
         this.push("availableSolutions", {
           code: { main: "", library: "", teacher: "" },
           workspace: { main: "", library: "" },
-          name: `${this.localize("solutions-solution")} ${index}`
+          name: name === null ? `${this.localize("solutions-solution")} ${index}` : name
         });
         this.selectedSolution = index;
+      },
+
+      addSolutionByName: function() {
+        const name = this._getUniqueSolutionName();
+        if (!name) return;
+
+        this.addSolution(name);
       },
 
       removeCurrentSolution: function() {
