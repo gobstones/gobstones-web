@@ -247,7 +247,7 @@
         let withExistsWarning = false;
 
         while (!name) {
-          const input = prompt(this.localize("attire-editor-add-new-attires-message") + (withExistsWarning ? this.localize("attire-editor-add-new-attires-message-warning") : ""));
+          const input = prompt(this.localize("attire-editor-add-new-attires-message") + (withExistsWarning ? this.localize("an-available-name") : ""));
           if (!input) return;
 
           const exists = this._boards().availableAttires.some((it) => it.name === input);

@@ -85,12 +85,14 @@
             </paper-listbox>
           </paper-dropdown-menu>
 
-          <paper-button id="rename-solution-button" style="z-index: 99" on-click="renameSolution"><iron-icon class="black-button" icon="icons:create"></iron-icon></paper-button>
-          <paper-tooltip for="rename-solution-button" position="bottom" animation-config="{{tooltipAnimation}}">
-            <div class="button-tooltip">
-              [[localize("tooltip-rename-solution")]]
-            </div>
-          </paper-tooltip>
+          <template is="dom-if" if="{{selectedSolution}}">
+            <paper-button id="rename-solution-button" style="z-index: 99" on-click="renameSolution"><iron-icon class="black-button" icon="icons:create"></iron-icon></paper-button>
+            <paper-tooltip for="rename-solution-button" position="bottom" animation-config="{{tooltipAnimation}}">
+              <div class="button-tooltip">
+                [[localize("tooltip-rename-solution")]]
+              </div>
+            </paper-tooltip>
+          </template>
 
           <paper-button id="add-solution-button" style="z-index: 99" on-click="addSolution"><iron-icon class="black-button" icon="icons:add"></iron-icon></paper-button>
           <paper-tooltip for="add-solution-button" position="bottom" animation-config="{{tooltipAnimation}}">
@@ -343,22 +345,26 @@
         return this._editors().forEach((editor) => editor.reset && editor.reset());
       },
 
-      getSolutionName: function(index, localize) {
-        return index === 0
-          ? localize("solutions-student")
-          : `${localize("solutions-solution")} ${index}`;
-      },
-
       getSolutionDisplayName: function(item, localize) {
         return item.name ? item.name : localize("solutions-student")
       },
 
       renameSolution: function() {
-        // const name = this._getUniqueSolutionName();
-        // if (!name) return;
+        const index = this.selectedSolution;
+        if (index === 0) return;
 
-        // this.set("attire.name", name);
-        // this._update();
+        const name = this._getUniqueSolutionName();
+        if (!name) return;
+
+        this.set(
+          `availableSolutions.${index}`,
+          Object.assign(
+            _.cloneDeep(this.availableSolutions[index]),
+            { name }
+          )
+        );
+        this.selectedSolution = 0;
+        this.selectedSolution = index;
       },
 
       addSolution: function() {
@@ -366,7 +372,7 @@
         this.push("availableSolutions", {
           code: { main: "", library: "", teacher: "" },
           workspace: { main: "", library: "" },
-          name: this.getSolutionName(index, this.localize)
+          name: `${this.localize("solutions-solution")} ${index}`
         });
         this.selectedSolution = index;
       },
@@ -382,20 +388,21 @@
       },
 
       _getUniqueSolutionName: function() {
-        // let name = null;
-        // let withExistsWarning = false;
+        let name = null;
+        let withExistsWarning = false;
 
-        // while (!name) {
-        //   const input = prompt(this.localize("attire-editor-add-new-attires-message") + (withExistsWarning ? this.localize("attire-editor-add-new-attires-message-warning") : ""));
-        //   if (!input) return;
+        while (!name) {
+          let input = prompt(this.localize("insert-solution-name") + (withExistsWarning ? this.localize("an-available-name") : ""));
+          if (!input) return;
 
-        //   const exists = this._boards().availableAttires.some((it) => it.name === input);
+          input = input.replace(/[^0-9A-Z -]/ig, "_");
+          const exists = this.availableSolutions.some((it) => it.name === input);
 
-        //   if (!exists) name = input;
-        //   else withExistsWarning = true;
-        // }
+          if (!exists) name = input;
+          else withExistsWarning = true;
+        }
 
-        // return name.slice(0, 25);
+        return name.slice(0, 25);
       },
 
       _setSolutionCode: function(code) {
