@@ -80,10 +80,17 @@
           <paper-dropdown-menu no-animations no-label-float vertical-align="bottom" horizontal-align="right">
             <paper-listbox class="dropdown-content" selected="{{selectedSolution}}">
               <template is="dom-repeat" items="{{ availableSolutions }}" rendered-item-count="{{solutionsCount}}">
-                <paper-item>{{getSolutionName(index, localize)}}</paper-item>
+                <paper-item>{{getSolutionDisplayName(item, localize)}}</paper-item>
               </template>
             </paper-listbox>
           </paper-dropdown-menu>
+
+          <paper-button id="rename-solution-button" style="z-index: 99" on-click="renameSolution"><iron-icon class="black-button" icon="icons:create"></iron-icon></paper-button>
+          <paper-tooltip for="rename-solution-button" position="bottom" animation-config="{{tooltipAnimation}}">
+            <div class="button-tooltip">
+              [[localize("tooltip-rename-solution")]]
+            </div>
+          </paper-tooltip>
 
           <paper-button id="add-solution-button" style="z-index: 99" on-click="addSolution"><iron-icon class="black-button" icon="icons:add"></iron-icon></paper-button>
           <paper-tooltip for="add-solution-button" position="bottom" animation-config="{{tooltipAnimation}}">
@@ -337,18 +344,31 @@
       },
 
       getSolutionName: function(index, localize) {
-        //return "asd";
         return index === 0
           ? localize("solutions-student")
           : `${localize("solutions-solution")} ${index}`;
       },
 
+      getSolutionDisplayName: function(item, localize) {
+        return item.name ? item.name : localize("solutions-student")
+      },
+
+      renameSolution: function() {
+        // const name = this._getUniqueSolutionName();
+        // if (!name) return;
+
+        // this.set("attire.name", name);
+        // this._update();
+      },
+
       addSolution: function() {
+        const index = this.availableSolutions.length;
         this.push("availableSolutions", {
           code: { main: "", library: "", teacher: "" },
-          workspace: { main: "", library: "" }
+          workspace: { main: "", library: "" },
+          name: this.getSolutionName(index, this.localize)
         });
-        this.selectedSolution = this.availableSolutions.length - 1;
+        this.selectedSolution = index;
       },
 
       removeCurrentSolution: function() {
@@ -359,6 +379,23 @@
 
       isBlocksOrCodeTabSelected: function(selectedTab) {
         return selectedTab === ID_BLOCKS || selectedTab === ID_CODE;
+      },
+
+      _getUniqueSolutionName: function() {
+        // let name = null;
+        // let withExistsWarning = false;
+
+        // while (!name) {
+        //   const input = prompt(this.localize("attire-editor-add-new-attires-message") + (withExistsWarning ? this.localize("attire-editor-add-new-attires-message-warning") : ""));
+        //   if (!input) return;
+
+        //   const exists = this._boards().availableAttires.some((it) => it.name === input);
+
+        //   if (!exists) name = input;
+        //   else withExistsWarning = true;
+        // }
+
+        // return name.slice(0, 25);
       },
 
       _setSolutionCode: function(code) {

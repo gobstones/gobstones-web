@@ -10,13 +10,13 @@
     }
 
     buildContent(context) {
-      return JSON.stringify({ count: context.editor.availableSolutions.length - 1 });
+      // return JSON.stringify({ count: context.editor.availableSolutions.length - 1 });
     }
 
     readContent(context, content) {
-      const solutions = JSON.parse(content);
-      for (let i = 0; i < solutions.count; i++) context.editor.addSolution();
-      context.editor.selectedSolution = 0;
+      // const solutions = JSON.parse(content);
+      // for (let i = 0; i < solutions.count; i++) context.editor.addSolution();
+      // context.editor.selectedSolution = 0;
     }
   }
 </script>

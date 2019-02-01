@@ -4,19 +4,19 @@
   class SolutionsLoader extends TextLoader {
     constructor() {
       super();
-      this.REGEXP = /assets\/solutions\/Solution(\d+)\.(gbs|gbk)/;
+      this.REGEXP = /assets\/solutions\/(.+)\.(gbs|gbk)/;
     }
 
     getFiles(context) {
       const editor = context.editor;
       const files = editor.availableSolutions.slice(1).map((solution, i) => {
         return {
-          name: `assets/solutions/Solution${i + 1}.gbs`,
+          name: `assets/solutions/${solution.name}.gbs`,
           content: solution.code.main
         };
       }).concat(editor.availableSolutions.slice(1).map((solution, i) => {
         return {
-          name: `assets/solutions/Solution${i + 1}.gbk`,
+          name: `assets/solutions/${solution.name}.gbk`,
           content: solution.workspace.main
         };
       }));
@@ -26,9 +26,17 @@
 
     readContent(context, content, fileName) {
       const resource = this._isBlocks(fileName) ? "workspace" : "code";
-      const index = parseInt(fileName.match(this.REGEXP)[1]);
+      const name = fileName.match(this.REGEXP)[1];
+      let index = _.findIndex(context.editor.availableSolutions, (it) => it.name === name, 1);
+
+      if (index < 0) {
+        context.editor.addSolution();
+        context.editor.selectedSolution = 0;
+        index = context.editor.availableSolutions.length - 1;
+      }
 
       context.editor.availableSolutions[index][resource].main = content;
+      context.editor.availableSolutions[index].name = name;
     }
 
     readProjectContent(context, content, fileName) {
