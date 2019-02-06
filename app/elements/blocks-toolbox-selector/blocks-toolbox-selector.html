@@ -281,7 +281,7 @@
             if (!info) return;
 
             const { name, alias } = info;
-            const hasVisibleBlocksList = blocks && blocks.visible.length > 0;
+            const hasVisibleBlocksList = blocks && blocks.visible && blocks.visible.length > 0;
 
             const item =  {
               name: name,
