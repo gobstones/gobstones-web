@@ -433,23 +433,27 @@
       },
 
       _setUpKeys: function() {
+        window.GBS_DISABLE_TUTORIAL = () => {
+          if (window.GBS_TOUR_ON) {
+            window.MATERIAL_WALKER_CLOSE();
+            window.GBS_TOUR_ON = false;
+            window.GBS_TOUR_ENDED = true;
+
+            setTimeout(() => {
+              if (confirm(this.localize("do-you-want-to-disable-tutorial"))) {
+                window.STORAGE.setItem("show-tutorial", false);
+                document.querySelector("#menu").showTutorial = false;
+              }
+            }, 150);
+
+
+            return;
+          }
+        };
+
         $(document).keydown((e) => {
           if (e.keyCode == 27) { // ESC
-            if (window.GBS_TOUR_ON) {
-              window.MATERIAL_WALKER_CLOSE();
-              window.GBS_TOUR_ON = false;
-              window.GBS_TOUR_ENDED = true;
-
-              setTimeout(() => {
-                if (confirm(this.localize("do-you-want-to-disable-tutorial"))) {
-                  window.STORAGE.setItem("show-tutorial", false);
-                  document.querySelector("#menu").showTutorial = false;
-                }
-              }, 150);
-
-
-              return;
-            }
+            window.GBS_DISABLE_TUTORIAL();
           }
         });
       },
@@ -464,7 +468,7 @@
         $.walk([
             {
               target: "#code-placeholder",
-              content: '<span style="font-size: small; color: #dbdbdb;">' + this.localize("tutorial-0") + '</span><br>' + this.localize("tutorial-1"),
+              content: '<a style="font-size: small; color: aliceblue" href="javascript: window.GBS_DISABLE_TUTORIAL()">' + this.localize("tutorial-0") + '</a><br>' + this.localize("tutorial-1"),
               color: '#2e3aa1',
               acceptText: 'OK'
             },
