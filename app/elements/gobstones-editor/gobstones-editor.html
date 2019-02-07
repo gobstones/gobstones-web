@@ -55,6 +55,7 @@
         max-width: 80%;
         max-height: 50%;
         color: black;
+        font-family: monospace, monospace;
       }
 
       .procedures-hint-content {
@@ -91,7 +92,13 @@
             </template>
             <template is="dom-repeat" items="{{primitiveProcedures}}" rendered-item-count="{{primitiveProceduresCount}}">
               <li>
-                {{item}}
+                {{item.name}}
+                <template is="dom-if" if="{{item.attributes.tooltip}}">
+                  <br>
+                  <i>{{item.attributes.tooltip}}</i>
+                  <br>
+                  <br>
+                </template>
               </li>
             </template>
 
@@ -102,7 +109,13 @@
             </template>
             <template is="dom-repeat" items="{{primitiveFunctions}}" rendered-item-count="{{primitiveFunctionsCount}}">
               <li>
-                {{item}}
+                {{item.name}}
+                <template is="dom-if" if="{{item.attributes.tooltip}}">
+                  <br>
+                  <i>{{item.attributes.tooltip}}</i>
+                  <br>
+                  <br>
+                </template>
               </li>
             </template>
           </div>
@@ -398,11 +411,11 @@
         window.BUS.fire("primitive-actions-off");
 
         try {
-          const actions = new Parser().getActionNamesFromSource(teacherCode);
+          const actions = new Parser().getActionsFromSource(teacherCode);
 
-          if (!_.isEmpty(actions.procedureNames) || !_.isEmpty(actions.functionNames)) {
-            this.primitiveProcedures = actions.procedureNames;
-            this.primitiveFunctions = actions.functionNames;
+          if (!_.isEmpty(actions.procedureDeclarations) || !_.isEmpty(actions.functionDeclarations)) {
+            this.primitiveProcedures = actions.procedureDeclarations;
+            this.primitiveFunctions = actions.functionDeclarations;
 
             window.BUS.fire("primitive-actions-on");
           }
