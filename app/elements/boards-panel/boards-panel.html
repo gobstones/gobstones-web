@@ -19,6 +19,25 @@
         text-align: center;
       }
 
+      .columns {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+      }
+
+      .left-column {
+        display: flex;
+        flex-direction: column;
+        align-items: start;
+      }
+
+      .middle-column {
+        flex: 1;
+      }
+
+      .right-column {
+      }
+
       .show-code-icon {
         margin-left: -5px;
         margin-right: 10px;
@@ -94,7 +113,6 @@
       }
 
       .boards-buttons {
-        /*position: absolute;*/
         margin-left: -16px;
         margin-top: -8px;
       }
@@ -121,15 +139,9 @@
       }
 
       .toggle-toolbox-button-up {
-        /*position: absolute;*/
-        left: 1px;
-        top: 119px;
       }
 
       .toggle-toolbox-button-down {
-        /*position: absolute*/;
-        left: 1px;
-        top: 72px;
       }
 
       .shortcut {
@@ -181,133 +193,143 @@
       <!-- TOAST -->
       <paper-toast class="toast" id="toast"></paper-toast>
 
-      <!-- TOOLBOX -->
-      <template is="dom-if" if="{{shouldShowToolbox(permissions.*, isToolboxVisible)}}">
-        <div class="boards-buttons">
-          <template is="dom-if" if="{{hasPermission(permissions.*, 'can_change_initial_board')}}">
-            <paper-menu-button id="board-select-button" class$="{{boardChangeButtonCss(selectedTab, permissions.*)}}">
-              <paper-icon-button icon="menu" class="dropdown-trigger"></paper-icon-button>
-              <paper-menu class="dropdown-content" selected="{{ selectedInitialState }}">
-                <template is="dom-repeat" items="{{ availableInitialStates }}">
-                  <paper-item>[[localize("initial-board")]] [[toOneBased(index)]]</paper-item>
-                </template>
-              </paper-menu>
-            </paper-menu-button>
-            <paper-tooltip for="board-select-button" position="bottom" animation-config="{{tooltipAnimation}}">
-              <div class="button-tooltip">
-                [[localize("tooltip-change-board")]]
-              </div>
-            </paper-tooltip>
-          </template>
-
-          <template is="dom-if" if="{{hasPermission(permissions.*, 'can_change_initial_board')}}">
-            <template is="dom-if" if="{{hasPermission(permissions.*, 'can_edit_board')}}">
-              <paper-button id="clean-board-button" style="z-index: 99" class="clean-board" on-click="cleanBoard"><iron-icon class$="{{boardButtonCss(selectedTab, showAttire, permissions.*)}}" icon="icons:delete-forever"></iron-icon></paper-button>
-              <paper-tooltip for="clean-board-button" position="bottom" animation-config="{{tooltipAnimation}}">
-                <div class="button-tooltip">
-                  [[localize("tooltip-clean-board")]]
-                </div>
-              </paper-tooltip>
-
-              <paper-button id="add-board-button" style="z-index: 99" class="add-or-remove-board" on-click="addBoard"><iron-icon class$="{{boardButtonCss(selectedTab, showAttire, permissions.*)}}" icon="icons:add"></iron-icon></paper-button>
-              <paper-tooltip for="add-board-button" position="bottom" animation-config="{{tooltipAnimation}}">
-                <div class="button-tooltip">
-                  [[localize("tooltip-add-board")]]
-                </div>
-              </paper-tooltip>
-
-              <paper-button id="remove-board-button" style="z-index: 99" class="add-or-remove-board" on-click="removeCurrentBoard"><iron-icon class$="{{boardButtonCss(selectedTab, showAttire, permissions.*)}}" icon="icons:remove"></iron-icon></paper-button>
-              <paper-tooltip for="remove-board-button" position="bottom" animation-config="{{tooltipAnimation}}">
-                <div class="button-tooltip">
-                  [[localize("tooltip-remove-board")]]
-                </div>
-              </paper-tooltip>
-            </template>
-          </template>
-        </div>
-
-        <template is="dom-if" if="{{!isInitialBoardNotEditable(selectedTab, showAttire, permissions.*)}}">
-          <paper-button style="z-index: 99" id="help" class="help-button"><iron-icon icon="icons:help"></iron-icon></paper-button>
-          <paper-tooltip for="help" position="left" animation-config="{{tooltipAnimation}}">
-            <div class="help-tooltip">
-              <div>
-                <span class="shortcut">[[localize("shortcut-add-stones")]]</span>: [[localize("shortcut-add-stones-description")]]
-              </div>
-              <div>
-                <span class="shortcut">[[localize("shortcut-remove-stones")]]</span>: [[localize("shortcut-remove-stones-description")]]
-              </div>
-              <div>
-                <span class="shortcut">[[localize("shortcut-set-header")]]</span>: [[localize("shortcut-set-header-description")]]
-              </div>
-            </div>
-          </paper-tooltip>
-        </template>
-      </template>
-
       <div class="boards-panel">
-        <template is="dom-if" if="{{shouldShowToolbox(permissions.*, isToolboxVisible)}}">
-          <template is="dom-if" if="{{hasPermission(permissions.*, 'can_view_size_section')}}">
-            <div class="size-bar">
-              <div class$="{{boardSizeCss(selectedTab, showAttire, permissions.*)}}">
-                <form>
-                  <div class="size-container">
-                    <strong>[[localize("size")]]:</strong>
-                    <paper-input class="size-input" value="{{sizeX}}" type="number" min="1" max="30" disabled$="{{isInitialBoardNotEditable(selectedTab, showAttire, permissions.*)}}"></paper-input>
-                  </div>
-                  <div class="size-container">
-                    <span>[[localize("columns")]] <strong>[[localize("by")]]</strong></span>
-                    <paper-input class="size-input" value="{{sizeY}}" type="number" min="1" max="30" disabled$="{{isInitialBoardNotEditable(selectedTab, showAttire, permissions.*)}}"></paper-input>
-                    <span>[[localize("rows")]]</span>
-                  </div>
-                </form>
-              </div>
-            </div>
-          </template>
-
-          <template is="dom-if" if="{{hasPermission(permissions.*, 'can_view_attire_section')}}">
-            <div class="attire-container">
-              <template is="dom-if" if="{{hasPermission(permissions.*, 'can_toggle_attire_visibility')}}">
-                <template is="dom-if" if="{{attiresCount}}">
-                  <paper-button id="show-attire-button" style="z-index: 99" on-click="toggleShowAttire"><iron-icon class="black-button" icon="icons:visibility"></iron-icon></paper-button>
-                  <paper-tooltip for="show-attire-button" position="bottom" animation-config="{{tooltipAnimation}}">
+        <div class="columns">
+          <div class="left-column">
+            <!-- TOOLBOX -->
+            <template is="dom-if" if="{{shouldShowToolbox(permissions.*, isToolboxVisible)}}">
+              <div class="boards-buttons">
+                <template is="dom-if" if="{{hasPermission(permissions.*, 'can_change_initial_board')}}">
+                  <paper-menu-button id="board-select-button" class$="{{boardChangeButtonCss(selectedTab, permissions.*)}}">
+                    <paper-icon-button icon="menu" class="dropdown-trigger"></paper-icon-button>
+                    <paper-menu class="dropdown-content" selected="{{ selectedInitialState }}">
+                      <template is="dom-repeat" items="{{ availableInitialStates }}">
+                        <paper-item>[[localize("initial-board")]] [[toOneBased(index)]]</paper-item>
+                      </template>
+                    </paper-menu>
+                  </paper-menu-button>
+                  <paper-tooltip for="board-select-button" position="bottom" animation-config="{{tooltipAnimation}}">
                     <div class="button-tooltip">
-                      <template is="dom-if" if="{{showAttire}}">
-                        [[localize("tooltip-hide-attire")]]
-                      </template>
-                      <template is="dom-if" if="{{!showAttire}}">
-                        [[localize("tooltip-show-attire")]]
-                      </template>
+                      [[localize("tooltip-change-board")]]
                     </div>
                   </paper-tooltip>
                 </template>
-              </template>
-              <strong>[[localize("attire")]]:</strong>
-              <paper-dropdown-menu no-animations no-label-float vertical-align="bottom" horizontal-align="right" disabled="{{!showAttire}}">
-                <paper-listbox class="dropdown-content" selected="{{selectedAttire}}">
-                  <template is="dom-repeat" items="{{ availableAttires }}" rendered-item-count="{{attiresCount}}">
-                    <paper-item>{{item.name}}</paper-item>
+
+                <template is="dom-if" if="{{hasPermission(permissions.*, 'can_change_initial_board')}}">
+                  <template is="dom-if" if="{{hasPermission(permissions.*, 'can_edit_board')}}">
+                    <paper-button id="clean-board-button" style="z-index: 99" class="clean-board" on-click="cleanBoard"><iron-icon class$="{{boardButtonCss(selectedTab, showAttire, permissions.*)}}" icon="icons:delete-forever"></iron-icon></paper-button>
+                    <paper-tooltip for="clean-board-button" position="bottom" animation-config="{{tooltipAnimation}}">
+                      <div class="button-tooltip">
+                        [[localize("tooltip-clean-board")]]
+                      </div>
+                    </paper-tooltip>
+
+                    <paper-button id="add-board-button" style="z-index: 99" class="add-or-remove-board" on-click="addBoard"><iron-icon class$="{{boardButtonCss(selectedTab, showAttire, permissions.*)}}" icon="icons:add"></iron-icon></paper-button>
+                    <paper-tooltip for="add-board-button" position="bottom" animation-config="{{tooltipAnimation}}">
+                      <div class="button-tooltip">
+                        [[localize("tooltip-add-board")]]
+                      </div>
+                    </paper-tooltip>
+
+                    <paper-button id="remove-board-button" style="z-index: 99" class="add-or-remove-board" on-click="removeCurrentBoard"><iron-icon class$="{{boardButtonCss(selectedTab, showAttire, permissions.*)}}" icon="icons:remove"></iron-icon></paper-button>
+                    <paper-tooltip for="remove-board-button" position="bottom" animation-config="{{tooltipAnimation}}">
+                      <div class="button-tooltip">
+                        [[localize("tooltip-remove-board")]]
+                      </div>
+                    </paper-tooltip>
                   </template>
-                </paper-listbox>
-              </paper-dropdown-menu>
-            </div>
-          </template>
-        </template>
+                </template>
+              </div>
+            </template>
 
-        <!-- TOGGLE TOOLBOX -->
-        <template is="dom-if" if="{{hasPermission(permissions.*, 'can_view_edition_panel')}}">
-          <paper-button id="toggle-toolbox-button" style="z-index: 99" class$="{{toggleToolboxButtonCss(isToolboxVisible)}}"><iron-icon icon$="{{toggleToolboxButtonIcon(isToolboxVisible)}}" on-click="toggleToolbox" class="black-button"></iron-icon></paper-button>
+            <!-- TOGGLE TOOLBOX -->
+            <template is="dom-if" if="{{hasPermission(permissions.*, 'can_view_edition_panel')}}">
+              <paper-button id="toggle-toolbox-button" style="z-index: 99" class$="{{toggleToolboxButtonCss(isToolboxVisible)}}"><iron-icon icon$="{{toggleToolboxButtonIcon(isToolboxVisible)}}" on-click="toggleToolbox" class="black-button"></iron-icon></paper-button>
 
-          <paper-tooltip for="toggle-toolbox-button" position="bottom" animation-config="{{tooltipAnimation}}">
-            <div class="button-tooltip">
-              <template is="dom-if" if="{{isToolboxVisible}}">
-                [[localize("tooltip-hide-toolbox")]]
+              <paper-tooltip for="toggle-toolbox-button" position="bottom" animation-config="{{tooltipAnimation}}">
+                <div class="button-tooltip">
+                  <template is="dom-if" if="{{isToolboxVisible}}">
+                    [[localize("tooltip-hide-toolbox")]]
+                  </template>
+                  <template is="dom-if" if="{{!isToolboxVisible}}">
+                    [[localize("tooltip-show-toolbox")]]
+                  </template>
+                </div>
+              </paper-tooltip>
+            </template>
+          </div>
+
+          <div class="middle-column">
+            <template is="dom-if" if="{{shouldShowToolbox(permissions.*, isToolboxVisible)}}">
+              <template is="dom-if" if="{{hasPermission(permissions.*, 'can_view_size_section')}}">
+                <div class="size-bar">
+                  <div class$="{{boardSizeCss(selectedTab, showAttire, permissions.*)}}">
+                    <form>
+                      <div class="size-container">
+                        <strong>[[localize("size")]]:</strong>
+                        <paper-input class="size-input" value="{{sizeX}}" type="number" min="1" max="30" disabled$="{{isInitialBoardNotEditable(selectedTab, showAttire, permissions.*)}}"></paper-input>
+                      </div>
+                      <div class="size-container">
+                        <span>[[localize("columns")]] <strong>[[localize("by")]]</strong></span>
+                        <paper-input class="size-input" value="{{sizeY}}" type="number" min="1" max="30" disabled$="{{isInitialBoardNotEditable(selectedTab, showAttire, permissions.*)}}"></paper-input>
+                        <span>[[localize("rows")]]</span>
+                      </div>
+                    </form>
+                  </div>
+                </div>
               </template>
-              <template is="dom-if" if="{{!isToolboxVisible}}">
-                [[localize("tooltip-show-toolbox")]]
+
+              <template is="dom-if" if="{{hasPermission(permissions.*, 'can_view_attire_section')}}">
+                <div class="attire-container">
+                  <template is="dom-if" if="{{hasPermission(permissions.*, 'can_toggle_attire_visibility')}}">
+                    <template is="dom-if" if="{{attiresCount}}">
+                      <paper-button id="show-attire-button" style="z-index: 99" on-click="toggleShowAttire"><iron-icon class="black-button" icon="icons:visibility"></iron-icon></paper-button>
+                      <paper-tooltip for="show-attire-button" position="bottom" animation-config="{{tooltipAnimation}}">
+                        <div class="button-tooltip">
+                          <template is="dom-if" if="{{showAttire}}">
+                            [[localize("tooltip-hide-attire")]]
+                          </template>
+                          <template is="dom-if" if="{{!showAttire}}">
+                            [[localize("tooltip-show-attire")]]
+                          </template>
+                        </div>
+                      </paper-tooltip>
+                    </template>
+                  </template>
+                  <strong>[[localize("attire")]]:</strong>
+                  <paper-dropdown-menu no-animations no-label-float vertical-align="bottom" horizontal-align="right" disabled="{{!showAttire}}">
+                    <paper-listbox class="dropdown-content" selected="{{selectedAttire}}">
+                      <template is="dom-repeat" items="{{ availableAttires }}" rendered-item-count="{{attiresCount}}">
+                        <paper-item>{{item.name}}</paper-item>
+                      </template>
+                    </paper-listbox>
+                  </paper-dropdown-menu>
+                </div>
               </template>
-            </div>
-          </paper-tooltip>
-        </template>
+            </template>
+          </div>
+
+          <div class="right-column">
+            <template is="dom-if" if="{{shouldShowToolbox(permissions.*, isToolboxVisible)}}">
+              <template is="dom-if" if="{{!isInitialBoardNotEditable(selectedTab, showAttire, permissions.*)}}">
+                <paper-button style="z-index: 99" id="help" class="help-button"><iron-icon icon="icons:help"></iron-icon></paper-button>
+                <paper-tooltip for="help" position="left" animation-config="{{tooltipAnimation}}">
+                  <div class="help-tooltip">
+                    <div>
+                      <span class="shortcut">[[localize("shortcut-add-stones")]]</span>: [[localize("shortcut-add-stones-description")]]
+                    </div>
+                    <div>
+                      <span class="shortcut">[[localize("shortcut-remove-stones")]]</span>: [[localize("shortcut-remove-stones-description")]]
+                    </div>
+                    <div>
+                      <span class="shortcut">[[localize("shortcut-set-header")]]</span>: [[localize("shortcut-set-header-description")]]
+                    </div>
+                  </div>
+                </paper-tooltip>
+              </template>
+            </template>
+          </div>
+        </div>
 
         <!-- BOARD -->
         <div class="theBoardContainer" style="position: relative;">
