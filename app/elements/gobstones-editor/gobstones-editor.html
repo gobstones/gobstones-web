@@ -284,40 +284,50 @@
       _runCode: function({ initialState, controller }, code = this.code) {
         this.editor.getSession().clearAnnotations();
 
-        try {
-          controller.start(
-            { initialState, code },
-            {
-              onCompilationError: (e) => {
-                if (e.message === "missing-program") {
-                  e.message = this.localize("missing-program");
-                  e.reason = {
-                    code: "missing-program",
-                    detail: []
-                  };
-                }
+        const DELAY = 500;
+        this._notify({
+          head: initialState.header,
+          width: initialState.size.x,
+          height: initialState.size.y,
+          table: initialState.table
+        });
 
-                this.reportError(e, "error");
-                window.BUS.fire("compilation-error");
+        setTimeout(() => {
+          try {
+            controller.start(
+              { initialState, code },
+              {
+                onCompilationError: (e) => {
+                  if (e.message === "missing-program") {
+                    e.message = this.localize("missing-program");
+                    e.reason = {
+                      code: "missing-program",
+                      detail: []
+                    };
+                  }
+
+                  this.reportError(e, "error");
+                  window.BUS.fire("compilation-error");
+                },
+                onTeacherCompilationError: (e) => {
+                  this.runner.reportTeacherLibraryErrors(e);
+                },
+                onInteractiveRun: () => {
+                  window.BUS.fire("interactive-run");
+                },
+                onResult: (state) => this._notify(state),
+                onReturnValue: (value, actualReturnValue) => {
+                  window.BUS.fire("return-value", { value: { value, actualReturnValue } });
+                }
               },
-              onTeacherCompilationError: (e) => {
-                this.runner.reportTeacherLibraryErrors(e);
-              },
-              onInteractiveRun: () => {
-                window.BUS.fire("interactive-run");
-              },
-              onResult: (state) => this._notify(state),
-              onReturnValue: (value, actualReturnValue) => {
-                window.BUS.fire("return-value", { value: { value, actualReturnValue } });
-              }
-            },
-            this.runner.speed
-          );
-        } catch (e) {
-          window.BUS.fire("unknown-error", e);
-          console.error("---UNKNOWN ERROR---");
-          throw e;
-        }
+              this.runner.speed
+            );
+          } catch (e) {
+            window.BUS.fire("unknown-error", e);
+            console.error("---UNKNOWN ERROR---");
+            throw e;
+          }
+        }, DELAY);
       },
 
       checkCompilationErrors: function() {
