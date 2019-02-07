@@ -59,9 +59,9 @@
         margin-left: 40% !important;
       }
 
-      .hidden {
-        visibility: hidden;
-      }
+      .hidden { visibility: hidden; }
+      .transparent { opacity: 0; }
+      .opaque { opacity: 1; }
 
       .tabs {
         margin-left: -10px;
@@ -142,6 +142,7 @@
       }
 
       .toggle-toolbox-button-down {
+        margin-top: 8px;
       }
 
       .shortcut {
@@ -199,7 +200,7 @@
             <!-- TOOLBOX -->
             <template is="dom-if" if="{{shouldShowToolbox(permissions.*, isToolboxVisible)}}">
               <div class="boards-buttons">
-                <template is="dom-if" if="{{hasPermission(permissions.*, 'can_change_initial_board')}}">
+                <div style="display: inline" class$="{{transparentOrOpaqueCss(permissions.*, 'can_change_initial_board')}}">
                   <paper-menu-button id="board-select-button" class$="{{boardChangeButtonCss(selectedTab, permissions.*)}}">
                     <paper-icon-button icon="menu" class="dropdown-trigger"></paper-icon-button>
                     <paper-menu class="dropdown-content" selected="{{ selectedInitialState }}">
@@ -213,7 +214,7 @@
                       [[localize("tooltip-change-board")]]
                     </div>
                   </paper-tooltip>
-                </template>
+                </div>
 
                 <template is="dom-if" if="{{hasPermission(permissions.*, 'can_change_initial_board')}}">
                   <template is="dom-if" if="{{hasPermission(permissions.*, 'can_edit_board')}}">
@@ -992,6 +993,11 @@
 
       toggleToolboxButtonIcon: function(isToolboxVisible) {
         return `icons:arrow-drop-${isToolboxVisible ? "up" : "down"}`;
+      },
+
+      transparentOrOpaqueCss(permissions, permissionName) {
+        const hasPermission = this.hasPermission(permissions, permissionName);
+        return hasPermission ? "opaque" : "transparent";
       },
 
       _updateStylistToolboxVisible: function(hasPermission = this.permissions.can_view_edition_panel, sizeVisible, attireVisible) {
