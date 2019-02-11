@@ -13,9 +13,11 @@
       zip.file(pathPrefix + this.FILENAME, this._serialize(attire));
 
       attire.rules.forEach(rule => {
-        const imageBase64 = rule.image.replace(this.BASE64_PREFIX, "");
-        const pngContent = toBinary(imageBase64);
-        zip.file(pathPrefix + rule.fileName, pngContent);
+        if (rule.image) {
+          const imageBase64 = rule.image.replace(this.BASE64_PREFIX, "");
+          const pngContent = toBinary(imageBase64);
+          zip.file(pathPrefix + rule.fileName, pngContent);
+        }
       });
     }
 
@@ -85,7 +87,7 @@
     _transform(attire) {
       const copy = _.cloneDeep(attire);
       copy.rules.forEach(rule => {
-        rule.image = rule.fileName;
+        rule.image = rule.fileName || null;
         delete rule.fileName;
         delete rule.loaded;
       });

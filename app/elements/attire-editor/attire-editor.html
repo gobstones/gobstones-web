@@ -109,11 +109,15 @@
 
               <paper-button class="remove-rule-button" style="z-index: 99" on-click="removeRule"><iron-icon class="black-button" icon="icons:delete-forever"></iron-icon></paper-button>
 
-              <paper-icon-button class="load-button" on-click="loadImage" icon="icons:folder-open" alt="open"> </paper-icon-button>
+              <template is="dom-if" if="{{!item.text}}">
+                <paper-icon-button class="load-button" on-click="loadImage" icon="icons:folder-open" alt="open"> </paper-icon-button>
+              </template>
 
               <template is="dom-if" if="{{item.fileName}}">
                 [[item.fileName]]
               </template>
+
+              <paper-input class="balls-input" value="{{item.text}}" on-input="_update" maxlength="4"></paper-input>
 
               <br>
             </template>
@@ -192,7 +196,8 @@
             blue: "",
             black: ""
           },
-          image: null
+          image: null,
+          text: ""
         });
         this._update();
       },
@@ -274,15 +279,18 @@
       _sanitizeAttire: function() {
         const attire = _.cloneDeep(this.attire);
         attire.rules = attire.rules.filter((it) => {
-          return this._isValid(it.when.red) && this._isValid(it.when.green) && this._isValid(it.when.blue) && this._isValid(it.when.black) && it.image !== null;
+          return this._isValid(it.when.red) && this._isValid(it.when.green) && this._isValid(it.when.blue) && this._isValid(it.when.black) && (it.image !== null || it.text);
         }).map((it) => {
           it.when.red = this._sanitizeValue(it.when.red);
           it.when.green = this._sanitizeValue(it.when.green);
           it.when.blue = this._sanitizeValue(it.when.blue);
           it.when.black = this._sanitizeValue(it.when.black);
+          if (it.text === "") it.text = null;
 
           return it;
         });
+
+        console.warn(JSON.stringify(attire, null, 2));
         return attire;
       },
 
