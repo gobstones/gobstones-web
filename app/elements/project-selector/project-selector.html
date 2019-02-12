@@ -213,6 +213,7 @@
         this._guideLoader().all().then((guides) => {
           this.guides = guides;
           this.selectedGuide = window.STORAGE.getItem("selected-guide") || 0;
+          this._onGuideChange();
         }).catch(() => this._stopLoading()).always(() => {
           this._stopLoadingAssets();
 
