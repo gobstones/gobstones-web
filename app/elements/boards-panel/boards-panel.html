@@ -37,8 +37,8 @@
       }
 
       .right-column {
-        padding-top: 6px;
         width: 115px;
+        padding-top: 6px;
         display: flex;
         justify-content: flex-end;
       }
@@ -96,6 +96,10 @@
       }
 
       .attire-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
         -webkit-touch-callout: none;
         -webkit-user-select: none;
         -khtml-user-select: none;
@@ -292,7 +296,7 @@
                 <div class="attire-container">
                   <template is="dom-if" if="{{hasPermission(permissions.*, 'can_toggle_attire_visibility')}}">
                     <template is="dom-if" if="{{attiresCount}}">
-                      <paper-button id="show-attire-button" style="z-index: 99" on-click="toggleShowAttire"><iron-icon class="black-button" icon="icons:visibility"></iron-icon></paper-button>
+                      <paper-button id="show-attire-button" style="z-index: 99; margin-right: 4px" on-click="toggleShowAttire"><iron-icon class="black-button" icon="icons:visibility"></iron-icon></paper-button>
                       <paper-tooltip for="show-attire-button" position="bottom" animation-config="{{tooltipAnimation}}">
                         <div class="button-tooltip">
                           <template is="dom-if" if="{{showAttire}}">
@@ -305,7 +309,7 @@
                       </paper-tooltip>
                     </template>
                   </template>
-                  <strong>[[localize("attire")]]:</strong>
+                  <strong style="margin-right: 4px">[[localize("attire")]]:</strong>
                   <paper-dropdown-menu no-animations no-label-float vertical-align="bottom" horizontal-align="right" disabled="{{!showAttire}}">
                     <paper-listbox class="dropdown-content" selected="{{selectedAttire}}">
                       <template is="dom-repeat" items="{{ availableAttires }}" rendered-item-count="{{attiresCount}}">

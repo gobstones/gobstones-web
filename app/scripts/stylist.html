@@ -3,6 +3,10 @@
 <script>
 
   class Stylist {
+    static get DEFAULT_PERCENTAGE() {
+      return 0.55;
+    }
+
     constructor() {
       this.toolboxVisible = true;
       this.sizeVisible = true;
@@ -10,7 +14,6 @@
       this.selectedTab = 0;
 
       this.SCALE = 0.8;
-      this.DEFAULT_PERCENTAGE = 0.6;
       this.MAX_PERCENTAGE = 0.9;
       this.TOOLBAR_HEIGHT = 64;
       this.IS_TOOLBOX_VISIBLE = () => this.toolboxVisible && (this.sizeVisible || this.attireVisible);
@@ -35,6 +38,10 @@
       this.sizeVisible = true;
       this.attireVisible = true;
       this.setSelectedTab(0);
+
+      setTimeout(() => {
+        document.querySelector("#gobstones-ide").resizeLeftPanel(true);
+      });
     }
 
     correctEditorHeight(editor) {
@@ -167,7 +174,7 @@
       const documentWidth = $(document).width();
       if (!this.lastDocumentWidth) {
         this.lastDocumentWidth = documentWidth;
-        return this.DEFAULT_PERCENTAGE;
+        return Stylist.DEFAULT_PERCENTAGE;
       }
 
       const percentage = this._getPercentage();
@@ -213,6 +220,7 @@
     _getPercentage() {
       const leftPanel = $(this.LEFT_PANEL_CSS_CLASS);
       const percentage = leftPanel.width() / this.lastDocumentWidth;
+      if (_.isNaN(percentage)) return Stylist.DEFAULT_PERCENTAGE;
 
       return this._isBorder(percentage) ? percentage : Math.min(percentage, this.MAX_PERCENTAGE);
     }

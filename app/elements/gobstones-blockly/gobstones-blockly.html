@@ -206,44 +206,35 @@
         this.$.blockly.workspace.removeBlockErrors();
         console.info("GENERATED CODE", code);
 
-        this._notify({
-          head: initialState.header,
-          width: initialState.size.x,
-          height: initialState.size.y,
-          table: initialState.table
-        });
-
-        setTimeout(() => {
-          try {
-            controller.start(
-              { initialState, code },
-              {
-                onCompilationError: (error, code) => {
-                  const { region } = error.on;
-                  if (region) this._showError(region, error);
-                  window.BUS.fire("compilation-error");
-                },
-                onTeacherCompilationError: (e) => {
-                  this.runner.reportTeacherLibraryErrors(e);
-                },
-                onInteractiveRun: () => {
-                  window.BUS.fire("interactive-run");
-                },
-                onResult: (state, fullState = {}) => {
-                  const { regionStack } = fullState;
-                  const region = this._getLastRegion(regionStack);
-                  if (region) this.highlight(region)
-                  this._notify(state);
-                }
+        try {
+          controller.start(
+            { initialState, code, initialBoardTime: 500 },
+            {
+              onCompilationError: (error, code) => {
+                const { region } = error.on;
+                if (region) this._showError(region, error);
+                window.BUS.fire("compilation-error");
               },
-              this.runner.speed
-            );
-          } catch (e) {
-            window.BUS.fire("unknown-error", e);
-            console.error("---UNKNOWN ERROR---");
-            throw e;
-          }
-        }, DELAY);
+              onTeacherCompilationError: (e) => {
+                this.runner.reportTeacherLibraryErrors(e);
+              },
+              onInteractiveRun: () => {
+                window.BUS.fire("interactive-run");
+              },
+              onResult: (state, fullState = {}) => {
+                const { regionStack } = fullState;
+                const region = this._getLastRegion(regionStack);
+                if (region) this.highlight(region)
+                this._notify(state);
+              }
+            },
+            this.runner.speed
+          );
+        } catch (e) {
+          window.BUS.fire("unknown-error", e);
+          console.error("---UNKNOWN ERROR---");
+          throw e;
+        }
       },
 
       _notify: function(state) {

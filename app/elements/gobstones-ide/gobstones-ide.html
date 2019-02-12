@@ -294,7 +294,7 @@
       },
 
       resizeLeftPanel: function(show, hiddenSize) {
-        const percentage = +window.STORAGE.getItem("code-panel-percentage") || 0.6;
+        const percentage = +window.STORAGE.getItem("code-panel-percentage") || Stylist.DEFAULT_PERCENTAGE;
 
         $(".panel-left").width(
           show ? $(document).width() * percentage : hiddenSize
