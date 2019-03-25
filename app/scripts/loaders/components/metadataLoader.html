@@ -66,6 +66,7 @@
             can_toggle_visibility: context.boards.permissions.can_toggle_attire_visibility
           }
         },
+        initialDescription: !context.ide.preventDescriptionAutoShow,
         blocks: context.editor.toolbox,
         customErrors: context.editor.customErrors
       });
@@ -79,6 +80,7 @@
 
       // defaults
       if (!metadata.source) metadata.source = { visible: true, percentage: context.boards.stylist.DEFAULT_PERCENTAGE };
+      if (!_.isBoolean(metadata.initialDescription)) metadata.initialDescription = true;
 
       // name
       context.setProjectName(metadata.name);
@@ -119,6 +121,8 @@
       context.boards.set("permissions.can_view_attire_section", metadata.board.user_permissions.can_view_attire_section !== false);
       context.editor.runner.set("permissions.can_change_speed", metadata.execution_speed.user_permissions.can_change_speed);
       context.boards.set("permissions.can_toggle_attire_visibility", metadata.attire.user_permissions.can_toggle_visibility);
+
+      context.ide.preventDescriptionAutoShow = !metadata.initialDescription;
 
       if (metadata.blocks) context.editor.toolbox = metadata.blocks;
       if (metadata.customErrors) context.editor.customErrors = metadata.customErrors;

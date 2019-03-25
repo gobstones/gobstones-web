@@ -15,7 +15,8 @@
 
     readContent(context, content) {
       context.ide.setDescription(content);
-      context.ide.showDescriptionModal();
+      if (!context.ide.preventDescriptionAutoShow)
+        context.ide.showDescriptionModal();
     }
   }
 </script>

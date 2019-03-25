@@ -61,6 +61,13 @@
         <paper-toggle-button checked="{{metadata.source.visible}}"></paper-toggle-button>
       </paper-item>
 
+      <paper-item>
+        <paper-item-body>
+          <div>[[localize("settings-code-autoopen-description")]]</div>
+        </paper-item-body>
+        <paper-toggle-button checked="{{metadata.initialDescription}}"></paper-toggle-button>
+      </paper-item>
+
       <paper-item center-justified flex class="menu-header-gobstones">
         <div>[[localize("settings-boards")]]</div>
       </paper-item>
@@ -320,6 +327,7 @@
               can_toggle_visibility: true
             }
           },
+          initialDescription: true,
           blocks: {
             visible: [],
             disabled: []

@@ -70,10 +70,17 @@
       this._loadFilesWithLoaders(context, zip, this.loaders, () => {
         context.boards.removeFirstBoard();
 
-        console.log("Reading attires...");
+        console.log("---> READING ATTIRES...");
         this.attireLoader.readFromZip(context, zip, (err) => {
           if (err) this._reportError(err);
-          this._loadFilesWithLoaders(context, zip, [this.metadataLoader, this.descriptionLoader], callback);
+
+          console.log("---> READING METADATA...");
+          this._loadFilesWithLoaders(context, zip, [this.metadataLoader], (err) => {
+            if (err) return callback(err);
+
+            console.log("---> READING DESCRIPTION...");
+            this._loadFilesWithLoaders(context, zip, [this.descriptionLoader], callback);
+          });
         });
       });
     }
