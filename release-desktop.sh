@@ -43,6 +43,8 @@ function build() {
   try yarn dist:docker "yarn dist --mode $TYPE --platform win --arch x64 --target nsis"
 }
 
+rm -rf app/guides.zip app/guides app/cache_config.json
+
 # ---
 
 TYPE="blocks"
