@@ -71,10 +71,13 @@ build
 echo "CREATING '$TYPE' ONE-FILE PACKAGES..."
 LINUX_NAME_2=gobstones-$(commertialName $TYPE)-linux-$PACKAGE_VERSION.AppImage
 WINDOWS_NAME_2=gobstones-$(commertialName $TYPE)-windows-$PACKAGE_VERSION.exe
+WINDOWS32_NAME_2=gobstones-$(commertialName $TYPE)-windows-ia32-$PACKAGE_VERSION.zip
 cp "./dist/gobstones-$(commertialName $TYPE)_$(echo $PACKAGE_VERSION)_linux_x86_64.AppImage" $LINUX_NAME_2
+cd ./dist/win-ia32-unpacked ; zip -rq ../../$WINDOWS32_NAME_2 . ; cd ../..
 cp "./dist/gobstones-$(commertialName $TYPE)_$(echo $PACKAGE_VERSION)_win.exe" $WINDOWS_NAME_2
 mv "$LINUX_NAME_2" node_modules/
 mv "$WINDOWS_NAME_2" node_modules/
+mv "$WINDOWS32_NAME_2" node_modules/
 
 # ---
 
@@ -85,10 +88,13 @@ build
 echo "CREATING '$TYPE' ONE-FILE PACKAGES..."
 LINUX_NAME_3=gobstones-$(commertialName $TYPE)-linux-$PACKAGE_VERSION.AppImage
 WINDOWS_NAME_3=gobstones-$(commertialName $TYPE)-windows-$PACKAGE_VERSION.exe
+WINDOWS32_NAME_3=gobstones-$(commertialName $TYPE)-windows-ia32-$PACKAGE_VERSION.zip
 cp "./dist/gobstones-$(commertialName $TYPE)_$(echo $PACKAGE_VERSION)_linux_x86_64.AppImage" $LINUX_NAME_3
+cd ./dist/win-ia32-unpacked ; zip -rq ../../$WINDOWS32_NAME_3 . ; cd ../..
 cp "./dist/gobstones-$(commertialName $TYPE)_$(echo $PACKAGE_VERSION)_win.exe" $WINDOWS_NAME_3
 mv "$LINUX_NAME_3" node_modules/
 mv "$WINDOWS_NAME_3" node_modules/
+mv "$WINDOWS32_NAME_3" node_modules/
 
 # ---
 
@@ -97,14 +103,16 @@ mv "node_modules/$WINDOWS_NAME_1" "$WINDOWS_NAME_1"
 mv "node_modules/$WINDOWS32_NAME_1" "$WINDOWS32_NAME_1"
 mv "node_modules/$LINUX_NAME_2" "$LINUX_NAME_2"
 mv "node_modules/$WINDOWS_NAME_2" "$WINDOWS_NAME_2"
+mv "node_modules/$WINDOWS32_NAME_2" "$WINDOWS32_NAME_2"
 mv "node_modules/$LINUX_NAME_3" "$LINUX_NAME_3"
 mv "node_modules/$WINDOWS_NAME_3" "$WINDOWS_NAME_3"
+mv "node_modules/$WINDOWS32_NAME_3" "$WINDOWS32_NAME_3"
 
 # ---
 
 echo "DEPLOYING DESKTOP VERSION $PACKAGE_VERSION..."
 
 echo "PUBLISHING..."
-./node_modules/.bin/publish-release --token $GITHUB_TOKEN --owner gobstones --repo gobstones-web-desktop --tag "$PACKAGE_VERSION" --name "$PACKAGE_VERSION" --assets $LINUX_NAME_1,$WINDOWS_NAME_1,$LINUX_NAME_2,$WINDOWS_NAME_2,$LINUX_NAME_3,$WINDOWS_NAME_3,$WINDOWS32_NAME_1 --notes "Gobstones Web - Desktop"
+./node_modules/.bin/publish-release --token $GITHUB_TOKEN --owner gobstones --repo gobstones-web-desktop --tag "$PACKAGE_VERSION" --name "$PACKAGE_VERSION" --assets $LINUX_NAME_1,$WINDOWS_NAME_1,$LINUX_NAME_2,$WINDOWS_NAME_2,$LINUX_NAME_3,$WINDOWS_NAME_3,$WINDOWS32_NAME_1,$WINDOWS32_NAME_2,$WINDOWS32_NAME_3 --notes "Gobstones Web - Desktop"
 
 echo "DONE."
