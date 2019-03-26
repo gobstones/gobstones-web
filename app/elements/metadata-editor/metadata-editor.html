@@ -68,6 +68,13 @@
         <paper-toggle-button checked="{{metadata.initialDescription}}"></paper-toggle-button>
       </paper-item>
 
+      <paper-item>
+        <paper-item-body>
+          <div>[[localize("settings-code-link")]]</div>
+        </paper-item-body>
+        <paper-input value="{{metadata.link}}"></paper-input>
+      </paper-item>
+
       <paper-item center-justified flex class="menu-header-gobstones">
         <div>[[localize("settings-boards")]]</div>
       </paper-item>
@@ -328,6 +335,7 @@
             }
           },
           initialDescription: true,
+          link: "",
           blocks: {
             visible: [],
             disabled: []

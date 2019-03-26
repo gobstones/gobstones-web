@@ -20,6 +20,12 @@
         user-select: none;
       }
 
+      .procedures-link-button {
+        cursor: pointer;
+        margin-right: 15px;
+        color: white;
+      }
+
       .procedures-hint-button {
         cursor: pointer;
         margin-right: 15px;
@@ -84,6 +90,10 @@
           </template>
         </template>
 
+        <template is="dom-if" if="{{_hasLink(link)}}">
+          <iron-icon on-click="openLink" id="procedures-link-button" class="procedures-link-button" icon="icons:icons:attachment"></iron-icon>
+        </template>
+
         <div class="buttons">
           <template is="dom-if" if="{{_isCodeProject(projectType)}}">
             <paper-button on-click="increaseEditorFontSize"><iron-icon class="button" icon="icons:zoom-in"></iron-icon></paper-button>
@@ -140,6 +150,10 @@
         showProceduresHint: {
           type: Boolean,
           value: false
+        },
+        link: {
+          type: String,
+          value: ""
         },
         permissions: {
           type: Object,
@@ -244,6 +258,10 @@
         else window.BUS.fire("save-code");
       },
 
+      openLink: function() {
+        window.open(this.link, "_blank");
+      },
+
       _isCodeProject: function(projectType) {
         return projectType === "code";
       },
@@ -266,6 +284,10 @@
 
       _showBoardsDirection: function(value) {
         return value ? "right" : "left";
+      },
+
+      _hasLink: function(link) {
+        return !_.isEmpty(link);
       },
 
       _projectLoader: function(projectType) {
