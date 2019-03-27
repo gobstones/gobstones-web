@@ -273,6 +273,8 @@
       },
 
       _loadCurrentGuide: function() {
+        window.BUS.fire("current-home-link", this.guide.homeLink);
+
         const TheGuideLoader = this._guideLoader();
         new TheGuideLoader(this.guide).getExercises().then(exercises => {
           this.exercises = exercises;
