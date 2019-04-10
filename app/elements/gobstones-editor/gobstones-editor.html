@@ -447,6 +447,22 @@
       _shouldShow: function(action) {
         if (!this.toolbox || !this.toolbox.defaultToolbox) return true;
 
+        // Show all if the node "PRIMITIVE_PROCEDURES" or "PRIMITIVE_FUNCTIONS"
+        // is present but empty to emulate Blockly behavior
+        var defaultToolboxDom = new DOMParser().parseFromString('<xml>' +this.toolbox.defaultToolbox + '</xml>', "application/xml");
+
+        // Mantain "Procedimientos primitivos" and "Funciones primitivas" for backwards compatibility
+        var elementProcedures = defaultToolboxDom.querySelectorAll(
+          'category[gbs_custom="PRIMITIVE_PROCEDURES"],category[name="Procedimientos primitivos"]')
+        var elementFunctions = defaultToolboxDom.querySelectorAll(
+          'category[gbs_custom="PRIMITIVE_FUNCTIONS"],category[name="Funciones primitivas"]')
+        // If it starts with uppercase it's a Procedure
+        if (action.name.substring(0,1).match(/[A-Z]/) &&
+          elementProcedures.length && !elementProcedures.childNodes) return true;
+        // If it starts with lowercase it's a Function
+        if (action.name.substring(0,1).match(/[a-z]/) &&
+          elementFunctions.length && !elementFunctions.childNodes) return true;
+
         const toolboxNames = this.toolbox.defaultToolbox
           .match(/<block type="(.+)"/g)
           .map((it) => it.match(/<block type="(.+)"/)[1]);
