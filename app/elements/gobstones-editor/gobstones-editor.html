@@ -447,6 +447,12 @@
       _shouldShow: function(action) {
         if (!this.toolbox || !this.toolbox.defaultToolbox) return true;
 
+        // Show all if the node "Procedimientos primitivos" is present but empty
+        // to emulate Blocks behavior
+        var defaultToolboxDom = new DOMParser().parseFromString('<xml>' +this.toolbox.defaultToolbox + '</xml>', "application/xml");
+        var elements = defaultToolboxDom.getElementsByName('Procedimientos primitivos')
+        if (elements.length && !elements.childNodes) return true;
+
         const toolboxNames = this.toolbox.defaultToolbox
           .match(/<block type="(.+)"/g)
           .map((it) => it.match(/<block type="(.+)"/)[1]);
