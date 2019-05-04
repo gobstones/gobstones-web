@@ -8,7 +8,8 @@ if [[ -z "$1" ]]; then
 fi;
 
 GITHUB_TOKEN="$1"
-PACKAGE_VERSION=`git describe --tags $(git rev-list --tags --max-count=1)`
+#PACKAGE_VERSION=`git describe --tags $(git rev-list --tags --max-count=1)`
+PACKAGE_VERSION="2.15.3"
 
 function commertialName() {
   if [ "$1" == "blocks" ] ; then
