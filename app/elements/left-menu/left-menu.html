@@ -174,6 +174,13 @@
         <paper-toggle-button checked="{{showTutorial}}" on-change="_onShowTutorialChanged"></paper-toggle-button>
       </paper-item>
 
+      <paper-item>
+        <paper-item-body>
+          <div>[[localize("changeTheme")]]</div>
+        </paper-item-body>
+        <paper-toggle-button checked="{{changeTheme}}" on-change="_onThemeChanged"></paper-toggle-button>
+      </paper-item>
+
       <template is="dom-if" if="{{!isEmbedded()}}">
         <hr>
 
@@ -413,6 +420,16 @@
 
       _onShowTutorialChanged: function() {
         window.STORAGE.setItem("show-tutorial", this.showTutorial);
+      },
+
+      _onThemeChanged: function() {
+        if(this.changeTheme){
+          document.getElementById("ace").setAttribute("theme", "ace/theme/gruvbox");
+          document.getElementById("main").classList.add("night");
+        } else {
+          document.getElementById("ace").setAttribute("theme", "ace/theme/chrome");
+          document.getElementById("main").classList.remove("night");
+        }
       },
 
       _isCodeProject: function(projectType) {
