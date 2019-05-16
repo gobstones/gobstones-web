@@ -173,13 +173,14 @@
         </paper-item-body>
         <paper-toggle-button checked="{{showTutorial}}" on-change="_onShowTutorialChanged"></paper-toggle-button>
       </paper-item>
-
-      <paper-item>
-        <paper-item-body>
-          <div>[[localize("changeTheme")]]</div>
-        </paper-item-body>
-        <paper-toggle-button checked="{{changeTheme}}" on-change="_onThemeChanged"></paper-toggle-button>
-      </paper-item>
+      <template is="dom-if" if="{{_isCodeOrTeacherProject(projectType)}}">
+        <paper-item>
+          <paper-item-body>
+            <div>[[localize("changeTheme")]]</div>
+          </paper-item-body>
+          <paper-toggle-button checked="{{changeTheme}}" on-change="_onThemeChanged"></paper-toggle-button>
+        </paper-item>
+      </template>
 
       <template is="dom-if" if="{{!isEmbedded()}}">
         <hr>
@@ -423,6 +424,7 @@
       },
 
       _onThemeChanged: function() {
+        delay(3000);
         if(this.changeTheme){
           document.getElementById("ace").setAttribute("theme", "ace/theme/gruvbox");
           document.getElementById("main").classList.add("night");
