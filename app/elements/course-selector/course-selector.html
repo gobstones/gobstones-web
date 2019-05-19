@@ -202,6 +202,7 @@
             course.downloadProgress = 0;
             RIMRAF.sync(path);
             path = path.replace(PATH.basename(path), "");
+            if (path[path.length - 1] === "/") path = path.substring(0, path.length - 1);
           } else {
             alert(this.localize("download-course-folder-broken"));
             return;
