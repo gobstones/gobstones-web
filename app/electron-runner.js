@@ -4,7 +4,105 @@ const http = require('http');
 const serveStatic = require('serve-static');
 const freeport = require('freeport');
 const path = require('path');
-const {app, BrowserWindow, ipcMain, globalShortcut} = require('electron');
+const {app, BrowserWindow, ipcMain, globalShortcut, Menu} = require('electron');
+
+  isMac = process.platform === 'darwin';
+
+  const template = [
+   // { role: 'appMenu' }
+   ...(isMac ? [{
+     label: app.getName(),
+     submenu: [
+       { role: 'about',
+         label: 'Acerca de Gobstones' },
+       { type: 'separator' },
+       { role: 'hide',
+         label: 'Ocultar Gobstones' },
+       { role: 'hideothers',
+         label: 'Ocultar otros' },
+       { role: 'unhide',
+         label: 'Mostrar Gobstones' },
+       { type: 'separator' },
+       { role: 'quit',
+         label: 'Salir de Gobstones'}
+     ]
+   }] : [
+     {
+       label: 'Archivo',
+       submenu: [
+         { role: 'quit',
+           label: 'Salir de Gobstones' }
+       ]
+     }
+   ])
+   ,
+   // { role: 'editMenu' }
+   {
+     label: 'Editar',
+     submenu: [
+       { role: 'undo',
+         label: 'Deshacer' },
+       { role: 'redo',
+         label: 'Rehacer' },
+       { type: 'separator' },
+       { role: 'cut',
+         label: 'Cortar' },
+       { role: 'copy',
+         label: 'Copiar' },
+       { role: 'paste',
+         label: 'Pegar' },
+       { type: 'separator' },
+       { role: 'delete',
+         label: 'Borrar' },
+       { type: 'separator' },
+       { role: 'selectAll',
+         label: 'Seleccionar todo'}
+     ]
+   },
+   // { role: 'viewMenu' }
+   {
+     label: 'Vista',
+     submenu: [
+       { role: 'reload',
+         label: 'Recargar'},
+       { role: 'forcereload',
+         label: 'Forzar Recarga'},
+       { role: 'toggledevtools',
+         label: 'Mostrar herramientas de desarrollador'},
+       { type: 'separator' },
+       { role: 'resetzoom',
+         label: 'Tamaño original'},
+       { role: 'zoomin',
+         label: 'Acercar'},
+       { role: 'zoomout',
+         label: 'Alejar'},
+       { type: 'separator' },
+       { role: 'togglefullscreen',
+         label: 'Mostrar en pantalla completa'}
+     ]
+   },
+   // { role: 'windowMenu' }
+   {
+     label: 'Ventana',
+     submenu: [
+       { role: 'minimize',
+         label: 'Minimizar' },
+       { role: 'zoom',
+         label: 'Acercarse'},
+       ...(isMac ? [
+         { type: 'separator' },
+         { role: 'front',
+           label: 'Traer al frente' },
+         { type: 'separator' },
+         { role: 'window',
+           label: 'Ventana'}
+       ] : [
+         { role: 'close',
+           label: 'Cerrar'}
+       ])
+     ]
+   },
+ ]
 
 
 function start(mode) {
@@ -98,6 +196,8 @@ function start(mode) {
         webSecurity: false
       }
     });
+    const menu = Menu.buildFromTemplate(template)
+    Menu.setApplicationMenu(menu)
     mainWindow.loadURL(serverAddress(port));
     mainWindow.maximize();
     mainWindow.on('closed', () => mainWindow = null);
