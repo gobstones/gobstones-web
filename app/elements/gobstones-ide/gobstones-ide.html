@@ -230,9 +230,15 @@
 
             if (version !== this.DESKTOP_RELEASE) {
               setTimeout(() => {
-                if (!confirm(this.localize("new-version-confirm"))) return;
+                const lastDatePrompt = window.STORAGE.getItem("lastDatePrompt");
+                const today = new Date().getDate();
+                if (today === lastDatePrompt) return;
 
-                electron.shell.openExternal("https://github.com/gobstones/gobstones-web-desktop/releases/latest");
+                if (confirm(this.localize("new-version-confirm"))) {
+                  electron.shell.openExternal("https://github.com/gobstones/gobstones-web-desktop/releases/latest");
+                }
+
+                window.STORAGE.setItem("lastDatePrompt", today);
               });
             }
           }
