@@ -345,6 +345,8 @@
       },
 
       _renderMarkdown: function(markdown) {
+        markdown = this._renderVariables(markdown);
+
         if (!window.showdown && window.GBS_DESKTOP) {
           window.showdown = window.GBS_REQUIRE("showdown");
         }
@@ -358,6 +360,18 @@
         emoji.img_sets.apple.sheet = this._makeAppUrl('images/emojis/sheet_apple_64.png');
 
         return emoji.replace_colons(markdown);
+      },
+
+      _renderVariables: function(markdown) {
+        const escapeSpaces = (s) => s.replace(/ /g, "%20");
+        const gitHubSlug = getParameterByName("github");
+        const gitHubPath = getParameterByName("path");
+        if (gitHubSlug) markdown = markdown.replace(/\$CURRENT_PROJECT/g, `https://raw.githubusercontent.com/${escapeSpaces(gitHubSlug)}/master/${escapeSpaces(gitHubPath) || '.'}`);
+
+        const fsPath = getParameterByName("fs");
+        if (fsPath) markdown = markdown.replace(/\$CURRENT_PROJECT/g, `file://${escapeSpaces(fsPath)}`);
+
+        return markdown;
       },
 
       _onCloseDescriptionModal: function() {
@@ -466,7 +480,6 @@
                 document.querySelector("#menu").showTutorial = false;
               }
             }, 150);
-
 
             return;
           }

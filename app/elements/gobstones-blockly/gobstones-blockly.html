@@ -203,7 +203,7 @@
         const code = _.assign(requiredCode, { main: this.code.main });
         this._onTeacherLibraryChange(code.teacher);
 
-        this.$.blockly.workspace.removeBlockErrors();
+        this._cleanErrors();
         console.info("GENERATED CODE", code);
 
         try {
@@ -268,7 +268,11 @@
         this.code[this.mode] = newCode;
 
         this.fire("content-change");
-        this.$.blockly.workspace.removeBlockErrors();
+        this._cleanErrors();
+      },
+
+      _cleanErrors: function() {
+        try { this.$.blockly.workspace.removeBlockErrors(); } catch (e) {}
       },
 
       _onTeacherLibraryChange: function(teacherCode, withErrorReport = false) {
