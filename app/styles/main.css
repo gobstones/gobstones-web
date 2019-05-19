@@ -153,3 +153,7 @@ iron-dropdown > #contentWrapper {
 .blocklyTreeSelected {
   background-color: #4ea7ca !important;
 }
+
+.blocklyInvalidParent > .blocklyPath {
+  fill: #ff0000;
+}
