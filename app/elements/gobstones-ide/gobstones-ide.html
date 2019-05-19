@@ -221,11 +221,22 @@
         });
 
 
-        if (!window.GBS_DESKTOP) {
-          GitHubLoader.getDesktopRelease().then((release) => {
-            this.DESKTOP_RELEASE = release.name;
-          });
-        }
+        GitHubLoader.getDesktopRelease().then((release) => {
+          this.DESKTOP_RELEASE = release.name;
+
+          if (window.GBS_DESKTOP) {
+            const electron = window.GBS_REQUIRE("electron");
+            const version = electron.remote.app.getVersion();
+
+            if (version !== this.DESKTOP_RELEASE) {
+              setTimeout(() => {
+                if (!confirm(this.localize("new-version-confirm"))) return;
+
+                electron.shell.openExternal("https://github.com/gobstones/gobstones-web-desktop/releases/latest");
+              });
+            }
+          }
+        });
 
         // Hack de "necesitamos esto ya":
         // TODO: Hacer timeout configurable en gobstones-code-runner y sacar esto.
