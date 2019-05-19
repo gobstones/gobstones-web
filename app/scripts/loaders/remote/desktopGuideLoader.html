@@ -4,14 +4,13 @@
 
 <script>
   const ZIP_NAME = "guides.zip";
-  const CONTENT_NAME = "content";
 
   const PATH = () => {
     const courses = window.STORAGE.getItem("courses") || [];
     const course = _.find(courses, { course: COURSE() });
     if (!course) return null;
 
-    return `${course.path}/${CONTENT_NAME}`;
+    return course.path;
   };
 
   class DesktopGuideLoader {
@@ -19,15 +18,21 @@
       this.exercises = exercises;
     }
 
+    static hasCourse(path) {
+      const fs = window.GBS_REQUIRE("fs");
+      return fs.existsSync(`${path}/guides.json`);
+    }
+
     static download(courseSlug, onProgress, path) {
       const zipPath = `${path}/${ZIP_NAME}`;
-      const contentPath = `${path}/${CONTENT_NAME}`;
-
       const repoName = _.last(courseSlug.split("/"));
       const url = `https://github.com/${courseSlug}/archive/master.zip`;
 
+      const contentPath = `${path}/${repoName}-master`;
+      const finalPath = `${path}/${repoName}`;
       const fs = window.GBS_REQUIRE("fs");
       const unzipper = new (window.GBS_REQUIRE("decompress-zip"))(zipPath);
+      const rimraf = window.GBS_REQUIRE("rimraf");
       window.GBS_REQUIRE("setimmediate");
 
       const deferred = new $.Deferred();
@@ -48,7 +53,8 @@
         .then((file) => {
           fs.writeFileSync(zipPath, new Buffer(file));
 
-          try { fs.rmdirSync(contentPath); } catch (e) { }
+          try { rimraf.sync(contentPath); } catch (e) { }
+          try { rimraf.sync(finalPath); } catch (e) { }
 
           const deferred = new $.Deferred();
           unzipper.on("error", (err) => {
@@ -65,8 +71,12 @@
 
           return deferred.promise();
         }).then((r) => {
-          fs.renameSync(`${path}/${repoName}-master`, contentPath);
-          return r;
+          fs.unlinkSync(zipPath);
+          fs.renameSync(contentPath, finalPath);
+          return finalPath;
+        }).catch((e) => {
+          console.error("DOWNLOAD ERROR", e);
+          throw e;
         });
     }
 

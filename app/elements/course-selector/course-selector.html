@@ -119,7 +119,7 @@
         if (!paths || !paths[0]) return;
         const path = paths[0];
 
-        if (!fs.existsSync(`${path}/content`)) {
+        if (!DesktopGuideLoader.hasCourse(path)) {
           alert(this.localize("download-course-folder-empty"));
           return;
         }
@@ -136,7 +136,7 @@
       },
 
       onDownloadCourse: function(event) {
-        this.requestDownload(event.model.item);
+        this.requestDownload(event.model.item, true);
       },
 
       onDeleteCourse: function(event) {
@@ -153,39 +153,39 @@
         location.reload();
       },
 
-      requestDownload: function(course) {
+      requestDownload: function(course, isRefreshing = false) {
         const slug = course.course;
         const dialog = window.GBS_REQUIRE("electron").remote.dialog;
         const fs = window.GBS_REQUIRE("fs");
 
-        const paths = dialog.showOpenDialog({
-          title: this.localize("download-course-path"),
-          buttonLabel: this.localize("download-course-save"),
-          properties: ["openDirectory"],
-          defaultPath: course.path
-        });
+        let path;
+        if (isRefreshing) {
+          path = course.path;
+        } else {
+          const paths = dialog.showOpenDialog({
+            title: this.localize("download-course-path"),
+            buttonLabel: this.localize("download-course-save"),
+            properties: ["openDirectory"],
+            defaultPath: course.path
+          });
 
-        if (!paths || !paths[0]) return;
-        const path = paths[0];
+          if (!paths || !paths[0]) return;
+          path = paths[0];
 
-        if (fs.existsSync(`${path}/content`)) {
-          alert(this.localize("download-course-folder-not-empty"));
-          return;
+          this._addCourse({
+            name: slug,
+            course: slug
+          });
         }
 
-        this._addCourse({
-          name: slug,
-          course: slug
-        });
-
-        this._download(this._getCourse(slug), path);
+        this._download(this._getCourse(slug), path, isRefreshing);
       },
 
       isDesktop: function() {
         return window.GBS_DESKTOP;
       },
 
-      _download: function(course, path) {
+      _download: function(course, path, isRefreshing) {
         const bytes = window.GBS_REQUIRE("bytes");
 
         course.isDownloading = true;
@@ -193,11 +193,26 @@
 
         const courseSlug = course.course;
         this._updateGlobalDownloadState();
+
+        if (isRefreshing) {
+          if (DesktopGuideLoader.hasCourse(path)) {
+            const RIMRAF = window.GBS_REQUIRE("rimraf");
+            const PATH = window.GBS_REQUIRE("path");
+
+            course.downloadProgress = 0;
+            RIMRAF.sync(path);
+            path = path.replace(PATH.basename(path), "");
+          } else {
+            alert(this.localize("download-course-folder-broken"));
+            return;
+          }
+        }
+
         DesktopGuideLoader.download(courseSlug, (loaded, total) => {
           this._changeCourse(course, (it) => it.downloadProgress = bytes(loaded));
-        }, path).then(() => {
+        }, path).then((finalPath) => {
           this._changeCourse(course, (it) => {
-            it.path = path;
+            it.path = finalPath;
             it.isDownloading = false;
           });
           this._saveCourses();

@@ -28,6 +28,7 @@
     "finalhandler": "^1.0.2",
     "freeport": "^1.0.5",
     "recursive-readdir-sync": "^1.0.6",
+    "rimraf": "^2.6.3",
     "serve-static": "^1.12.2",
     "setimmediate": "^1.0.5",
     "showdown": "^1.7.3",
