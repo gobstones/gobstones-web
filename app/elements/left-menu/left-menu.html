@@ -177,9 +177,9 @@
       <template is="dom-if" if="{{_isCodeOrTeacherProject(projectType)}}">
         <paper-item>
           <paper-item-body>
-            <div>[[localize("changeTheme")]]</div>
+            <div>[[localize("nightMode")]]</div>
           </paper-item-body>
-          <paper-toggle-button checked="{{changeTheme}}" on-change="_onThemeChanged"></paper-toggle-button>
+          <paper-toggle-button checked="{{nightMode}}" on-change="_onThemeChanged"></paper-toggle-button>
         </paper-item>
       </template>
 
@@ -425,7 +425,7 @@
       },
 
       _onThemeChanged: function() {
-        if(this.changeTheme){
+        if(this.nightMode){
           document.getElementById("ace").setAttribute("theme", "ace/theme/gruvbox");
           document.getElementById("main").classList.add("night");
         } else {
