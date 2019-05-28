@@ -665,10 +665,9 @@
         this.selectedInitialState = 0;
         this._initialRandomBoard = null;
         this._lastRandomBoard = null;
-        this.i++; // ^ to force computed update
+        this.i++; // HACK: to force refresh computed update
         this.selectedAttire = 0;
 
-        // TODO: Unhack - refresh computed attributes
         this._bootstrap();
         this.removeCurrentBoard();
 

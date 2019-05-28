@@ -244,7 +244,7 @@
           }
         });
 
-        // Hack de "necesitamos esto ya":
+        // HACK de "necesitamos esto ya":
         // TODO: Hacer timeout configurable en gobstones-code-runner y sacar esto.
         Parser.prototype.hasFailed = function(result) { this.interpreter.config.setInfiniteLoopTimeout(10000); return result.reason };
       },
@@ -255,12 +255,14 @@
       },
 
       showDescriptionModal: function() {
-        document.querySelector("#descriptionModal").open();
-        $("paper-drawer-panel")[0].closeDrawer();
+        setTimeout(() => { // HACK: para que el popup aparezca centrado
+          document.querySelector("#descriptionModal").open();
+          $("paper-drawer-panel")[0].closeDrawer();
 
-        setTimeout(() => {
-          window.GobstonesBoard.updateAllBoards();
-        }, 500); // TODO: Deshacer hack
+          setTimeout(() => {
+            window.GobstonesBoard.updateAllBoards();
+          }, 500); // HACK: para que renderice los <gs-board /> con vestimenta bien
+        });
       },
 
       hideAboutModal: function() {
