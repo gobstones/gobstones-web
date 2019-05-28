@@ -173,8 +173,8 @@
         </paper-item-body>
         <paper-toggle-button checked="{{showTutorial}}" on-change="_onShowTutorialChanged"></paper-toggle-button>
       </paper-item>
-      
-      <template is="dom-if" if="{{_isCodeOrTeacherProject(projectType)}}">
+
+      <template is="dom-if" if="{{_isCodeProject(projectType)}}">
         <paper-item>
           <paper-item-body>
             <div>[[localize("nightMode")]]</div>
@@ -280,8 +280,11 @@
         const index = this.languages.indexOf(language);
         this.selectedLanguage = index >= 0 ? index : 0;
 
+        const shouldEnableNightMode = window.STORAGE.getItem("night-mode") === "true";
         const shouldNotShowTutorial = window.STORAGE.getItem("show-tutorial") === "false";
         this.showTutorial = !shouldNotShowTutorial;
+        this.nightMode = shouldEnableNightMode;
+        this._onThemeChanged();
 
         setTimeout(() => {
           this.$.languageSelector.label = this.localize(this.languages[this.selectedLanguage]);
@@ -425,13 +428,18 @@
       },
 
       _onThemeChanged: function() {
-        if(this.nightMode){
-          document.getElementById("ace").setAttribute("theme", "ace/theme/gruvbox");
-          document.getElementById("main").classList.add("night");
-        } else {
-          document.getElementById("ace").setAttribute("theme", "ace/theme/chrome");
-          document.getElementById("main").classList.remove("night");
-        }
+        if (!this._isCodeProject(this.projectType)) return;
+        window.STORAGE.setItem("night-mode", this.nightMode);
+
+        setTimeout(() => {
+          if (this.nightMode){
+            document.getElementById("ace").setAttribute("theme", "ace/theme/gruvbox");
+            document.getElementById("main").classList.add("night");
+          } else {
+            document.getElementById("ace").setAttribute("theme", "ace/theme/chrome");
+            document.getElementById("main").classList.remove("night");
+          }
+        });
       },
 
       _isCodeProject: function(projectType) {
