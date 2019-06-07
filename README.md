@@ -162,6 +162,7 @@ This project is hosted on GitHub Pages. Pushing to `master` will deploy to **sta
 
 To deploy manually:
 ```bash
+# update version in package.json and about-gobstones.html
 export GH_TOKEN="{your_username}:{your_password}"
 ./deploy.sh staging
 # or ./deploy.sh production
