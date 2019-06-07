@@ -19,7 +19,7 @@
     "file-saver": "eligrey/FileSaver.js#4a73fd7a2dcdc6ce2947433af3d3fbad56a019fa",
     "app-router": "2.7.2",
     "async": "^2.1.4",
-    "gs-element-blockly": "Program-AR/gs-element-blockly#^0.32.0",
+    "gs-element-blockly": "Program-AR/gs-element-blockly#^0.32.1",
     "showdown": "^1.6.4",
     "js-emoji": "^3.2.2",
     "js-yaml": "~3.9.0",
