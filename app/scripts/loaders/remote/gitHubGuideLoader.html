@@ -13,6 +13,11 @@
       }
     }
 
+    document.title = _.compact([
+      _.last(window.GBS_COURSE.split("/")),
+      _.last(document.title.split(" - "))
+    ]).join(" - ");
+
     return window.GBS_COURSE;
   };
 
