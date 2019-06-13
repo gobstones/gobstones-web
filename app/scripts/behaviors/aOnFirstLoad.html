@@ -45,7 +45,11 @@
 
   // Base64 image to PNG
   function toBinary(base64) {
-    const raw = atob(base64);
+    return rawToBinary(atob(base64));
+  };
+
+  // Raw image to binary
+  function rawToBinary(raw) {
     const rawLength = raw.length;
     const array = new Uint8Array(new ArrayBuffer(rawLength));
 

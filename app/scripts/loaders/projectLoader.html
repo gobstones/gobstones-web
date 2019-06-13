@@ -84,9 +84,27 @@
     }
 
     _write(context, zip) {
-      zip.generateAsync({ type: "blob" }).then(content => {
-        this._saveBlob(content, `${context.getProjectName()}${this.EXTENSION}`);
-      });
+      const projectRoot = getParameterByName("fs");
+
+      if (window.GBS_DESKTOP && window.GBS_PROJECT_TYPE === "teacher" && projectRoot) {
+        const fs = window.GBS_REQUIRE("fs");
+
+        zip.forEach((relativePath, zipEntry) => {
+          zipEntry.async(this._getContentType(relativePath)).then((content) => {
+            if (this._isBinary(relativePath)) content = rawToBinary(content);
+            fs.writeFileSync(`${projectRoot}/${relativePath}`, content, { mode: null });
+          }).catch((e) => {
+            if (e.code === "EISDIR") return;
+            else throw e;
+          });
+        });
+
+        context.boards.showToast(context.boards.localize("saved"));
+      } else {
+        zip.generateAsync({ type: "blob" }).then(content => {
+          this._saveBlob(content, `${context.getProjectName()}${this.EXTENSION}`);
+        });
+      }
     }
 
     _loadersForSaving() {
@@ -130,8 +148,12 @@
     }
 
     _getContentType(relativePath) {
+      return this._isBinary(relativePath) ? "binarystring" : "string";
+    }
+
+    _isBinary(relativePath) {
       const extension = _.last(relativePath.split("."));
-      return extension === 'png' ? 'binarystring' : 'string';
+      return extension === "png";
     }
 
     _removeUtf8Bom(content) {
