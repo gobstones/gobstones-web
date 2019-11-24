@@ -109,15 +109,15 @@
 
               <paper-button class="remove-rule-button" style="z-index: 99" on-click="removeRule"><iron-icon class="black-button" icon="icons:delete-forever"></iron-icon></paper-button>
 
-              <template is="dom-if" if="{{!item.text}}">
-                <paper-icon-button class="load-button" on-click="loadImage" icon="icons:folder-open" alt="open"> </paper-icon-button>
-              </template>
+              <paper-icon-button class="load-button" on-click="loadImage" icon="icons:folder-open" alt="open"> </paper-icon-button>
 
               <template is="dom-if" if="{{item.fileName}}">
                 [[item.fileName]]
               </template>
 
-              <paper-input class="balls-input" value="{{item.text}}" on-input="_update" maxlength="4"></paper-input>
+              <template is="dom-if" if="{{!item.fileName}}">
+                <paper-input class="balls-input" value="{{item.text}}" on-input="_update" maxlength="4"></paper-input>
+              </template>
 
               <br>
             </template>
@@ -234,12 +234,13 @@
         fileReader.onload = (event) => {
           const base64 = event.target.result;
 
-          const rules = this.attire.rules;
+          const rules = this.attire.rules;   
           this.set("attire.rules", []);
           this.async(() => {
             this.currentRule.fileName = file.name;
             this.currentRule.image = base64;
             this.set("attire.rules", rules);
+            this._update();
           });
         };
         fileReader.readAsDataURL(file);
