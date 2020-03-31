@@ -24,7 +24,7 @@
     "js-emoji": "^3.2.2",
     "js-yaml": "~3.9.0",
     "material-walkthrough": "rodri042/material-walkthrough#^0.0.2",
-    "tweenjs": "@tweenjs/tweenjs#v16.3.0",
+    "tweenjs": "tweenjs/tween.js#v16.3.0",
     "juicy-jsoneditor": "~1.2.0",
     "simplemde": "~1.11.2",
     "gobstones-code-runner": "gobstones/gobstones-code-runner#0.10.1",
