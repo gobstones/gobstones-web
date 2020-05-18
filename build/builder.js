@@ -30,7 +30,7 @@ const AVAILABLE_ARCHS = ['x64', 'ia32'];
 const AVAILABLE_PLATFORMS = ['freebsd', 'linux', 'mac', 'win'];
 const AVAILABLE_TARGETS = {
     linux: ['AppImage', 'deb', 'rpm', 'pacman'],
-    mac: ['mac', 'dmg'],
+    mac: ['mas', 'dmg'],
     win: ['nsis', 'portable'],
     freebsd: ['freebsd']
 }
@@ -38,7 +38,7 @@ const AVAILABLE_MODES = ['full', 'code', 'blocks', 'teacher']
 
 // A set of rules to avoid invalid configurations on different platforms
 const EXCLUSSION_RULES = [
-    // 
+    //
     (configs) => {
         // Mac only supports 64 bits architecture, remove 32 bit possibilities
         if (configs.mac) {
@@ -126,14 +126,14 @@ yargs
 yargs.parse(process.argv, (err, argv, out) => {
     if (err) {
         console.log(out)
-        process.exit()  
+        process.exit()
     }
     flags = argv
     })
 
 if (flags.help) {
     yargs.showHelp()
-    process.exit() 
+    process.exit()
 }
 
 // Standarize flags
