@@ -1,4 +1,5 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/iron-icons/notification-icons.html">
 <link rel="import" href="../../scripts/behaviors/busListenerBehavior.html">
 <link rel="import" href="../../scripts/jquery.html">
 <link rel="import" href="../../scripts/simplemde.html">
@@ -14,17 +15,26 @@
       }
 
       .fab-sync {
-        --paper-fab-background: var(--fab-sync-background);
+        /* --paper-fab-background: var(--fab-sync-background);
         --paper-fab-keyboard-focus-background: var(--fab-sync-background);
+        */
         width: 10px;
         height: 10px !important;
         position: absolute;
         left: 3px;
         top: 3px;
+        --paper-fab-iron-icon: {
+          width: 10px !important;
+          height: 10px !important;
+        }
       }
 
-      .fab-sync:after {
-        content: "➟";
+      .fab-sync.sync-on {
+        background-color: #1da65b !important;
+      }
+
+      .fab-sync.sync-off {
+        background-color: #d93c46 !important;
       }
 
       .editor {
@@ -66,7 +76,7 @@
       </paper-tooltip>
       <paper-tabs id="editorTab" selected="{{selectedTab}}" class="bottom self-end">
         <paper-tab>[[localize("blocks")]]</paper-tab>
-        <paper-fab id="fab-sync-button" mini label="" class="fab-sync" on-click="_onBlocksSyncClick"></paper-fab>
+        <paper-fab id="fab-sync-button" mini icon="notification:sync-disabled" class="fab-sync sync-off" on-click="_onBlocksSyncClick"></paper-fab>
         <paper-tab>[[localize("code")]]</paper-tab>
         <paper-tab>[[localize("teachers-library")]]</paper-tab>
         <paper-tab>[[localize("students-library")]]</paper-tab>
@@ -179,8 +189,8 @@
       },
 
       ready: function() {
-        this.BLOCKS_SYNC_ON_COLOR = "#03a9f4";
-        this.BLOCKS_SYNC_OFF_COLOR = "#666666";
+        this.BLOCKS_SYNC_ON_ICON = "notification:sync";
+        this.BLOCKS_SYNC_OFF_ICON = "notification:sync-disabled";
         this._setBlocksSyncOff();
 
         setTimeout(() => {
@@ -417,7 +427,9 @@
       },
 
       _setSolutionWorkspace: function(workspace) {
-        this.availableSolutions[this.selectedSolution].workspace.main = workspace;
+        if (this.availableSolutions[this.selectedSolution]) {
+          this.availableSolutions[this.selectedSolution].workspace.main = workspace;
+        }
       },
 
       _getSolutionLibrary: function() {
@@ -500,12 +512,17 @@
       },
 
       _setBlocksSyncOff: function() {
-        this.customStyle["--fab-sync-background"] = this.BLOCKS_SYNC_OFF_COLOR;
-        this.updateStyles();
+        this.$['fab-sync-button'].icon = this.BLOCKS_SYNC_OFF_ICON;
+        $(this.$['fab-sync-button']).removeClass('sync-on');
+        $(this.$['fab-sync-button']).addClass('sync-off');
         this.blocksSyncEnabled = false;
       },
 
       _setBlocksSyncOn: function() {
+        this.$['fab-sync-button'].icon = this.BLOCKS_SYNC_ON_ICON;
+        $(this.$['fab-sync-button']).removeClass('sync-off');
+        $(this.$['fab-sync-button']).addClass('sync-on');
+
         const generatedCode = this.generateCode(false);
         const currentCode = this.solution.code.main;
 
@@ -515,9 +532,6 @@
         }
 
         this.blocksSyncEnabled = true;
-        this.customStyle["--fab-sync-background"] = this.BLOCKS_SYNC_ON_COLOR;
-        this.updateStyles();
-
         this._copyBlocksToCode();
       },
 
@@ -529,7 +543,9 @@
       },
 
       _onBlocksSyncClick: function() {
-        if (this.blocksSyncEnabled) this._setBlocksSyncOff();
+        if (this.blocksSyncEnabled) {
+          this._setBlocksSyncOff();
+        }
         else this._setBlocksSyncOn();
       },
 

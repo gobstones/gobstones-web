@@ -93,7 +93,6 @@
     <div class$="panel-container {{ideCss(showIsLoading)}}">
       <div class="panel-left">
         <gbs-editor-toolbar id="toolbar" project-type="[[projectType]]" id="toolbar"></gbs-editor-toolbar>
-
         <template is="dom-if" if="{{isBlocksProject(projectType)}}">
           <gobstones-blockly id="editor" with-runner></gobstones-blockly>
         </template>
@@ -103,9 +102,8 @@
         </template>
 
         <template is="dom-if" if="{{isTeacherProject(projectType)}}">
-          <gobstones-teacher id="editor"></gobstones-editor>
+          <gobstones-teacher id="editor"></gobstones-teacher>
         </template>
-
         <div id="code-placeholder" class="code-placeholder"></div>
       </div>
 
