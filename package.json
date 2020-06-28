@@ -1,7 +1,7 @@
 {
   "name": "gobstones-web",
   "description": "Gobstones Web",
-  "version": "2.18.0",
+  "version": "2.19.0",
   "private": true,
   "licence": "GPLv3",
   "author": "Gobstones <info@gobstones.org> (https://gobstones.github.io)",
@@ -41,7 +41,7 @@
     "connect-history-api-fallback": "^1.1.0",
     "del": "^2.0.2",
     "electron": "^1.6.6",
-    "electron-builder": "^19.55.2",
+    "electron-builder": "^21.2.0",
     "env-cmd": "^8.0.2",
     "es6-promise": "^3.1.2",
     "glob-all": "^3.0.1",
