@@ -1,0 +1,535 @@
+<link rel="import" href="gs-cell.html">
+<link rel="import" href="key-tracker.html">
+<dom-module id="gs-board">
+  <template>
+    <style>
+      .gbs_pointer {
+        cursor: pointer;
+      }
+
+      .gbs_unselectable {
+        -webkit-touch-callout: none;
+        -webkit-user-select: none;
+        -khtml-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+      }
+
+      .background, .gbs_board td.gbs_lht, .gbs_board td.gbs_lhb, .gbs_board td.gbs_lvl, .gbs_board td.gbs_lvr, .gbs_board td.gbs_top_left, .gbs_board td.gbs_top_right, .gbs_board td.gbs_bottom_left, .gbs_board td.gbs_bottom_right {
+        background-repeat: no-repeat;
+        background-position: center;
+        background-size: cover;
+      }
+
+      table.gbs_board {
+        border-style: none;
+        border: solid black 0px;
+        border-spacing: 0;
+        border-collapse: collapse;
+        font-family: Arial, Helvetica, sans-serif;
+        font-size: 9pt;
+        display: inline-block;
+        vertical-align: top;
+        line-height: normal;
+      }
+
+      .gbs_board td {
+        margin: 0;
+        padding: var(--cell-padding);
+        border: var(--cell-border);
+        width: 30px;
+        height: 30px;
+      }
+
+      .gbs_board td.gbs_lv {
+        /* labels at the side */
+        text-align: center;
+        vertical-align: middle;
+        border-style: none;
+        border: solid black 0px;
+        background: #ddd;
+        width: 15px;
+      }
+
+      .gbs_board td.gbs_lh {
+        /* labels at the top / bottom */
+        text-align: center;
+        vertical-align: middle;
+        border-style: none;
+        border: solid black 0px;
+        background: #ddd;
+        height: 15px;
+      }
+
+      .gbs_board td.gbs_lx {
+        /* corner */
+        border-style: none;
+        border: solid black 0px;
+        background: #ddd;
+        width: 15px;
+        height: 15px;
+      }
+
+      .gbs_board td.gbs_lht {
+        background-image: var(--top-background-url);
+      }
+
+      .gbs_board td.gbs_lhb {
+        background-image: var(--bottom-background-url);
+      }
+
+      .gbs_board td.gbs_lvl {
+        background-image: var(--left-background-url);
+      }
+
+      .gbs_board td.gbs_lvr {
+        background-image: var(--right-background-url);
+      }
+
+      .gbs_board td.gbs_top_left {
+        -webkit-border-top-left-radius: 10px;
+        -moz-border-top-left-radius: 10px;
+        border-top-left-radius: 10px;
+        background-image: var(--top-left-background-url);
+      }
+
+      .gbs_board td.gbs_top_right {
+        -webkit-border-top-right-radius: 10px;
+        -moz-border-top-right-radius: 10px;
+        border-top-right-radius: 10px;
+        background-image: var(--top-right-background-url);
+      }
+
+      .gbs_board td.gbs_bottom_left {
+        -webkit-border-bottom-left-radius: 10px;
+        -moz-border-bottom-left-radius: 10px;
+        border-bottom-left-radius: 10px;
+        background-image: var(--bottom-left-background-url);
+      }
+
+      .gbs_board td.gbs_bottom_right {
+        -webkit-border-bottom-right-radius: 10px;
+        -moz-border-bottom-right-radius: 10px;
+        border-bottom-right-radius: 10px;
+        background-image: var(--bottom-right-background-url);
+      }
+
+      .gbs_boom, .gbs_boom::after {
+        content: url(https://user-images.githubusercontent.com/1631752/37945593-54b482c0-3157-11e8-9f32-bd25d7bf901b.png);
+      }
+
+      /*# sourceMappingURL=style.css.map */
+
+    </style>
+
+    <key-tracker id="keyTracker" aria-hidden="true"></key-tracker>
+
+    <template is="dom-if" if="{{!boom}}">
+      <button aria-label$="{{gbb}}" style="opacity: 0; position: absolute;"></button>
+
+      <table class="gbs_board" aria-hidden="true">
+        <tbody>
+          <tr>
+            <td class="gbs_lx gbs_top_left"></td>
+            <template is="dom-repeat" items="{{columnIndexes}}" as="columnIndex">
+              <td class="gbs_lh gbs_lht">{{columnIndex}}</td>
+            </template>
+            <td class="gbs_lx gbs_top_right"></td>
+          </tr>
+          <template is="dom-repeat" items="{{table}}" as="row" index-as="rowIndex">
+            <tr>
+              <td class="gbs_lv gbs_lvl">{{getRowNumber(table, rowIndex)}}</td>
+              <template is="dom-repeat" items="{{row}}" as="cell" index-as="cellIndex">
+                <td>
+                  <gs-cell black={{cell.black}} blue={{cell.blue}} green={{cell.green}} red={{cell.red}} cell-index="{{cellIndex}}" row-index="{{rowIndex}}" header="{{header}}" options="{{options}}" attire="{{attire}}"></gs-cell>
+                </td>
+              </template>
+              <td class="gbs_lv gbs_lvr">{{getRowNumber(table, rowIndex)}}</td>
+            </tr>
+          </template>
+          <tr>
+            <td class="gbs_lx gbs_bottom_left"></td>
+            <template is="dom-repeat" items="{{columnIndexes}}" as="columnIndex">
+              <td class="gbs_lh gbs_lhb">{{columnIndex}}</td>
+            </template>
+            <td class="gbs_lx gbs_bottom_right"></td>
+          </tr>
+        </tbody>
+      </table>
+    </template>
+
+    <template is="dom-if" if="{{boom}}">
+      <div class="gbs_boom"></div>
+    </template>
+
+  </template>
+  <script>
+    
+    var stringUtils = {
+      splitByLines: function (string) {
+        return string.split(/\r\n|\r|\n/);
+      },
+
+      scan: function (string, regExp) {
+        if (!regExp.global) {
+          throw new Error('The regExp must be global (with "g" flag)');
+        }
+        var m = [];
+        var r = m;
+        m = regExp.exec(string);
+        while (m) {
+          m.shift();
+          r.push(m);
+          m = regExp.exec(string);
+        }
+        return r;
+      }
+    };
+
+    var gbbReader = {
+    };
+
+    gbbReader.fromString = function (gbbString) {
+      var gbbCode = this._try(gbbString);
+
+      var rawLines = stringUtils.splitByLines(gbbCode).map(function(line) {
+        return line.trim();
+      });
+
+      var lines = rawLines.filter(function (line) {
+        return !/GBB\/(\d\.)+\d$/.test(line) && line !== '';
+      });
+
+      return this._buildBoard(lines);
+    };
+
+    gbbReader._buildBoard = function (lines) {
+      var dimensions = this._getDimensions(lines);
+      var header = this._getHeader(lines);
+
+      try {
+        var board = {
+          width: dimensions[0],
+          height: dimensions[1],
+          head: { x: header[0], y: header[1] },
+          table: []
+        };
+        for (var i = board.height - 1; i >= 0; i--) {
+          board.table[i] = [];
+          for (var j = 0; j < board.width; j++) {
+            board.table[i][j] = {};
+          }
+        }
+        this._putCells(lines, board);
+
+        return board;
+      } catch (err) {
+        var error = new Error('Error building the board');
+        error.inner = err;
+        throw error;
+      }
+    };
+
+    gbbReader._getDimensions = function (lines) {
+      var dimensions = this._try(
+        lines[0].match(/^size (\d+) (\d+)$/)
+      , 'dimensions');
+      return this._getPositionOf(dimensions);
+    };
+
+    gbbReader._getHeader = function (lines) {
+      var header = this._try(
+        lines[lines.length - 1].match(/^head (\d+) (\d+)$/)
+      , 'header');
+      return this._getPositionOf(header);
+    };
+
+    gbbReader._putCells = function (lines, board) {
+      var CELL_REGEXP = /^cell (\d+) (\d+)/;
+
+      var cellLines = lines.filter(function (line) {
+        return CELL_REGEXP.test(line);
+      });
+
+      cellLines.forEach(function (line) {
+        var cell = line.match(CELL_REGEXP);
+        var position = this._getPositionOf(cell, line);
+
+        var x = position[0];
+        var y = position[1];
+        this._putBalls(x, y, line, board);
+      }.bind(this));
+    };
+
+    gbbReader._putBalls = function (x, y, line, board) {
+      var values = stringUtils.scan(line, /(Azul|Negro|Rojo|Verde) (\d+)/g);
+      var getAmount = function (color) {
+        var value = values.filter(function (it) {
+          return it[0] === color;
+        });
+        return parseInt((value[0] || {})[1] || 0, 0);
+      };
+
+      const cell = board.table[board.height - 1 - y][x];
+      cell.blue = getAmount('Azul');
+      cell.black = getAmount('Negro');
+      cell.red = getAmount('Rojo');
+      cell.green = getAmount('Verde');
+    };
+
+    gbbReader._getPositionOf = function (source, element) {
+      source = source || {};
+
+      return [
+        this._try(source[1], element), this._try(source[2], element)
+      ].map(function (it) {
+        return parseInt(it, 0);
+      });
+    };
+
+    gbbReader._try = function (value, thingToParse) {
+      if (!value) {
+        throw new Error('Error parsing ' + (thingToParse || 'GBB file'));
+      }
+      return value;
+    };
+    ;
+    window.GobstonesBoard = {
+      attireProvider: null,
+      defaultAttire: null,
+      getAttire: function(name) {
+        if (this.attireProvider == null) {
+          throw new Error("You need to provide an attire provider with GobstonesBoard.setAttireProvider");
+        }
+        return this.attireProvider.get(name);
+      },
+      setAttireProvider: function(attireProvider) {
+        if (!(attireProvider != null ? attireProvider.get : void 0)) {
+          throw new Error("Attire providers must have a `get` method");
+        }
+        this.attireProvider = attireProvider;
+        return this.updateAllBoards();
+      },
+      setDefaultAttire: function(defaultAttire) {
+        this.defaultAttire = defaultAttire;
+        return this.updateAllBoards();
+      },
+      updateAllBoards: function() {
+        return document.querySelectorAll("gs-board").forEach((function(_this) {
+          return function(board) {
+            return board.detectAttire();
+          };
+        })(this));
+      }
+    };
+
+    Polymer({
+      is: 'gs-board',
+      properties: {
+        table: Array,
+        size: {
+          type: Object,
+          value: {
+            x: 2,
+            y: 2
+          },
+          observer: "_updateSize"
+        },
+        header: {
+          type: Object,
+          value: {
+            x: 0,
+            y: 0
+          }
+        },
+        options: Object,
+        boom: {
+          type: Boolean,
+          value: false
+        },
+        gbb: {
+          type: String
+        },
+        attire: {
+          type: Object,
+          observer: '_notifyAttireChanged'
+        },
+        attireSrc: {
+          type: String
+        },
+        noAttire: {
+          type: Boolean,
+          value: false
+        },
+        withoutHeader: {
+          type: Boolean,
+          value: false
+        }
+      },
+      observers: ['_updateStyles(table.*, header.*, attire.*)'],
+      ready: function() {
+        this._setBorderOn();
+        this._readGbb();
+        this._initializeTable();
+        return this._initializeOptions();
+      },
+      attached: function() {
+        return setTimeout(this.detectAttire.bind(this));
+      },
+      _notifyAttireChanged: function() {
+        return this.fire('board-attire-changed');
+      },
+      getRowNumber: function(table, rowIndex) {
+        return table.length - 1 - rowIndex;
+      },
+      isCtrlPressed: function() {
+        return this.$.keyTracker.isPressed("Control");
+      },
+      isShiftPressed: function() {
+        return this.$.keyTracker.isPressed("Shift");
+      },
+      setStonesNumber: function(cell, color, amount) {
+        this.table[cell.rowIndex][cell.cellIndex][color] = amount;
+        return this.fire("board-changed");
+      },
+      fillTable: function() {
+        var i, j, limit, table, _base, _i, _j, _ref, _ref1;
+        if (this.table == null) {
+          return;
+        }
+        limit = function(array, limit) {
+          return array.slice(0, limit);
+        };
+        table = this.table.slice().reverse();
+        for (i = _i = 0, _ref = this.size.y; 0 <= _ref ? _i < _ref : _i > _ref; i = 0 <= _ref ? ++_i : --_i) {
+          for (j = _j = 0, _ref1 = this.size.x; 0 <= _ref1 ? _j < _ref1 : _j > _ref1; j = 0 <= _ref1 ? ++_j : --_j) {
+            if (table[i] == null) {
+              table[i] = [];
+            }
+            table[i] = limit(table[i], this.size.x);
+            if ((_base = table[i])[j] == null) {
+              _base[j] = {};
+            }
+          }
+        }
+        table = limit(table, this.size.y);
+        this.table = table.reverse();
+        return this._forceHeaderSet();
+      },
+      update: function(table, header) {
+        this.table = table;
+        this.header = header;
+        this._setSizeFromTable();
+        return this.fillTable();
+      },
+      detectAttire: function() {
+        if (this.attireSrc) {
+          return this.attire = GobstonesBoard.getAttire(this.attireSrc);
+        } else if (GobstonesBoard.defaultAttire && !this.noAttire) {
+          return this.attire = GobstonesBoard.defaultAttire;
+        }
+      },
+      _initializeTable: function() {
+        if (this.table != null) {
+          return this._setSizeFromTable();
+        } else {
+          this.table = [];
+          return this.fillTable();
+        }
+      },
+      _setSizeFromTable: function() {
+        var _ref;
+        return this.size = {
+          x: ((_ref = this.table[0]) != null ? _ref.length : void 0) || 0,
+          y: this.table.length || 0
+        };
+      },
+      _initializeOptions: function() {
+        var _base;
+        if (this.options == null) {
+          this.options = {};
+        }
+        return (_base = this.options).editable != null ? _base.editable : _base.editable = false;
+      },
+      _updateSize: function() {
+        var _i, _ref, _results;
+        this.columnIndexes = (function() {
+          _results = [];
+          for (var _i = 0, _ref = this.size.x; 0 <= _ref ? _i < _ref : _i > _ref; 0 <= _ref ? _i++ : _i--){ _results.push(_i); }
+          return _results;
+        }).apply(this);
+        return this.fire("board-changed");
+      },
+      _forceHeaderSet: function() {
+        var x, y;
+        x = Math.min(this.header.x, this.size.x - 1);
+        y = Math.min(this.header.y, this.size.y - 1);
+        this.header = null;
+        return this.header = {
+          x: x,
+          y: y
+        };
+      },
+      _readGbb: function() {
+        var gbb, height, width, _ref;
+        gbb = Polymer.dom(this).textContent;
+        if ((gbb == null) || gbb.indexOf("GBB") < 0) {
+          return;
+        }
+        this.gbb = gbb;
+        _ref = gbbReader.fromString(this.gbb), this.table = _ref.table, this.header = _ref.head, width = _ref.width, height = _ref.height;
+        this.size.x = width;
+        return this.size.y = height;
+      },
+      _updateStyles: function(uTable, uHeader, uAttire) {
+        var attire, header, table;
+        table = uTable != null ? uTable.base : void 0;
+        header = uHeader != null ? uHeader.base : void 0;
+        attire = uAttire != null ? uAttire.base : void 0;
+        if (!((table != null) && (header != null))) {
+          return;
+        }
+        if ((attire != null) && attire.enabled) {
+          this._setBorderOff();
+        } else {
+          this._setBorderOn();
+        }
+        this._updateBorderImages(attire);
+        this.updateStyles();
+        return this.querySelectorAll("gs-cell").forEach(function(cell) {
+          return cell.updateCellStyles(table, header, attire);
+        });
+      },
+      _setBorderOn: function() {
+        this.customStyle["--cell-padding"] = "2px";
+        return this.customStyle["--cell-border"] = "solid #888 1px";
+      },
+      _setBorderOff: function() {
+        this.customStyle["--cell-padding"] = "0 0";
+        return this.customStyle["--cell-border"] = "none";
+      },
+      _updateBorderImages: function(attire) {
+        var url;
+        url = (function(_this) {
+          return function(border) {
+            var link, _ref;
+            link = attire != null ? (_ref = attire.borders) != null ? _ref[border] : void 0 : void 0;
+            if ((attire != null ? attire.enabled : void 0) && (link != null)) {
+              return "url(" + link + ")";
+            }
+          };
+        })(this);
+        this.customStyle["--top-left-background-url"] = url("topLeft");
+        this.customStyle["--top-right-background-url"] = url("topRight");
+        this.customStyle["--bottom-left-background-url"] = url("bottomLeft");
+        this.customStyle["--bottom-right-background-url"] = url("bottomRight");
+        this.customStyle["--left-background-url"] = url("left");
+        this.customStyle["--top-background-url"] = url("top");
+        this.customStyle["--right-background-url"] = url("right");
+        return this.customStyle["--bottom-background-url"] = url("bottom");
+      }
+    });
+
+  </script>
+</dom-module>

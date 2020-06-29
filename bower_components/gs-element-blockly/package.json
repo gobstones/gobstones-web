@@ -1,0 +1,24 @@
+{
+  "name": "gs-element-blockly",
+  "version": "0.34.0",
+  "description": "Element providing Blockly interface for Gobstones Web",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "dependencies": {},
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/program-ar/gs-element-blockly.git"
+  },
+  "author": "",
+  "license": "LGPL-3.0",
+  "bugs": {
+    "url": "https://github.com/program-ar/gs-element-blockly/issues"
+  },
+  "homepage": "https://github.com/program-ar/gs-element-blockly#readme"
+}

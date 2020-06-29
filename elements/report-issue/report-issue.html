@@ -1,0 +1,54 @@
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../scripts/loaders/remote/gitHubLoader.html">
+
+</head><body><dom-module id="report-issue">
+  <style>
+    .title {
+      margin-bottom: 30px;
+      text-align: center;
+    }
+
+    .form {
+      width: 400px;
+      margin-left: 20px;
+      margin-right: 20px;
+    }
+
+    .body {
+      width: 100%;
+    }
+
+    .submit {
+      margin-top: 10px;
+      margin-bottom: 10px;
+    }
+
+    .report-warning {
+      color: gray;
+    }
+  </style>
+
+  <template>
+    <h1 class="title">[[localize("report-bug")]]</h1>
+
+    <div class="form">
+      <div>
+        <paper-input label$="{{localize('report-bug-title')}}" value="{{title}}"></paper-input>
+      </div>
+
+      <div>
+        <iron-autogrow-textarea rows="5" bind-value="{{body}}" placeholder$="{{localize('report-bug-description')}}"></iron-autogrow-textarea>
+      </div>
+
+      <div>
+        <paper-input label$="{{localize('report-bug-email')}}" value="{{email}}"></paper-input>
+      </div>
+
+      <div class="report-warning">[[localize("report-bug-public")]]<a target="_blank" href="https://github.com/gobstones/gobstones-issues/issues">issue tracker</a>.</div>
+
+      <button class="submit" on-click="send" disabled$="{{isLoading}}">[[localize("report-bug-send")]]</button>
+    </div>
+  </template>
+
+  </dom-module>
+<script src="report-issue.js"></script></body></html>

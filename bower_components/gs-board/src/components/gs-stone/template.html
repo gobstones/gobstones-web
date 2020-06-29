@@ -1,0 +1,13 @@
+<template is="dom-if" if="{{amount}}">
+  <div class$="gbs_stone gbs_tooltip gbs_{{color}} {{cssClass(color, amount)}}">
+    <span class="gbs_stone_amount">{{amountText(amount)}}</span>
+
+    <template is="dom-if" if="{{hasBigAmount(amount)}}">
+      <span class="gbs_tooltiptext">{{amount}}</span>
+    </template>
+  </div>
+</template>
+
+<template is="dom-if" if="{{!amount}}">
+  <div class$="gbs_stone gbs_O {{cssClass(color, amount)}}"></div>
+</template>

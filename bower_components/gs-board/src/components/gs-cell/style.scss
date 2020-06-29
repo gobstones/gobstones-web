@@ -1,0 +1,35 @@
+@import '../../common/style';
+
+.gbs_gh { /* position of the header in the board */
+  background: rgba(221, 221, 136, 0.7);
+  outline: 3px solid #cc0000;
+  outline-style: var(--outline-style);
+}
+
+div.gbs_gc {
+  background-image: var(--background-url);
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+}
+
+table.gbs_gc { /* cell table */
+  border-style: none;
+  border: solid black 0px;
+}
+.gbs_gc tr {
+  border-style: none;
+  border: 0px;
+}
+.gbs_gc td {
+  visibility: var(--stones-visibility);
+  border-style: none;
+  border: solid black 0px;
+  width: 15px;
+  height: 15px;
+  text-align: center;
+  color: #F3F3E9;
+}
+.gbs_gc td div {
+  line-height: 2;
+}

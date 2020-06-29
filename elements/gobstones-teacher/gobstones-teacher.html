@@ -1,0 +1,143 @@
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/iron-icons/notification-icons.html">
+<link rel="import" href="../../scripts/behaviors/busListenerBehavior.html">
+<link rel="import" href="../../scripts/jquery.html">
+<link rel="import" href="../../scripts/simplemde.html">
+
+</head><body><dom-module id="gobstones-teacher">
+  <template>
+
+    <style>
+      paper-tab {
+        --paper-tab-content-unselected: {
+          opacity: 0.5;
+        }
+      }
+
+      .fab-sync {
+        /* --paper-fab-background: var(--fab-sync-background);
+        --paper-fab-keyboard-focus-background: var(--fab-sync-background);
+        */
+        width: 10px;
+        height: 10px !important;
+        position: absolute;
+        left: 3px;
+        top: 3px;
+        --paper-fab-iron-icon: {
+          width: 10px !important;
+          height: 10px !important;
+        }
+      }
+
+      .fab-sync.sync-on {
+        background-color: #1da65b !important;
+      }
+
+      .fab-sync.sync-off {
+        background-color: #d93c46 !important;
+      }
+
+      .editor {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        left: 0;
+        top: 0;
+      }
+
+      .visible {
+        visibility: visible;
+      }
+
+      .unvisible {
+        visibility: hidden;
+      }
+
+      .button-tooltip {
+        font-size: 15px;
+      }
+
+      .solution-selector {
+        position: absolute;
+        right: 15px;
+        z-index: 99;
+        background-color: rgba(0, 0, 0, 0.02);
+        border-radius: 5px;
+        padding-left: 5px;
+        padding-right: 5px;
+      }
+    </style>
+
+    <div>
+      <paper-tooltip for="fab-sync-button" position="right" animation-config="{{tooltipAnimation}}">
+        <div class="button-tooltip">
+          [[localize("tooltip-blocks-sync")]]
+        </div>
+      </paper-tooltip>
+      <paper-tabs id="editorTab" selected="{{selectedTab}}" class="bottom self-end">
+        <paper-tab>[[localize("blocks")]]</paper-tab>
+        <paper-fab id="fab-sync-button" mini="" icon="notification:sync-disabled" class="fab-sync sync-off" on-click="_onBlocksSyncClick"></paper-fab>
+        <paper-tab>[[localize("code")]]</paper-tab>
+        <paper-tab>[[localize("teachers-library")]]</paper-tab>
+        <paper-tab>[[localize("students-library")]]</paper-tab>
+        <paper-tab>[[localize("description")]]</paper-tab>
+        <paper-tab>[[localize("attire")]]</paper-tab>
+        <paper-tab>[[localize("settings")]]</paper-tab>
+      </paper-tabs>
+
+      <template is="dom-if" if="{{isBlocksOrCodeTabSelected(selectedTab)}}">
+        <div class="solution-selector">
+          <paper-dropdown-menu no-animations="" no-label-float="" vertical-align="bottom" horizontal-align="right">
+            <paper-listbox class="dropdown-content" selected="{{selectedSolution}}">
+              <template is="dom-repeat" items="{{ availableSolutions }}" rendered-item-count="{{solutionsCount}}">
+                <paper-item>{{getSolutionDisplayName(item, localize)}}</paper-item>
+              </template>
+            </paper-listbox>
+          </paper-dropdown-menu>
+
+          <template is="dom-if" if="{{selectedSolution}}">
+            <paper-button id="rename-solution-button" style="z-index: 99" on-click="renameSolution"><iron-icon class="black-button" icon="icons:create"></iron-icon></paper-button>
+            <paper-tooltip for="rename-solution-button" position="bottom" animation-config="{{tooltipAnimation}}">
+              <div class="button-tooltip">
+                [[localize("tooltip-rename-solution")]]
+              </div>
+            </paper-tooltip>
+          </template>
+
+          <paper-button id="add-solution-button" style="z-index: 99" on-click="addSolutionByName"><iron-icon class="black-button" icon="icons:add"></iron-icon></paper-button>
+          <paper-tooltip for="add-solution-button" position="bottom" animation-config="{{tooltipAnimation}}">
+            <div class="button-tooltip">
+              [[localize("tooltip-add-solution")]]
+            </div>
+          </paper-tooltip>
+
+          <paper-button id="remove-solution-button" style="z-index: 99" on-click="removeCurrentSolution"><iron-icon class="black-button" icon="icons:remove"></iron-icon></paper-button>
+          <paper-tooltip for="remove-solution-button" position="bottom" animation-config="{{tooltipAnimation}}">
+            <div class="button-tooltip">
+              [[localize("tooltip-remove-solution")]]
+            </div>
+          </paper-tooltip>
+        </div>
+      </template>
+
+      <div style="position: relative">
+        <gobstones-blockly id="blocks-editor" class$="editor {{_blocksClass(selectedTab)}}"></gobstones-blockly>
+
+        <gobstones-editor id="code-editor" class$="editor {{_codeClass(selectedTab)}}"></gobstones-editor>
+
+        <gobstones-editor id="teacher-library-editor" class$="editor {{_teacherLibraryClass(selectedTab)}}"></gobstones-editor>
+
+        <gobstones-editor id="library-editor" class$="editor {{_libraryClass(selectedTab)}}"></gobstones-editor>
+
+        <description-editor id="description-editor" class$="editor {{_descriptionClass(selectedTab)}}"></description-editor>
+
+        <attire-editor id="attire-editor" class$="editor {{_attireClass(selectedTab)}}"></attire-editor>
+
+        <metadata-editor id="metadata-editor" class$="editor {{_metadataClass(selectedTab)}}"></metadata-editor>
+      </div>
+    </div>
+
+  </template>
+
+  </dom-module>
+<script src="gobstones-teacher.js"></script></body></html>

@@ -1,0 +1,32 @@
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html">
+
+</head><body><dom-module id="results-inspector">
+  <style>
+    .title {
+      margin-bottom: 30px;
+    }
+
+    .return-monospace {
+      width: 500px;
+      color: darkblue;
+      overflow-y: scroll;
+      text-align: left;
+      min-height: 50px;
+      max-height: 300px;
+      margin-left: 20px;
+      margin-right: 20px;
+    }
+  </style>
+
+  <template>
+    <h1 class="title">[[localize("results")]]</h1>
+
+    <strong>[[localize("type")]]:</strong>&nbsp;
+    <pre class="return-monospace">{{adaptType(result)}}</pre>
+
+    <strong>[[localize("value")]]:</strong>&nbsp;
+    <pre class="return-monospace">{{adaptValue(result)}}</pre>
+  </template>
+
+  </dom-module>
+<script src="results-inspector.js"></script></body></html>

@@ -1,0 +1,115 @@
+@import '../../common/style';
+
+.gbs_color-blue {
+  background-image: url(data:image/svg+xml,%3C%3Fxml%20version%3D%221.0%22%20encoding%3D%22UTF-8%22%20standalone%3D%22no%22%3F%3E%0A%3Csvg%20id%3D%22svg2%22%20xmlns%3Ardf%3D%22http%3A//www.w3.org/1999/02/22-rdf-syntax-ns%23%22%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20height%3D%2250mm%22%20width%3D%2250mm%22%20version%3D%221.1%22%20xmlns%3Acc%3D%22http%3A//creativecommons.org/ns%23%22%20xmlns%3Adc%3D%22http%3A//purl.org/dc/elements/1.1/%22%20viewBox%3D%220%200%20177.16535%20177.16535%22%3E%0A%20%3Cmetadata%20id%3D%22metadata4%22%3E%0A%20%20%3Crdf%3ARDF%3E%0A%20%20%20%3Ccc%3AWork%20rdf%3Aabout%3D%22%22%3E%0A%20%20%20%20%3Cdc%3Aformat%3Eimage/svg+xml%3C/dc%3Aformat%3E%0A%20%20%20%20%3Cdc%3Atype%20rdf%3Aresource%3D%22http%3A//purl.org/dc/dcmitype/StillImage%22/%3E%0A%20%20%20%20%3Cdc%3Atitle/%3E%0A%20%20%20%3C/cc%3AWork%3E%0A%20%20%3C/rdf%3ARDF%3E%0A%20%3C/metadata%3E%0A%20%3Cellipse%20id%3D%22ellipse8%22%20rx%3D%2288.184%22%20ry%3D%2288.715%22%20cy%3D%2288.64%22%20cx%3D%2288.641%22%20fill%3D%22%232a7fff%22/%3E%0A%20%3Cpath%20id%3D%22path10%22%20d%3D%22m171.5%2059.51c3.8341%209.671%205.9385%2020.183%205.9385%2031.178%200%2047.861-39.767%2086.675-88.804%2086.675-49.035%200-88.802-38.814-88.802-86.675%200-11.546%202.321-22.563%206.5203-32.638%200.65931%201.4104%201.2522%202.2175%202.3526%203.2916%200.35416%201.0386%200.78421%201.6358%201.3755%202.1681-7.3662%2020.277-6.1393%2043.028%203.4436%2062.435%2054.759-46.096%2078.905%2015.358%20153.35-15.895%205.0041-18.979%207.0041-31.152-1.2712-50.54h5.8942z%22%20fill%3D%22%230055d4%22/%3E%0A%20%3Cellipse%20id%3D%22ellipse12%22%20rx%3D%227.2374%22%20ry%3D%227.2809%22%20cy%3D%2240.65%22%20cx%3D%2255.881%22%20fill%3D%22%23fff%22/%3E%0A%20%3Cellipse%20id%3D%22ellipse14%22%20rx%3D%224.0266%22%20ry%3D%224.0508%22%20cy%3D%2231.7%22%20cx%3D%2260.102%22%20fill%3D%22%23fff%22/%3E%0A%20%3Cpath%20id%3D%22path16%22%20d%3D%22m170.51%2094.27c-0.7628%204.8812-1.991%209.9925-3.5039%2015.73-22.254%209.3418-40.012%2010.398-55.438%208.5215a61.964%2057.5%200%200%200%20-11.02%2032.707%2061.964%2057.5%200%200%200%205.9121%2024.359c38.986-7.6985%2068.715-40.328%2070.965-80.098a61.964%2057.5%200%200%200%20-6.916%20-1.2207z%22%20fill%3D%22%2304a%22/%3E%0A%3C/svg%3E%0A);
+  background-size: 20px 20px;
+}
+
+.gbs_color-black {
+  background-image: url(data:image/svg+xml,%3C%3Fxml%20version%3D%221.0%22%20encoding%3D%22UTF-8%22%20standalone%3D%22no%22%3F%3E%0A%3Csvg%20id%3D%22svg2%22%20xmlns%3Ardf%3D%22http%3A//www.w3.org/1999/02/22-rdf-syntax-ns%23%22%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20height%3D%2250mm%22%20width%3D%2250mm%22%20version%3D%221.1%22%20xmlns%3Acc%3D%22http%3A//creativecommons.org/ns%23%22%20xmlns%3Adc%3D%22http%3A//purl.org/dc/elements/1.1/%22%20viewBox%3D%220%200%20177.16535%20177.16535%22%3E%0A%20%3Cmetadata%20id%3D%22metadata4%22%3E%0A%20%20%3Crdf%3ARDF%3E%0A%20%20%20%3Ccc%3AWork%20rdf%3Aabout%3D%22%22%3E%0A%20%20%20%20%3Cdc%3Aformat%3Eimage/svg+xml%3C/dc%3Aformat%3E%0A%20%20%20%20%3Cdc%3Atype%20rdf%3Aresource%3D%22http%3A//purl.org/dc/dcmitype/StillImage%22/%3E%0A%20%20%20%20%3Cdc%3Atitle/%3E%0A%20%20%20%3C/cc%3AWork%3E%0A%20%20%3C/rdf%3ARDF%3E%0A%20%3C/metadata%3E%0A%20%3Cellipse%20id%3D%22ellipse8%22%20rx%3D%2288.184%22%20ry%3D%2288.715%22%20cy%3D%2288.64%22%20cx%3D%2288.641%22%20fill%3D%22%23292929%22/%3E%0A%20%3Cpath%20id%3D%22path10%22%20d%3D%22m171.5%2059.51c3.8341%209.671%205.9385%2020.183%205.9385%2031.178%200%2047.861-39.767%2086.675-88.804%2086.675-49.035%200-88.802-38.814-88.802-86.675%200-11.546%202.321-22.563%206.5203-32.638%200.65931%201.4104%201.2522%202.2175%202.3526%203.2916%200.35416%201.0386%200.78421%201.6358%201.3755%202.1681-7.3662%2020.277-6.1393%2043.028%203.4436%2062.435%2054.759-46.096%2078.905%2015.358%20153.35-15.895%205.0041-18.979%207.0041-31.152-1.2712-50.54h5.8942z%22%20fill%3D%22%23202020%22/%3E%0A%20%3Cellipse%20id%3D%22ellipse12%22%20rx%3D%227.2374%22%20ry%3D%227.2809%22%20cy%3D%2240.65%22%20cx%3D%2255.881%22%20fill%3D%22%23fff%22/%3E%0A%20%3Cellipse%20id%3D%22ellipse14%22%20rx%3D%224.0266%22%20ry%3D%224.0508%22%20cy%3D%2231.7%22%20cx%3D%2260.102%22%20fill%3D%22%23fff%22/%3E%0A%20%3Cpath%20id%3D%22path16%22%20d%3D%22m170.51%2094.27c-0.7628%204.8812-1.991%209.9925-3.5039%2015.73-22.254%209.3418-40.012%2010.398-55.438%208.5215a61.964%2057.5%200%200%200%20-11.02%2032.707%2061.964%2057.5%200%200%200%205.9121%2024.359c38.986-7.6985%2068.715-40.328%2070.965-80.098a61.964%2057.5%200%200%200%20-6.916%20-1.2207z%22%20fill%3D%22%23131313%22/%3E%0A%3C/svg%3E%0A);
+  background-size: 20px 20px;
+}
+
+.gbs_color-red {
+  background-image: url(data:image/svg+xml,%3Csvg%20xmlns%3Ardf%3D%22http%3A//www.w3.org/1999/02/22-rdf-syntax-ns%23%22%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20height%3D%2250mm%22%20width%3D%2250mm%22%20version%3D%221.1%22%20xmlns%3Acc%3D%22http%3A//creativecommons.org/ns%23%22%20xmlns%3Adc%3D%22http%3A//purl.org/dc/elements/1.1/%22%20viewBox%3D%220%200%20177.16535%20177.16535%22%3E%0A%3Cmetadata%3E%0A%3Crdf%3ARDF%3E%0A%3Ccc%3AWork%20rdf%3Aabout%3D%22%22%3E%0A%3Cdc%3Aformat%3Eimage/svg+xml%3C/dc%3Aformat%3E%0A%3Cdc%3Atype%20rdf%3Aresource%3D%22http%3A//purl.org/dc/dcmitype/StillImage%22/%3E%0A%3Cdc%3Atitle/%3E%0A%3C/cc%3AWork%3E%0A%3C/rdf%3ARDF%3E%0A%3C/metadata%3E%0A%3Cg%20transform%3D%22translate%280%20-875.2%29%22%3E%0A%3Cellipse%20rx%3D%2288.184%22%20ry%3D%2288.715%22%20cy%3D%22963.84%22%20cx%3D%2288.641%22%20fill%3D%22%23d40000%22/%3E%0A%3Cpath%20fill%3D%22%23b10000%22%20d%3D%22m171.5%20934.71c3.8341%209.671%205.9385%2020.183%205.9385%2031.178%200%2047.861-39.767%2086.675-88.804%2086.675-49.035%200-88.802-38.814-88.802-86.675%200-11.546%202.321-22.563%206.5203-32.638%200.65931%201.4104%201.2522%202.2175%202.3526%203.2916%200.35416%201.0386%200.78421%201.6358%201.3755%202.1681-7.3662%2020.277-6.1393%2043.028%203.4436%2062.435%2054.759-46.096%2078.905%2015.358%20153.35-15.895%205.0041-18.979%207.0041-31.152-1.2712-50.54h5.8942z%22/%3E%0A%3Cellipse%20rx%3D%227.2374%22%20ry%3D%227.2809%22%20cy%3D%22915.85%22%20cx%3D%2255.881%22%20fill%3D%22%23fff%22/%3E%0A%3Cellipse%20rx%3D%224.0266%22%20ry%3D%224.0508%22%20cy%3D%22906.9%22%20cx%3D%2260.102%22%20fill%3D%22%23fff%22/%3E%0A%3Cpath%20fill%3D%22%23800%22%20d%3D%22m170.51%20969.47c-0.7628%204.8812-1.991%209.9925-3.5039%2015.73-22.254%209.3418-40.012%2010.398-55.438%208.5215a61.964%2057.5%200%200%200%20-11.02%2032.707%2061.964%2057.5%200%200%200%205.9121%2024.359c38.986-7.6985%2068.715-40.328%2070.965-80.098a61.964%2057.5%200%200%200%20-6.916%20-1.2207z%22/%3E%0A%3C/g%3E%0A%3C/svg%3E%0A);
+  background-size: 20px 20px;
+}
+
+.gbs_color-green {
+  background-image: url(data:image/svg+xml,%3C%3Fxml%20version%3D%221.0%22%20encoding%3D%22UTF-8%22%20standalone%3D%22no%22%3F%3E%0A%3Csvg%20id%3D%22svg2%22%20xmlns%3Ardf%3D%22http%3A//www.w3.org/1999/02/22-rdf-syntax-ns%23%22%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20height%3D%2250mm%22%20width%3D%2250mm%22%20version%3D%221.1%22%20xmlns%3Acc%3D%22http%3A//creativecommons.org/ns%23%22%20xmlns%3Adc%3D%22http%3A//purl.org/dc/elements/1.1/%22%20viewBox%3D%220%200%20177.16535%20177.16535%22%3E%0A%20%3Cmetadata%20id%3D%22metadata4%22%3E%0A%20%20%3Crdf%3ARDF%3E%0A%20%20%20%3Ccc%3AWork%20rdf%3Aabout%3D%22%22%3E%0A%20%20%20%20%3Cdc%3Aformat%3Eimage/svg+xml%3C/dc%3Aformat%3E%0A%20%20%20%20%3Cdc%3Atype%20rdf%3Aresource%3D%22http%3A//purl.org/dc/dcmitype/StillImage%22/%3E%0A%20%20%20%20%3Cdc%3Atitle/%3E%0A%20%20%20%3C/cc%3AWork%3E%0A%20%20%3C/rdf%3ARDF%3E%0A%20%3C/metadata%3E%0A%20%3Cellipse%20id%3D%22ellipse8%22%20rx%3D%2288.184%22%20ry%3D%2288.715%22%20cy%3D%2288.64%22%20cx%3D%2288.641%22%20fill%3D%22%2337c837%22/%3E%0A%20%3Cpath%20id%3D%22path10%22%20d%3D%22m171.5%2059.51c3.8341%209.671%205.9385%2020.183%205.9385%2031.178%200%2047.861-39.767%2086.675-88.804%2086.675-49.035%200-88.802-38.814-88.802-86.675%200-11.546%202.321-22.563%206.5203-32.638%200.65931%201.4104%201.2522%202.2175%202.3526%203.2916%200.35416%201.0386%200.78421%201.6358%201.3755%202.1681-7.3662%2020.277-6.1393%2043.028%203.4436%2062.435%2054.759-46.096%2078.905%2015.358%20153.35-15.895%205.0041-18.979%207.0041-31.152-1.2712-50.54h5.8942z%22%20fill%3D%22%232ca02c%22/%3E%0A%20%3Cellipse%20id%3D%22ellipse12%22%20rx%3D%227.2374%22%20ry%3D%227.2809%22%20cy%3D%2240.65%22%20cx%3D%2255.881%22%20fill%3D%22%23fff%22/%3E%0A%20%3Cellipse%20id%3D%22ellipse14%22%20rx%3D%224.0266%22%20ry%3D%224.0508%22%20cy%3D%2231.7%22%20cx%3D%2260.102%22%20fill%3D%22%23fff%22/%3E%0A%20%3Cpath%20id%3D%22path16%22%20d%3D%22m170.51%2094.27c-0.7628%204.8812-1.991%209.9925-3.5039%2015.73-22.254%209.3418-40.012%2010.398-55.438%208.5215a61.964%2057.5%200%200%200%20-11.02%2032.707%2061.964%2057.5%200%200%200%205.9121%2024.359c38.986-7.6985%2068.715-40.328%2070.965-80.098a61.964%2057.5%200%200%200%20-6.916%20-1.2207z%22%20fill%3D%22%23217821%22/%3E%0A%3C/svg%3E%0A);
+  background-size: 20px 20px;
+}
+
+::content {
+  div.gbs_blue { @extend .gbs_color-blue; }
+  div.gbs_black { @extend .gbs_color-black; }
+  div.gbs_red  { @extend .gbs_color-red; }
+  div.gbs_green { @extend .gbs_color-green; }
+  div.gbs_O { background: white; opacity: 0; }
+}
+
+.gbs_hidden {
+  visibility: hidden;
+}
+
+.gbs_stone {
+  font-weight: bold;
+  font-size: 8pt;
+  width: 20px;
+  height: 20px;
+
+  @extend .gbs_unselectable;
+}
+
+.gbs_stone_amount {
+  vertical-align: sub;
+}
+
+.gbs_ghost-color {
+  cursor: pointer;
+  opacity: 0.5 !important;
+}
+
+.gbs_ghost-blue:hover {
+  @extend .gbs_ghost-color;
+  @extend .gbs_color-blue;
+}
+
+.gbs_ghost-black:hover {
+  @extend .gbs_ghost-color;
+  @extend .gbs_color-black;
+}
+
+.gbs_ghost-red:hover {
+  @extend .gbs_ghost-color;
+  @extend .gbs_color-red;
+}
+
+.gbs_ghost-green:hover {
+  @extend .gbs_ghost-color;
+  @extend .gbs_color-green;
+}
+
+/* Tooltip container */
+.gbs_tooltip {
+  position: relative;
+}
+
+/* Tooltip text */
+.gbs_tooltip .gbs_tooltiptext {
+  visibility: hidden;
+  width: 50px;
+  background-color: #555;
+  color: #fff;
+  text-align: center;
+  padding: 5px 0;
+  border-radius: 6px;
+
+  /* Position the tooltip text */
+  position: absolute;
+  z-index: 1;
+  bottom: 125%;
+  left: 50%;
+  margin-left: -25px;
+
+  /* Fade in tooltip */
+  opacity: 0;
+}
+
+/* Tooltip arrow */
+.gbs_tooltip .gbs_tooltiptext::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  margin-left: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: #555 transparent transparent transparent;
+}
+
+/* Show the tooltip text when you mouse over the tooltip container */
+.gbs_tooltip:hover .gbs_tooltiptext {
+  visibility: visible;
+  opacity: 1;
+}

@@ -1,0 +1,78 @@
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html">
+
+</head><body><dom-module id="course-selector">
+  <style>
+    .input-course {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .input-course-input {
+      width: 70%;
+    }
+
+    .input-course-button {
+      margin-top: 15px;
+      margin-left: 15px;
+    }
+
+    .available-courses {
+      margin-top: 30px;
+      margin-bottom: 30px;
+    }
+  </style>
+
+  <template>
+    <h1>[[localize("course")]]</h1>
+
+    <form action="javascript:void(0);">
+      <div class="input-course">
+        <paper-input class="input-course-input" label$="{{localize('insert-course-slug')}}" value="{{slug}}"></paper-input>
+
+        <template is="dom-if" if="{{isDesktop()}}">
+          <button class="input-course-button" type="submit" on-click="downloadCourse">[[localize("download-course")]]</button>
+          <button class="input-course-button" type="submit" on-click="importCourse">[[localize("download-course-import")]]</button>
+        </template>
+        <template is="dom-if" if="{{!isDesktop()}}">
+          <button class="input-course-button" type="submit" on-click="goToCourse">[[localize("go-to-course")]]</button>
+        </template>
+      </div>
+    </form>
+
+    <template is="dom-if" if="{{availableCourses.length}}">
+      <h1 class="available-courses">[[localize("available-courses")]]</h1>
+      <template is="dom-repeat" items="{{availableCourses}}">
+        <li>
+          <span hidden$="{{isDesktop()}}">
+            <a href="javascript: void(0);" on-click="onGoToClick">[[item.name]]</a>
+          </span>
+          <span hidden$="{{!isDesktop()}}">
+            <span hidden$="{{!item.path}}">
+              <a href="javascript: void(0);" on-click="onGoToClick">[[item.name]]</a>
+            </span>
+            <span hidden$="{{item.path}}">
+              [[item.name]]
+            </span>
+          </span>
+
+          <span hidden$="{{!isDesktop()}}">
+            <span hidden$="{{item.isDownloading}}">
+              <paper-button style="z-index: 99" on-click="onDownloadCourse"><iron-icon class="black-button" icon="icons:refresh"></iron-icon></paper-button>
+              <paper-button style="z-index: 99" on-click="onDeleteCourse"><iron-icon class="black-button" icon="icons:remove"></iron-icon></paper-button>
+            </span>
+
+            <span hidden$="{{!item.isDownloading}}">
+              <span style="font-size: small; color: gray">
+                <span>[[localize("updating")]]</span>
+                <span>([[item.downloadProgress]])</span>
+              </span>
+            </span>
+          </span>
+        </li>
+      </template>
+    </template>
+  </template>
+
+  </dom-module>
+<script src="course-selector.js"></script></body></html>

@@ -1,0 +1,230 @@
+{
+  "name": "gobstones-web",
+  "description": "Gobstones Web",
+  "version": "2.19.0",
+  "private": true,
+  "licence": "GPLv3",
+  "author": "Gobstones <info@gobstones.org> (https://gobstones.github.io)",
+  "homepage": "https://gobstones.github.io",
+  "repository": "https://github.com/gobstones/gobstones-web",
+  "main": "app/start-electron.js",
+  "scripts": {
+    "postinstall": "bower install --allow-root",
+    "dev": "gulp serve",
+    "start": "electron build/start-full.js",
+    "build": "electron-builder",
+    "dist": "node build/builder.js",
+    "dist:all": "node build/builder.js -p all -t all -a all -v",
+    "dist:docker": "sh build/docker_build.sh",
+    "publish": "node build/builder.js --publish",
+    "test": "echo 'Oops, no tests here... :('"
+  },
+  "engines": {
+    "node": ">=7.0.0"
+  },
+  "dependencies": {
+    "bytes": "^3.0.0",
+    "decompress-zip": "^0.3.1",
+    "finalhandler": "^1.0.2",
+    "freeport": "^1.0.5",
+    "recursive-readdir-sync": "^1.0.6",
+    "rimraf": "^2.6.3",
+    "serve-static": "^1.12.2",
+    "setimmediate": "^1.0.5",
+    "showdown": "^1.7.3",
+    "yargs": "^12.0.1"
+  },
+  "devDependencies": {
+    "babel-preset-es2015": "^6.24.1",
+    "bower": "^1.8.4",
+    "browser-sync": "^2.7.7",
+    "connect-history-api-fallback": "^1.1.0",
+    "del": "^2.0.2",
+    "electron": "^1.6.6",
+    "electron-builder": "^21.2.0",
+    "env-cmd": "^8.0.2",
+    "es6-promise": "^3.1.2",
+    "glob-all": "^3.0.1",
+    "gulp": "^3.8.5",
+    "gulp-autoprefixer": "^3.1.0",
+    "gulp-babel": "^6.1.2",
+    "gulp-cache": "^0.4.0",
+    "gulp-changed": "^1.0.0",
+    "gulp-crisper": "^1.1.0",
+    "gulp-gh-pages": "^0.5.4",
+    "gulp-html-extract": "^0.1.0",
+    "gulp-if": "^2.0.0",
+    "gulp-imagemin": "^2.2.1",
+    "gulp-jasmine-browser": "^1.4.0",
+    "gulp-load-plugins": "^1.1.0",
+    "gulp-minify-css": "^1.2.1",
+    "gulp-minify-html": "^1.0.2",
+    "gulp-rename": "^1.2.0",
+    "gulp-replace": "^0.5.4",
+    "gulp-size": "^2.0.0",
+    "gulp-sourcemaps": "^1.6.0",
+    "gulp-uglify": "^1.2.0",
+    "gulp-useref": "^2.1.0",
+    "gulp-vulcanize": "^6.0.0",
+    "jasmine-core": "^2.4.1",
+    "merge-stream": "^1.0.0",
+    "publish-release": "^1.3.3",
+    "require-dir": "^0.3.0",
+    "run-sequence": "^1.0.2",
+    "vulcanize": ">= 1.4.2",
+    "web-component-tester": "^4.0.0"
+  },
+  "window": {
+    "title": "Gobstones Web",
+    "width": 800,
+    "height": 600,
+    "min_width": 640,
+    "min_height": 480,
+    "icon": "favicon.ico",
+    "position": "center"
+  },
+  "build": {
+    "appId": "org.gobstones.gobstones-web",
+    "productName": "gobstones-web",
+    "artifactName": "${productName}_${version}_${os}_${arch}.${ext}",
+    "asar": false,
+    "fileAssociations": [
+      {
+        "ext": "gbp",
+        "name": "Gobstones Project File"
+      },
+      {
+        "ext": "gbs",
+        "name": "Gobstones Sr. Code File"
+      },
+      {
+        "ext": "gbk",
+        "name": "Gobstones Jr. Code File"
+      }
+    ],
+    "mac": {
+      "category": "public.app-category.developer-tools",
+      "icon": "icon.icns",
+      "target": "dmg"
+    },
+    "dmg": {
+      "icon": "dmgIcon.icns",
+      "window": {
+        "width": 507,
+        "height": 302
+      },
+      "background": "build/background.png",
+      "iconSize": 100,
+      "contents": [
+        {
+          "x": 375,
+          "y": 150,
+          "type": "link",
+          "path": "/Applications"
+        },
+        {
+          "x": 150,
+          "y": 150,
+          "type": "file"
+        }
+      ]
+    },
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64",
+            "ia32"
+          ]
+        },
+        {
+          "target": "portable",
+          "arch": [
+            "x64",
+            "ia32"
+          ]
+        }
+      ]
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": true,
+      "allowElevation": true,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "installerIcon": "build/msiIcon.ico",
+      "uninstallerIcon": "build/msiIcon.ico"
+    },
+    "portable": {
+      "artifactName": "${productName}_${version}_${os}_portable_${arch}.${ext}"
+    },
+    "linux": {
+      "icon": "build/linuxIcons",
+      "executableName": "gobstones",
+      "target": [
+        {
+          "target": "AppImage",
+          "arch": [
+            "x64",
+            "ia32"
+          ]
+        },
+        {
+          "target": "deb",
+          "arch": [
+            "x64",
+            "ia32"
+          ]
+        },
+        {
+          "target": "rpm",
+          "arch": [
+            "x64",
+            "ia32"
+          ]
+        },
+        {
+          "target": "pacman",
+          "arch": [
+            "x64",
+            "ia32"
+          ]
+        },
+        {
+          "target": "freebsd",
+          "arch": [
+            "x64",
+            "ia32"
+          ]
+        }
+      ]
+    },
+    "deb": {
+      "depends": [
+        "gconf2",
+        "gconf-service",
+        "libnotify4",
+        "libappindicator1",
+        "libxtst6",
+        "libnss3",
+        "libcanberra-gtk3-module",
+        "libcanberra-gtk-module"
+      ],
+      "packageCategory": "Education"
+    },
+    "rpm": {
+      "packageCategory": "Education"
+    },
+    "pacman": {
+      "packageCategory": "Education"
+    },
+    "freebsd": {
+      "packageCategory": "Education"
+    }
+  },
+  "resolutions": {
+    "**/event-stream": "^4.0.1"
+  }
+}

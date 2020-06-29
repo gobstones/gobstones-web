@@ -1,0 +1,14 @@
+{
+  "name": "gobstones-interpreter",
+  "description": "Gobstones Web Interpreter",
+  "main": "lib/gobstones-interpreter.min.js",
+  "license": "GPL",
+  "keywords": [
+    "gobstones",
+    "interpreter"
+  ],
+  "homepage": "https://github.com/gobstones/gobstones-interpreter",
+  "moduleType": [],
+  "ignore": [
+  ]
+}

@@ -1,0 +1,161 @@
+/*
+Copyright (c) 2015 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+*/
+
+body {
+  background: #fafafa;
+  font-family: 'Roboto', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  color: #333;
+}
+
+blockquote {
+  border-radius: 4px;
+  background-color: #cce5f6;
+  border-left: 8px solid #3498DB;
+  font-size: 15px;
+  margin: 10px 0;
+  padding: 1px 10px;
+}
+
+.page-title {
+  outline: none;
+}
+
+#drawer {
+  border-left: 1px solid rgba(0, 0, 0, 0.22);
+  z-index: 999;
+}
+
+.app-name {
+  font-size: 20px;
+  margin-left: 10px;
+}
+
+.app-logo {
+  height: 30px;
+  background-color: white;
+  border-radius: 20px;
+  padding: 4px 6px 4px 6px;
+}
+
+.panel-container {
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  height: 100vh;
+  -webkit-flex-direction: row;
+      -ms-flex-direction: row;
+          flex-direction: row;
+  overflow: hidden;
+
+  /* avoid browser level touch actions */
+  xtouch-action: none;
+}
+
+.panel-left {
+  -webkit-flex: 0 0 auto;
+      -ms-flex: 0 0 auto;
+          flex: 0 0 auto;
+  width: 60%;
+  white-space: nowrap;
+  background: white;
+}
+
+.panel-right {
+  -webkit-flex: 1 1 auto;
+      -ms-flex: 1 1 auto;
+          flex: 1 1 auto;
+  padding: 10px;
+  width: 100%;
+  background: white;
+}
+
+.clickable {
+  cursor: pointer;
+}
+
+.button {
+  cursor: pointer;
+  color: white;
+}
+
+.black-button {
+  cursor: pointer;
+  color: black;
+}
+
+.blue-sky {
+  color: #3367d6;
+}
+
+.grey {
+  color: gray;
+}
+
+.button-disabled {
+  color: #9a9a9a;
+}
+
+.button:hover {
+  box-shadow: 1px 1px 1px 1px rgba(0,0,0,0.3);
+}
+
+.black-button:hover {
+  box-shadow: 1px 1px 1px 1px rgba(0,0,0,0.3);
+}
+
+.close {
+  position: absolute;
+  top: -25px;
+  right: -25px;
+}
+
+.accept {
+  cursor: pointer;
+}
+
+.ace_info {
+  background-image: url("../images/bomb.png") !important;
+}
+
+iron-dropdown > #contentWrapper {
+  width: 350px;
+}
+
+.gbs_gh {
+  outline: 3px solid #129841 !important;
+}
+
+.paper-fab-0 {
+  background: #129841 !important;
+}
+
+.boards-tabs {
+  background: #b50909 !important;
+}
+
+.blocklyFlyoutBackground {
+  fill: #dcedf5 !important;
+}
+
+.blocklyToolboxDiv {
+  background-color: #dcedf5 !important;
+}
+
+.blocklyTreeRow:not(.blocklyTreeSelected):hover {
+  background-color: #ebf5f9 !important;
+}
+
+.blocklyTreeSelected {
+  background-color: #4ea7ca !important;
+}
+
+.blocklyInvalidParent > .blocklyPath {
+  fill: #ff0000;
+  fill-opacity: 1;
+}

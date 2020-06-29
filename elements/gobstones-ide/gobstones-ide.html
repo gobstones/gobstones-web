@@ -1,0 +1,166 @@
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../scripts/behaviors/localizationBehavior.html">
+<link rel="import" href="../../scripts/behaviors/loaderBehavior.html">
+<link rel="import" href="../../scripts/jquery.html">
+<link rel="import" href="../../scripts/tour.html">
+<link rel="import" href="../../scripts/showdown.html">
+<link rel="import" href="../../scripts/js-emoji.html">
+<link rel="import" href="../../scripts/loaders/remote/urlLoader.html">
+<link rel="import" href="../../scripts/loaders/remote/gitHubLoader.html">
+<link rel="import" href="../../scripts/loaders/remote/fsLoader.html">
+<link rel="import" href="../course-selector/course-selector.html">
+<link rel="import" href="../project-selector/project-selector.html">
+<link rel="import" href="../about-gobstones/about-gobstones.html">
+<link rel="import" href="../code-viewer/code-viewer.html">
+
+<link rel="stylesheet" href="../../bower_components/material-walkthrough/dist/material-walkthrough.min.css">
+
+</head><body><dom-module id="gobstones-ide">
+  <style>
+    .overlay {
+      background-color: rgba(1, 1, 1, 0);
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 9999;
+    }
+
+    .loading {
+      z-index: 999;
+      position: absolute;
+      text-align: center;
+      font-weight: bold;
+      font-size: xx-large;
+      width: 600px;
+      height: 100px;
+      margin-top: -50px;
+      margin-left: -300px;
+      top: 50%;
+      left: 50%;
+      transform: translateY(-100%);
+    }
+
+    .loading-logo {
+      width: 200px;
+      height: 200px;
+      opacity: 0.8;
+    }
+
+    .gray {
+      filter: blur(15px);
+    }
+
+    .ide-modal {
+      min-width: 40%;
+    }
+
+    .project-selector-modal {
+      width: 70%;
+    }
+
+    .code-placeholder {
+      position: absolute;
+      top: 78px;
+      left: 100px;
+      width: 300px;
+      height: 300px;
+      pointer-events: none;
+    }
+
+    .description-dialog {
+      user-select: none;
+    }
+  </style>
+
+  <template>
+
+    <template is="dom-if" if="{{showIsLoading}}">
+      <div class="overlay">
+        <div class="loading">
+          <div>
+            <img class="loading-logo" src="../../images/logo.png">
+          </div>
+          <div>
+            <paper-spinner active=""></paper-spinner>
+            <span>[[localize("loading")]]</span>
+          </div>
+        </div>
+      </div>
+    </template>
+
+    <div class$="panel-container {{ideCss(showIsLoading)}}">
+      <div class="panel-left">
+        <gbs-editor-toolbar id="toolbar" project-type="[[projectType]]"></gbs-editor-toolbar>
+        <template is="dom-if" if="{{isBlocksProject(projectType)}}">
+          <gobstones-blockly id="editor" with-runner=""></gobstones-blockly>
+        </template>
+
+        <template is="dom-if" if="{{isCodeProject(projectType)}}">
+          <gobstones-editor id="editor" with-runner=""></gobstones-editor>
+        </template>
+
+        <template is="dom-if" if="{{isTeacherProject(projectType)}}">
+          <gobstones-teacher id="editor"></gobstones-teacher>
+        </template>
+        <div id="code-placeholder" class="code-placeholder"></div>
+      </div>
+
+      <div class="panel-right">
+        <boards-panel id="boards" project-type="[[projectType]]"></boards-panel>
+      </div>
+
+      <paper-dialog class="description-dialog" id="descriptionModal" on-iron-overlay-closed="_onCloseDescriptionModal">
+        <paper-button class="accept close" dialog-confirm="" autofocus=""><iron-icon icon="icons:close"></iron-icon></paper-button>
+
+        <paper-dialog-scrollable>
+          <div inner-h-t-m-l="[[compileMd(description)]]"></div>
+        </paper-dialog-scrollable>
+
+        <div class="buttons">
+          <paper-button class="accept" dialog-confirm="" autofocus="">[[localize("accept")]]</paper-button>
+        </div>
+      </paper-dialog>
+
+      <paper-dialog id="aboutModal" class="about-modal">
+        <paper-button class="accept close" dialog-confirm="" autofocus=""><iron-icon icon="icons:close"></iron-icon></paper-button>
+
+        <paper-dialog-scrollable>
+          <about-gobstones></about-gobstones>
+        </paper-dialog-scrollable>
+      </paper-dialog>
+
+      <paper-dialog id="projectSelectorModal" class="project-selector-modal">
+        <paper-button class="accept close" dialog-confirm="" autofocus=""><iron-icon icon="icons:close"></iron-icon></paper-button>
+
+        <paper-dialog-scrollable>
+          <project-selector projecttype="[[projectType]]"></project-selector>
+        </paper-dialog-scrollable>
+      </paper-dialog>
+
+      <paper-dialog id="courseSelectorModal" class="project-selector-modal">
+        <paper-button class="accept close" dialog-confirm="" autofocus=""><iron-icon icon="icons:close"></iron-icon></paper-button>
+
+        <paper-dialog-scrollable>
+          <course-selector></course-selector>
+        </paper-dialog-scrollable>
+      </paper-dialog>
+
+      <paper-dialog id="codeViewModal" class="code-view-modal">
+        <paper-button class="accept close" dialog-confirm="" autofocus=""><iron-icon icon="icons:close"></iron-icon></paper-button>
+
+        <code-viewer id="codeViewer" code="[[currentCode]]">
+      </code-viewer></paper-dialog>
+
+      <paper-dialog id="reportIssueModal" class="report-issue-modal">
+        <paper-button class="accept close" dialog-confirm="" autofocus=""><iron-icon icon="icons:close"></iron-icon></paper-button>
+
+        <report-issue>
+      </report-issue></paper-dialog>
+    </div>
+
+  </template>
+
+  </dom-module>
+<script src="gobstones-ide.js"></script></body></html>

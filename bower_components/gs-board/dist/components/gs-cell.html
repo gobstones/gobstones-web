@@ -1,0 +1,192 @@
+<link rel="import" href="gs-stone.html">
+<link rel="import" href="cell-dresser.html">
+<dom-module id="gs-cell">
+  <template>
+    <style>
+      .gbs_pointer {
+        cursor: pointer;
+      }
+
+      .gbs_unselectable {
+        -webkit-touch-callout: none;
+        -webkit-user-select: none;
+        -khtml-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+      }
+
+      .gbs_gh {
+        /* position of the header in the board */
+        background: rgba(221, 221, 136, 0.7);
+        outline: 3px solid #cc0000;
+        outline-style: var(--outline-style);
+      }
+
+      div.gbs_gc {
+        background-image: var(--background-url);
+        background-repeat: no-repeat;
+        background-position: center;
+        background-size: cover;
+      }
+
+      table.gbs_gc {
+        /* cell table */
+        border-style: none;
+        border: solid black 0px;
+      }
+
+      .gbs_gc tr {
+        border-style: none;
+        border: 0px;
+      }
+
+      .gbs_gc td {
+        visibility: var(--stones-visibility);
+        border-style: none;
+        border: solid black 0px;
+        width: 15px;
+        height: 15px;
+        text-align: center;
+        color: #F3F3E9;
+      }
+
+      .gbs_gc td div {
+        line-height: 2;
+      }
+
+      /*# sourceMappingURL=style.css.map */
+
+    </style>
+
+    <cell-dresser id="dresser"></cell-dresser>
+
+    <template is="dom-if" if="true">
+      <!-- // ^ (otherwise, the cssClass() does not refresh itself) -->
+      <div class$="gbs_gc {{cssClass(header)}}">
+        <table>
+          <tbody>
+            <tr>
+              <td>
+                <gs-stone color="blue" amount="{{blue}}" options="{{options}}"></gs-stone>
+              </td>
+              <td>
+                <gs-stone color="black" amount="{{black}}" options="{{options}}"></gs-stone>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <gs-stone color="red" amount="{{red}}" options="{{options}}"></gs-stone>
+              </td>
+              <td>
+                <gs-stone color="green" amount="{{green}}" options="{{options}}"></gs-stone>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </template>
+
+  </template>
+  <script>
+    Polymer({
+      is: 'gs-cell',
+      properties: {
+        black: {
+          type: Number,
+          value: 0
+        },
+        blue: {
+          type: Number,
+          value: 0
+        },
+        green: {
+          type: Number,
+          value: 0
+        },
+        red: {
+          type: Number,
+          value: 0
+        },
+        cellIndex: Number,
+        rowIndex: Number,
+        attire: Object,
+        options: Object,
+        header: {
+          type: Object,
+          notify: true
+        }
+      },
+      listeners: {
+        click: "_leftClick"
+      },
+      ready: function() {
+        return this._validateData();
+      },
+      cssClass: function(header) {
+        var isHeader;
+        if ((header == null) || this.domHost.withoutHeader) {
+          return "";
+        }
+        isHeader = this.x() === header.x && this.y() === header.y;
+        if (isHeader) {
+          return "gbs_gh";
+        } else {
+          return "";
+        }
+      },
+      x: function() {
+        return this.cellIndex;
+      },
+      y: function() {
+        return this.domHost.getRowNumber(this.domHost.table, this.rowIndex);
+      },
+      updateCellStyles: function(table, header, attire) {
+        var cell, isHeader, rule, text, url, _ref, _ref1;
+        cell = (_ref = table[this.rowIndex]) != null ? _ref[this.cellIndex] : void 0;
+        if ((cell == null) || (header == null)) {
+          return;
+        }
+        isHeader = this.x() === header.x && this.y() === header.y;
+        rule = this.$.dresser.getRule(cell, isHeader, attire);
+        url = rule != null ? rule.image : void 0;
+        text = rule != null ? rule.text : void 0;
+        if ((text != null) && text !== "") {
+          url = "\"data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' version='1.1' height='50px' width='50px'><text x='25' y='25' font-size='25' fill='black' text-anchor='middle' alignment-baseline='central'>" + text + "</text></svg>\"";
+        }
+        this.customStyle["--stones-visibility"] = url != null ? "hidden" : "visible";
+        this.customStyle["--outline-style"] = (url != null) && ((rule != null ? (_ref1 = rule.when) != null ? _ref1.head : void 0 : void 0) != null) ? "none" : "solid";
+        if (url != null) {
+          this.customStyle["--background-url"] = "url(" + url + ")";
+        } else {
+          delete this.customStyle["--background-url"];
+        }
+        return this.updateStyles();
+      },
+      _leftClick: function(event) {
+        if (!this.options.editable) {
+          return;
+        }
+        if (this.domHost.isCtrlPressed()) {
+          this.header = {
+            x: this.x(),
+            y: this.y()
+          };
+          return this.fire("board-changed");
+        }
+      },
+      _validateData: function() {
+        if ((this.cellIndex == null) || (this.rowIndex == null)) {
+          throw new Error("The coordinates are required");
+        }
+        if (this.header == null) {
+          throw new Error("The header is required");
+        }
+        if (this.options == null) {
+          throw new Error("The options are required");
+        }
+      }
+    });
+
+  </script>
+</dom-module>

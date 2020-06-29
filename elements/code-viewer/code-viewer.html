@@ -1,0 +1,19 @@
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/ace-widget/ace-widget.html">
+
+</head><body><dom-module id="code-viewer">
+  <style>
+    .container {
+      width: 483px;
+      height: 402px;
+    }
+  </style>
+
+  <template>
+    <div class="container">
+      <ace-widget style="width: 450px; height: 450px" value="[[code]]" mode="ace/mode/gobstones" theme="ace/theme/chrome" font-size="15" tab-size="4" minlines="30" maxlines="30" readonly="" initial-focus=""></ace-widget>
+    </div>
+  </template>
+
+  </dom-module>
+<script src="code-viewer.js"></script></body></html>

@@ -1,0 +1,397 @@
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/gs-board/dist/components/gs-board.html">
+<link rel="import" href="../../scripts/behaviors/busListenerBehavior.html">
+<link rel="import" href="../../scripts/behaviors/permissionsBehavior.html">
+<link rel="import" href="../../scripts/behaviors/localizationBehavior.html">
+<link rel="import" href="../../scripts/behaviors/expressionBehavior.html">
+<link rel="import" href="../../scripts/behaviors/toastBehavior.html">
+<link rel="import" href="../../scripts/stylist.html">
+
+</head><body><dom-module id="boards-panel">
+  <template>
+
+    <style>
+      .main-container {
+        position: relative;
+      };
+
+      .boards-panel {
+        text-align: center;
+      }
+
+      .columns {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+      }
+
+      .left-column {
+        display: flex;
+        flex-direction: column;
+        align-items: start;
+        width: 115px;
+      }
+
+      .middle-column {
+        flex: 1;
+      }
+
+      .right-column {
+        width: 115px;
+        padding-top: 6px;
+        display: flex;
+        justify-content: flex-end;
+      }
+
+      .show-code-icon {
+        margin-left: -5px;
+        margin-right: 10px;
+      }
+
+      .wind-rose {
+        margin-top: 3px;
+        margin-left: 10px;
+        width: 55px;
+        height: 55px;
+      }
+
+      .alert {
+        color: red;
+      }
+
+      .toast {
+        --paper-toast-background-color: rgba(255, 0, 0, 0.8);
+        margin-left: 40% !important;
+      }
+
+      .hidden { visibility: hidden; }
+      .transparent { opacity: 0; }
+      .opaque { opacity: 1; }
+
+      .tabs {
+        margin-left: -10px;
+        margin-right: -10px;
+        margin-top: -10px;
+        border-left: solid 1px;
+        border-color: #688998;
+
+        z-index: 10;
+        -webkit-touch-callout: none;
+        -webkit-user-select: none;
+        -khtml-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+      }
+
+      .size-bar {
+        margin-top: -22px;
+        margin-bottom: 5px;
+        overflow: hidden;
+        white-space: nowrap;
+      }
+
+      .size-container {
+        display: inline;
+      }
+
+      .attire-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        -webkit-touch-callout: none;
+        -webkit-user-select: none;
+        -khtml-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+      }
+
+      .size-input {
+        display: inline-block;
+        width: 50px;
+      }
+
+      .boom-container {
+        margin-top: 10px;
+      }
+
+      .theBoardContainer {
+        margin-left: -8px;
+      }
+
+      .boards-buttons {
+        margin-left: -8px;
+        margin-top: -8px;
+      }
+
+      .clean-board {
+        margin-left: -14px;
+      }
+
+      .add-or-remove-board {
+        margin-left: -2px;
+      }
+
+      .help-button {
+        cursor: pointer;
+        margin-top: 8px;
+      }
+
+      .help-tooltip {
+        font-size: 15px;
+      }
+
+      .button-tooltip {
+        font-size: 15px;
+        width: 150px;
+      }
+
+      .toggle-toolbox-button-up {
+        margin-left: 8px;
+      }
+
+      .toggle-toolbox-button-down {
+        margin-top: 8px;
+        margin-left: 8px;
+      }
+
+      .shortcut {
+        color: var(--paper-blue-grey-200);
+        font-weight: bold;
+      }
+
+      .run-button {
+        position: absolute;
+        bottom: 16px;
+        right: 16px;
+        z-index: 99;
+      }
+
+      .inspect-results-button {
+        position: fixed;
+        bottom: 10px;
+        right: 10px;
+      }
+
+      paper-tab {
+        --paper-tab-content-unselected: {
+          opacity: 0.5;
+        }
+      }
+    </style>
+
+    <div class="main-container">
+      <!-- TABS -->
+      <paper-toolbar class="tabs boards-tabs">
+        <div>
+          <template is="dom-if" if="{{_showCodeVisible(interactive.*)}}">
+            <paper-button style="z-index: 99" on-click="toggleShowCode"><iron-icon class="button show-code-icon" icon="icons:chevron-{{_showCodeDirection(showCode)}}"></iron-icon></paper-button>
+          </template>
+        </div>
+        <div style="width: 90%">
+          <paper-tabs id="theBoardsTab" selected="{{selectedTab}}" class="bottom self-end">
+            <paper-tab>[[localize("initial-board")]] [[toOneBased(selectedInitialState)]]</paper-tab>
+            <template is="dom-if" if="{{isFinalBoardVisible(finalState, error)}}">
+              <paper-tab>[[localize("final-board")]]</paper-tab>
+            </template>
+          </paper-tabs>
+        </div>
+        <div>
+          <img class="wind-rose" src="../../images/wind-rose.png">
+        </div>
+      </paper-toolbar>
+
+      <!-- TOAST -->
+      <paper-toast class="toast" id="toast"></paper-toast>
+
+      <div class="boards-panel">
+        <div class="columns">
+          <div class="left-column">
+            <!-- TOOLBOX -->
+            <template is="dom-if" if="{{shouldShowToolbox(permissions.*, isToolboxVisible)}}">
+              <div class="boards-buttons">
+                <div style="display: inline" class$="{{transparentOrOpaqueCss(permissions.*, 'can_change_initial_board')}}">
+                  <paper-menu-button id="board-select-button" class$="{{boardChangeButtonCss(selectedTab, permissions.*)}}">
+                    <paper-icon-button icon="menu" class="dropdown-trigger"></paper-icon-button>
+                    <paper-menu class="dropdown-content" selected="{{ selectedInitialState }}">
+                      <template is="dom-repeat" items="{{ availableInitialStates }}">
+                        <paper-item>[[localize("initial-board")]] [[toOneBased(index)]]</paper-item>
+                      </template>
+                    </paper-menu>
+                  </paper-menu-button>
+                  <paper-tooltip for="board-select-button" position="bottom" animation-config="{{tooltipAnimation}}">
+                    <div class="button-tooltip">
+                      [[localize("tooltip-change-board")]]
+                    </div>
+                  </paper-tooltip>
+                </div>
+
+                <template is="dom-if" if="{{hasPermission(permissions.*, 'can_change_initial_board')}}">
+                  <template is="dom-if" if="{{hasPermission(permissions.*, 'can_edit_board')}}">
+                    <paper-button id="clean-board-button" style="z-index: 99" class="clean-board" on-click="cleanBoard"><iron-icon class$="{{boardButtonCss(selectedTab, showAttire, permissions.*)}}" icon="icons:delete-forever"></iron-icon></paper-button>
+                    <paper-tooltip for="clean-board-button" position="bottom" animation-config="{{tooltipAnimation}}">
+                      <div class="button-tooltip">
+                        [[localize("tooltip-clean-board")]]
+                      </div>
+                    </paper-tooltip>
+
+                    <paper-button id="add-board-button" style="z-index: 99" class="add-or-remove-board" on-click="addBoard"><iron-icon class$="{{boardButtonCss(selectedTab, showAttire, permissions.*)}}" icon="icons:add"></iron-icon></paper-button>
+                    <paper-tooltip for="add-board-button" position="bottom" animation-config="{{tooltipAnimation}}">
+                      <div class="button-tooltip">
+                        [[localize("tooltip-add-board")]]
+                      </div>
+                    </paper-tooltip>
+
+                    <paper-button id="remove-board-button" style="z-index: 99" class="add-or-remove-board" on-click="removeCurrentBoard"><iron-icon class$="{{boardButtonCss(selectedTab, showAttire, permissions.*)}}" icon="icons:remove"></iron-icon></paper-button>
+                    <paper-tooltip for="remove-board-button" position="bottom" animation-config="{{tooltipAnimation}}">
+                      <div class="button-tooltip">
+                        [[localize("tooltip-remove-board")]]
+                      </div>
+                    </paper-tooltip>
+                  </template>
+                </template>
+              </div>
+            </template>
+
+            <!-- TOGGLE TOOLBOX -->
+            <template is="dom-if" if="{{hasPermission(permissions.*, 'can_view_edition_panel')}}">
+              <paper-button id="toggle-toolbox-button" style="z-index: 99" class$="{{toggleToolboxButtonCss(isToolboxVisible)}}"><iron-icon icon$="{{toggleToolboxButtonIcon(isToolboxVisible)}}" on-click="toggleToolbox" class="black-button"></iron-icon></paper-button>
+
+              <paper-tooltip for="toggle-toolbox-button" position="bottom" animation-config="{{tooltipAnimation}}">
+                <div class="button-tooltip">
+                  <template is="dom-if" if="{{isToolboxVisible}}">
+                    [[localize("tooltip-hide-toolbox")]]
+                  </template>
+                  <template is="dom-if" if="{{!isToolboxVisible}}">
+                    [[localize("tooltip-show-toolbox")]]
+                  </template>
+                </div>
+              </paper-tooltip>
+            </template>
+          </div>
+
+          <div class="middle-column">
+            <template is="dom-if" if="{{shouldShowToolbox(permissions.*, isToolboxVisible)}}">
+              <template is="dom-if" if="{{hasPermission(permissions.*, 'can_view_size_section')}}">
+                <div class="size-bar">
+                  <div class$="{{boardSizeCss(selectedTab, showAttire, permissions.*)}}">
+                    <form>
+                      <div class="size-container">
+                        <strong>[[localize("size")]]:</strong>
+                        <paper-input class="size-input" value="{{sizeX}}" type="number" min="1" max="30" disabled$="{{isInitialBoardNotEditable(selectedTab, showAttire, permissions.*)}}"></paper-input>
+                      </div>
+                      <div class="size-container">
+                        <span>[[localize("columns")]] <strong>[[localize("by")]]</strong></span>
+                        <paper-input class="size-input" value="{{sizeY}}" type="number" min="1" max="30" disabled$="{{isInitialBoardNotEditable(selectedTab, showAttire, permissions.*)}}"></paper-input>
+                        <span>[[localize("rows")]]</span>
+                      </div>
+                    </form>
+                  </div>
+                </div>
+              </template>
+
+              <template is="dom-if" if="{{hasPermission(permissions.*, 'can_view_attire_section')}}">
+                <div class="attire-container">
+                  <template is="dom-if" if="{{hasPermission(permissions.*, 'can_toggle_attire_visibility')}}">
+                    <template is="dom-if" if="{{attiresCount}}">
+                      <paper-button id="show-attire-button" style="z-index: 99; margin-right: 4px" on-click="toggleShowAttire"><iron-icon class="black-button" icon="icons:visibility"></iron-icon></paper-button>
+                      <paper-tooltip for="show-attire-button" position="bottom" animation-config="{{tooltipAnimation}}">
+                        <div class="button-tooltip">
+                          <template is="dom-if" if="{{showAttire}}">
+                            [[localize("tooltip-hide-attire")]]
+                          </template>
+                          <template is="dom-if" if="{{!showAttire}}">
+                            [[localize("tooltip-show-attire")]]
+                          </template>
+                        </div>
+                      </paper-tooltip>
+                    </template>
+                  </template>
+                  <strong style="margin-right: 4px">[[localize("attire")]]:</strong>
+                  <paper-dropdown-menu no-animations="" no-label-float="" vertical-align="bottom" horizontal-align="right" disabled="{{!showAttire}}">
+                    <paper-listbox class="dropdown-content" selected="{{selectedAttire}}">
+                      <template is="dom-repeat" items="{{ availableAttires }}" rendered-item-count="{{attiresCount}}">
+                        <paper-item>{{item.name}}</paper-item>
+                      </template>
+                    </paper-listbox>
+                  </paper-dropdown-menu>
+                </div>
+              </template>
+            </template>
+          </div>
+
+          <div class="right-column">
+            <template is="dom-if" if="{{shouldShowToolbox(permissions.*, isToolboxVisible)}}">
+              <template is="dom-if" if="{{!isInitialBoardNotEditable(selectedTab, showAttire, permissions.*)}}">
+                <paper-button style="z-index: 99" id="help" class="help-button"><iron-icon icon="icons:help"></iron-icon></paper-button>
+                <paper-tooltip for="help" position="left" animation-config="{{tooltipAnimation}}">
+                  <div class="help-tooltip">
+                    <div>
+                      <span class="shortcut">[[localize("shortcut-add-stones")]]</span>: [[localize("shortcut-add-stones-description")]]
+                    </div>
+                    <div>
+                      <span class="shortcut">[[localize("shortcut-remove-stones")]]</span>: [[localize("shortcut-remove-stones-description")]]
+                    </div>
+                    <div>
+                      <span class="shortcut">[[localize("shortcut-set-header")]]</span>: [[localize("shortcut-set-header-description")]]
+                    </div>
+                  </div>
+                </paper-tooltip>
+              </template>
+            </template>
+          </div>
+        </div>
+
+        <!-- BOARD -->
+        <div class="theBoardContainer" style="position: relative;">
+          <div class="theBoard" style="position: absolute; left: 0; right: 0;">
+            <!-- Initial board -->
+            <template is="dom-if" if="{{isInitialBoardSelected(selectedTab)}}">
+              <gs-board id="initialStateEditor" table="{{initialState.table}}" header="{{initialState.header}}" size="{{size}}" options="{{initialBoardOptions}}" attire="{{attire}}"></gs-board>
+            </template>
+
+            <!-- Final board -->
+            <template is="dom-if" if="{{isFinalBoardSelected(selectedTab)}}">
+              <template is="dom-if" if="{{!isBoom(error)}}">
+                <template is="dom-if" if="{{finalState}}">
+                  <gs-board id="finalStateEditor" attire="{{attire}}"></gs-board>
+
+                  <template is="dom-if" if="{{_hasReturnValue(returnValue)}}">
+                    <paper-button id="inspect-results-button" class="inspect-results-button" style="z-index: 99" on-click="showReturnValue"><iron-icon class="black-button" icon="icons:search"></iron-icon></paper-button>
+                    <paper-tooltip for="inspect-results-button" position="left" animation-config="{{tooltipAnimation}}">
+                      <div class="button-tooltip">
+                        [[localize("tooltip-inspect-results")]]
+                      </div>
+                    </paper-tooltip>
+                  </template>
+                </template>
+              </template>
+            </template>
+          </div>
+        </div>
+
+        <template is="dom-if" if="{{isFinalBoardSelected(selectedTab)}}">
+          <template is="dom-if" if="{{isBoom(error)}}">
+            <div class="boom-container">
+              <img src="../../images/boom.png">
+              <h2>[[localize("boom")]]</h2>
+              <div class="alert">{{error}}</div>
+            </div>
+          </template>
+        </template>
+      </div>
+    </div>
+
+    <code-runner class="run-button" id="runner"></code-runner>
+
+    <paper-dialog id="inspectResultsModal" class="inspect-results-modal">
+      <paper-button class="accept close" dialog-confirm="" autofocus=""><iron-icon icon="icons:close"></iron-icon></paper-button>
+
+      <results-inspector id="resultsInspector" result="[[returnValue]]">
+    </results-inspector></paper-dialog>
+  </template>
+
+  </dom-module>
+<script src="boards-panel.js"></script></body></html>

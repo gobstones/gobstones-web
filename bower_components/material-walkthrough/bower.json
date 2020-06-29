@@ -1,0 +1,18 @@
+{
+  "name": "material-walkthrough",
+  "homepage": "https://github.com/rodri042/material-walkthrough",
+  "version": "0.0.2",
+  "authors": [
+    "Rodrigo Alfonso <rodri042@gmail.com>"
+  ],
+  "description": "",
+  "main": "dist/material-walkthrough.min.js",
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}

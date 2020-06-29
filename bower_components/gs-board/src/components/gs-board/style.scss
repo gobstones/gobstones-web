@@ -1,0 +1,101 @@
+@import '../../common/style';
+
+.background {
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+}
+
+table.gbs_board {
+  border-style: none;
+  border: solid black 0px;
+  border-spacing: 0;
+  border-collapse: collapse;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 9pt;
+  display: inline-block;
+  vertical-align: top;
+  line-height: normal;
+}
+.gbs_board td {
+  margin: 0;
+  padding: var(--cell-padding);
+  border: var(--cell-border);
+  width: 30px;
+  height: 30px;
+}
+.gbs_board td.gbs_lv { /* labels at the side */
+  text-align: center;
+  vertical-align: middle;
+  border-style: none;
+  border: solid black 0px;
+  background: #ddd;
+  width: 15px;
+}
+.gbs_board td.gbs_lh { /* labels at the top / bottom */
+  text-align: center;
+  vertical-align: middle;
+  border-style: none;
+  border: solid black 0px;
+  background: #ddd;
+  height: 15px;
+}
+.gbs_board td.gbs_lx { /* corner */
+  border-style: none;
+  border: solid black 0px;
+  background: #ddd;
+  width: 15px;
+  height: 15px;
+}
+.gbs_board td.gbs_lht {
+  background-image: var(--top-background-url);
+  @extend .background;
+}
+.gbs_board td.gbs_lhb {
+  background-image: var(--bottom-background-url);
+  @extend .background;
+}
+.gbs_board td.gbs_lvl {
+  background-image: var(--left-background-url);
+  @extend .background;
+}
+.gbs_board td.gbs_lvr {
+  background-image: var(--right-background-url);
+  @extend .background;
+}
+.gbs_board td.gbs_top_left {
+  -webkit-border-top-left-radius: 10px;
+  -moz-border-top-left-radius: 10px;
+  border-top-left-radius: 10px;
+
+  background-image: var(--top-left-background-url);
+  @extend .background;
+}
+.gbs_board td.gbs_top_right {
+  -webkit-border-top-right-radius: 10px;
+  -moz-border-top-right-radius: 10px;
+  border-top-right-radius: 10px;
+
+  background-image: var(--top-right-background-url);
+  @extend .background;
+}
+.gbs_board td.gbs_bottom_left {
+  -webkit-border-bottom-left-radius: 10px;
+  -moz-border-bottom-left-radius: 10px;
+  border-bottom-left-radius: 10px;
+
+  background-image: var(--bottom-left-background-url);
+  @extend .background;
+}
+.gbs_board td.gbs_bottom_right {
+  -webkit-border-bottom-right-radius: 10px;
+  -moz-border-bottom-right-radius: 10px;
+  border-bottom-right-radius: 10px;
+
+  background-image: var(--bottom-right-background-url);
+  @extend .background;
+}
+
+.gbs_boom, .gbs_boom::after {
+  content: url(https://user-images.githubusercontent.com/1631752/37945593-54b482c0-3157-11e8-9f32-bd25d7bf901b.png);
+}

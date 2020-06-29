@@ -1,0 +1,19 @@
+{
+  "name": "blockly-package",
+  "version": "0.0.15",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hugoruscitti/blockly-package.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/hugoruscitti/blockly-package/issues"
+  },
+  "homepage": "https://github.com/hugoruscitti/blockly-package#readme"
+}

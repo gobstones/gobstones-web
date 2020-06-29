@@ -1,0 +1,33 @@
+require "bundler/gem_tasks"
+require "rspec/core/rake_task"
+
+RSpec::Core::RakeTask.new(:spec)
+
+task :default => :spec
+
+namespace :wrapper do
+  desc 'Wrap styles assets into this gem'
+  task wrap: :clean do
+    # readme
+    cp_r '../README.md', 'README.md'
+
+    #  gs-board
+    cp_r '../dist/gs-board.html', 'app/assets/htmls'
+    cp_r '../dist/components', 'app/assets/htmls'
+
+    # polymer
+    cp_r '../bower_components/polymer/polymer.html', 'app/assets/htmls/vendor'
+    cp_r '../bower_components/polymer/polymer-mini.html', 'app/assets/htmls/vendor'
+    cp_r '../bower_components/polymer/polymer-micro.html', 'app/assets/htmls/vendor'
+
+    # webcomponents
+    cp_r '../bower_components/webcomponentsjs/webcomponents.min.js', 'app/assets/javascripts/vendor'
+  end
+
+  task :clean do
+    rm_rf 'app'
+    mkdir_p 'app/assets/htmls'
+    mkdir_p 'app/assets/htmls/vendor'
+    mkdir_p 'app/assets/javascripts/vendor'
+  end
+end

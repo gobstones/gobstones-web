@@ -1,0 +1,89 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+    <title>Demo</title>
+
+    <!-- google's polyfill to allow html imports in all browsers -->
+    <script src="bower_components/webcomponentsjs/webcomponents.min.js"></script>
+    <!-- polymer framework -->
+    <link href="dist/polymer.html" rel="import" />
+    <!-- gobstones board -->
+    <link href="dist/gs-board.html" rel="import" />
+
+    <script>
+      GobstonesBoard.setAttireProvider({
+        get: function(name) {
+          if (name === "mines")
+            return (
+              {
+                "enabled": true,
+                "rules": [
+                  {
+                    "when": { "blue": "*", "black": "+", "red": 4, "green": "*" },
+                    "image": "https://cloud.githubusercontent.com/assets/1631752/19217961/ef2e0d4c-8dea-11e6-960d-69585778f89d.png"
+                  },
+
+                  {
+                    "when": { "blue": 0, "black": 0, "red": 0, "green": 0 },
+                    "image": "https://cloud.githubusercontent.com/assets/1631752/19217956/ef1d928c-8dea-11e6-8b53-8d2495cdd3e9.png"
+                  },
+
+                  {
+                    "when": { "blue": 0, "black": 0, "red": 0, "green": 1 },
+                    "image": "https://cloud.githubusercontent.com/assets/1631752/19217959/ef27e822-8dea-11e6-9bb0-57892593c9d8.png"
+                  },
+
+                  {
+                    "when": { "blue": 1, "black": 0, "red": 0, "green": 0 },
+                    "image": "https://cloud.githubusercontent.com/assets/1631752/19217958/ef245892-8dea-11e6-80f4-aeb5d1862b1c.png"
+                  },
+
+                  {
+                    "when": { "blue": 0, "black": 1, "red": 0, "green": 0 },
+                    "image": "https://cloud.githubusercontent.com/assets/1631752/19217957/ef20120a-8dea-11e6-825c-23e7773269b0.png"
+                  },
+
+                  {
+                    "when": { "blue": 0, "black": 0, "red": 1, "green": 0 },
+                    "image": "https://cloud.githubusercontent.com/assets/1631752/19217960/ef2ad3c0-8dea-11e6-8434-ff9152b76f3b.png"
+                  }
+                ]
+              }
+            );
+        }
+      });
+    </script>
+  </head>
+
+  <body>
+    <!-- simple board -->
+    <gs-board>
+      GBB/1.0
+      size 4 3
+      cell 1 2 Azul 0 Negro 1 Rojo 4 Verde 0
+      cell 3 2 Azul 1 Negro 0 Rojo 5 Verde 1
+      cell 3 1 Azul 1 Negro 0 Rojo 0 Verde 0
+      cell 3 0 Azul 0 Negro 1 Rojo 0 Verde 0
+      cell 2 2 Azul 0 Negro 0 Rojo 1 Verde 0
+      cell 2 0 Azul 0 Negro 0 Rojo 0 Verde 1
+      cell 2 1 Azul 0 Negro 6 Rojo 0 Verde 0
+      head 1 2
+    </gs-board>
+
+    <!-- with attire -->
+    <gs-board attire-src="mines">
+      GBB/1.0
+      size 4 3
+      cell 1 2 Azul 0 Negro 1 Rojo 4 Verde 0
+      cell 3 2 Azul 1 Negro 0 Rojo 5 Verde 1
+      cell 3 1 Azul 1 Negro 0 Rojo 0 Verde 0
+      cell 3 0 Azul 0 Negro 1 Rojo 0 Verde 0
+      cell 2 2 Azul 0 Negro 0 Rojo 1 Verde 0
+      cell 2 0 Azul 0 Negro 0 Rojo 0 Verde 1
+      cell 2 1 Azul 0 Negro 6 Rojo 0 Verde 0
+      head 2 1
+    </gs-board>
+  </body>
+</html>

@@ -1,0 +1,135 @@
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../scripts/behaviors/busListenerBehavior.html">
+<link rel="import" href="../../scripts/behaviors/permissionsBehavior.html">
+<link rel="import" href="../../scripts/behaviors/localizationBehavior.html">
+<link rel="import" href="../../scripts/behaviors/loaderBehavior.html">
+
+</head><body><dom-module id="attire-editor">
+  <template>
+    <style>
+      .button-tooltip {
+        font-size: 15px;
+        width: 150px;
+        text-align: center;
+      }
+
+      .buttons {
+        position: absolute;
+        right: 0;
+      }
+
+      .content {
+        margin-top: 20px;
+        margin-left: 20px;
+        height: 80vh;
+        overflow: scroll;
+        overflow-x: hidden;
+      }
+
+      .no-attires {
+        color: cornflowerblue;
+      }
+
+      .rules-container {
+        margin-left: 30px;
+      }
+
+      .balls-input {
+        display: inline-block;
+        width: 50px;
+      }
+
+      .remove-rule-button {
+        margin-left: 10px;
+      }
+
+      .load-button {
+        margin-left: 30px;
+      }
+    </style>
+
+    <div class="buttons">
+      <paper-button id="add-attire-button" style="z-index: 99" on-click="addAttire"><iron-icon class="black-button" icon="icons:add"></iron-icon></paper-button>
+      <paper-tooltip for="add-attire-button" position="bottom" animation-config="{{tooltipAnimation}}">
+        <div class="button-tooltip">
+          [[localize("attire-editor-tooltip-add-attire")]]
+        </div>
+      </paper-tooltip>
+
+      <paper-button id="remove-attire-button" style="z-index: 99" on-click="removeAttire"><iron-icon class="black-button" icon="icons:remove"></iron-icon></paper-button>
+      <paper-tooltip for="remove-attire-button" position="bottom" animation-config="{{tooltipAnimation}}">
+        <div class="button-tooltip">
+          [[localize("attire-editor-tooltip-remove-attire")]]
+        </div>
+      </paper-tooltip>
+    </div>
+
+    <input id="image" type="file" accept=".png" on-change="onLoadedImage" style="visibility: hidden;">
+
+    <div class="content">
+      <template is="dom-if" if="{{attire}}">
+        <div>
+          <span><strong>[[localize("attire")]]:</strong> <i>[[attire.name]]</i> <paper-button id="rename-attire-button" style="z-index: 99" on-click="renameAttire"><iron-icon class="black-button" icon="icons:create"></iron-icon></paper-button></span>
+          <paper-tooltip for="rename-attire-button" position="bottom" animation-config="{{tooltipAnimation}}">
+            <div class="button-tooltip">
+              [[localize("attire-editor-tooltip-rename-attire")]]
+            </div>
+          </paper-tooltip>
+          <br>
+
+          <hr>
+          <br>
+
+          <div>
+            <paper-button id="add-rule-button" style="z-index: 99" on-click="addRule"><iron-icon class="black-button" icon="icons:add"></iron-icon></paper-button>
+            <paper-tooltip for="add-rule-button" position="right" animation-config="{{tooltipAnimation}}">
+              <div class="button-tooltip">
+                [[localize("attire-editor-tooltip-add-rule")]]
+              </div>
+            </paper-tooltip>
+          </div>
+
+          <div class="rules-container">
+            <template is="dom-repeat" items="{{ attire.rules }}">
+              <paper-button style="z-index: 99" on-click="upRule"><iron-icon class="black-button" icon="icons:arrow-drop-up"></iron-icon></paper-button>
+
+              <paper-button style="z-index: 99; margin-right: 10px" on-click="downRule"><iron-icon class="black-button" icon="icons:arrow-drop-down"></iron-icon></paper-button>
+
+              <img src="../../images/stones/red.svg" width="15" height="15">
+              <paper-input class="balls-input" value="{{item.when.red}}" on-input="_update" min="1" max="8"></paper-input>
+
+              <img src="../../images/stones/green.svg" width="15" height="15">
+              <paper-input class="balls-input" value="{{item.when.green}}" on-input="_update" min="1" max="8"></paper-input>
+
+              <img src="../../images/stones/blue.svg" width="15" height="15">
+              <paper-input class="balls-input" value="{{item.when.blue}}" on-input="_update" min="1" max="8"></paper-input>
+
+              <img src="../../images/stones/black.svg" width="15" height="15">
+              <paper-input class="balls-input" value="{{item.when.black}}" on-input="_update" min="1" max="8"></paper-input>
+
+              <paper-button class="remove-rule-button" style="z-index: 99" on-click="removeRule"><iron-icon class="black-button" icon="icons:delete-forever"></iron-icon></paper-button>
+
+              <paper-icon-button class="load-button" on-click="loadImage" icon="icons:folder-open" alt="open"> </paper-icon-button>
+
+              <template is="dom-if" if="{{item.fileName}}">
+                [[item.fileName]]
+              </template>
+
+              <template is="dom-if" if="{{!item.fileName}}">
+                <paper-input class="balls-input" value="{{item.text}}" on-input="_update" maxlength="4"></paper-input>
+              </template>
+
+              <br>
+            </template>
+          </div>
+        </div>
+      </template>
+
+      <template is="dom-if" if="{{!attire}}">
+        <h3 class="no-attires">[[localize("attire-editor-add-new-attires")]]</h3>
+      </template>
+    </div>
+  </template>
+
+  </dom-module>
+<script src="attire-editor.js"></script></body></html>

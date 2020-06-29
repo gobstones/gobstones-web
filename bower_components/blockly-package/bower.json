@@ -1,0 +1,19 @@
+{
+  "name": "blockly-package",
+  "homepage": "https://github.com/hugoruscitti/blockly-package",
+  "authors": [
+    "Hugo Ruscitti <hugoruscitti@gmail.com>"
+  ],
+  "description": "",
+  "main": "",
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "blockly",
+    "tests",
+    "demos"
+  ]
+}

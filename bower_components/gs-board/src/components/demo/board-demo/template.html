@@ -1,0 +1,94 @@
+<div>
+  <h3>
+    with gbb:
+  </h3>
+  <gs-board>
+    GBB/1.0
+    size 4 3
+    cell 1 2 Azul 0 Negro 0 Rojo 8 Verde 0
+    cell 3 2 Azul 2 Negro 0 Rojo 5 Verde 1
+    cell 2 1 Azul 0 Negro 6 Rojo 0 Verde 0
+    head 1 2
+  </gs-board>
+</div>
+
+<div>
+  <h3>
+    with boom:
+  </h3>
+  <gs-board boom></gs-board>
+</div>
+
+<div>
+  <h3>
+    without header:
+  </h3>
+  <gs-board without-header>
+    GBB/1.0
+    size 4 3
+    cell 1 2 Azul 0 Negro 0 Rojo 8 Verde 0
+    cell 3 2 Azul 2 Negro 0 Rojo 5 Verde 1
+    cell 2 1 Azul 0 Negro 6 Rojo 0 Verde 0
+    head 1 2
+  </gs-board>
+</div>
+
+<div>
+  <h3>
+    with gbb and text inside the attire:
+  </h3>
+  <gs-board attire='{{attire2}}'>
+    GBB/1.0
+    size 4 3
+    cell 1 2 Azul 0 Negro 0 Rojo 8 Verde 0
+    cell 3 2 Azul 3 Negro 0 Rojo 1 Verde 0
+    cell 2 1 Azul 0 Negro 6 Rojo 0 Verde 0
+    head 1 2
+  </gs-board>
+</div>
+
+<!--
+<div>
+  <gs-board attire-src="mines">
+    GBB/1.0
+    size 4 3
+    cell 1 2 Azul 0 Negro 0 Rojo 8 Verde 0
+    cell 3 2 Azul 2 Negro 0 Rojo 5 Verde 1
+    cell 2 1 Azul 0 Negro 6 Rojo 0 Verde 0
+    head 1 2
+  </gs-board>
+</div>
+ -->
+
+<div>
+  <h3>
+    with table:
+  </h3>
+  <gs-board table="{{model.table}}" options='{ "editable": false }'></gs-board>
+</div>
+<div>
+  <h3>
+    with attire:
+  </h3>
+  <gs-board size='{ "x": 4, "y": 4 }' options='{ "editable": false }' attire="{{attire2}}"></gs-board>
+</div>
+<div>
+  <h3>
+    with 3x5 size:
+  </h3>
+  <gs-board size='{ "x": 3, "y": 5 }' options='{ "editable": true }'></gs-board>
+</div>
+<div>
+  <h3>
+    with id and 2x2 size:
+  </h3>
+  <gs-board id="thing" size='{ "x": 2, "y": 2 }' options='{ "editable": true }'></gs-board>
+</div>
+<div>
+  <hr>
+  <gs-board table="{{modelWithAttire.table}}" options='{ "editable": false }' attire='{{attire}}'></gs-board>
+  <hr>
+</div>
+<div class="board-wrap-json">
+  <juicy-jsoneditor id="jsoneditor" style="height: 300px;" json="{{jsonModel}}"></juicy-jsoneditor>
+</div>

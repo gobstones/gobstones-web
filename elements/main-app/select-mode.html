@@ -1,0 +1,81 @@
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../scripts/behaviors/localizationBehavior.html">
+</head><body>l"&gt;
+<link rel="import" href="../../scripts/behaviors/loaderBehavior.html">
+<link rel="import" href="../../scripts/loaders/projectBlocksLoader.html">
+
+<dom-module id="select-mode">
+  <style>
+    .content {
+      text-align: center;
+    }
+
+    .logo {
+      width: 100px;
+      height: 100px;
+    }
+
+    .title {
+      margin-top: 20px;
+      margin-bottom: 40px;
+    }
+
+    .button {
+      position: relative;
+      width: 300px;
+      height: 300px;
+      margin: 40px 40px;
+      color: black;
+    }
+
+    .button:after {
+      position: absolute;
+      font-family: monospace;
+      font-size: 150%;
+      left: 50%;
+      top: -30px;
+      transform: translate(-50%, 0);
+    }
+
+    .button-blocks:after {
+      content: 'Gobstones Jr';
+    }
+
+    .button-code:after {
+      content: 'Gobstones Sr';
+    }
+
+    .button-teacher:after {
+      content: 'Gobstones Teacher';
+    }
+
+    .download-desktop {
+      position: absolute;
+      right: 1px;
+    }
+  </style>
+
+  <template>
+    <gbs-editor-toolbar></gbs-editor-toolbar>
+    <div class="content">
+      <!--
+      <div class="download-desktop">
+        <a href="https://github.com/gobstones/gobstones-web-desktop/releases">[[localize("download-desktop")]]</a>
+      </div>
+      -->
+
+      <div class="title">
+        <img class="logo" src="../../images/logo.png">
+        <h1>Gobstones Web</h1>
+      </div>
+
+      <paper-icon-button class="button button-blocks" on-click="useBlocks" icon="icons:extension" alt="use blocks"> </paper-icon-button>
+
+      <paper-icon-button class="button button-code" on-click="useCode" icon="icons:code" alt="use code"> </paper-icon-button>
+
+      <paper-icon-button class="button button-teacher" on-click="useTeacher" icon="icons:card-membership" alt="use teacher"> </paper-icon-button>
+    </div>
+  </template>
+
+  </dom-module>
+<script src="select-mode.js"></script></body></html>

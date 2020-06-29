@@ -1,0 +1,41 @@
+<html><head><link rel="import" href="../../bower_components/iron-icons/av-icons.html">
+<link rel="import" href="../../scripts/behaviors/busListenerBehavior.html">
+<link rel="import" href="../../scripts/behaviors/localizationBehavior.html">
+<link rel="import" href="../../scripts/behaviors/toastBehavior.html">
+
+</head><body><dom-module id="code-runner">
+  <style>
+    .random-toggle {
+      position: absolute;
+      cursor: pointer;
+      z-index: 99;
+      left: 49px;
+      top: 43px;
+    }
+
+    .speed-slider {
+      width: 80px;
+      transform: translateX(-14px);
+
+      --paper-slider-knob-start-color: var(--google-blue-700);
+      --paper-slider-knob-start-border-color: var(--google-blue-700);
+      --paper-slider-pin-start-color: var(--google-blue-700);
+    }
+
+    .toast {
+      --paper-toast-background-color: rgba(11, 70, 93, 0.8);
+      margin-left: 53px !important;
+    }
+  </style>
+
+  <template>
+    <paper-toast class="toast" id="toast"></paper-toast>
+    <gobstones-code-runner id="playButton" style="z-index: 10;" title="{{localize('execute')}}"></gobstones-code-runner>
+    <template is="dom-if" if="{{permissions.can_change_source}}">
+      <paper-button class="random-toggle" on-click="toggleRandom"><iron-icon class$="{{toggleRandomCss(useRandomBoard)}}" icon="av:shuffle"></iron-icon></paper-button>
+    </template>
+    <paper-slider id="speedSlider" style="z-index: 10" class="speed-slider" snaps="" min="1" max="5" max-markers="5" step="1" value="{{speed}}" immediate-value="{{immediateSpeed}}" ,="" disabled="{{!permissions.can_change_speed}}"></paper-slider>
+  </template>
+
+  </dom-module>
+<script src="code-runner.js"></script></body></html>

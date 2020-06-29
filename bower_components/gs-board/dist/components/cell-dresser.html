@@ -1,0 +1,57 @@
+<dom-module id="cell-dresser">
+  <template>
+    <style>
+      
+
+      /*# sourceMappingURL=style.css.map */
+
+    </style>
+
+
+  </template>
+  <script>
+    Polymer({
+      is: 'cell-dresser',
+      getRule: function(cell, isHeader, attire) {
+        if ((attire == null) || !attire.enabled) {
+          return;
+        }
+        return attire != null ? attire.rules.filter((function(_this) {
+          return function(rule) {
+            return _this._doesSatisfyRule(cell, isHeader, rule);
+          };
+        })(this))[0] : void 0;
+      },
+      _doesSatisfyRule: function(cell, isHeader, rule) {
+        var itSatisfies;
+        itSatisfies = (function(_this) {
+          return function(color) {
+            return _this._doesSatisfyQuantity(cell[color], rule.when[color]) && _this._doesSatisfyHeader(isHeader, rule.when.head);
+          };
+        })(this);
+        return ["red", "blue", "green", "black"].reduce((function(_this) {
+          return function(previousCondition, color) {
+            return previousCondition && itSatisfies(color);
+          };
+        })(this), true);
+      },
+      _doesSatisfyQuantity: function(quantity, expectedQuantity) {
+        if (quantity == null) {
+          quantity = 0;
+        }
+        switch (expectedQuantity) {
+          case "*":
+            return true;
+          case "+":
+            return quantity > 0;
+          default:
+            return quantity === expectedQuantity;
+        }
+      },
+      _doesSatisfyHeader: function(isHeader, expectedHeader) {
+        return (expectedHeader == null) || expectedHeader === isHeader;
+      }
+    });
+
+  </script>
+</dom-module>

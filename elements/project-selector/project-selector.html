@@ -1,0 +1,171 @@
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../scripts/loaders/remote/gitHubGuideLoader.html">
+<link rel="import" href="../../scripts/loaders/remote/desktopGuideLoader.html">
+
+</head><body><dom-module id="project-selector">
+  <style>
+    .container {
+      margin: 0 auto;
+      width: 90%;
+    }
+
+    .exercise-large {
+      cursor: pointer;
+      width: 200px;
+      float: left;
+      margin: 10px;
+    }
+
+    .exercise-large > * > h3 {
+      text-align: center;
+      font-size: 16px;
+      height: 60px;
+      font-weight: 400;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+    }
+
+    .exercise-small {
+      cursor: pointer;
+      width: 100px;
+      float: left;
+      margin: 10px;
+    }
+
+    .exercise-small > * > h3 {
+      text-align: center;
+      font-size: 12px;
+      height: 60px;
+      font-weight: 400;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+    }
+
+    .exercise-list {
+      display: inline;
+      cursor: pointer;
+    }
+
+    .exercise-list > * > h3 {
+      font-size: 12px;
+      height: 60px;
+      font-weight: 400;
+      margin-top: 2px;
+      margin-left: 5px;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+
+    .exercise-list > a {
+      display: inline-flex;
+    }
+
+    .separator-list {
+      margin-bottom: 25px;
+    }
+
+    .no-exercises {
+      margin-top: 40px;
+      color: cornflowerblue;
+    }
+
+    .guide-selector {
+      width: 350px;
+    }
+
+    .view-selector {
+      position: absolute;
+      top: -31px;
+      right: 6px;
+      transform: scale(0.8);
+      width: 150px;
+    }
+
+    .course-name {
+      position: absolute;
+      left: 16px;
+      top: -14px;
+      color: #0b465d;
+      font-family: monospace;
+      font-weight: 800;
+    }
+  </style>
+
+  <template>
+    <h1>[[localize("select-an-exercise")]] <paper-icon-button suffix="" icon="folder-open" on-click="loadFromFile"></paper-icon-button></h1>
+
+    <template is="dom-if" if="[[_isEmpty(guides)]]">
+      <h3 class="no-exercises">
+        <template is="dom-if" if="[[!_isDesktop()]]">
+          [[localize("no-guides-web")]]
+        </template>
+
+        <template is="dom-if" if="[[_isDesktop()]]">
+          [[localize("no-guides-desktop")]]
+        </template>
+      </h3>
+    </template>
+
+    <template is="dom-if" if="[[!_isEmpty(guides)]]">
+      <paper-dropdown-menu class="guide-selector" no-animations="" no-label-float="" vertical-align="bottom" horizontal-align="right">
+        <paper-listbox class="dropdown-content" selected="{{selectedGuide}}">
+          <template is="dom-repeat" items="{{ guides }}">
+            <paper-item>{{item.name}}</paper-item>
+          </template>
+        </paper-listbox>
+      </paper-dropdown-menu>
+
+      <div class="view-selector">
+        <paper-dropdown-menu no-animations="" no-label-float="" vertical-align="top" horizontal-align="right" id="viewModeSelector">
+          <paper-listbox class="dropdown-content" selected="{{selectedViewMode}}">
+            <template is="dom-repeat" items="{{ viewModes }}">
+              <paper-item>[[localize(item)]]</paper-item>
+            </template>
+          </paper-listbox>
+        </paper-dropdown-menu>
+      </div>
+
+      <span class="course-name">[[getCourseName()]]</span>
+
+      <div class="container">
+        <template is="dom-if" if="[[exercises]]">
+          <hr style="transform: translateY(9px)" class$="{{getSeparatorCssClass(selectedViewMode)}}">
+        </template>
+
+        <template is="dom-repeat" items="[[exercises]]">
+          <div class$="{{getExerciseCssClass(selectedViewMode)}}">
+            <a on-tap="goToExercise">
+              <template is="dom-if" if="[[!_isList(selectedViewMode)]]">
+                <img width$="{{getImageSize(selectedViewMode)}}" height$="{{getImageSize(selectedViewMode)}}" src="{{item.imageUrl}}">
+                <h3 inner-h-t-m-l="[[getItemTitle(item, selectedViewMode)]]"></h3>
+              </template>
+
+              <template is="dom-if" if="[[_isList(selectedViewMode)]]">
+                <img width$="{{getImageSize(selectedViewMode)}}" height$="{{getImageSize(selectedViewMode)}}" src="{{item.imageUrl}}">
+                <h3 inner-h-t-m-l="[[getItemTitle(item, selectedViewMode)]]"></h3>
+              </template>
+            </a>
+          </div>
+          <template is="dom-if" if="[[_isList(selectedViewMode)]]">
+            <br>
+          </template>
+        </template>
+
+        <template is="dom-if" if="[[_isEmpty(exercises)]]">
+          <h3 class="no-exercises">
+            [[localize("no-exercises")]]
+          </h3>
+        </template>
+      </div>
+    </template>
+  </template>
+
+  </dom-module>
+<script src="project-selector.js"></script></body></html>

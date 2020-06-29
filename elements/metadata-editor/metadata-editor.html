@@ -1,0 +1,171 @@
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../scripts/simplemde.html">
+<link rel="import" href="../../scripts/stylist.html">
+<link rel="import" href="../../scripts/loaders/components/metadataLoader.html">
+<link rel="import" href="../../scripts/behaviors/busListenerBehavior.html">
+<link rel="import" href="../../scripts/behaviors/permissionsBehavior.html">
+<link rel="import" href="../../scripts/behaviors/localizationBehavior.html">
+<link rel="import" href="../../scripts/behaviors/loaderBehavior.html">
+
+</head><body><dom-module id="metadata-editor">
+  <template>
+    <style>
+      .menu-header-gobstones {
+        background-color: white;
+        font-weight: 800;
+      }
+
+      .metadata-editor-options {
+        width: 100%;
+        overflow: scroll;
+        overflow-x: hidden;
+      }
+
+      .json-editor {
+        height: 50vh;
+      }
+
+      .gray {
+        color: gray;
+      }
+    </style>
+
+    <div class="metadata-editor-options">
+      <paper-item>
+        <paper-item-body>
+          <div>([[localize("settings-preview-changes")]])</div>
+        </paper-item-body>
+        <paper-toggle-button checked="{{previewChanges}}"></paper-toggle-button>
+      </paper-item>
+      <br>
+
+      <paper-item center-justified="" flex="" class="menu-header-gobstones">
+        <div>[[localize("settings-library")]]</div>
+      </paper-item>
+
+      <paper-item>
+        <paper-item-body>
+          <div>[[localize("settings-library-visible")]]</div>
+        </paper-item-body>
+        <paper-toggle-button checked="{{metadata.library.visible}}"></paper-toggle-button>
+      </paper-item>
+
+      <paper-item center-justified="" flex="" class="menu-header-gobstones">
+        <div>[[localize("settings-code")]]</div>
+      </paper-item>
+
+      <paper-item>
+        <paper-item-body>
+          <div>[[localize("settings-code-visible")]]</div>
+        </paper-item-body>
+        <paper-toggle-button checked="{{metadata.source.visible}}"></paper-toggle-button>
+      </paper-item>
+
+      <paper-item>
+        <paper-item-body>
+          <div>[[localize("settings-code-autoopen-description")]]</div>
+        </paper-item-body>
+        <paper-toggle-button checked="{{metadata.initialDescription}}"></paper-toggle-button>
+      </paper-item>
+
+      <paper-item>
+        <paper-item-body>
+          <div>[[localize("settings-code-link")]]</div>
+        </paper-item-body>
+        <paper-input value="{{metadata.link}}"></paper-input>
+      </paper-item>
+
+      <paper-item center-justified="" flex="" class="menu-header-gobstones">
+        <div>[[localize("settings-boards")]]</div>
+      </paper-item>
+
+      <paper-item>
+        <paper-item-body>
+          <div>[[localize("settings-boards-visible-edition")]]</div>
+        </paper-item-body>
+        <paper-toggle-button checked="{{metadata.board.visible_edition}}"></paper-toggle-button>
+      </paper-item>
+
+      <paper-item>
+        <paper-item-body>
+          <div class$="{{grayedUnless(metadata.*, 'board.visible_edition')}}">[[localize("settings-boards-collapse-toolbox")]]</div>
+        </paper-item-body>
+        <paper-toggle-button checked="{{metadata.board.collapse_toolbox}}"></paper-toggle-button>
+      </paper-item>
+
+      <paper-item>
+        <paper-item-body>
+          <div class$="{{grayedUnless(metadata.*, 'board.visible_edition')}}">[[localize("settings-boards-can-change-initial-board")]]</div>
+        </paper-item-body>
+        <paper-toggle-button checked="{{metadata.board.user_permissions.can_change_initial_board}}"></paper-toggle-button>
+      </paper-item>
+
+      <paper-item>
+        <paper-item-body>
+          <div class$="{{grayedUnless(metadata.*, 'board.visible_edition')}}">[[localize("settings-boards-can-view-size-section")]]</div>
+        </paper-item-body>
+        <paper-toggle-button checked="{{metadata.board.user_permissions.can_view_size_section}}"></paper-toggle-button>
+      </paper-item>
+
+      <paper-item>
+        <paper-item-body>
+          <div class$="{{grayedUnless(metadata.*, 'board.visible_edition')}}">[[localize("settings-boards-can-view-attire-section")]]</div>
+        </paper-item-body>
+        <paper-toggle-button checked="{{metadata.board.user_permissions.can_view_attire_section}}"></paper-toggle-button>
+      </paper-item>
+
+      <paper-item>
+        <paper-item-body>
+          <div class$="{{grayedUnless(metadata.*, 'board.visible_edition')}} {{grayedUnless(metadata.*, 'board.user_permissions.can_view_attire_section')}}">[[localize("settings-attires-can-toggle-visibility")]]</div>
+        </paper-item-body>
+        <paper-toggle-button checked="{{metadata.attire.user_permissions.can_toggle_visibility}}"></paper-toggle-button>
+      </paper-item>
+
+      <paper-item>
+        <paper-item-body>
+          <div>[[localize("settings-boards-can-edit-board")]]</div>
+        </paper-item-body>
+        <paper-toggle-button checked="{{metadata.board.user_permissions.can_edit_board}}"></paper-toggle-button>
+      </paper-item>
+
+      <paper-item center-justified="" flex="" class="menu-header-gobstones">
+        <div>[[localize("settings-execution")]]</div>
+      </paper-item>
+
+      <paper-item>
+        <paper-item-body>
+          <div>[[localize("settings-boards-can-change-initial-board-source")]]</div>
+        </paper-item-body>
+        <paper-toggle-button checked="{{metadata.board.user_permissions.can_change_initial_board_source}}"></paper-toggle-button>
+      </paper-item>
+
+      <paper-item>
+        <paper-item-body>
+          <div>[[localize("settings-execution-speed-can-change-speed")]]</div>
+        </paper-item-body>
+        <paper-toggle-button checked="{{metadata.execution_speed.user_permissions.can_change_speed}}"></paper-toggle-button>
+      </paper-item>
+
+      <paper-item center-justified="" flex="" class="menu-header-gobstones">
+        <paper-item-body>
+          <div>[[localize("settings-cover")]]</div>
+        </paper-item-body>
+        <paper-icon-button on-click="loadImage" icon="icons:folder-open" alt="open"> </paper-icon-button>
+        <template is="dom-if" if="{{cover}}">
+          <img src="{{cover}}" width="30" height="30">
+        </template>
+      </paper-item>
+      <input id="image" type="file" accept=".png" on-change="onLoadedImage" style="visibility: hidden;">
+
+      <paper-item center-justified="" flex="" class="menu-header-gobstones">
+        <div>[[localize("settings-blocks")]]</div>
+      </paper-item>
+
+      <blocks-toolbox-selector default-toolbox="{{defaultToolbox}}" blocks="{{metadata.blocks}}"></blocks-toolbox-selector>
+    </div>
+  </template>
+
+  </dom-module>
+
+
+<script src="metadata-editor.js"></script></body></html>

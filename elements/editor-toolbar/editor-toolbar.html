@@ -1,0 +1,170 @@
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/iron-icons/maps-icons.html">
+<link rel="import" href="../../scripts/behaviors/busListenerBehavior.html">
+<link rel="import" href="../../scripts/behaviors/loaderBehavior.html">
+<link rel="import" href="../../scripts/loaders/projectLoader.html">
+<link rel="import" href="../../scripts/loaders/projectBlocksLoader.html">
+<link rel="import" href="../../scripts/loaders/projectTeacherLoader.html">
+<link rel="import" href="../../scripts/jquery.html">
+
+</head><body><dom-module id="gbs-editor-toolbar">
+  <template>
+
+    <style>
+      .buttons {
+        -webkit-touch-callout: none;
+        -webkit-user-select: none;
+        -khtml-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+      }
+
+      .link-button {
+        cursor: pointer;
+        margin-right: 15px;
+        color: white;
+      }
+
+      .procedures-hint-button {
+        cursor: pointer;
+        margin-right: 15px;
+        color: orange;
+      }
+
+      .hint-tooltip {
+        font-size: 15px;
+        width: 400px;
+        text-align: center;
+      }
+
+      .main-toolbar {
+        z-index: 10;
+      }
+
+      .navbar-project-title {
+        --paper-input-container-input-color: #FFFFFF;
+        --paper-input-container-color: #FF5B81;
+        --paper-input-container-focus-color: #FF5B81;
+        width: 70%;
+        margin-left: 15px;
+      }
+
+      #project-buttons-placeholder {
+        position: absolute;
+        width: 140px;
+        height: 64px;
+        transform: translate(-130px, -32px);
+        z-index: 999;
+        pointer-events: none;
+      }
+    </style>
+
+    <paper-toolbar class="main-toolbar">
+      <paper-icon-button id="options-button" icon="menu" paper-drawer-toggle="" on-click="togglePanel"></paper-icon-button>
+
+      <a href="https://github.com/gobstones/gobstones-web/wiki/Acerca-de-Gobstones-Web" target="_blank">
+        <img id="logo" class="app-logo" src="../../images/logo.png">
+      </a>
+
+      <template is="dom-if" if="{{_areToolsVisible(projectType)}}">
+        <paper-input value="{{projectName}}" class="navbar-project-title" no-label-float="">
+          <paper-icon-button suffix="" icon="assignment" on-click="openProjectSelector"></paper-icon-button>
+          <paper-icon-button suffix="" icon="folder-open" on-click="load"></paper-icon-button>
+          <paper-icon-button suffix="" icon="save" on-click="save"></paper-icon-button>
+        </paper-input>
+        <div style="position: relative">
+          <div id="project-buttons-placeholder"></div>
+        </div>
+
+        <div class="title"></div>
+
+        <template is="dom-if" if="{{_isCodeProject(projectType)}}">
+          <template is="dom-if" if="{{showProceduresHint}}">
+            <iron-icon on-click="toggleProceduresHint" id="procedures-hint-button" class="procedures-hint-button" icon="icons:lightbulb-outline"></iron-icon>
+
+            <paper-tooltip for="procedures-hint-button" position="left" animation-config="{{tooltipAnimation}}">
+              <div class="hint-tooltip">
+                [[localize("you-have-available-actions")]]
+              </div>
+            </paper-tooltip>
+          </template>
+        </template>
+
+
+        <template is="dom-if" if="{{_hasLink(homeLink)}}">
+          <iron-icon on-click="openHomeLink" id="home-link-button" class="link-button" icon="icons:home"></iron-icon>
+
+          <paper-tooltip for="home-link-button" position="left" animation-config="{{tooltipAnimation}}">
+            <div class="hint-tooltip">
+              [[localize("tooltip-toolbar-home-link")]]
+            </div>
+          </paper-tooltip>
+        </template>
+
+        <template is="dom-if" if="{{_hasLink(link)}}">
+          <iron-icon on-click="openLink" id="link-button" class="link-button" icon="icons:attachment"></iron-icon>
+
+          <paper-tooltip for="link-button" position="left" animation-config="{{tooltipAnimation}}">
+            <div class="hint-tooltip">
+              [[localize("tooltip-toolbar-link")]]
+            </div>
+          </paper-tooltip>
+        </template>
+
+        <div class="buttons">
+          <template is="dom-if" if="{{_isCodeProject(projectType)}}">
+            <paper-button on-click="increaseEditorFontSize"><iron-icon id="zoom-in" class="button" icon="icons:zoom-in"></iron-icon></paper-button>
+
+            <paper-tooltip for="zoom-in" position="left" animation-config="{{tooltipAnimation}}">
+              <div class="hint-tooltip">
+                [[localize("tooltip-toolbar-zoom-in")]]
+              </div>
+            </paper-tooltip>
+
+            <paper-button on-click="decreaseEditorFontSize"><iron-icon id="zoom-out" class="button" icon="icons:zoom-out"></iron-icon></paper-button>
+
+            <paper-tooltip for="zoom-out" position="left" animation-config="{{tooltipAnimation}}">
+              <div class="hint-tooltip">
+                [[localize("tooltip-toolbar-zoom-out")]]
+              </div>
+            </paper-tooltip>
+          </template>
+          <template is="dom-if" if="{{_isBlocksProject(projectType)}}">
+            <paper-button on-click="undo"><iron-icon id="undo-button" class="button" icon="icons:undo"></iron-icon></paper-button>
+
+            <paper-tooltip for="undo-button" position="left" animation-config="{{tooltipAnimation}}">
+              <div class="hint-tooltip">
+                [[localize("tooltip-toolbar-undo")]]
+              </div>
+            </paper-tooltip>
+          </template>
+          <template is="dom-if" if="{{showInfo}}">
+            <paper-button id="open-description-button" on-click="showDescription"><iron-icon class="button" icon="icons:info"></iron-icon></paper-button>
+
+            <paper-tooltip for="open-description-button" position="left" animation-config="{{tooltipAnimation}}">
+              <div class="hint-tooltip">
+                [[localize("tooltip-toolbar-see-description")]]
+              </div>
+            </paper-tooltip>
+          </template>
+          <template is="dom-if" if="{{_isCodeProject(projectType)}}">
+            <template is="dom-if" if="{{permissions.can_use_library}}">
+              <paper-button on-click="toggleLibrary"><iron-icon id="toggle-library-button" class$="button {{buttonCssClass(showLibrary)}}" icon="icons:chrome-reader-mode"></iron-icon></paper-button>
+
+              <paper-tooltip for="toggle-library-button" position="left" animation-config="{{tooltipAnimation}}">
+                <div class="hint-tooltip">
+                  [[localize("tooltip-toolbar-toggle-library")]]
+                </div>
+              </paper-tooltip>
+            </template>
+          </template>
+          <paper-button on-click="toggleShowBoards"><iron-icon class="button" icon$="icons:chevron-{{_showBoardsDirection(showBoards)}}"></iron-icon></paper-button>
+        </div>
+      </template>
+    </paper-toolbar>
+
+    <input id="Project" type="file" accept$="[[_projectExtension(projectType)]]" on-change="onLoadedProject" style="display:none;">
+  </template>
+  </dom-module>
+<script src="editor-toolbar.js"></script></body></html>

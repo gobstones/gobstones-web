@@ -1,0 +1,4 @@
+{
+  "name": "gs-board",
+  "imports": ["gs-cell.html", "key-tracker.html"]
+}

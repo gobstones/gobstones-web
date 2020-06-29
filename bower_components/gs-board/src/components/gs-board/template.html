@@ -1,0 +1,39 @@
+<key-tracker id="keyTracker" aria-hidden="true"></key-tracker>
+
+<template is="dom-if" if="{{!boom}}">
+  <button aria-label$="{{gbb}}" style="opacity: 0; position: absolute;"></button>
+
+  <table class="gbs_board" aria-hidden="true">
+    <tbody>
+      <tr>
+        <td class="gbs_lx gbs_top_left"></td>
+        <template is="dom-repeat" items="{{columnIndexes}}" as="columnIndex">
+          <td class="gbs_lh gbs_lht">{{columnIndex}}</td>
+        </template>
+        <td class="gbs_lx gbs_top_right"></td>
+      </tr>
+      <template is="dom-repeat" items="{{table}}" as="row" index-as="rowIndex">
+        <tr>
+          <td class="gbs_lv gbs_lvl">{{getRowNumber(table, rowIndex)}}</td>
+          <template is="dom-repeat" items="{{row}}" as="cell" index-as="cellIndex">
+            <td>
+              <gs-cell black={{cell.black}} blue={{cell.blue}} green={{cell.green}} red={{cell.red}} cell-index="{{cellIndex}}" row-index="{{rowIndex}}" header="{{header}}" options="{{options}}" attire="{{attire}}"></gs-cell>
+            </td>
+          </template>
+          <td class="gbs_lv gbs_lvr">{{getRowNumber(table, rowIndex)}}</td>
+        </tr>
+      </template>
+      <tr>
+        <td class="gbs_lx gbs_bottom_left"></td>
+        <template is="dom-repeat" items="{{columnIndexes}}" as="columnIndex">
+          <td class="gbs_lh gbs_lhb">{{columnIndex}}</td>
+        </template>
+        <td class="gbs_lx gbs_bottom_right"></td>
+      </tr>
+    </tbody>
+  </table>
+</template>
+
+<template is="dom-if" if="{{boom}}">
+  <div class="gbs_boom"></div>
+</template>

@@ -1,0 +1,30 @@
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html">
+
+</head><body><dom-module id="main-app">
+  <template>
+
+    <event-bus></event-bus>
+
+    <paper-drawer-panel left-drawer="" id="paperDrawerPanel" drawer-width="250px" force-narrow="" disable-edge-swipe="">
+      <!-- LEFT MENU -->
+      <paper-header-panel drawer="">
+        <left-menu id="menu" project-type="[[projectType]]"></left-menu>
+      </paper-header-panel>
+
+      <!-- Main Area -->
+      <paper-header-panel main="" id="headerPanelMain" fixed="">
+        <!-- MAIN CONTENT -->
+        <div class="content">
+          <gobstones-ide id="gobstones-ide" project-type="[[projectType]]"></gobstones-ide>
+        </div>
+      </paper-header-panel>
+    </paper-drawer-panel>
+
+    <paper-toast id="toast">
+      <span class="toast-hide-button" role="button" tabindex="0" onclick="app.$.toast.hide()">Ok</span>
+    </paper-toast>
+
+  </template>
+
+  </dom-module>
+<script src="main-app.js"></script></body></html>
