@@ -52,6 +52,7 @@
       media="{{mediaDir}}"
       local-media="{{localMediaDir}}"
       role$="{{getRole(withRunner)}}"
+      language="en"
     ></gs-element-blockly>
     <gs-element-blockly id="blocklytmp" style="visibility: hidden"></gs-element-blockly>
   </template>
@@ -100,6 +101,7 @@
       },
 
       ready: function() {
+        this.$.blockly.setLanguage(window.STORAGE.getItem("language"));
         if (this.withRunner) {
           const boardsPanel = document.getElementById("boards");
           if (boardsPanel) {

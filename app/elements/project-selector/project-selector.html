@@ -229,8 +229,10 @@
         this.selectedViewMode = parseInt(window.STORAGE.getItem("selected-view-mode")) || 0;
 
         setTimeout(() => {
-          this.$.viewModeSelector.label = this.localize(this.viewModes[this.selectedViewMode]);
-        }, 0);
+          if (this.$.viewModeSelector) {
+            this.$.viewModeSelector.label = this.localize(this.viewModes[this.selectedViewMode]);
+          }
+        }, 10);
       },
 
       goToExercise: function(event) {

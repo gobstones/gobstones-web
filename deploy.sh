@@ -10,10 +10,6 @@ function try {
   return $status
 }
 
-# build
-rm -rf .tmp dist
-try gulp
-
 # config
 ENVIRONMENT="$1"
 SUFFIX="-staging"
@@ -24,6 +20,12 @@ if [ "$ENVIRONMENT" == "production" ]; then
 fi
 
 echo "Deploying to gobstones-web$SUFFIX (remote $REMOTE)..."
+
+echo "Building project"
+
+# build
+rm -rf .tmp dist
+try gulp
 
 # push to gh pages
 current_branch=$(git branch | grep \* | cut -d ' ' -f2)
@@ -38,6 +40,6 @@ try git commit -m "Deploy @ $(date +'%d/%m/%Y')"
 echo "Creating deploy subtree commit..."
 try git subtree split --prefix dist deploy -b tmp-deploy
 echo "Pushing to remote..."
-try git remote add $REMOTE "https://github.com/gobstones/gobstones-web$SUFFIX.git"
+try git remote add $REMOTE "git@github.com:gobstones/gobstones-web$SUFFIX.git"
 try git push -f $REMOTE tmp-deploy:gh-pages
 git checkout "$current_branch"
