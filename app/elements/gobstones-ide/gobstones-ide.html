@@ -220,13 +220,33 @@
 
 
         GitHubLoader.getDesktopRelease().then((release) => {
-          this.DESKTOP_RELEASE = release.name;
+          this.REMOTE_DESKTOP_RELEASE = release.name;
 
-          if (window.GBS_DESKTOP) {
+          // Only check for updates if in desktop but not packaged for OS.
+          if (window.GBS_DESKTOP && window.IS_PACKAGED) {
+            console.log('This is a packaged app. The OS manages the version of the app. Not checking for updates');
+          } else if (window.GBS_DESKTOP && !window.IS_PACKAGED) {
             const electron = window.GBS_REQUIRE("electron");
-            const version = electron.remote.app.getVersion();
+            const currentVersion = electron.remote.app.getVersion();
 
-            if (version !== this.DESKTOP_RELEASE) {
+            let hasNewerRemote = currentVersion !== this.REMOTE_DESKTOP_RELEASE;
+            try {
+            const [desktopMajorStr, desktopMinorStr, desktopPatchStr] = currentVersion.split('.');
+            const [remoteMajorStr, remoteMinorStr, remotePatchStr] = this.REMOTE_DESKTOP_RELEASE.split('.');
+
+            const [desktopMajor, desktopMinor, desktopPatch] = [parseInt(desktopMajorStr), parseInt(desktopMinorStr), parseInt(desktopPatchStr)];
+            const [remoteMajor, remoteMinor, remotePatch] = [parseInt(remoteMajorStr), parseInt(remoteMinorStr), parseInt(remotePatchStr)];
+
+            hasNewerRemote = desktopMajor < remoteMajor ||
+              (desktopMajor === remoteMajor && desktopMinor < remoteMinor) ||
+              (desktopMajor === remoteMajor && desktopMinor === remoteMinor && desktopPatch < remotePatch);
+
+            console.log('Comparing based to semVer');
+            } catch (e) {}
+
+            if (hasNewerRemote) {
+              console.log('Newer version found. Current version is: ' + currentVersion +
+                  ' but remote is: ' + this.REMOTE_DESKTOP_RELEASE + ' We recommend updating.');
               setTimeout(() => {
                 const lastDatePrompt = window.STORAGE.getItem("lastDatePrompt");
                 const today = new Date().getDate();
@@ -238,6 +258,9 @@
 
                 window.STORAGE.setItem("lastDatePrompt", today);
               });
+            } else {
+              console.log('No new version found. Current is: ' + currentVersion +
+                  ' but remote is: ' + this.REMOTE_DESKTOP_RELEASE + ' No update needed.');
             }
           }
         });
