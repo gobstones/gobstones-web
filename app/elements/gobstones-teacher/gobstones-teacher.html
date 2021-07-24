@@ -79,7 +79,6 @@
         <paper-fab id="fab-sync-button" mini icon="notification:sync-disabled" class="fab-sync sync-off" on-click="_onBlocksSyncClick"></paper-fab>
         <paper-tab>[[localize("code")]]</paper-tab>
         <paper-tab>[[localize("teachers-library")]]</paper-tab>
-        <paper-tab>[[localize("students-library")]]</paper-tab>
         <paper-tab>[[localize("description")]]</paper-tab>
         <paper-tab>[[localize("attire")]]</paper-tab>
         <paper-tab>[[localize("settings")]]</paper-tab>
@@ -127,8 +126,6 @@
 
         <gobstones-editor id="teacher-library-editor" class$="editor {{_teacherLibraryClass(selectedTab)}}"></gobstones-editor>
 
-        <gobstones-editor id="library-editor" class$="editor {{_libraryClass(selectedTab)}}"></gobstones-editor>
-
         <description-editor id="description-editor" class$="editor {{_descriptionClass(selectedTab)}}"></description-editor>
 
         <attire-editor id="attire-editor" class$="editor {{_attireClass(selectedTab)}}"></attire-editor>
@@ -144,10 +141,9 @@
     const ID_BLOCKS = 0;
     const ID_CODE = 1;
     const ID_TEACHER_LIBRARY = 2;
-    const ID_LIBRARY = 3;
-    const ID_DESCRIPTION = 4;
-    const ID_ATTIRE = 5;
-    const ID_METADATA = 6;
+    const ID_DESCRIPTION = 3;
+    const ID_ATTIRE = 4;
+    const ID_METADATA = 5;
 
     Polymer({
       is: "gobstones-teacher",
@@ -243,7 +239,6 @@
           this._editors()[ID_BLOCKS].runner = this.runner;
           this._editors()[ID_CODE].runner = this.runner;
           this._editors()[ID_TEACHER_LIBRARY].runner = this.runner;
-          this._editors()[ID_LIBRARY].runner = this.runner;
 
           this.runner.addEventListener("run", ({ detail }) => {
             if (!this.isBlocksOrCodeTabSelected(this.selectedTab)) {
@@ -265,15 +260,7 @@
           });
 
           this._editors()[ID_CODE].reportError = (error, type) => {
-            if (error.location.mode === "library") {
-              setTimeout(() => {
-                this.selectedTab = ID_LIBRARY;
-
-                this._editors()[ID_LIBRARY]._setAnnotation(error, type);
-              });
-            } else {
-              this._editors()[ID_CODE]._setAnnotation(error, type);
-            }
+            this._editors()[ID_CODE]._setAnnotation(error, type);
           };
           this._editors()[ID_CODE]._setMode = _.noop;
         }
@@ -312,7 +299,6 @@
         const editors = this._editors();
 
         if (mode === "library") {
-          editors[ID_LIBRARY].setCode(code);
           editors[ID_BLOCKS].setCode(code, mode);
           editors[ID_CODE].setCode(code, mode);
         } else if (mode === "teacher") {
@@ -572,7 +558,6 @@
       _blocksClass: (selectedTab) => selectedTab === ID_BLOCKS ? "visible" : "unvisible",
       _codeClass: (selectedTab) => selectedTab === ID_CODE ? "visible" : "unvisible",
       _teacherLibraryClass: (selectedTab) => selectedTab === ID_TEACHER_LIBRARY ? "visible" : "unvisible",
-      _libraryClass: (selectedTab) => selectedTab === ID_LIBRARY ? "visible" : "unvisible",
       _descriptionClass: (selectedTab) => selectedTab === ID_DESCRIPTION ? "visible" : "unvisible",
       _attireClass: (selectedTab) => selectedTab === ID_ATTIRE ? "visible" : "unvisible",
       _metadataClass: (selectedTab) => selectedTab === ID_METADATA ? "visible" : "unvisible",
@@ -580,7 +565,7 @@
       _editors: function() {
         return [
           "blocks-editor", "code-editor",
-          "teacher-library-editor", "library-editor",
+          "teacher-library-editor",
           "description-editor", "attire-editor",
           "metadata-editor"
         ].map((it) => this.$[it]);
