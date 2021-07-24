@@ -20,7 +20,7 @@
     "test": "echo 'Oops, no tests here... :('"
   },
   "engines": {
-    "node": ">=7.0.0"
+    "node": ">=10.0.0"
   },
   "dependencies": {
     "bytes": "^3.0.0",
