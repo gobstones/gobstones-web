@@ -237,6 +237,7 @@
 
       _selectedBlocksChanged: function({ detail }) {
         this.metadata.blocks = detail;
+        this._refreshPreviewIfEnabled(this.metadata);
       },
 
       _onMetadataChanged: function({ base }) {
@@ -288,8 +289,14 @@
             }));
           }
 
-          if (this.previewChanges) this._previewChanges(base);
+          this._refreshPreviewIfEnabled(base);
         } catch(e) {}
+      },
+
+      _refreshPreviewIfEnabled(metadata) {
+        if (this.previewChanges) {
+          this._previewChanges(metadata);
+        }
       },
 
       _onPreviewChangesChanged(previewChanges) {
