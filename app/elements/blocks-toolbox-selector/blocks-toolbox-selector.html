@@ -335,10 +335,20 @@
               disabled: this._getDisabledBlocks(this._blocks),
               defaultToolbox: _.trim(this.defaultToolbox) !== "" ? this.defaultToolbox : undefined
             };
+            this._notifySelectedBlocksChanged();
             this._isEditingBlocks = false;
           }, 100);
 
         this.__onBlocksUpdate();
+      },
+
+      /* @faloi:
+      Agregué este método para que el metadata-editor se entere de que cambiaron los
+      bloques seleccionados.
+      https://polymer-library.polymer-project.org/1.0/docs/devguide/events#custom-events
+      */
+      _notifySelectedBlocksChanged() {
+        this.fire('teacherSelectedBlocksChanged', this.blocks);
       },
 
       _getVisibleBlocks(array) {
