@@ -40,17 +40,6 @@
       <br>
 
       <paper-item center-justified flex class="menu-header-gobstones">
-        <div>[[localize("settings-library")]]</div>
-      </paper-item>
-
-      <paper-item>
-        <paper-item-body>
-          <div>[[localize("settings-library-visible")]]</div>
-        </paper-item-body>
-        <paper-toggle-button checked="{{metadata.library.visible}}"></paper-toggle-button>
-      </paper-item>
-
-      <paper-item center-justified flex class="menu-header-gobstones">
         <div>[[localize("settings-code")]]</div>
       </paper-item>
 
@@ -307,7 +296,7 @@
       _defaultMetadata() {
         return {
           library: {
-            visible: true
+            visible: false
           },
           source: {
             visible: true,

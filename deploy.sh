@@ -25,7 +25,7 @@ echo "Building project"
 
 # build
 rm -rf .tmp dist
-try gulp
+try npx gulp # TODO: commitear a master para que no haya que instalar gulp global
 
 # push to gh pages
 current_branch=$(git branch | grep \* | cut -d ' ' -f2)
