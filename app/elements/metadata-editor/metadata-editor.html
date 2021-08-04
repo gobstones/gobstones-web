@@ -98,6 +98,20 @@
 
       <paper-item>
         <paper-item-body>
+          <div>[[localize("settings-boards-can-edit-board")]]</div>
+        </paper-item-body>
+        <paper-toggle-button checked="{{metadata.board.user_permissions.can_edit_board}}"></paper-toggle-button>
+      </paper-item>
+
+      <paper-item>
+        <paper-item-body>
+          <div>[[localize("settings-attires-visible")]]</div>
+        </paper-item-body>
+        <paper-toggle-button checked="{{metadata.attire.visible}}"></paper-toggle-button>
+      </paper-item>
+
+      <paper-item>
+        <paper-item-body>
           <div class$="{{grayedUnless(metadata.*, 'board.visible_edition')}}">[[localize("settings-boards-can-view-attire-section")]]</div>
         </paper-item-body>
         <paper-toggle-button checked="{{metadata.board.user_permissions.can_view_attire_section}}"></paper-toggle-button>
@@ -108,13 +122,6 @@
           <div class$="{{grayedUnless(metadata.*, 'board.visible_edition')}} {{grayedUnless(metadata.*, 'board.user_permissions.can_view_attire_section')}}">[[localize("settings-attires-can-toggle-visibility")]]</div>
         </paper-item-body>
         <paper-toggle-button checked="{{metadata.attire.user_permissions.can_toggle_visibility}}"></paper-toggle-button>
-      </paper-item>
-
-      <paper-item>
-        <paper-item-body>
-          <div>[[localize("settings-boards-can-edit-board")]]</div>
-        </paper-item-body>
-        <paper-toggle-button checked="{{metadata.board.user_permissions.can_edit_board}}"></paper-toggle-button>
       </paper-item>
 
       <paper-item center-justified flex class="menu-header-gobstones">
