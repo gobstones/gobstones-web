@@ -150,7 +150,8 @@
         <div>[[localize("settings-blocks")]]</div>
       </paper-item>
 
-      <blocks-toolbox-selector default-toolbox="{{defaultToolbox}}" blocks="{{metadata.blocks}}"></blocks-toolbox-selector>
+      <!-- Al pasarlo entre corchetes dobles, la expresión se vuelve a evaluar cuando cambia la metadata -->
+      <blocks-toolbox-selector default-toolbox="{{defaultToolbox}}" blocks="[[metadata.blocks]]"></blocks-toolbox-selector>
     </div>
   </template>
 
@@ -170,7 +171,15 @@
         previewChanges: {
           type: Boolean,
           value: false
-        }
+        },
+      },
+      /* @faloi:
+      Agregué este listener para que el blocks-toolbox-selector avise cuando cambian los
+      bloques seleccionados.
+      Ver https://polymer-library.polymer-project.org/1.0/docs/devguide/events#event-listeners
+      */
+      listeners: {
+        'teacherSelectedBlocksChanged': '_selectedBlocksChanged'
       },
       behaviors: [
         Polymer.BusListenerBehavior,
@@ -226,6 +235,11 @@
         event.target.value = null;
       },
 
+      _selectedBlocksChanged: function({ detail }) {
+        this.metadata.blocks = detail;
+        this._refreshPreviewIfEnabled(this.metadata);
+      },
+
       _onMetadataChanged: function({ base }) {
         const FIELDS_OF_EDITION_SECTION = [
           "board.collapse_toolbox",
@@ -243,6 +257,7 @@
         const attireFieldsOn = FIELDS_OF_ATTIRE_SECTION.some((it) => _.get(base, it));
 
         this.defaultToolbox = base.blocks && base.blocks.defaultToolbox;
+        this.notifyPath('metadata.blocks');
 
         try {
           if (!base.board.visible_edition && editionFieldsOn) {
@@ -274,8 +289,14 @@
             }));
           }
 
-          if (this.previewChanges) this._previewChanges(base);
+          this._refreshPreviewIfEnabled(base);
         } catch(e) {}
+      },
+
+      _refreshPreviewIfEnabled(metadata) {
+        if (this.previewChanges) {
+          this._previewChanges(metadata);
+        }
       },
 
       _onPreviewChangesChanged(previewChanges) {
