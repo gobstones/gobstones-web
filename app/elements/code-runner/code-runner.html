@@ -141,6 +141,7 @@
 
       _togglePreviewTeacherConfiguration: function() {
         this.previewTeacherConfiguration = !this.previewTeacherConfiguration;
+        this.fire("teacher-preview-configuration-changed", this.previewTeacherConfiguration);
       },
 
       _computePreviewIcon: function(previewTeacherConfiguration) {
