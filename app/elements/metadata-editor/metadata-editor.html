@@ -236,10 +236,6 @@
         this.cover = null;
       },
 
-      grayedUnless: function({ base }, property) {
-        return !_.get(base, property) ? "gray" : "";
-      },
-
       loadImage: function(e) {
         $(this.$.image).click()
       },
