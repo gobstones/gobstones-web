@@ -26,10 +26,24 @@
       --paper-toast-background-color: rgba(11, 70, 93, 0.8);
       margin-left: 53px !important;
     }
+
+    .secondary-fab {
+      background-color: var(--dark-primary-color);
+      margin-bottom: 10px;
+    }
   </style>
 
   <template>
     <paper-toast class="toast" id="toast"></paper-toast>
+    <template is="dom-if" if="{{_isTeacherProject(projectType)}}">
+      <paper-fab
+        class="secondary-fab"
+        id="previewTeacherConfiguration"
+        icon="{{ previewIcon }}"
+        title="[[localize('settings-preview-changes')]]"
+        on-click="_togglePreviewTeacherConfiguration"
+      ></paper-fab>
+    </template>
     <gobstones-code-runner
       id="playButton"
       style="z-index: 10;"
@@ -56,11 +70,21 @@
           type: Number,
           value: MAX_SPEED
         },
+        projectType: {
+          type: String
+        },
         useRandomBoard: {
           type: Boolean,
           value: false
         },
-
+        previewTeacherConfiguration: {
+          type: Boolean,
+          value: false
+        },
+        previewIcon: {
+          type: String,
+          computed: "_computePreviewIcon(previewTeacherConfiguration)"
+        },
         immediateSpeed: {
           type: Number,
           value: MAX_SPEED
@@ -111,6 +135,17 @@
         debugger
         this.showToast(this.localize("teachers-library-has-errors"));
         console.error(e);
+      },
+
+      _isTeacherProject: function(projectType) { return projectType === 'teacher'; },
+
+      _togglePreviewTeacherConfiguration: function() {
+        this.previewTeacherConfiguration = !this.previewTeacherConfiguration;
+        this.fire("teacher-preview-configuration-changed", this.previewTeacherConfiguration);
+      },
+
+      _computePreviewIcon: function(previewTeacherConfiguration) {
+        return previewTeacherConfiguration ? 'icons:visibility-off' : 'icons:visibility';
       },
 
       _onRunRequest: function({ detail: controller }) {

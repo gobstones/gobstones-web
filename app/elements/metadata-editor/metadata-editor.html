@@ -31,14 +31,6 @@
     </style>
 
     <div class="metadata-editor-options">
-      <paper-item>
-        <paper-item-body>
-          <div>([[localize("settings-preview-changes")]])</div>
-        </paper-item-body>
-        <paper-toggle-button checked="{{previewChanges}}"></paper-toggle-button>
-      </paper-item>
-      <br>
-
       <paper-item center-justified flex class="menu-header-gobstones">
         <div>[[localize("settings-code")]]</div>
       </paper-item>
@@ -190,7 +182,7 @@
       Ver https://polymer-library.polymer-project.org/1.0/docs/devguide/events#event-listeners
       */
       listeners: {
-        'teacherSelectedBlocksChanged': '_selectedBlocksChanged'
+        'teacher-selected-blocks-changed': '_onSelectedBlocksChanged',
       },
       behaviors: [
         Polymer.BusListenerBehavior,
@@ -200,8 +192,19 @@
       ],
       observers: [
         "_onMetadataChanged(metadata.*)",
-        "_onPreviewChangesChanged(previewChanges)"
       ],
+
+      attached: function() {
+        /* @faloi:
+        No encontré forma polymerosa de suscribirme a un evento de un nodo "hermano",
+        así que lo resolví así.
+        */
+        document
+          .querySelector('code-runner')
+          .addEventListener('teacher-preview-configuration-changed', (event) => {
+            this._onPreviewChangesChanged(event);
+          });
+      },
 
       ready: function() {
         this.set("metadata", this._defaultMetadata());
@@ -246,8 +249,8 @@
         event.target.value = null;
       },
 
-      _selectedBlocksChanged: function({ detail }) {
-        this.metadata.blocks = detail;
+      _onSelectedBlocksChanged: function({ detail: newBlocks }) {
+        this.metadata.blocks = newBlocks;
         this._refreshPreviewIfEnabled(this.metadata);
       },
 
@@ -310,8 +313,13 @@
         }
       },
 
-      _onPreviewChangesChanged(previewChanges) {
+      _onPreviewChangesChanged({ detail: previewChanges }) {
         try {
+          /* @faloi:
+          Es redundante mantener este estado local,
+          pero no sé cómo manejar estado global sin pasearlo por todos los componentes.
+          */
+          this.previewChanges = previewChanges;
           if (previewChanges) this._previewChanges(this.metadata);
           else this._resetPreview();
         } catch(e) {}
