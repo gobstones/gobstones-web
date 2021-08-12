@@ -64,26 +64,26 @@
         <paper-item-body>
           <div>[[localize("settings-boards-visible-edition")]]</div>
         </paper-item-body>
-        <paper-toggle-button checked="{{metadata.board.visible_edition}}"></paper-toggle-button>
+        <paper-toggle-button on-tap="_onBoardVisibleEditionChanged" checked="{{metadata.board.visible_edition}}"></paper-toggle-button>
       </paper-item>
 
-      <paper-item>
+      <paper-item disabled$="{{boardEditionOptionsDisabled}}">
         <paper-item-body>
-          <div class$="{{grayedUnless(metadata.*, 'board.visible_edition')}}">[[localize("settings-boards-collapse-toolbox")]]</div>
+          <div>[[localize("settings-boards-collapse-toolbox")]]</div>
         </paper-item-body>
         <paper-toggle-button checked="{{metadata.board.collapse_toolbox}}"></paper-toggle-button>
       </paper-item>
 
-      <paper-item>
+      <paper-item disabled$="{{boardEditionOptionsDisabled}}">
         <paper-item-body>
-          <div class$="{{grayedUnless(metadata.*, 'board.visible_edition')}}">[[localize("settings-boards-can-change-initial-board")]]</div>
+          <div>[[localize("settings-boards-can-change-initial-board")]]</div>
         </paper-item-body>
         <paper-toggle-button checked="{{metadata.board.user_permissions.can_change_initial_board}}"></paper-toggle-button>
       </paper-item>
 
-      <paper-item>
+      <paper-item disabled$="{{boardEditionOptionsDisabled}}">
         <paper-item-body>
-          <div class$="{{grayedUnless(metadata.*, 'board.visible_edition')}}">[[localize("settings-boards-can-view-size-section")]]</div>
+          <div>[[localize("settings-boards-can-view-size-section")]]</div>
         </paper-item-body>
         <paper-toggle-button checked="{{metadata.board.user_permissions.can_view_size_section}}"></paper-toggle-button>
       </paper-item>
@@ -106,16 +106,16 @@
         <paper-toggle-button checked="{{metadata.attire.visible}}"></paper-toggle-button>
       </paper-item>
 
-      <paper-item>
+      <paper-item disabled$="{{boardEditionOptionsDisabled}}">
         <paper-item-body>
-          <div class$="{{grayedUnless(metadata.*, 'board.visible_edition')}}">[[localize("settings-boards-can-view-attire-section")]]</div>
+          <div>[[localize("settings-boards-can-view-attire-section")]]</div>
         </paper-item-body>
         <paper-toggle-button checked="{{metadata.board.user_permissions.can_view_attire_section}}"></paper-toggle-button>
       </paper-item>
 
-      <paper-item>
+      <paper-item disabled$="{{boardEditionOptionsDisabled}}">
         <paper-item-body>
-          <div class$="{{grayedUnless(metadata.*, 'board.visible_edition')}} {{grayedUnless(metadata.*, 'board.user_permissions.can_view_attire_section')}}">[[localize("settings-attires-can-toggle-visibility")]]</div>
+          <div class$="{{grayedUnless(metadata.*, 'board.user_permissions.can_view_attire_section')}}">[[localize("settings-attires-can-toggle-visibility")]]</div>
         </paper-item-body>
         <paper-toggle-button checked="{{metadata.attire.user_permissions.can_toggle_visibility}}"></paper-toggle-button>
       </paper-item>
@@ -175,6 +175,10 @@
           type: Boolean,
           value: false
         },
+        boardEditionOptionsDisabled: {
+          type: Boolean,
+          value: false
+        }
       },
       /* @faloi:
       Agregué este listener para que el blocks-toolbox-selector avise cuando cambian los
@@ -249,6 +253,27 @@
         event.target.value = null;
       },
 
+      _onBoardVisibleEditionChanged: function () {
+        const boardVisibleEdition = this.metadata.board.visible_edition;
+        this.boardEditionOptionsDisabled = !boardVisibleEdition;
+        this.setMetadata(_.merge({}, this.metadata, {
+          board: {
+            collapse_toolbox: false,
+            user_permissions: {
+              can_change_initial_board: boardVisibleEdition,
+              can_view_size_section: boardVisibleEdition,
+              can_view_attire_section: boardVisibleEdition,
+              can_toggle_visibility: boardVisibleEdition
+            }
+          },
+          attire: {
+            user_permissions: {
+              can_toggle_visibility: boardVisibleEdition
+            }
+          }
+        }));
+      },
+
       _onSelectedBlocksChanged: function({ detail: newBlocks }) {
         this.metadata.blocks = newBlocks;
         this._refreshPreviewIfEnabled(this.metadata);
@@ -274,25 +299,6 @@
         this.notifyPath('metadata.blocks');
 
         try {
-          if (!base.board.visible_edition && editionFieldsOn) {
-            this.setMetadata(_.merge({}, this.metadata, {
-              board: {
-                collapse_toolbox: false,
-                user_permissions: {
-                  can_change_initial_board: false,
-                  can_view_size_section: false,
-                  can_view_attire_section: false,
-                  can_toggle_visibility: false
-                }
-              },
-              attire: {
-                user_permissions: {
-                  can_toggle_visibility: false
-                }
-              }
-            }));
-          }
-
           if (!base.board.user_permissions.can_view_attire_section && attireFieldsOn) {
             this.setMetadata(_.merge({}, this.metadata, {
               attire: {
