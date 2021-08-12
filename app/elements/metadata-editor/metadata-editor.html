@@ -202,23 +202,16 @@
         "_onMetadataChanged(metadata.*)",
       ],
 
-      attached: function() {
-        /* @faloi:
-        No encontré forma polymerosa de suscribirme a un evento de un nodo "hermano",
-        así que lo resolví así.
-        */
-        document
-          .querySelector('code-runner')
-          .addEventListener('teacher-preview-configuration-changed', (event) => {
-            this._onPreviewChangesChanged(event);
-          });
-      },
-
       ready: function() {
         this.set("metadata", this._defaultMetadata());
 
         this.stylist = new Stylist();
         this.stylist.setUpMetadataEditorCustomizations();
+
+        this.subscribeTo(
+          'teacher-preview-configuration-changed',
+          this._onPreviewChangesChanged.bind(this)
+        );
       },
 
       getMetadata: function() {
@@ -308,7 +301,7 @@
         }
       },
 
-      _onPreviewChangesChanged({ detail: previewChanges }) {
+      _onPreviewChangesChanged(previewChanges) {
         try {
           /* @faloi:
           Es redundante mantener este estado local,
