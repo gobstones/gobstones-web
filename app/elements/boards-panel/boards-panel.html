@@ -579,7 +579,9 @@
           try {
             const element = $(".ace_text-input")[0];
             if (showCode) element.focus(); else element.blur();
-          } catch (e) { }
+          } catch (e) {
+            // Quién sabe para qué sirve esto
+          }
         }, 0);
       },
 
@@ -692,7 +694,7 @@
       },
 
       removeFirstBoard: function() {
-        this._removeBoard(index => {
+        this._removeBoard(() => {
           this.shift("availableInitialStates");
         });
       },
@@ -722,8 +724,8 @@
       },
 
       _buildEmptyTable: function(sizeX, sizeY) {
-        return _.range(sizeY).map(row => {
-          return _.range(sizeX).map(cell => {
+        return _.range(sizeY).map(() => {
+          return _.range(sizeX).map(() => {
             return {};
           });
         });
@@ -747,7 +749,7 @@
         this._cleanState();
 
         const { useRandomBoard, controller } = options;
-        if (options.useRandomBoard) {
+        if (useRandomBoard) {
           if (
             this._initialRandomBoard == null ||
             this._lastRandomBoard + 1 === this._initialRandomBoard
@@ -802,7 +804,7 @@
         this._setSelectedTab(1);
       },
 
-      _onUnknownError: function(error) {
+      _onUnknownError: function(_error) {
         this.showToast(this.localize("unknown-interpreter-error"));
       },
 

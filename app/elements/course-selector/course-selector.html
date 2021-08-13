@@ -108,7 +108,6 @@
         if (_.isEmpty(this.slug)) return;
 
         const dialog = window.GBS_REQUIRE("electron").remote.dialog;
-        const fs = window.GBS_REQUIRE("fs");
 
         const paths = dialog.showOpenDialog({
           title: this.localize("download-course-select-path"),
@@ -156,7 +155,6 @@
       requestDownload: function(course, isRefreshing = false) {
         const slug = course.course;
         const dialog = window.GBS_REQUIRE("electron").remote.dialog;
-        const fs = window.GBS_REQUIRE("fs");
 
         let path;
         if (isRefreshing) {
@@ -209,7 +207,7 @@
           }
         }
 
-        DesktopGuideLoader.download(courseSlug, (loaded, total) => {
+        DesktopGuideLoader.download(courseSlug, (loaded, _total) => {
           this._changeCourse(course, (it) => it.downloadProgress = bytes(loaded));
         }, path).then((finalPath) => {
           this._changeCourse(course, (it) => {
@@ -218,7 +216,7 @@
           });
           this._saveCourses();
           this._updateGlobalDownloadState(true);
-        }).catch((e) => {
+        }).catch(() => {
           this._changeCourse(course, (it) => {
             it.isDownloading = false;
           });

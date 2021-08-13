@@ -3,6 +3,7 @@
 <link rel="import" href="../../js-yaml.html">
 
 <script>
+  // eslint-disable-next-line no-unused-vars
   class MetadataLoader extends TextLoader {
     constructor() {
       super();
@@ -147,7 +148,7 @@
       context.editor.customErrors = null;
     }
 
-    readContent(context, content, fileName) {
+    readContent(context, content) {
       const metadata = this.readCoreOptions(context, content);
       this.readSecondaryOptions(context, metadata);
     }

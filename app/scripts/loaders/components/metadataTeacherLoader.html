@@ -1,6 +1,7 @@
 <link rel="import" href="./metadataLoader.html">
 
 <script>
+  // eslint-disable-next-line no-unused-vars
   class MetadataTeacherLoader extends MetadataLoader {
     buildContent(context) {
       const partialMetadata = context.editor.getMetadata();
@@ -8,7 +9,7 @@
       return this.buildFullOptions(context, partialMetadata);
     }
 
-    readContent(context, content, fileName) {
+    readContent(context, content, _fileName) {
       const metadata = this.readCoreOptions(context, content);
 
       context.editor.setMetadata(metadata);

@@ -13,6 +13,7 @@
     return course.path;
   };
 
+  // eslint-disable-next-line no-unused-vars
   class DesktopGuideLoader {
     constructor({ exercises }) {
       this.exercises = exercises;
@@ -53,8 +54,8 @@
         .then((file) => {
           fs.writeFileSync(zipPath, new Buffer(file));
 
-          try { rimraf.sync(contentPath); } catch (e) { }
-          try { rimraf.sync(finalPath); } catch (e) { }
+          try { rimraf.sync(contentPath); } catch (e) { /* Magia */ }
+          try { rimraf.sync(finalPath); } catch (e) { /* Magia */ }
 
           const deferred = new $.Deferred();
           unzipper.on("error", (err) => {
@@ -70,7 +71,7 @@
           });
 
           return deferred.promise();
-        }).then((r) => {
+        }).then(() => {
           fs.unlinkSync(zipPath);
           fs.renameSync(contentPath, finalPath);
           return finalPath;

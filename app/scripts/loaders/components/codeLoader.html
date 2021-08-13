@@ -2,6 +2,7 @@
 <link rel="import" href="mixins/singleFileComponent.html">
 
 <script>
+  // eslint-disable-next-line no-unused-vars
   class CodeLoader extends TextLoader {
     constructor() {
       super();
@@ -13,7 +14,7 @@
       return context.editor.code.main;
     }
 
-    readContent(context, content, fileName) {
+    readContent(context, content, _fileName) {
       // context.setProjectName(fileName);
       this._setCode(context, content);
     }

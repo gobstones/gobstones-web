@@ -9,10 +9,11 @@
   }
 
   // Read querystring
+  // eslint-disable-next-line no-unused-vars
   function getParameterByName(name, url) {
     // http://stackoverflow.com/questions/901115/how-can-i-get-query-string-values-in-javascript
     if (!url) url = window.location.href;
-    name = name.replace(/[\[\]]/g, "\\$&");
+    name = name.replace(/[[\]]/g, "\\$&");
     var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
         results = regex.exec(url);
     if (!results) return undefined;
@@ -21,6 +22,7 @@
   }
 
   // Clean querystring
+  // eslint-disable-next-line no-unused-vars
   function cleanQueryString() {
     let url;
     url = window.location.href;
@@ -32,6 +34,7 @@
   }
 
   // Array move
+  // eslint-disable-next-line no-unused-vars
   function arrayMove(arr, old_index, new_index) {
     if (new_index >= arr.length) {
       var k = new_index - arr.length + 1;
@@ -44,9 +47,10 @@
   }
 
   // Base64 image to PNG
+  // eslint-disable-next-line no-unused-vars
   function toBinary(base64) {
     return rawToBinary(atob(base64));
-  };
+  }
 
   // Raw image to binary
   function rawToBinary(raw) {
@@ -59,14 +63,15 @@
     }
 
     return array;
-  };
+  }
 
   // Promisify
+  // eslint-disable-next-line no-unused-vars
   function promisify(value) {
     const deferred = new $.Deferred();
     deferred.resolve(value);
     return deferred.promise();
-  };
+  }
 
   // Set isomorphic local storage method
   const getDataPath = () =>

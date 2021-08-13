@@ -242,7 +242,9 @@
               (desktopMajor === remoteMajor && desktopMinor === remoteMinor && desktopPatch < remotePatch);
 
             console.log('Comparing based to semVer');
-            } catch (e) {}
+            } catch (e) {
+              // Quién sabe para qué sirve esto
+            }
 
             if (hasNewerRemote) {
               console.log('Newer version found. Current version is: ' + currentVersion +
@@ -321,7 +323,7 @@
         this.currentCode = newCode;
       },
 
-      showCodeViewModal: function(newCode) {
+      showCodeViewModal: function(_newCode) {
         document.querySelector("#codeViewModal").open();
       },
 
@@ -440,12 +442,9 @@
       _setUpMouseWheel() {
         this.addEventListener("wheel", (event) => {
           let parent = event.target;
-          let isBlocklyChild = false;
           let isBlocklyToolboxChild = false;
 
           while (parent) {
-            if (parent.id === "blocklyDiv")
-              isBlocklyChild = true;
             if (parent.classList.contains("blocklyToolboxDiv"))
               isBlocklyToolboxChild = true;
 
