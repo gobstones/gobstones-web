@@ -8,7 +8,7 @@ assignees: ''
 
 > Borrar las secciones que no se usen. :smiley:
 
-# :beetle: Problema detectado
+# 🐞 Problema detectado
 
 (Explicar cuál es el problema, y cuáles son los pasos para reproducirlo. Si está vinculado a una interfaz gráfica, incluir capturas de pantalla o GIFs que muestren claramente el defecto.)
 
