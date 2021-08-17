@@ -9,7 +9,7 @@ assignees: ''
 
 > Borrar las secciones que no se usen. :smiley:
 
-# :heavy_check_mark: Objetivos
+# :dart: Objetivos
 
 (Contar brevemente qué problema resuelve o qué funcionalidad agrega esta tarea, desde el punto de vista del usuario.)
 
