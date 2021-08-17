@@ -115,9 +115,6 @@
         <paper-tab>[[localize("description")]]</paper-tab>
         <paper-tab>[[localize("attire")]]</paper-tab>
         <paper-tab>[[localize("settings")]]</paper-tab>
-        <paper-button on-click="correr">
-          <iron-icon class="black-button" icon="icons:check"></iron-icon>
-        </paper-button>
       </paper-tabs>
 
       <paper-dialog id="projectLinterModal" backdrop>
@@ -129,7 +126,7 @@
 
         <div class="buttons">
           <paper-button dialog-dismiss>[[localize("cancel")]]</paper-button>
-          <paper-button dialog-confirm autofocus>[[localize("save")]]</paper-button>
+          <paper-button dialog-confirm autofocus on-click="_saveProject">[[localize("save")]]</paper-button>
         </div>
       </paper-dialog>
 
@@ -151,6 +148,7 @@
   </template>
 
   <script>
+    /* global Blockly:readable */
 
     const ID_BLOCKS = 0;
     const ID_CODE = 1;
@@ -191,17 +189,6 @@
         "content-change": "_onContentChange"
       },
 
-      correr: function() {
-        document.querySelector("#projectLinterModal").open();
-
-        window.BUS.fire("project-linter-start");
-
-        // TODO: crear un método o algo
-        const boardsPanel = document.getElementById("boards");
-        const runner = boardsPanel.$.runner;
-        runner.requestRun();
-      },
-
       attached: function() {
         this.tooltipAnimation = {
           "entry": [{"name": "fade-in-animation", "timing": {"delay": 0}}],
@@ -226,6 +213,11 @@
               library: ""
             }
           }]);
+
+          this.subscribeTo(
+            "teacher-save-project",
+            this._runProjectLinter.bind(this
+          ));
         });
 
         Object.defineProperty(this, "code", {
@@ -413,6 +405,26 @@
 
       isBlocksOrCodeTabSelected: function(selectedTab) {
         return selectedTab === ID_BLOCKS || selectedTab === ID_CODE;
+      },
+
+      _saveProject: function() {
+        window.BUS.fire('save-project');
+      },
+
+      _runProjectLinter: function() {
+        document.querySelector("#projectLinterModal").open();
+        window.BUS.fire("project-linter-start");
+        this._validateCode();
+      },
+
+      // @faloi: sería ideal que no se ejecute el código, sino que solamente se compile
+      _validateCode: function() {
+        // Es necesario focalizar en una pestaña para poder ejecutar.
+        // TODO: modificar cuando se haga #419
+        this.selectedTab = ID_BLOCKS;
+        const boardsPanel = document.getElementById("boards");
+        const runner = boardsPanel.$.runner;
+        runner.requestRun();
       },
 
       _getUniqueSolutionName: function() {
