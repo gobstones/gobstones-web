@@ -54,6 +54,7 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: build
+          path: dist
       - name: Deploy
         uses: JamesIves/github-pages-deploy-action@4.1.4
         with:
@@ -70,6 +71,7 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: build
+          path: dist
       - name: Deploy
         uses: JamesIves/github-pages-deploy-action@4.1.4
         with:
