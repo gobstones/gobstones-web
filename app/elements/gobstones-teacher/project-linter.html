@@ -26,10 +26,10 @@
   </style>
 
   <template>
-    <h1>Validando proyecto...</h1>
+    <h1>[[localize("validating-project")]]</h1>
     <div class="container">
       <template is="dom-if" if="[[ _pendingChecks() ]]">
-        <h3>Se están ejecutando los chequeos.</h3>
+        <h3>[[localize("checks-pending")]]</h3>
       </template>
 
       <template is="dom-if" if="[[ !_pendingChecks() ]]">
