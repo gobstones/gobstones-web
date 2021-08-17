@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/gobstones/gobstones-web.svg?branch=master)](https://travis-ci.org/gobstones/gobstones-web)
+![Build status](https://github.com/gobstones/gobstones-web/actions/workflows/test-deploy.yml/badge.svg?branch=master)
 
 Gobstones Web
 =============
