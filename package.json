@@ -17,7 +17,7 @@
     "dist:all": "node build/builder.js -p all -t all -a all -v",
     "dist:docker": "sh build/docker_build.sh",
     "publish": "node build/builder.js --publish",
-    "test": "echo 'Oops, no tests here... :('"
+    "test": "eslint --ext .html,.js app/elements/ app/scripts/"
   },
   "engines": {
     "node": ">=7.0.0"
@@ -44,6 +44,8 @@
     "electron-builder": "^21.2.0",
     "env-cmd": "^8.0.2",
     "es6-promise": "^3.1.2",
+    "eslint": "^6.8.0",
+    "eslint-plugin-html": "^6.1.2",
     "glob-all": "^3.0.1",
     "gulp": "^3.8.5",
     "gulp-autoprefixer": "^3.1.0",

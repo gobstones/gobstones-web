@@ -3,6 +3,7 @@
 <link rel="import" href="../../../jszip.html">
 
 <script>
+  // eslint-disable-next-line no-unused-vars
   class IndividualAttireLoader extends Loader {
     constructor() {
       super();
@@ -27,7 +28,7 @@
     }
 
     read(context, event, callback) {
-      const { file, fileName } = this._readLocalFile(event);
+      const { file } = this._readLocalFile(event);
 
       JSZip.loadAsync(file).then(zip => {
         this.reader.readFromZip(context, zip, callback);

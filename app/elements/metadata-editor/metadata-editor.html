@@ -236,7 +236,7 @@
         this.cover = null;
       },
 
-      loadImage: function(e) {
+      loadImage: function() {
         $(this.$.image).click()
       },
 
@@ -317,7 +317,9 @@
           this.previewChanges = previewChanges;
           if (previewChanges) this._previewChanges(this.metadata);
           else this._resetPreview();
-        } catch(e) {}
+        } catch(e) {
+          // Quién sabe para qué es este catch
+        }
       },
 
       _previewChanges(metadata) {

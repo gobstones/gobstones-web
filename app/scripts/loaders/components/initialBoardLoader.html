@@ -1,6 +1,7 @@
 <link rel="import" href="../textLoader.html">
 
 <script>
+  // eslint-disable-next-line no-unused-vars
   class InitialBoardLoader extends TextLoader {
     constructor() {
       super();
@@ -22,7 +23,6 @@
     readContent(context, content) {
       const panel = context.boards;
       const board = new Parser().readGbb(content);
-      const initialState = panel.initialState;
 
       panel.addInitialState({
         header: { x: board.head.x, y: board.head.y },

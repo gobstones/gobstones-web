@@ -2,6 +2,7 @@
 <link rel="import" href="mixins/singleFileComponent.html">
 
 <script>
+  // eslint-disable-next-line no-unused-vars
   class FinalBoardLoader extends TextLoader {
     constructor() {
       super();
@@ -15,7 +16,7 @@
       return new Parser().buildGbb(panel.finalState, panel.size);
     }
 
-    readContent(context, content) {
+    readContent(_context, _content) {
       throw new Error("This method should not be called (write-only loader)");
     }
   }

@@ -1,7 +1,7 @@
 <link rel="import" href="jquery.html">
 
 <script>
-
+  // eslint-disable-next-line no-unused-vars
   class Stylist {
     static get DEFAULT_PERCENTAGE() {
       return 0.55;
@@ -45,7 +45,6 @@
     }
 
     correctEditorHeight(editor) {
-      const lineHeight = editor.renderer.lineHeight;
       const availableLines = ($(document).height() - this.TOOLBAR_HEIGHT - this._getTabsHeight()) / editor.renderer.lineHeight;
 
       editor.setOption("minLines", availableLines);
@@ -79,7 +78,7 @@
       });
     }
 
-    setPanelAsResizable(boardDimensions) {
+    setPanelAsResizable(_boardDimensions) {
       $(document).ready(() => {
         this._makeResizable();
         setTimeout(() => {

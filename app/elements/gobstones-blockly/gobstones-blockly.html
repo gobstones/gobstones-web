@@ -212,13 +212,14 @@
           controller.start(
             { initialState, code, initialBoardTime: 500 },
             {
-              onCompilationError: (error, code) => {
+              onCompilationError: (error, _code) => {
                 const { region } = error.on;
                 if (region) this._showError(region, error);
                 window.BUS.fire("compilation-error");
               },
               onTeacherCompilationError: (e) => {
                 this.runner.reportTeacherLibraryErrors(e);
+                // TODO: se puede tirar acá un evento para saber que tiene errores
               },
               onInteractiveRun: () => {
                 window.BUS.fire("interactive-run");
@@ -274,7 +275,9 @@
       },
 
       _cleanErrors: function() {
-        try { this.$.blockly.workspace.removeBlockErrors(); } catch (e) {}
+        try { this.$.blockly.workspace.removeBlockErrors(); } catch (e) {
+          // Quién sabe para qué sirve esto
+        }
       },
 
       _onTeacherLibraryChange: function(teacherCode, withErrorReport = false) {

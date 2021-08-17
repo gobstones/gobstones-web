@@ -146,15 +146,8 @@
         "onBlocksChanged(blocks.*, defaultToolbox)"
       ],
 
-      onBlocksChanged({ base: blocks }, defaultToolbox) {
+      onBlocksChanged({ base: blocks }) {
         if (this._isEditingBlocks) return;
-
-        const forEachBlock = (array, func) => {
-          array.forEach((it) => {
-            func(it);
-            forEachBlock(it.children, func);
-          });
-        };
 
         this._blocks = this._buildBlocks(this._getTree(), blocks);
       },

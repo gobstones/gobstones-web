@@ -1,16 +1,11 @@
 language: node_js
-node_js:
-  - '8.11'
-cache:
-  directories:
-    - node_modules
+before_install:
+  - npm i -g bower@1.8.4
+before_deploy:
+  - rm -rf .tmp dist
+  - npx gulp
 services:
   - docker
-before_deploy:
-  - npm i -g bower@1.8.4 gulp@3.9.0
-  - rm -rf .tmp dist
-  - bower install
-  - gulp
 deploy:
   - provider: pages
     skip_cleanup: true

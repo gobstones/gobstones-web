@@ -2,6 +2,7 @@
 <link rel="import" href="mixins/singleFileComponent.html">
 
 <script>
+  // eslint-disable-next-line no-unused-vars
   class AppendBlocksLoader extends TextLoader {
     constructor() {
       super();
@@ -9,11 +10,11 @@
       this.FILENAME = "---";
     }
 
-    buildContent(context) {
+    buildContent(_context) {
       throw new Error("This method should not be called (read-only loader)");
     }
 
-    readContent(context, content, fileName) {
+    readContent(context, content, _fileName) {
       context.editor.addCode(content);
     }
   }
