@@ -28,122 +28,216 @@
       .gray {
         color: gray;
       }
+
+      .option-enabled {
+        color: green;
+      }
+
+      .option-disabled {
+        color: red;
+      }
     </style>
 
     <div class="metadata-editor-options">
-      <paper-item center-justified flex class="menu-header-gobstones">
-        <div>[[localize("settings-code")]]</div>
-      </paper-item>
-
-      <paper-item>
+      <paper-item center-justified flex>
         <paper-item-body>
-          <div>[[localize("settings-code-visible")]]</div>
+          <paper-toggle-button checked="{{advancedMode}}">Modo avanzado</paper-toggle-button>
         </paper-item-body>
-        <paper-toggle-button checked="{{metadata.source.visible}}"></paper-toggle-button>
       </paper-item>
 
-      <paper-item>
-        <paper-item-body>
-          <div>[[localize("settings-code-autoopen-description")]]</div>
-        </paper-item-body>
-        <paper-toggle-button checked="{{metadata.initialDescription}}"></paper-toggle-button>
-      </paper-item>
+      <template is="dom-if" if="[[advancedMode]]">
+        <paper-item center-justified flex class="menu-header-gobstones">
+          <div>[[localize("settings-code")]]</div>
+        </paper-item>
 
-      <paper-item>
-        <paper-item-body>
-          <div>[[localize("settings-code-link")]]</div>
-        </paper-item-body>
-        <paper-input value="{{metadata.link}}"></paper-input>
-      </paper-item>
+        <paper-item>
+          <paper-item-body>
+            <div>[[localize("settings-code-visible")]]</div>
+          </paper-item-body>
+          <paper-toggle-button checked="{{metadata.source.visible}}"></paper-toggle-button>
+        </paper-item>
 
-      <paper-item center-justified flex class="menu-header-gobstones">
-        <div>[[localize("settings-boards")]]</div>
-      </paper-item>
+        <paper-item>
+          <paper-item-body>
+            <div>[[localize("settings-code-autoopen-description")]]</div>
+          </paper-item-body>
+          <paper-toggle-button checked="{{metadata.initialDescription}}"></paper-toggle-button>
+        </paper-item>
 
-      <paper-item>
-        <paper-item-body>
-          <div>[[localize("settings-boards-visible-edition")]]</div>
-        </paper-item-body>
-        <paper-toggle-button on-tap="_onBoardVisibleEditionChanged" checked="{{metadata.board.visible_edition}}"></paper-toggle-button>
-      </paper-item>
+        <paper-item>
+          <paper-item-body>
+            <div>[[localize("settings-code-link")]]</div>
+          </paper-item-body>
+          <paper-input value="{{metadata.link}}"></paper-input>
+        </paper-item>
 
-      <paper-item disabled$="{{boardEditionOptionsDisabled}}">
-        <paper-item-body>
-          <div>[[localize("settings-boards-collapse-toolbox")]]</div>
-        </paper-item-body>
-        <paper-toggle-button checked="{{metadata.board.collapse_toolbox}}"></paper-toggle-button>
-      </paper-item>
+        <paper-item center-justified flex class="menu-header-gobstones">
+          <div>[[localize("settings-boards")]]</div>
+        </paper-item>
 
-      <paper-item disabled$="{{boardEditionOptionsDisabled}}">
-        <paper-item-body>
-          <div>[[localize("settings-boards-can-change-initial-board")]]</div>
-        </paper-item-body>
-        <paper-toggle-button checked="{{metadata.board.user_permissions.can_change_initial_board}}"></paper-toggle-button>
-      </paper-item>
+        <paper-item>
+          <paper-item-body>
+            <div>[[localize("settings-boards-visible-edition")]]</div>
+          </paper-item-body>
+          <paper-toggle-button on-tap="_onBoardVisibleEditionChanged" checked="{{metadata.board.visible_edition}}"></paper-toggle-button>
+        </paper-item>
 
-      <paper-item disabled$="{{boardEditionOptionsDisabled}}">
-        <paper-item-body>
-          <div>[[localize("settings-boards-can-view-size-section")]]</div>
-        </paper-item-body>
-        <paper-toggle-button checked="{{metadata.board.user_permissions.can_view_size_section}}"></paper-toggle-button>
-      </paper-item>
+        <paper-item disabled$="{{boardEditionOptionsDisabled}}">
+          <paper-item-body>
+            <div>[[localize("settings-boards-collapse-toolbox")]]</div>
+          </paper-item-body>
+          <paper-toggle-button checked="{{metadata.board.collapse_toolbox}}"></paper-toggle-button>
+        </paper-item>
 
-      <paper-item>
-        <paper-item-body>
-          <div>[[localize("settings-boards-can-edit-board")]]</div>
-        </paper-item-body>
-        <paper-toggle-button checked="{{metadata.board.user_permissions.can_edit_board}}"></paper-toggle-button>
-      </paper-item>
+        <paper-item disabled$="{{boardEditionOptionsDisabled}}">
+          <paper-item-body>
+            <div>[[localize("settings-boards-can-change-initial-board")]]</div>
+          </paper-item-body>
+          <paper-toggle-button checked="{{metadata.board.user_permissions.can_change_initial_board}}"></paper-toggle-button>
+        </paper-item>
 
-      <paper-item center-justified flex class="menu-header-gobstones">
-        <div>[[localize("settings-attires")]]</div>
-      </paper-item>
+        <paper-item disabled$="{{boardEditionOptionsDisabled}}">
+          <paper-item-body>
+            <div>[[localize("settings-boards-can-view-size-section")]]</div>
+          </paper-item-body>
+          <paper-toggle-button checked="{{metadata.board.user_permissions.can_view_size_section}}"></paper-toggle-button>
+        </paper-item>
 
-      <paper-item>
-        <paper-item-body>
-          <div>[[localize("settings-attires-visible")]]</div>
-        </paper-item-body>
-        <paper-toggle-button checked="{{metadata.attire.visible}}"></paper-toggle-button>
-      </paper-item>
+        <paper-item>
+          <paper-item-body>
+            <div>[[localize("settings-boards-can-edit-board")]]</div>
+          </paper-item-body>
+          <paper-toggle-button checked="{{metadata.board.user_permissions.can_edit_board}}"></paper-toggle-button>
+        </paper-item>
 
-      <paper-item disabled$="{{boardEditionOptionsDisabled}}">
-        <paper-item-body>
-          <div>[[localize("settings-boards-can-view-attire-section")]]</div>
-        </paper-item-body>
-        <paper-toggle-button on-tap="_onAttireSectionVisibleChanged" checked="{{metadata.board.user_permissions.can_view_attire_section}}"></paper-toggle-button>
-      </paper-item>
+        <paper-item center-justified flex class="menu-header-gobstones">
+          <div>[[localize("settings-attires")]]</div>
+        </paper-item>
 
-      <paper-item disabled$="[[_either(boardEditionOptionsDisabled, attireSectionDisabled)]]">
-        <paper-item-body>
-          <div>[[localize("settings-attires-can-toggle-visibility")]]</div>
-        </paper-item-body>
-        <paper-toggle-button checked="{{metadata.attire.user_permissions.can_toggle_visibility}}"></paper-toggle-button>
-      </paper-item>
+        <paper-item>
+          <paper-item-body>
+            <div>[[localize("settings-attires-visible")]]</div>
+          </paper-item-body>
+          <paper-toggle-button checked="{{metadata.attire.visible}}"></paper-toggle-button>
+        </paper-item>
 
-      <paper-item center-justified flex class="menu-header-gobstones">
-        <div>[[localize("settings-execution")]]</div>
-      </paper-item>
+        <paper-item disabled$="{{boardEditionOptionsDisabled}}">
+          <paper-item-body>
+            <div>[[localize("settings-boards-can-view-attire-section")]]</div>
+          </paper-item-body>
+          <paper-toggle-button on-tap="_onAttireSectionVisibleChanged" checked="{{metadata.board.user_permissions.can_view_attire_section}}"></paper-toggle-button>
+        </paper-item>
 
-      <paper-item>
-        <paper-item-body>
-          <div>[[localize("settings-boards-can-change-initial-board-source")]]</div>
-        </paper-item-body>
-        <paper-toggle-button checked="{{metadata.board.user_permissions.can_change_initial_board_source}}"></paper-toggle-button>
-      </paper-item>
+        <paper-item disabled$="[[_either(boardEditionOptionsDisabled, attireSectionDisabled)]]">
+          <paper-item-body>
+            <div>[[localize("settings-attires-can-toggle-visibility")]]</div>
+          </paper-item-body>
+          <paper-toggle-button checked="{{metadata.attire.user_permissions.can_toggle_visibility}}"></paper-toggle-button>
+        </paper-item>
 
-      <paper-item>
-        <paper-item-body>
-          <div>[[localize("settings-execution-speed-can-change-speed")]]</div>
-        </paper-item-body>
-        <paper-toggle-button checked="{{metadata.execution_speed.user_permissions.can_change_speed}}"></paper-toggle-button>
-      </paper-item>
+        <paper-item center-justified flex class="menu-header-gobstones">
+          <div>[[localize("settings-execution")]]</div>
+        </paper-item>
 
-      <paper-item center-justified flex class="menu-header-gobstones">
-        <div>[[localize("settings-blocks")]]</div>
-      </paper-item>
+        <paper-item>
+          <paper-item-body>
+            <div>[[localize("settings-boards-can-change-initial-board-source")]]</div>
+          </paper-item-body>
+          <paper-toggle-button checked="{{metadata.board.user_permissions.can_change_initial_board_source}}"></paper-toggle-button>
+        </paper-item>
 
-      <!-- Al pasarlo entre corchetes dobles, la expresión se vuelve a evaluar cuando cambia la metadata -->
-      <blocks-toolbox-selector default-toolbox="{{defaultToolbox}}" blocks="[[metadata.blocks]]"></blocks-toolbox-selector>
+        <paper-item>
+          <paper-item-body>
+            <div>[[localize("settings-execution-speed-can-change-speed")]]</div>
+          </paper-item-body>
+          <paper-toggle-button checked="{{metadata.execution_speed.user_permissions.can_change_speed}}"></paper-toggle-button>
+        </paper-item>
+
+        <paper-item center-justified flex class="menu-header-gobstones">
+          <div>[[localize("settings-blocks")]]</div>
+        </paper-item>
+
+        <!-- Al pasarlo entre corchetes dobles, la expresión se vuelve a evaluar cuando cambia la metadata -->
+        <blocks-toolbox-selector default-toolbox="{{defaultToolbox}}" blocks="[[metadata.blocks]]"></blocks-toolbox-selector>
+      </template>
+
+      <template is="dom-if" if="[[!advancedMode]]">
+        <paper-item>
+          <paper-item-body three-line>
+            <div>Tipo de actividad</div>
+            <div secondary>Define qué elementos del panel de tableros están visibles y pueden utilizarse.</div>
+          </paper-item-body>
+          <paper-dropdown-menu>
+            <paper-listbox class="dropdown-content" selected="{{selectedSolution}}">
+              <paper-item>Con dominio</paper-item>
+              <paper-item>Sin dominio</paper-item>
+              <paper-item>De representación</paper-item>
+              <paper-item>Libre</paper-item>
+            </paper-listbox>
+          </paper-dropdown-menu>
+        </paper-item>
+
+        <paper-item center-justified flex class="menu-header-gobstones">
+          <div>Visualización</div>
+        </paper-item>
+
+        <paper-item>
+          <paper-item-body>
+            <div>
+              <p>Tablero</p>
+            </div>
+          </paper-item-body>
+          <paper-item-body>
+            <div secondary>
+              <iron-icon icon="icons:close" class="option-disabled"></iron-icon>
+              <span>Editar el contenido</span>
+            </div>
+          </paper-item-body>
+          <paper-item-body>
+            <div secondary>
+              <iron-icon icon="icons:close" class="option-disabled"></iron-icon>
+              <span>Elegir el tablero</span>
+            </div>
+          </paper-item-body>
+        </paper-item>
+        <paper-item>
+          <paper-item-body>
+            <div>
+              <p>Vestimenta</p>
+            </div>
+          </paper-item-body>
+          <paper-item-body>
+            <div secondary>
+              <iron-icon icon="icons:check" class="option-enabled"></iron-icon>
+              <span>Inicialmente visible</span>
+            </div>
+          </paper-item-body>
+          <paper-item-body>
+            <div secondary>
+              <iron-icon icon="icons:close" class="option-disabled"></iron-icon>
+              <span>Decidir si está visible</span>
+            </div>
+          </paper-item-body>
+        </paper-item>
+
+        <paper-item center-justified flex class="menu-header-gobstones">
+          <div>Bloques</div>
+        </paper-item>
+        <paper-item>
+          <paper-item-body three-line>
+            <div>Bloques disponibles</div>
+            <div secondary>Esta opción limita qué bloques ven tus estudiantes.</div>
+          </paper-item-body>
+          <paper-dropdown-menu>
+            <paper-listbox class="dropdown-content" selected="{{selectedSolution}}">
+              <paper-item>Inicial</paper-item>
+              <paper-item>Medio</paper-item>
+              <paper-item>Avanzado</paper-item>
+              <paper-item>Libre</paper-item>
+            </paper-listbox>
+          </paper-dropdown-menu>
+        </paper-item>
+      </template>
     </div>
   </template>
 
@@ -156,6 +250,10 @@
           value: { }
         },
         defaultToolbox: String,
+        advancedMode: {
+          type: Boolean,
+          value: false
+        },
         previewChanges: {
           type: Boolean,
           value: false
