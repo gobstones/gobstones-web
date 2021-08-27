@@ -307,6 +307,7 @@
               },
               onTeacherCompilationError: (e) => {
                 this.runner.reportTeacherLibraryErrors(e);
+                window.BUS.fire("teacher-library-compilation-error");
               },
               onInteractiveRun: () => {
                 window.BUS.fire("interactive-run");

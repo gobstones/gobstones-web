@@ -219,7 +219,7 @@
               },
               onTeacherCompilationError: (e) => {
                 this.runner.reportTeacherLibraryErrors(e);
-                // TODO: se puede tirar acá un evento para saber que tiene errores
+                window.BUS.fire("teacher-library-compilation-error");
               },
               onInteractiveRun: () => {
                 window.BUS.fire("interactive-run");

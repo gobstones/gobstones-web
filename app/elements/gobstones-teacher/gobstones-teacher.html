@@ -3,6 +3,7 @@
 <link rel="import" href="../../scripts/behaviors/busListenerBehavior.html">
 <link rel="import" href="../../scripts/jquery.html">
 <link rel="import" href="../../scripts/simplemde.html">
+<link rel="import" href="./project-linter.html">
 
 <dom-module id="gobstones-teacher">
   <template>
@@ -66,6 +67,38 @@
         padding-left: 5px;
         padding-right: 5px;
       }
+
+      /* @faloi:
+      Esto no debería ser necesasrio, pero por algún motivo no importa los estilos del paper-dialog. */
+      .buttons > paper-button {
+        display: var(--layout-inline_-_display);
+        -ms-flex-align: var(--layout-center-center_-_-ms-flex-align);
+        -webkit-align-items: var(--layout-center-center_-_-webkit-align-items);
+        align-items: var(--layout-center-center_-_align-items);
+        -ms-flex-pack: var(--layout-center-center_-_-ms-flex-pack);
+        -webkit-justify-content: var(--layout-center-center_-_-webkit-justify-content);
+        justify-content: var(--layout-center-center_-_justify-content);
+        position: relative;
+        box-sizing: border-box;
+        min-width: 5.14em;
+        margin: 0 0.29em;
+        background: transparent;
+        -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+        -webkit-tap-highlight-color: transparent;
+        font: inherit;
+        text-transform: uppercase;
+        outline-width: 0;
+        border-radius: 3px;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        -webkit-user-select: none;
+        user-select: none;
+        cursor: pointer;
+        z-index: 0;
+        padding: 0.7em 0.57em;
+        font-family: var(--paper-font-common-base_-_font-family);
+        -webkit-font-smoothing: var(--paper-font-common-base_-_-webkit-font-smoothing);
+      }
     </style>
 
     <div>
@@ -83,6 +116,19 @@
         <paper-tab>[[localize("attire")]]</paper-tab>
         <paper-tab>[[localize("settings")]]</paper-tab>
       </paper-tabs>
+
+      <paper-dialog id="projectLinterModal" backdrop>
+        <paper-button class="accept close" dialog-confirm autofocus><iron-icon icon="icons:close"></iron-icon></paper-button>
+
+        <paper-dialog-scrollable>
+          <project-linter></project-linter>
+        </paper-dialog-scrollable>
+
+        <div class="buttons">
+          <paper-button dialog-dismiss>[[localize("cancel")]]</paper-button>
+          <paper-button dialog-confirm autofocus on-click="_saveProject">[[localize("save")]]</paper-button>
+        </div>
+      </paper-dialog>
 
       <div style="position: relative">
         <gobstones-blockly id="blocks-editor" class$="editor {{_blocksClass(selectedTab)}}"></gobstones-blockly>
@@ -102,6 +148,7 @@
   </template>
 
   <script>
+    /* global Blockly:readable */
 
     const ID_BLOCKS = 0;
     const ID_CODE = 1;
@@ -166,6 +213,11 @@
               library: ""
             }
           }]);
+
+          this.subscribeTo(
+            "teacher-save-project",
+            this._runProjectLinter.bind(this
+          ));
         });
 
         Object.defineProperty(this, "code", {
@@ -353,6 +405,26 @@
 
       isBlocksOrCodeTabSelected: function(selectedTab) {
         return selectedTab === ID_BLOCKS || selectedTab === ID_CODE;
+      },
+
+      _saveProject: function() {
+        window.BUS.fire('save-project');
+      },
+
+      _runProjectLinter: function() {
+        document.querySelector("#projectLinterModal").open();
+        window.BUS.fire("project-linter-start");
+        this._validateCode();
+      },
+
+      // @faloi: sería ideal que no se ejecute el código, sino que solamente se compile
+      _validateCode: function() {
+        // Es necesario focalizar en una pestaña para poder ejecutar.
+        // TODO: modificar cuando se haga #419
+        this.selectedTab = ID_BLOCKS;
+        const boardsPanel = document.getElementById("boards");
+        const runner = boardsPanel.$.runner;
+        runner.requestRun();
       },
 
       _getUniqueSolutionName: function() {
