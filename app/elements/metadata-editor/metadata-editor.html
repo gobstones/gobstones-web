@@ -173,20 +173,30 @@
               <paper-item>Sin dominio</paper-item>
               <paper-item>De representación</paper-item>
               <paper-item>Libre</paper-item>
+              <paper-item>Personalizada</paper-item>
+            </paper-listbox>
+          </paper-dropdown-menu>
+        </paper-item>
+
+        <paper-item>
+          <paper-item-body three-line>
+            <div>Herramientas disponibles</div>
+            <div secondary>Esta opción limita qué bloques pueden utilizar tus estudiantes.</div>
+          </paper-item-body>
+          <paper-dropdown-menu>
+            <paper-listbox class="dropdown-content" selected="{{selectedToolboxIndex}}">
+              <template is="dom-repeat" items="{{ availableToolboxes }}">
+                <paper-item>{{item.name}}</paper-item>
+              </template>
             </paper-listbox>
           </paper-dropdown-menu>
         </paper-item>
 
         <paper-item center-justified flex class="menu-header-gobstones">
-          <div>Visualización</div>
+          <div>Tablero</div>
         </paper-item>
 
         <paper-item>
-          <paper-item-body>
-            <div>
-              <p>Tablero</p>
-            </div>
-          </paper-item-body>
           <paper-item-body>
             <div secondary>
               <iron-icon icon="icons:close" class="option-disabled"></iron-icon>
@@ -196,20 +206,20 @@
           <paper-item-body>
             <div secondary>
               <iron-icon icon="icons:close" class="option-disabled"></iron-icon>
-              <span>Elegir el tablero</span>
+              <span>Elegir el tablero inicial</span>
             </div>
           </paper-item-body>
         </paper-item>
+
+        <paper-item center-justified flex class="menu-header-gobstones">
+          <div>Vestimenta</div>
+        </paper-item>
+
         <paper-item>
-          <paper-item-body>
-            <div>
-              <p>Vestimenta</p>
-            </div>
-          </paper-item-body>
           <paper-item-body>
             <div secondary>
               <iron-icon icon="icons:check" class="option-enabled"></iron-icon>
-              <span>Inicialmente visible</span>
+              <span>Visible por defecto</span>
             </div>
           </paper-item-body>
           <paper-item-body>
@@ -218,30 +228,106 @@
               <span>Decidir si está visible</span>
             </div>
           </paper-item-body>
+          <paper-item-body>
+            <div secondary>
+              <iron-icon icon="icons:check" class="option-enabled"></iron-icon>
+              <span>Cambiar entre vestimentas</span>
+            </div>
+          </paper-item-body>
         </paper-item>
 
         <paper-item center-justified flex class="menu-header-gobstones">
-          <div>Bloques</div>
+          <div>Caja de herramientas</div>
         </paper-item>
-        <paper-item>
-          <paper-item-body three-line>
-            <div>Bloques disponibles</div>
-            <div secondary>Esta opción limita qué bloques ven tus estudiantes.</div>
-          </paper-item-body>
-          <paper-dropdown-menu>
-            <paper-listbox class="dropdown-content" selected="{{selectedSolution}}">
-              <paper-item>Inicial</paper-item>
-              <paper-item>Medio</paper-item>
-              <paper-item>Avanzado</paper-item>
-              <paper-item>Libre</paper-item>
-            </paper-listbox>
-          </paper-dropdown-menu>
+
+        <paper-item style="flex-wrap: wrap;">
+          <template is="dom-repeat" items="{{allToolboxes}}">
+            <paper-item-body style="margin-right: 10px; overflow: unset;">
+              <div secondary>
+                <template is="dom-if" if="[[ !isToolSelected(selectedToolbox, item) ]]">
+                  <iron-icon icon="icons:close" class="option-disabled"></iron-icon>
+                </template>
+                <template is="dom-if" if="[[ isToolSelected(selectedToolbox, item) ]]">
+                  <iron-icon icon="icons:check" class="option-enabled"></iron-icon>
+                </template>
+                {{item}}
+              </div>
+            </paper-item-body>
+          </template>
         </paper-item>
       </template>
     </div>
   </template>
 
   <script>
+    const inicial = {
+      name: 'Inicial',
+      features: ['Procedimientos simples'],
+      blocks: [
+        { type: 'procedures_defnoreturnnoparams' },
+        { type: 'Procedimientos primitivos' },
+        { type: 'Mis procedimientos' },
+      ],
+    };
+
+    const media = {
+      name: 'Media',
+      features: [
+        ...inicial.features,
+        'Procedimientos con parámetros',
+        'Expresiones y literales numéricos',
+        'Expresiones booleanas',
+        'Repetición simple',
+        'Alternativa condicional',
+        'Funciones simples',
+      ],
+      blocks: [
+        ...inicial.blocks,
+        { type: 'procedures_defnoreturn' },
+        { type: 'math_number' },
+        { type: 'OperadorNumerico' },
+        { type: 'OperadorLogico' },
+        { type: 'OperadorDeComparacion' },
+        { type: 'not' },
+        { type: 'RepeticionSimple' },
+        { type: 'Alternativas' },
+        { type: 'procedures_defreturnsimple' },
+        { type: 'Mis funciones' },
+        { type: 'Funciones primitivas' },
+      ],
+    };
+
+    const avanzada = {
+      name: 'Avanzada',
+      features: [
+        ...media.features,
+        'Funciones con procesamiento',
+        'Repetición condicional'
+      ],
+      blocks: [
+        ...media.blocks,
+        { type: 'procedures_defreturnsimplewithparams' },
+        { type: 'procedures_defreturn' },
+        { type: 'RepeticionCondicional' },
+        { type: 'Asignación' },
+        { type: 'BoolSelector' },
+        { type: 'Alternativas' },
+        { type: 'procedures_defreturnsimple' },
+        { type: 'Mis funciones' },
+        { type: 'Funciones primitivas' },
+      ],
+    };
+
+    const sinDominio = {
+      features: ['Comandos primitivos', 'Direcciones y colores'],
+      blocks: [
+        { type: 'Comandos primitivos' },
+        { type: 'ColorSelector' },
+        { type: 'DireccionSelector' },
+        { type: 'Expresiones primitivas' },
+      ],
+    };
+
     Polymer({
       is: 'metadata-editor',
       properties: {
@@ -253,6 +339,25 @@
         advancedMode: {
           type: Boolean,
           value: false
+        },
+        availableToolboxes: {
+          type: Array,
+          value: [inicial, media, avanzada]
+        },
+        selectedToolboxIndex: {
+          type: Number,
+          value: 0
+        },
+        selectedToolbox: {
+          type: Object,
+          computed: "_computeSelectedToolbox(selectedToolboxIndex)"
+        },
+        allToolboxes: {
+          type: Array,
+          value: [
+            ...avanzada.features,
+            ...sinDominio.features
+          ]
         },
         previewChanges: {
           type: Boolean,
@@ -309,6 +414,14 @@
         this.setMetadata(this._defaultMetadata());
         this.defaultToolbox = "";
         this.previewChanges = false;
+      },
+
+      isToolSelected: function(selectedToolbox, tool) {
+        return selectedToolbox.features.includes(tool);
+      },
+
+      _computeSelectedToolbox: function(index) {
+        return this.availableToolboxes[index];
       },
 
       // @faloi: no se puede poner un || en el binding, por eso creé esta función
