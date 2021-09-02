@@ -4,13 +4,14 @@
   const PrimitiveTools = {
     features: ['Comandos primitivos', 'Direcciones y colores'],
     blocks: [
-      { type: 'Comandos primitivos' },
-      { type: 'ColorSelector' },
-      { type: 'DireccionSelector' },
-      { type: 'Expresiones primitivas' },
+      'ComandosPrimitivos',
+      'Color',
+      'Direccion',
+      'ExpresionesPrimitivas',
     ],
   };
 
+  // eslint-disable-next-line no-unused-vars
   const ActivityTypes = {
     withoutDomain: _.merge({}, PrimitiveTools, {
       name: 'Sin dominio',
@@ -108,9 +109,9 @@
     name: 'Inicial',
     features: ['Procedimientos simples'],
     blocks: [
-      { type: 'procedures_defnoreturnnoparams' },
-      { type: 'Procedimientos primitivos' },
-      { type: 'Mis procedimientos' },
+      'DefinicionDeProcedimientoSimple',
+      'ProcedimientosPrimitivos',
+      'MisProcedimientos',
     ],
   };
 
@@ -127,17 +128,17 @@
     ],
     blocks: [
       ...initial.blocks,
-      { type: 'procedures_defnoreturn' },
-      { type: 'math_number' },
-      { type: 'OperadorNumerico' },
-      { type: 'OperadorLogico' },
-      { type: 'OperadorDeComparacion' },
-      { type: 'not' },
-      { type: 'RepeticionSimple' },
-      { type: 'Alternativas' },
-      { type: 'procedures_defreturnsimple' },
-      { type: 'Mis funciones' },
-      { type: 'Funciones primitivas' },
+      'DefinicionDeProcedimientoParametrizado',
+      'Numero',
+      'OperadorNumerico',
+      'OperadorLogico',
+      'OperadorDeComparacion',
+      'OperadorDeNegacion',
+      'RepeticionSimple',
+      'Alternativas',
+      'DefinicionDeFuncionSimple',
+      'MisFunciones',
+      'FuncionesPrimitivas',
     ],
   };
 
@@ -150,18 +151,15 @@
     ],
     blocks: [
       ...medium.blocks,
-      { type: 'procedures_defreturnsimplewithparams' },
-      { type: 'procedures_defreturn' },
-      { type: 'RepeticionCondicional' },
-      { type: 'Asignación' },
-      { type: 'BoolSelector' },
-      { type: 'Alternativas' },
-      { type: 'procedures_defreturnsimple' },
-      { type: 'Mis funciones' },
-      { type: 'Funciones primitivas' },
+      'DefinicionDeFuncionSimpleParametrizada',
+      'DefinicionDeFuncionParametrizada',
+      'RepeticionCondicional',
+      'Asignacion',
+      'Booleano',
     ],
   };
 
+  // eslint-disable-next-line no-unused-vars
   const Toolboxes = {
     initial,
     medium,

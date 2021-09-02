@@ -162,8 +162,8 @@
             <div secondary>Define qué elementos del panel de tableros están visibles y pueden utilizarse.</div>
           </paper-item-body>
           <paper-dropdown-menu>
-            <paper-listbox class="dropdown-content" selected="{{ selectedExerciseTypeIndex }}">
-              <template is="dom-repeat" items="{{ allExerciseTypes }}">
+            <paper-listbox class="dropdown-content" selected="{{ selectedActivityTypeIndex }}">
+              <template is="dom-repeat" items="{{ allActivityTypes }}">
                 <paper-item>{{item.name}}</paper-item>
               </template>
             </paper-listbox>
@@ -192,12 +192,12 @@
           <paper-item-body>
             <project-feature
               name="Editar el contenido"
-              enabled="[[ selectedExerciseType.settings.board.user_permissions.can_edit_board ]]" />
+              enabled="[[ selectedActivityType.settings.board.user_permissions.can_edit_board ]]" />
           </paper-item-body>
           <paper-item-body>
             <project-feature
               name="Elegir el tablero inicial"
-              enabled="[[ selectedExerciseType.settings.board.user_permissions.can_change_initial_board ]]" />
+              enabled="[[ selectedActivityType.settings.board.user_permissions.can_change_initial_board ]]" />
           </paper-item-body>
         </paper-item>
 
@@ -209,17 +209,17 @@
           <paper-item-body>
             <project-feature
               name="Visible por defecto"
-              enabled="[[ selectedExerciseType.settings.attire.visible ]]" />
+              enabled="[[ selectedActivityType.settings.attire.visible ]]" />
           </paper-item-body>
           <paper-item-body>
             <project-feature
               name="Decidir si está visible"
-              enabled="[[ selectedExerciseType.settings.attire.user_permissions.can_toggle_visibility ]]" />
+              enabled="[[ selectedActivityType.settings.attire.user_permissions.can_toggle_visibility ]]" />
           </paper-item-body>
           <paper-item-body>
             <project-feature
               name="Cambiar de vestimenta"
-              enabled="[[ selectedExerciseType.settings.board.user_permissions.can_view_attire_section ]]" />
+              enabled="[[ selectedActivityType.settings.board.user_permissions.can_view_attire_section ]]" />
           </paper-item-body>
         </paper-item>
 
@@ -230,7 +230,7 @@
         <paper-item style="flex-wrap: wrap;">
           <template is="dom-repeat" items="{{ allTools }}">
             <paper-item-body style="margin-right: 10px; overflow: unset;">
-              <project-feature name="{{item}}" enabled="[[ _isToolSelected(selectedToolbox, selectedExerciseType, item) ]]" />
+              <project-feature name="{{item}}" enabled="[[ _isToolSelected(selectedToolbox, selectedActivityType, item) ]]" />
             </paper-item-body>
           </template>
         </paper-item>
@@ -270,17 +270,17 @@
           type: Object,
           computed: "_computeSelectedItem(allToolboxes, selectedToolboxIndex)"
         },
-        allExerciseTypes: {
+        allActivityTypes: {
           type: Array,
           value: _.values(ActivityTypes)
         },
-        selectedExerciseTypeIndex: {
+        selectedActivityTypeIndex: {
           type: Number,
           value: 0
         },
-        selectedExerciseType: {
+        selectedActivityType: {
           type: Object,
-          computed: "_computeSelectedItem(allExerciseTypes, selectedExerciseTypeIndex)"
+          computed: "_computeSelectedItem(allActivityTypes, selectedActivityTypeIndex)"
         },
         previewChanges: {
           type: Boolean,
@@ -311,6 +311,7 @@
       ],
       observers: [
         "_onMetadataChanged(metadata.*)",
+        "_onBasicSettingsChanged(selectedActivityType, selectedToolbox)"
       ],
 
       ready: function() {
@@ -350,6 +351,14 @@
       // @faloi: no se puede poner un || en el binding, por eso creé esta función
       _either: function(x, y) {
         return x || y;
+      },
+
+      _onBasicSettingsChanged: function (selectedActivityType, selectedToolbox) {
+        this._onSelectedBlocksChanged({
+          detail: {
+            visible: selectedToolbox.blocks.concat(selectedActivityType.blocks)
+          }
+        });
       },
 
       _onBoardVisibleEditionChanged: function () {
