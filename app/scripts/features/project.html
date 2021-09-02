@@ -1,0 +1,165 @@
+<link rel="import" href="../lodash.html">
+
+<script>
+  const herramientasSinDominio = {
+    features: ['Comandos primitivos', 'Direcciones y colores'],
+    blocks: [
+      { type: 'Comandos primitivos' },
+      { type: 'ColorSelector' },
+      { type: 'DireccionSelector' },
+      { type: 'Expresiones primitivas' },
+    ],
+  };
+
+  const sinDominio = _.merge({}, herramientasSinDominio, {
+    name: 'Sin dominio',
+    settings: {
+      board: {
+        visible_edition: true,
+        collapse_toolbox: false,
+        user_permissions: {
+          can_change_initial_board: false,
+          can_change_initial_board_source: false,
+          can_edit_board: false,
+          can_view_size_section: false,
+          can_view_attire_section: true,
+        },
+      },
+      attire: {
+        visible: false,
+        user_permissions: {
+          can_toggle_visibility: false,
+        },
+      },
+    },
+  });
+
+  const conDominio = {
+    name: 'Con dominio',
+    features: [],
+    blocks: [],
+    settings: {
+      board: {
+        visible_edition: true,
+        collapse_toolbox: false,
+        user_permissions: {
+          can_change_initial_board: false,
+          can_change_initial_board_source: false,
+          can_edit_board: false,
+          can_view_size_section: false,
+          can_view_attire_section: true,
+        },
+      },
+      attire: {
+        visible: true,
+        user_permissions: {
+          can_toggle_visibility: false,
+        },
+      },
+    },
+  };
+
+  const deRepresentacion = _.merge({}, herramientasSinDominio, {
+    name: 'De representación',
+    settings: {
+      board: {
+        visible_edition: true,
+        collapse_toolbox: false,
+        user_permissions: {
+          can_change_initial_board: true,
+          can_change_initial_board_source: true,
+          can_edit_board: false,
+          can_view_size_section: false,
+          can_view_attire_section: true,
+        },
+      },
+      attire: {
+        visible: true,
+        user_permissions: {
+          can_toggle_visibility: true,
+        },
+      },
+    },
+  });
+
+  const libre = _.merge({}, herramientasSinDominio, {
+    name: 'Libre',
+    settings: {
+      board: {
+        visible_edition: true,
+        collapse_toolbox: false,
+        user_permissions: {
+          can_change_initial_board: true,
+          can_change_initial_board_source: true,
+          can_edit_board: true,
+          can_view_size_section: true,
+          can_view_attire_section: true,
+        },
+      },
+      attire: {
+        visible: true,
+        user_permissions: {
+          can_toggle_visibility: true,
+        },
+      },
+    },
+  });
+
+  const inicial = {
+    name: 'Inicial',
+    features: ['Procedimientos simples'],
+    blocks: [
+      { type: 'procedures_defnoreturnnoparams' },
+      { type: 'Procedimientos primitivos' },
+      { type: 'Mis procedimientos' },
+    ],
+  };
+
+  const media = {
+    name: 'Media',
+    features: [
+      ...inicial.features,
+      'Procedimientos con parámetros',
+      'Expresiones y literales numéricos',
+      'Expresiones booleanas',
+      'Repetición simple',
+      'Alternativa condicional',
+      'Funciones simples',
+    ],
+    blocks: [
+      ...inicial.blocks,
+      { type: 'procedures_defnoreturn' },
+      { type: 'math_number' },
+      { type: 'OperadorNumerico' },
+      { type: 'OperadorLogico' },
+      { type: 'OperadorDeComparacion' },
+      { type: 'not' },
+      { type: 'RepeticionSimple' },
+      { type: 'Alternativas' },
+      { type: 'procedures_defreturnsimple' },
+      { type: 'Mis funciones' },
+      { type: 'Funciones primitivas' },
+    ],
+  };
+
+  const avanzada = {
+    name: 'Avanzada',
+    features: [
+      ...media.features,
+      'Funciones con procesamiento',
+      'Repetición condicional'
+    ],
+    blocks: [
+      ...media.blocks,
+      { type: 'procedures_defreturnsimplewithparams' },
+      { type: 'procedures_defreturn' },
+      { type: 'RepeticionCondicional' },
+      { type: 'Asignación' },
+      { type: 'BoolSelector' },
+      { type: 'Alternativas' },
+      { type: 'procedures_defreturnsimple' },
+      { type: 'Mis funciones' },
+      { type: 'Funciones primitivas' },
+    ],
+  };
+</script>

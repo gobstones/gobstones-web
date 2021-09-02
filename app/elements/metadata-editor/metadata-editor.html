@@ -1,11 +1,13 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 <link rel="import" href="../../scripts/simplemde.html">
 <link rel="import" href="../../scripts/stylist.html">
+<link rel="import" href="../../scripts/features/project.html">
 <link rel="import" href="../../scripts/loaders/components/metadataLoader.html">
 <link rel="import" href="../../scripts/behaviors/busListenerBehavior.html">
 <link rel="import" href="../../scripts/behaviors/permissionsBehavior.html">
 <link rel="import" href="../../scripts/behaviors/localizationBehavior.html">
 <link rel="import" href="../../scripts/behaviors/loaderBehavior.html">
+<link rel="import" href="./project-feature.html">
 
 <dom-module id="metadata-editor">
   <template>
@@ -27,14 +29,6 @@
 
       .gray {
         color: gray;
-      }
-
-      .option-enabled {
-        color: green;
-      }
-
-      .option-disabled {
-        color: red;
       }
     </style>
 
@@ -168,12 +162,10 @@
             <div secondary>Define qué elementos del panel de tableros están visibles y pueden utilizarse.</div>
           </paper-item-body>
           <paper-dropdown-menu>
-            <paper-listbox class="dropdown-content" selected="{{selectedSolution}}">
-              <paper-item>Con dominio</paper-item>
-              <paper-item>Sin dominio</paper-item>
-              <paper-item>De representación</paper-item>
-              <paper-item>Libre</paper-item>
-              <paper-item>Personalizada</paper-item>
+            <paper-listbox class="dropdown-content" selected="{{ selectedExerciseTypeIndex }}">
+              <template is="dom-repeat" items="{{ allExerciseTypes }}">
+                <paper-item>{{item.name}}</paper-item>
+              </template>
             </paper-listbox>
           </paper-dropdown-menu>
         </paper-item>
@@ -184,8 +176,8 @@
             <div secondary>Esta opción limita qué bloques pueden utilizar tus estudiantes.</div>
           </paper-item-body>
           <paper-dropdown-menu>
-            <paper-listbox class="dropdown-content" selected="{{selectedToolboxIndex}}">
-              <template is="dom-repeat" items="{{ availableToolboxes }}">
+            <paper-listbox class="dropdown-content" selected="{{ selectedToolboxIndex }}">
+              <template is="dom-repeat" items="{{ allToolboxes }}">
                 <paper-item>{{item.name}}</paper-item>
               </template>
             </paper-listbox>
@@ -198,16 +190,14 @@
 
         <paper-item>
           <paper-item-body>
-            <div secondary>
-              <iron-icon icon="icons:close" class="option-disabled"></iron-icon>
-              <span>Editar el contenido</span>
-            </div>
+            <project-feature
+              name="Editar el contenido"
+              enabled="[[ selectedExerciseType.settings.board.user_permissions.can_edit_board ]]" />
           </paper-item-body>
           <paper-item-body>
-            <div secondary>
-              <iron-icon icon="icons:close" class="option-disabled"></iron-icon>
-              <span>Elegir el tablero inicial</span>
-            </div>
+            <project-feature
+              name="Elegir el tablero inicial"
+              enabled="[[ selectedExerciseType.settings.board.user_permissions.can_change_initial_board ]]" />
           </paper-item-body>
         </paper-item>
 
@@ -217,22 +207,19 @@
 
         <paper-item>
           <paper-item-body>
-            <div secondary>
-              <iron-icon icon="icons:check" class="option-enabled"></iron-icon>
-              <span>Visible por defecto</span>
-            </div>
+            <project-feature
+              name="Visible por defecto"
+              enabled="[[ selectedExerciseType.settings.attire.visible ]]" />
           </paper-item-body>
           <paper-item-body>
-            <div secondary>
-              <iron-icon icon="icons:close" class="option-disabled"></iron-icon>
-              <span>Decidir si está visible</span>
-            </div>
+            <project-feature
+              name="Decidir si está visible"
+              enabled="[[ selectedExerciseType.settings.attire.user_permissions.can_toggle_visibility ]]" />
           </paper-item-body>
           <paper-item-body>
-            <div secondary>
-              <iron-icon icon="icons:check" class="option-enabled"></iron-icon>
-              <span>Cambiar entre vestimentas</span>
-            </div>
+            <project-feature
+              name="Cambiar de vestimenta"
+              enabled="[[ selectedExerciseType.settings.board.user_permissions.can_view_attire_section ]]" />
           </paper-item-body>
         </paper-item>
 
@@ -241,17 +228,9 @@
         </paper-item>
 
         <paper-item style="flex-wrap: wrap;">
-          <template is="dom-repeat" items="{{allToolboxes}}">
+          <template is="dom-repeat" items="{{ allTools }}">
             <paper-item-body style="margin-right: 10px; overflow: unset;">
-              <div secondary>
-                <template is="dom-if" if="[[ !isToolSelected(selectedToolbox, item) ]]">
-                  <iron-icon icon="icons:close" class="option-disabled"></iron-icon>
-                </template>
-                <template is="dom-if" if="[[ isToolSelected(selectedToolbox, item) ]]">
-                  <iron-icon icon="icons:check" class="option-enabled"></iron-icon>
-                </template>
-                {{item}}
-              </div>
+              <project-feature name="{{item}}" enabled="[[ _isToolSelected(selectedToolbox, selectedExerciseType, item) ]]" />
             </paper-item-body>
           </template>
         </paper-item>
@@ -260,74 +239,6 @@
   </template>
 
   <script>
-    const inicial = {
-      name: 'Inicial',
-      features: ['Procedimientos simples'],
-      blocks: [
-        { type: 'procedures_defnoreturnnoparams' },
-        { type: 'Procedimientos primitivos' },
-        { type: 'Mis procedimientos' },
-      ],
-    };
-
-    const media = {
-      name: 'Media',
-      features: [
-        ...inicial.features,
-        'Procedimientos con parámetros',
-        'Expresiones y literales numéricos',
-        'Expresiones booleanas',
-        'Repetición simple',
-        'Alternativa condicional',
-        'Funciones simples',
-      ],
-      blocks: [
-        ...inicial.blocks,
-        { type: 'procedures_defnoreturn' },
-        { type: 'math_number' },
-        { type: 'OperadorNumerico' },
-        { type: 'OperadorLogico' },
-        { type: 'OperadorDeComparacion' },
-        { type: 'not' },
-        { type: 'RepeticionSimple' },
-        { type: 'Alternativas' },
-        { type: 'procedures_defreturnsimple' },
-        { type: 'Mis funciones' },
-        { type: 'Funciones primitivas' },
-      ],
-    };
-
-    const avanzada = {
-      name: 'Avanzada',
-      features: [
-        ...media.features,
-        'Funciones con procesamiento',
-        'Repetición condicional'
-      ],
-      blocks: [
-        ...media.blocks,
-        { type: 'procedures_defreturnsimplewithparams' },
-        { type: 'procedures_defreturn' },
-        { type: 'RepeticionCondicional' },
-        { type: 'Asignación' },
-        { type: 'BoolSelector' },
-        { type: 'Alternativas' },
-        { type: 'procedures_defreturnsimple' },
-        { type: 'Mis funciones' },
-        { type: 'Funciones primitivas' },
-      ],
-    };
-
-    const sinDominio = {
-      features: ['Comandos primitivos', 'Direcciones y colores'],
-      blocks: [
-        { type: 'Comandos primitivos' },
-        { type: 'ColorSelector' },
-        { type: 'DireccionSelector' },
-        { type: 'Expresiones primitivas' },
-      ],
-    };
-
     Polymer({
       is: 'metadata-editor',
       properties: {
@@ -340,9 +251,16 @@
           type: Boolean,
           value: false
         },
-        availableToolboxes: {
+        allToolboxes: {
           type: Array,
           value: [inicial, media, avanzada]
+        },
+        allTools: {
+          type: Array,
+          value: [
+            ...avanzada.features,
+            ...herramientasSinDominio.features
+          ]
         },
         selectedToolboxIndex: {
           type: Number,
@@ -350,14 +268,19 @@
         },
         selectedToolbox: {
           type: Object,
-          computed: "_computeSelectedToolbox(selectedToolboxIndex)"
+          computed: "_computeSelectedItem(allToolboxes, selectedToolboxIndex)"
         },
-        allToolboxes: {
+        allExerciseTypes: {
           type: Array,
-          value: [
-            ...avanzada.features,
-            ...sinDominio.features
-          ]
+          value: [conDominio, sinDominio, deRepresentacion, libre]
+        },
+        selectedExerciseTypeIndex: {
+          type: Number,
+          value: 0
+        },
+        selectedExerciseType: {
+          type: Object,
+          computed: "_computeSelectedItem(allExerciseTypes, selectedExerciseTypeIndex)"
         },
         previewChanges: {
           type: Boolean,
@@ -416,12 +339,12 @@
         this.previewChanges = false;
       },
 
-      isToolSelected: function(selectedToolbox, tool) {
-        return selectedToolbox.features.includes(tool);
+      _isToolSelected: function(selectedToolbox, selectedActivityType, tool) {
+        return selectedToolbox.features.concat(selectedActivityType.features).includes(tool);
       },
 
-      _computeSelectedToolbox: function(index) {
-        return this.availableToolboxes[index];
+      _computeSelectedItem: function(list, index) {
+        return list[index];
       },
 
       // @faloi: no se puede poner un || en el binding, por eso creé esta función
