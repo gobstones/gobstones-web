@@ -30,6 +30,34 @@
       .gray {
         color: gray;
       }
+
+      .flash {
+        padding: 20px 16px;
+        border-style: solid;
+        border-width: 1px 0;
+      }
+
+      .flash-warn {
+        background-color: #fefbdd;
+        border-color: #b0880033;
+      }
+
+      .flash-warn iron-icon {
+        color: #b08800;
+      }
+
+      .flash-info {
+        background-color: #dbedff;
+        border-color: #04428933
+      }
+
+      .flash-info iron-icon {
+        color: #04428999;
+      }
+
+      .flash-action {
+        margin-top: 10px;
+      }
     </style>
 
     <div class="metadata-editor-options">
@@ -40,6 +68,14 @@
       </paper-item>
 
       <template is="dom-if" if="[[advancedMode]]">
+        <div class="flash flash-warn">
+          <iron-icon icon="icons:warning"></iron-icon>
+          <strong>Estás editando en modo avanzado</strong>
+          <div>
+            Deberás descartar los cambios que hagas si querés volver al modo básico.
+          </div>
+        </div>
+
         <paper-item center-justified flex class="menu-header-gobstones">
           <div>[[localize("settings-code")]]</div>
         </paper-item>
@@ -156,84 +192,98 @@
       </template>
 
       <template is="dom-if" if="[[!advancedMode]]">
-        <paper-item>
-          <paper-item-body three-line>
-            <div>Tipo de actividad</div>
-            <div secondary>Define qué elementos del panel de tableros están visibles y pueden utilizarse.</div>
-          </paper-item-body>
-          <paper-dropdown-menu>
-            <paper-listbox class="dropdown-content" selected="{{ selectedActivityTypeIndex }}">
-              <template is="dom-repeat" items="{{ allActivityTypes }}">
-                <paper-item>{{item.name}}</paper-item>
-              </template>
-            </paper-listbox>
-          </paper-dropdown-menu>
-        </paper-item>
-
-        <paper-item>
-          <paper-item-body three-line>
-            <div>Herramientas disponibles</div>
-            <div secondary>Esta opción limita qué bloques pueden utilizar tus estudiantes.</div>
-          </paper-item-body>
-          <paper-dropdown-menu>
-            <paper-listbox class="dropdown-content" selected="{{ selectedToolboxIndex }}">
-              <template is="dom-repeat" items="{{ allToolboxes }}">
-                <paper-item>{{item.name}}</paper-item>
-              </template>
-            </paper-listbox>
-          </paper-dropdown-menu>
-        </paper-item>
-
-        <paper-item center-justified flex class="menu-header-gobstones">
-          <div>Tablero</div>
-        </paper-item>
-
-        <paper-item>
-          <paper-item-body>
-            <project-feature
-              name="Editar el contenido"
-              enabled="[[ selectedActivityType.settings.board.user_permissions.can_edit_board ]]" />
-          </paper-item-body>
-          <paper-item-body>
-            <project-feature
-              name="Elegir el tablero inicial"
-              enabled="[[ selectedActivityType.settings.board.user_permissions.can_change_initial_board ]]" />
-          </paper-item-body>
-        </paper-item>
-
-        <paper-item center-justified flex class="menu-header-gobstones">
-          <div>Vestimenta</div>
-        </paper-item>
-
-        <paper-item>
-          <paper-item-body>
-            <project-feature
-              name="Visible por defecto"
-              enabled="[[ selectedActivityType.settings.attire.visible ]]" />
-          </paper-item-body>
-          <paper-item-body>
-            <project-feature
-              name="Decidir si está visible"
-              enabled="[[ selectedActivityType.settings.attire.user_permissions.can_toggle_visibility ]]" />
-          </paper-item-body>
-          <paper-item-body>
-            <project-feature
-              name="Cambiar de vestimenta"
-              enabled="[[ selectedActivityType.settings.board.user_permissions.can_view_attire_section ]]" />
-          </paper-item-body>
-        </paper-item>
-
-        <paper-item center-justified flex class="menu-header-gobstones">
-          <div>Caja de herramientas</div>
-        </paper-item>
-
-        <paper-item style="flex-wrap: wrap;">
-          <template is="dom-repeat" items="{{ allTools }}">
-            <paper-item-body style="margin-right: 10px; overflow: unset;">
-              <project-feature name="{{item}}" enabled="[[ _isToolSelected(selectedToolbox, selectedActivityType, item) ]]" />
+        <template is="dom-if" if="[[changesFromAdvancedMode]]">
+          <div class="flash flash-info">
+            <iron-icon icon="icons:info"></iron-icon>
+            <strong>Realizaste cambios en el modo avanzado</strong>
+            <div>
+              Para volver al modo básico tenés que descartar esos cambios.
+            </div>
+            <button on-tap="_discardAdvancedModeChanges" class="flash-action">
+              Descartar cambios
+            </button>
+          </div>
+        </template>
+        <template is="dom-if" if="[[!changesFromAdvancedMode]]">
+          <paper-item>
+            <paper-item-body three-line>
+              <div>Tipo de actividad</div>
+              <div secondary>Define qué elementos del panel de tableros están visibles y pueden utilizarse.</div>
             </paper-item-body>
-          </template>
-        </paper-item>
+            <paper-dropdown-menu>
+              <paper-listbox class="dropdown-content" selected="{{ selectedActivityTypeIndex }}">
+                <template is="dom-repeat" items="{{ allActivityTypes }}">
+                  <paper-item>{{item.name}}</paper-item>
+                </template>
+              </paper-listbox>
+            </paper-dropdown-menu>
+          </paper-item>
+
+          <paper-item>
+            <paper-item-body three-line>
+              <div>Herramientas disponibles</div>
+              <div secondary>Esta opción limita qué bloques pueden utilizar tus estudiantes.</div>
+            </paper-item-body>
+            <paper-dropdown-menu>
+              <paper-listbox class="dropdown-content" selected="{{ selectedToolboxIndex }}">
+                <template is="dom-repeat" items="{{ allToolboxes }}">
+                  <paper-item>{{item.name}}</paper-item>
+                </template>
+              </paper-listbox>
+            </paper-dropdown-menu>
+          </paper-item>
+
+          <paper-item center-justified flex class="menu-header-gobstones">
+            <div>Tablero</div>
+          </paper-item>
+
+          <paper-item>
+            <paper-item-body>
+              <project-feature
+                name="Editar el contenido"
+                enabled="[[ selectedActivityType.settings.board.user_permissions.can_edit_board ]]" />
+            </paper-item-body>
+            <paper-item-body>
+              <project-feature
+                name="Elegir el tablero inicial"
+                enabled="[[ selectedActivityType.settings.board.user_permissions.can_change_initial_board ]]" />
+            </paper-item-body>
+          </paper-item>
+
+          <paper-item center-justified flex class="menu-header-gobstones">
+            <div>Vestimenta</div>
+          </paper-item>
+
+          <paper-item>
+            <paper-item-body>
+              <project-feature
+                name="Visible por defecto"
+                enabled="[[ selectedActivityType.settings.attire.visible ]]" />
+            </paper-item-body>
+            <paper-item-body>
+              <project-feature
+                name="Decidir si está visible"
+                enabled="[[ selectedActivityType.settings.attire.user_permissions.can_toggle_visibility ]]" />
+            </paper-item-body>
+            <paper-item-body>
+              <project-feature
+                name="Cambiar de vestimenta"
+                enabled="[[ selectedActivityType.settings.board.user_permissions.can_view_attire_section ]]" />
+            </paper-item-body>
+          </paper-item>
+
+          <paper-item center-justified flex class="menu-header-gobstones">
+            <div>Caja de herramientas</div>
+          </paper-item>
+
+          <paper-item style="flex-wrap: wrap;">
+            <template is="dom-repeat" items="{{ allTools }}">
+              <paper-item-body style="margin-right: 10px; overflow: unset;">
+                <project-feature name="{{item}}" enabled="[[ _isToolSelected(selectedToolbox, selectedActivityType, item) ]]" />
+              </paper-item-body>
+            </template>
+          </paper-item>
+        </template>
       </template>
     </div>
   </template>
@@ -286,6 +336,10 @@
           type: Boolean,
           value: false
         },
+        changesFromAdvancedMode: {
+          type: Boolean,
+          value: false,
+        },
         boardEditionOptionsDisabled: {
           type: Boolean,
           value: false
@@ -326,7 +380,7 @@
         );
 
         // Hack para que inicialice
-        this._onBasicSettingsChanged(this.selectedActivityType, this.selectedToolbox);
+        this._resetBasicMode();
       },
 
       getMetadata: function() {
@@ -340,7 +394,11 @@
       reset: function() {
         this.setMetadata(this._defaultMetadata());
         this.defaultToolbox = "";
-        this.previewChanges = false;
+      },
+
+      _resetBasicMode: function() {
+        this._onBasicSettingsChanged(this.selectedActivityType, this.selectedToolbox);
+        // this._refreshPreviewIfEnabled(this.metadata);
       },
 
       _isToolSelected: function(selectedToolbox, selectedActivityType, tool) {
@@ -356,11 +414,15 @@
         return x || y;
       },
 
+      _discardAdvancedModeChanges: function() {
+        this.changesFromAdvancedMode = false;
+        this.reset();
+        this._resetBasicMode();
+      },
+
       _onBasicSettingsChanged: function (selectedActivityType, selectedToolbox) {
-        this._onSelectedBlocksChanged({
-          detail: {
-            visible: selectedToolbox.blocks.concat(selectedActivityType.blocks)
-          }
+        this._changeBlocks({
+          visible: selectedToolbox.blocks.concat(selectedActivityType.blocks)
         });
 
         this.setMetadata(_.merge({}, this.metadata, selectedActivityType.settings));
@@ -400,11 +462,23 @@
       },
 
       _onSelectedBlocksChanged: function({ detail: newBlocks }) {
-        this.metadata.blocks = newBlocks;
+        this._notifyAdvancedModeChanges();
+        this._changeBlocks(newBlocks);
+      },
+
+      _changeBlocks: function(blocks) {
+        this.metadata.blocks = blocks;
         this._refreshPreviewIfEnabled(this.metadata);
       },
 
+      _notifyAdvancedModeChanges: function() {
+        if (this.advancedMode) {
+          this.changesFromAdvancedMode = true;
+        }
+      },
+
       _onMetadataChanged: function({ base }) {
+        this._notifyAdvancedModeChanges();
         this.defaultToolbox = base.blocks && base.blocks.defaultToolbox;
         this.notifyPath('metadata.blocks');
         this._refreshPreviewIfEnabled(base);
