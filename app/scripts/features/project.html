@@ -1,7 +1,7 @@
 <link rel="import" href="../lodash.html">
 
 <script>
-  const herramientasSinDominio = {
+  const PrimitiveTools = {
     features: ['Comandos primitivos', 'Direcciones y colores'],
     blocks: [
       { type: 'Comandos primitivos' },
@@ -11,101 +11,100 @@
     ],
   };
 
-  const sinDominio = _.merge({}, herramientasSinDominio, {
-    name: 'Sin dominio',
-    settings: {
-      board: {
-        visible_edition: true,
-        collapse_toolbox: false,
-        user_permissions: {
-          can_change_initial_board: false,
-          can_change_initial_board_source: false,
-          can_edit_board: false,
-          can_view_size_section: false,
-          can_view_attire_section: true,
+  const ActivityTypes = {
+    withoutDomain: _.merge({}, PrimitiveTools, {
+      name: 'Sin dominio',
+      settings: {
+        board: {
+          visible_edition: true,
+          collapse_toolbox: false,
+          user_permissions: {
+            can_change_initial_board: false,
+            can_change_initial_board_source: false,
+            can_edit_board: false,
+            can_view_size_section: false,
+            can_view_attire_section: true,
+          },
+        },
+        attire: {
+          visible: false,
+          user_permissions: {
+            can_toggle_visibility: false,
+          },
         },
       },
-      attire: {
-        visible: false,
-        user_permissions: {
-          can_toggle_visibility: false,
+    }),
+    withDomain: {
+      name: 'Con dominio',
+      features: [],
+      blocks: [],
+      settings: {
+        board: {
+          visible_edition: true,
+          collapse_toolbox: false,
+          user_permissions: {
+            can_change_initial_board: false,
+            can_change_initial_board_source: false,
+            can_edit_board: false,
+            can_view_size_section: false,
+            can_view_attire_section: true,
+          },
+        },
+        attire: {
+          visible: true,
+          user_permissions: {
+            can_toggle_visibility: false,
+          },
         },
       },
     },
-  });
-
-  const conDominio = {
-    name: 'Con dominio',
-    features: [],
-    blocks: [],
-    settings: {
-      board: {
-        visible_edition: true,
-        collapse_toolbox: false,
-        user_permissions: {
-          can_change_initial_board: false,
-          can_change_initial_board_source: false,
-          can_edit_board: false,
-          can_view_size_section: false,
-          can_view_attire_section: true,
+    representation: _.merge({}, PrimitiveTools, {
+      name: 'De representación',
+      settings: {
+        board: {
+          visible_edition: true,
+          collapse_toolbox: false,
+          user_permissions: {
+            can_change_initial_board: true,
+            can_change_initial_board_source: true,
+            can_edit_board: false,
+            can_view_size_section: false,
+            can_view_attire_section: true,
+          },
+        },
+        attire: {
+          visible: true,
+          user_permissions: {
+            can_toggle_visibility: true,
+          },
         },
       },
-      attire: {
-        visible: true,
-        user_permissions: {
-          can_toggle_visibility: false,
+    }),
+    free: _.merge({}, PrimitiveTools, {
+      name: 'Libre',
+      settings: {
+        board: {
+          visible_edition: true,
+          collapse_toolbox: false,
+          user_permissions: {
+            can_change_initial_board: true,
+            can_change_initial_board_source: true,
+            can_edit_board: true,
+            can_view_size_section: true,
+            can_view_attire_section: true,
+          },
+        },
+        attire: {
+          visible: true,
+          user_permissions: {
+            can_toggle_visibility: true,
+          },
         },
       },
-    },
+    })
   };
 
-  const deRepresentacion = _.merge({}, herramientasSinDominio, {
-    name: 'De representación',
-    settings: {
-      board: {
-        visible_edition: true,
-        collapse_toolbox: false,
-        user_permissions: {
-          can_change_initial_board: true,
-          can_change_initial_board_source: true,
-          can_edit_board: false,
-          can_view_size_section: false,
-          can_view_attire_section: true,
-        },
-      },
-      attire: {
-        visible: true,
-        user_permissions: {
-          can_toggle_visibility: true,
-        },
-      },
-    },
-  });
-
-  const libre = _.merge({}, herramientasSinDominio, {
-    name: 'Libre',
-    settings: {
-      board: {
-        visible_edition: true,
-        collapse_toolbox: false,
-        user_permissions: {
-          can_change_initial_board: true,
-          can_change_initial_board_source: true,
-          can_edit_board: true,
-          can_view_size_section: true,
-          can_view_attire_section: true,
-        },
-      },
-      attire: {
-        visible: true,
-        user_permissions: {
-          can_toggle_visibility: true,
-        },
-      },
-    },
-  });
-
-  const inicial = {
+  const initial = {
     name: 'Inicial',
     features: ['Procedimientos simples'],
     blocks: [
@@ -115,10 +114,10 @@
     ],
   };
 
-  const media = {
+  const medium = {
     name: 'Media',
     features: [
-      ...inicial.features,
+      ...initial.features,
       'Procedimientos con parámetros',
       'Expresiones y literales numéricos',
       'Expresiones booleanas',
@@ -127,7 +126,7 @@
       'Funciones simples',
     ],
     blocks: [
-      ...inicial.blocks,
+      ...initial.blocks,
       { type: 'procedures_defnoreturn' },
       { type: 'math_number' },
       { type: 'OperadorNumerico' },
@@ -142,15 +141,15 @@
     ],
   };
 
-  const avanzada = {
+  const advanced = {
     name: 'Avanzada',
     features: [
-      ...media.features,
+      ...medium.features,
       'Funciones con procesamiento',
       'Repetición condicional'
     ],
     blocks: [
-      ...media.blocks,
+      ...medium.blocks,
       { type: 'procedures_defreturnsimplewithparams' },
       { type: 'procedures_defreturn' },
       { type: 'RepeticionCondicional' },
@@ -161,5 +160,11 @@
       { type: 'Mis funciones' },
       { type: 'Funciones primitivas' },
     ],
+  };
+
+  const Toolboxes = {
+    initial,
+    medium,
+    advanced
   };
 </script>

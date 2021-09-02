@@ -253,13 +253,13 @@
         },
         allToolboxes: {
           type: Array,
-          value: [inicial, media, avanzada]
+          value: _.values(Toolboxes)
         },
         allTools: {
           type: Array,
           value: [
-            ...avanzada.features,
-            ...herramientasSinDominio.features
+            ...Toolboxes.advanced.features,
+            ...PrimitiveTools.features
           ]
         },
         selectedToolboxIndex: {
@@ -272,7 +272,7 @@
         },
         allExerciseTypes: {
           type: Array,
-          value: [conDominio, sinDominio, deRepresentacion, libre]
+          value: _.values(ActivityTypes)
         },
         selectedExerciseTypeIndex: {
           type: Number,
