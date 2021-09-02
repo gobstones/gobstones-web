@@ -324,6 +324,9 @@
           'teacher-preview-configuration-changed',
           this._onPreviewChangesChanged.bind(this)
         );
+
+        // Hack para que inicialice
+        this._onBasicSettingsChanged(this.selectedActivityType, this.selectedToolbox);
       },
 
       getMetadata: function() {
@@ -359,6 +362,8 @@
             visible: selectedToolbox.blocks.concat(selectedActivityType.blocks)
           }
         });
+
+        this.setMetadata(_.merge({}, this.metadata, selectedActivityType.settings));
       },
 
       _onBoardVisibleEditionChanged: function () {
