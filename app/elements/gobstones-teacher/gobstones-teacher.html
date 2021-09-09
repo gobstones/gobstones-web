@@ -108,10 +108,10 @@
         </div>
       </paper-tooltip>
       <paper-tabs id="editorTab" selected="{{selectedTab}}" class="bottom self-end">
+        <paper-tab>[[localize("teachers-library")]]</paper-tab>
         <paper-tab>[[localize("blocks")]]</paper-tab>
         <paper-fab id="fab-sync-button" mini icon="notification:sync-disabled" class="fab-sync sync-off" on-click="_onBlocksSyncClick"></paper-fab>
         <paper-tab>[[localize("code")]]</paper-tab>
-        <paper-tab>[[localize("teachers-library")]]</paper-tab>
         <paper-tab>[[localize("description")]]</paper-tab>
         <paper-tab>[[localize("attire")]]</paper-tab>
         <paper-tab>[[localize("settings")]]</paper-tab>
@@ -131,11 +131,11 @@
       </paper-dialog>
 
       <div style="position: relative">
+        <gobstones-editor id="teacher-library-editor" class$="editor {{_teacherLibraryClass(selectedTab)}}"></gobstones-editor>
+
         <gobstones-blockly id="blocks-editor" class$="editor {{_blocksClass(selectedTab)}}"></gobstones-blockly>
 
         <gobstones-editor id="code-editor" class$="editor {{_codeClass(selectedTab)}}"></gobstones-editor>
-
-        <gobstones-editor id="teacher-library-editor" class$="editor {{_teacherLibraryClass(selectedTab)}}"></gobstones-editor>
 
         <description-editor id="description-editor" class$="editor {{_descriptionClass(selectedTab)}}"></description-editor>
 
@@ -150,9 +150,9 @@
   <script>
     /* global Blockly:readable */
 
-    const ID_BLOCKS = 0;
-    const ID_CODE = 1;
-    const ID_TEACHER_LIBRARY = 2;
+    const ID_TEACHER_LIBRARY = 0;
+    const ID_BLOCKS = 1;
+    const ID_CODE = 2;
     const ID_DESCRIPTION = 3;
     const ID_ATTIRE = 4;
     const ID_METADATA = 5;
@@ -601,8 +601,7 @@
 
       _editors: function() {
         return [
-          "blocks-editor", "code-editor",
-          "teacher-library-editor",
+          "teacher-library-editor", "blocks-editor", "code-editor",
           "description-editor", "attire-editor",
           "metadata-editor"
         ].map((it) => this.$[it]);
