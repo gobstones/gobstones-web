@@ -63,7 +63,7 @@
     <div class="metadata-editor-options">
       <paper-item center-justified flex>
         <paper-item-body style="flex-direction: row;">
-          <paper-toggle-button checked="{{advancedMode}}">Modo de edición {{editionModeName}}</paper-toggle-button>
+          <paper-toggle-button checked="{{advancedMode}}" on-tap="_notifyBasicChangesToToolboxSelector">Modo de edición {{editionModeName}}</paper-toggle-button>
         </paper-item-body>
       </paper-item>
 
@@ -347,6 +347,10 @@
           type: Boolean,
           value: false,
         },
+        advancedSyncPending: {
+          type: Boolean,
+          value: false,
+        },
         boardEditionOptionsDisabled: {
           type: Boolean,
           value: false
@@ -443,6 +447,23 @@
         this.setMetadata(_.merge({}, this.metadata, selectedActivityType.settings));
       },
 
+      _notifyBasicChangesToToolboxSelector() {
+        /* @faloi:
+        Esto es TREMENDO hack para que le avise al blocks-selector que hubo cambios.
+        Lo hice así porque no se avivaba de los cambios, y el setTimeout está porque recién se suscribe
+        al evento cuando se attachea el componente...
+        */
+        if (this.advancedMode) {
+          setTimeout(
+            () => {
+              window.BUS.fire('teacher-toolbox-changed', this.metadata.blocks);
+              this.advancedSyncPending = true;
+            },
+            0
+          );
+        }
+      },
+
       _onBoardVisibleEditionChanged: function () {
         const boardVisibleEdition = this.metadata.board.visible_edition;
         this.boardEditionOptionsDisabled = !boardVisibleEdition;
@@ -487,7 +508,9 @@
       },
 
       _notifyAdvancedModeChanges: function() {
-        if (this.advancedMode) {
+        if (this.advancedSyncPending) {
+          this.advancedSyncPending = false;
+        } else if (this.advancedMode) {
           this.changesFromAdvancedMode = true;
         }
       },
