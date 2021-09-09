@@ -133,11 +133,20 @@
 
       <div style="position: relative">
         <div class$="editor {{_teacherLibraryClass(selectedTab)}}">
-          <alert-banner
-            title="Definí aquí las primitivas para tu actividad"
-            message="Si renombrás o eliminás alguna primitiva que está en uso, deberás actualizar manualmente la solución del estudiante."
-            level="info"
-          ></alert-banner>
+          <template is="dom-if" if="{{!studentSolutionDirty}}">
+            <alert-banner
+              title="Definí aquí las primitivas para tu actividad"
+              message="Los procedimientos y funciones que definas podrán ser utilizados por tus estudiantes en sus soluciones."
+              level="info"
+            ></alert-banner>
+          </template>
+          <template is="dom-if" if="{{studentSolutionDirty}}">
+            <alert-banner
+              title="Realizaste cambios en la solución del estudiante"
+              message="Si renombrás o eliminás alguna primitiva que está en uso, deberás actualizar manualmente la solución del estudiante."
+              level="warning"
+            ></alert-banner>
+          </template>
           <gobstones-editor id="teacher-library-editor"></gobstones-editor>
         </div>
         <gobstones-blockly id="blocks-editor" class$="editor {{_blocksClass(selectedTab)}}"></gobstones-blockly>
@@ -189,11 +198,15 @@
           type: Array,
           value: []
         },
-
+        studentSolutionDirty: {
+          type: Boolean,
+          value: false
+        },
         tooltipAnimation: Object
       },
       listeners: {
-        "content-change": "_onContentChange"
+        "content-change": "_onContentChange",
+        "student-solution-dirty": "_onStudentSolutionDirty"
       },
 
       attached: function() {
@@ -497,6 +510,10 @@
           this.setCode(this.solution.code.main, "main", false);
           this.setCode(this.solution.workspace.main, "main", true);
         });
+      },
+
+      _onStudentSolutionDirty() {
+        this.studentSolutionDirty = true;
       },
 
       _onContentChange: function(event) {
