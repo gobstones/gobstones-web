@@ -1,0 +1,178 @@
+<link rel="import" href="../lodash.html">
+
+<script>
+  const PrimitiveTools = {
+    features: ['Comandos primitivos', 'Direcciones y colores'],
+    blocks: [
+      'ComandosPrimitivos',
+      'Color',
+      'Direccion',
+      'ExpresionesPrimitivas',
+    ],
+  };
+
+  // eslint-disable-next-line no-unused-vars
+  const ActivityTypes = {
+    withoutDomain: _.merge({}, PrimitiveTools, {
+      name: 'Sin dominio',
+      settings: {
+        board: {
+          visible_edition: true,
+          collapse_toolbox: false,
+          user_permissions: {
+            can_change_initial_board: false,
+            can_change_initial_board_source: false,
+            can_edit_board: false,
+            can_view_size_section: false,
+            can_view_attire_section: true,
+          },
+        },
+        attire: {
+          visible: false,
+          user_permissions: {
+            can_toggle_visibility: true,
+          },
+        },
+      },
+    }),
+    withDomain: {
+      name: 'Con dominio',
+      features: [],
+      blocks: [],
+      settings: {
+        board: {
+          visible_edition: true,
+          collapse_toolbox: false,
+          user_permissions: {
+            can_change_initial_board: false,
+            can_change_initial_board_source: false,
+            can_edit_board: false,
+            can_view_size_section: false,
+            can_view_attire_section: true,
+          },
+        },
+        attire: {
+          visible: true,
+          user_permissions: {
+            can_toggle_visibility: false,
+          },
+        },
+      },
+    },
+    representation: _.merge({}, PrimitiveTools, {
+      name: 'De representación',
+      settings: {
+        board: {
+          visible_edition: true,
+          collapse_toolbox: false,
+          user_permissions: {
+            can_change_initial_board: true,
+            can_change_initial_board_source: true,
+            can_edit_board: false,
+            can_view_size_section: false,
+            can_view_attire_section: true,
+          },
+        },
+        attire: {
+          visible: true,
+          user_permissions: {
+            can_toggle_visibility: true,
+          },
+        },
+      },
+    }),
+    free: _.merge({}, PrimitiveTools, {
+      name: 'Libre',
+      settings: {
+        board: {
+          visible_edition: true,
+          collapse_toolbox: false,
+          user_permissions: {
+            can_change_initial_board: true,
+            can_change_initial_board_source: true,
+            can_edit_board: true,
+            can_view_size_section: true,
+            can_view_attire_section: true,
+          },
+        },
+        attire: {
+          visible: true,
+          user_permissions: {
+            can_toggle_visibility: true,
+          },
+        },
+      },
+    })
+  };
+
+  const initial = {
+    name: 'Inicial',
+    features: ['Procedimientos simples'],
+    blocks: [
+      'DefinicionDeProcedimientoSimple',
+      'ProcedimientosPrimitivos',
+      'MisProcedimientos',
+    ],
+  };
+
+  const medium = {
+    name: 'Media',
+    features: [
+      ...initial.features,
+      'Procedimientos con parámetros',
+      'Expresiones y literales numéricos',
+      'Expresiones booleanas',
+      'Repetición simple',
+      'Alternativa condicional',
+      'Funciones simples',
+    ],
+    blocks: [
+      ...initial.blocks,
+      'DefinicionDeProcedimientoParametrizado',
+      'Numero',
+      'OperadorNumerico',
+      'OperadorLogico',
+      'OperadorDeComparacion',
+      'OperadorDeNegacion',
+      'RepeticionSimple',
+      'Alternativas',
+      'DefinicionDeFuncionSimple',
+      'MisFunciones',
+      'FuncionesPrimitivas',
+    ],
+  };
+
+  const advanced = {
+    name: 'Avanzada',
+    features: [
+      ...medium.features,
+      'Funciones con procesamiento',
+      'Repetición condicional'
+    ],
+    blocks: [
+      ...medium.blocks,
+      'DefinicionDeFuncionSimpleParametrizada',
+      'DefinicionDeFuncionParametrizada',
+      'RepeticionCondicional',
+      'Asignacion',
+      'Booleano',
+    ],
+  };
+
+  const free = {
+    name: 'Libre',
+    features: [
+      ...advanced.features,
+      'Listas'
+    ],
+    blocks: []
+  };
+
+  // eslint-disable-next-line no-unused-vars
+  const Toolboxes = {
+    initial,
+    medium,
+    advanced,
+    free
+  };
+</script>

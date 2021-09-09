@@ -339,8 +339,8 @@
         return this._editors()[ID_METADATA].getMetadata();
       },
 
-      setMetadata: function(content) {
-        this._editors()[ID_METADATA].setMetadata(content);
+      setMetadata: function(content, ...args) {
+        this._editors()[ID_METADATA].setMetadata(content, ...args);
       },
 
       generateCode: function(withRegions, blockly) {

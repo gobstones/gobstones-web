@@ -12,7 +12,7 @@
     readContent(context, content, _fileName) {
       const metadata = this.readCoreOptions(context, content);
 
-      context.editor.setMetadata(metadata);
+      context.editor.setMetadata(metadata, { fromLoader: true });
     }
   }
 </script>

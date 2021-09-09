@@ -1,5 +1,6 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 <link rel="import" href="../../scripts/behaviors/localizationBehavior.html">
+<link rel="import" href="../../scripts/behaviors/busListenerBehavior.html">
 
 <dom-module id="blocks-toolbox-item">
   <template>
@@ -137,7 +138,8 @@
         _blocks: Array
       },
       behaviors: [
-        Polymer.LocalizationBehavior
+        Polymer.LocalizationBehavior,
+        Polymer.BusListenerBehavior,
       ],
       listeners: {
         "toolbox-changed": "_onBlocksUpdate"
@@ -154,6 +156,10 @@
 
       ready: function() {
         this._blocks = this._buildBlocks(this._getTree());
+        this.subscribeTo(
+          "teacher-toolbox-changed",
+          (blocks) => this.onBlocksChanged({ base: blocks })
+        );
       },
 
       _getTree() {
