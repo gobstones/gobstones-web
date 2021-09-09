@@ -62,8 +62,8 @@
 
     <div class="metadata-editor-options">
       <paper-item center-justified flex>
-        <paper-item-body>
-          <paper-toggle-button checked="{{advancedMode}}">Modo avanzado</paper-toggle-button>
+        <paper-item-body style="flex-direction: row;">
+          <paper-toggle-button checked="{{advancedMode}}">Modo de edición {{editionModeName}}</paper-toggle-button>
         </paper-item-body>
       </paper-item>
 
@@ -72,7 +72,7 @@
           <iron-icon icon="icons:warning"></iron-icon>
           <strong>Estás editando en modo avanzado</strong>
           <div>
-            Deberás descartar los cambios que hagas si querés volver al modo básico.
+            Los cambios que hagas en este modo deberán ser descartados si querés volver a usar el modo básico.
           </div>
         </div>
 
@@ -197,10 +197,13 @@
             <iron-icon icon="icons:info"></iron-icon>
             <strong>Realizaste cambios en el modo avanzado</strong>
             <div>
-              Para volver al modo básico tenés que descartar esos cambios.
+              Para utilizar el modo básico tenés que descartar esos cambios.
             </div>
             <button on-tap="_discardAdvancedModeChanges" class="flash-action">
               Descartar cambios
+            </button>
+            <button on-tap="_goToAdvancedMode" class="flash-action">
+              Volver al modo avanzado
             </button>
           </div>
         </template>
@@ -301,6 +304,10 @@
           type: Boolean,
           value: false
         },
+        editionModeName: {
+          type: String,
+          computed: "_computeEditionModeName(advancedMode)"
+        },
         allToolboxes: {
           type: Array,
           value: _.values(Toolboxes)
@@ -394,6 +401,14 @@
       reset: function() {
         this.setMetadata(this._defaultMetadata());
         this.defaultToolbox = "";
+      },
+
+      _computeEditionModeName: function(advancedMode) {
+        return advancedMode ? 'avanzado' : 'básico'
+      },
+
+      _goToAdvancedMode: function() {
+        this.advancedMode = true;
       },
 
       _resetBasicMode: function() {
