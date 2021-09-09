@@ -398,13 +398,31 @@
         return this.metadata;
       },
 
-      setMetadata: function(config) {
+      setMetadata: function(config, { fromLoader = false } = {}) {
         this.set("metadata", config);
+
+        if (fromLoader) {
+          this._selectEditionMode(config);
+        }
       },
 
       reset: function() {
         this.setMetadata(this._defaultMetadata());
         this.defaultToolbox = "";
+      },
+
+      _selectEditionMode({ activity }) {
+        // Retrocompatibilidad: si no está activity es porque se creó en modo avanzado
+        if (_.get(activity, 'creation_mode') === 'basic') {
+          this.advancedMode = false;
+          this.selectedActivityTypeIndex = _.findIndex(this.allActivityTypes, { name: activity.type });
+          this.selectedToolboxIndex = _.findIndex(this.allToolboxes, { name: activity.toolbox });
+        } else {
+          this.advancedMode = true;
+          // Fuerza a que aparezca el cartel "tenés que descartar cambios"
+          this.changesFromAdvancedMode = true;
+          this._forceToolboxSelectorRefresh();
+        }
       },
 
       _computeEditionModeName: function(advancedMode) {
@@ -444,7 +462,15 @@
           visible: selectedToolbox.blocks.concat(selectedActivityType.blocks)
         });
 
-        this.setMetadata(_.merge({}, this.metadata, selectedActivityType.settings));
+        this.setMetadata(
+          _.merge({}, this.metadata, selectedActivityType.settings, {
+            activity: {
+              type: selectedActivityType.name,
+              toolbox: selectedToolbox.name,
+              creation_mode: 'basic'
+            },
+          })
+        );
       },
 
       _notifyBasicChangesToToolboxSelector() {
@@ -453,15 +479,19 @@
         Lo hice así porque no se avivaba de los cambios, y el setTimeout está porque recién se suscribe
         al evento cuando se attachea el componente...
         */
-        if (this.advancedMode) {
-          setTimeout(
-            () => {
-              window.BUS.fire('teacher-toolbox-changed', this.metadata.blocks);
-              this.advancedSyncPending = true;
-            },
-            0
-          );
+        if (this.advancedMode && !this.changesFromAdvancedMode) {
+          this._forceToolboxSelectorRefresh();
         }
+      },
+
+      _forceToolboxSelectorRefresh() {
+        setTimeout(
+          () => {
+            window.BUS.fire('teacher-toolbox-changed', this.metadata.blocks);
+            this.advancedSyncPending = true;
+          },
+          0
+        );
       },
 
       _onBoardVisibleEditionChanged: function () {
@@ -510,8 +540,16 @@
       _notifyAdvancedModeChanges: function() {
         if (this.advancedSyncPending) {
           this.advancedSyncPending = false;
-        } else if (this.advancedMode) {
+        } else if (this.advancedMode && !this.changesFromAdvancedMode) {
           this.changesFromAdvancedMode = true;
+          this.setMetadata(
+            _.assign({}, this.metadata, {
+              activity: {
+                creation_mode: 'advanced'
+              },
+            }
+          )
+        );
         }
       },
 
