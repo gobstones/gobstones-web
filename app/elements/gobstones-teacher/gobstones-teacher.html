@@ -4,6 +4,7 @@
 <link rel="import" href="../../scripts/jquery.html">
 <link rel="import" href="../../scripts/simplemde.html">
 <link rel="import" href="./project-linter.html">
+<link rel="import" href="./alert-banner.html">
 
 <dom-module id="gobstones-teacher">
   <template>
@@ -131,8 +132,14 @@
       </paper-dialog>
 
       <div style="position: relative">
-        <gobstones-editor id="teacher-library-editor" class$="editor {{_teacherLibraryClass(selectedTab)}}"></gobstones-editor>
-
+        <div class$="editor {{_teacherLibraryClass(selectedTab)}}">
+          <alert-banner
+            title="Definí aquí las primitivas para tu actividad"
+            message="Si renombrás o eliminás alguna primitiva que está en uso, deberás actualizar manualmente la solución del estudiante."
+            level="info"
+          ></alert-banner>
+          <gobstones-editor id="teacher-library-editor"></gobstones-editor>
+        </div>
         <gobstones-blockly id="blocks-editor" class$="editor {{_blocksClass(selectedTab)}}"></gobstones-blockly>
 
         <gobstones-editor id="code-editor" class$="editor {{_codeClass(selectedTab)}}"></gobstones-editor>
