@@ -1,0 +1,90 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html" />
+
+<dom-module id="alert-banner">
+  <template>
+    <style>
+      .flash {
+        padding: 20px 16px;
+        border-style: solid;
+        border-width: 1px 0;
+      }
+
+      .flash-error {
+        background-color: #fdebe9;
+        border-color: #ff818266;
+      }
+
+      .flash-error iron-icon {
+        color: #cf222e;
+      }
+
+      .flash-warning {
+        background-color: #fefbdd;
+        border-color: #b0880033;
+      }
+
+      .flash-warning iron-icon {
+        color: #b08800;
+      }
+
+      .flash-info {
+        background-color: #dbedff;
+        border-color: #04428933
+      }
+
+      .flash-info iron-icon {
+        color: #04428999;
+      }
+
+      .flash-success {
+        background-color: #dafbe1;
+        border-color: #04428933
+      }
+
+      .flash-success iron-icon {
+        color: #1e7f37;
+      }
+    </style>
+    <div class$="{{cssClass(level)}}">
+      <iron-icon icon="{{icon(level)}}"></iron-icon>
+      <strong>{{ title }}</strong>
+      <div>
+        {{ message }}
+        <!-- Botones opcionales -->
+      </div>
+    </div>
+  </template>
+
+  <script>
+    const LEVELS = {
+      warning: {
+        icon: 'icons:warning'
+      },
+      info: {
+        icon: 'icons:info'
+      },
+      error: {
+        icon: 'icons:error'
+      },
+      success: {
+        icon: 'icons:check-circle'
+      }
+    }
+
+    Polymer({
+      is: "alert-banner",
+      behaviors: [Polymer.LocalizationBehavior, Polymer.BusListenerBehavior],
+      properties: {
+        title: String,
+        message: String,
+        level: String
+      },
+      cssClass(level) {
+        return `flash flash-${level}`;
+      },
+      icon(level) {
+        return LEVELS[level].icon;
+      }
+    });
+  </script>
+</dom-module>
