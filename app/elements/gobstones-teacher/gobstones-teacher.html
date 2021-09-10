@@ -4,6 +4,7 @@
 <link rel="import" href="../../scripts/jquery.html">
 <link rel="import" href="../../scripts/simplemde.html">
 <link rel="import" href="./project-linter.html">
+<link rel="import" href="./alert-banner.html">
 
 <dom-module id="gobstones-teacher">
   <template>
@@ -108,10 +109,10 @@
         </div>
       </paper-tooltip>
       <paper-tabs id="editorTab" selected="{{selectedTab}}" class="bottom self-end">
+        <paper-tab>[[localize("teachers-library")]]</paper-tab>
         <paper-tab>[[localize("blocks")]]</paper-tab>
         <paper-fab id="fab-sync-button" mini icon="notification:sync-disabled" class="fab-sync sync-off" on-click="_onBlocksSyncClick"></paper-fab>
         <paper-tab>[[localize("code")]]</paper-tab>
-        <paper-tab>[[localize("teachers-library")]]</paper-tab>
         <paper-tab>[[localize("description")]]</paper-tab>
         <paper-tab>[[localize("attire")]]</paper-tab>
         <paper-tab>[[localize("settings")]]</paper-tab>
@@ -131,11 +132,26 @@
       </paper-dialog>
 
       <div style="position: relative">
+        <div class$="editor {{_teacherLibraryClass(selectedTab)}}">
+          <template is="dom-if" if="{{!studentSolutionDirty}}">
+            <alert-banner
+              title="Definí aquí las primitivas para tu actividad"
+              message="Los procedimientos y funciones que definas podrán ser utilizados por tus estudiantes en sus soluciones."
+              level="info"
+            ></alert-banner>
+          </template>
+          <template is="dom-if" if="{{studentSolutionDirty}}">
+            <alert-banner
+              title="Realizaste cambios en la solución del estudiante"
+              message="Si renombrás o eliminás alguna primitiva que está en uso, deberás actualizar manualmente la solución del estudiante."
+              level="warning"
+            ></alert-banner>
+          </template>
+          <gobstones-editor id="teacher-library-editor"></gobstones-editor>
+        </div>
         <gobstones-blockly id="blocks-editor" class$="editor {{_blocksClass(selectedTab)}}"></gobstones-blockly>
 
         <gobstones-editor id="code-editor" class$="editor {{_codeClass(selectedTab)}}"></gobstones-editor>
-
-        <gobstones-editor id="teacher-library-editor" class$="editor {{_teacherLibraryClass(selectedTab)}}"></gobstones-editor>
 
         <description-editor id="description-editor" class$="editor {{_descriptionClass(selectedTab)}}"></description-editor>
 
@@ -150,9 +166,9 @@
   <script>
     /* global Blockly:readable */
 
-    const ID_BLOCKS = 0;
-    const ID_CODE = 1;
-    const ID_TEACHER_LIBRARY = 2;
+    const ID_TEACHER_LIBRARY = 0;
+    const ID_BLOCKS = 1;
+    const ID_CODE = 2;
     const ID_DESCRIPTION = 3;
     const ID_ATTIRE = 4;
     const ID_METADATA = 5;
@@ -182,11 +198,15 @@
           type: Array,
           value: []
         },
-
+        studentSolutionDirty: {
+          type: Boolean,
+          value: false
+        },
         tooltipAnimation: Object
       },
       listeners: {
-        "content-change": "_onContentChange"
+        "content-change": "_onContentChange",
+        "student-solution-dirty": "_onStudentSolutionDirty"
       },
 
       attached: function() {
@@ -492,6 +512,10 @@
         });
       },
 
+      _onStudentSolutionDirty() {
+        this.studentSolutionDirty = true;
+      },
+
       _onContentChange: function(event) {
         const editors = this._editors();
 
@@ -601,8 +625,7 @@
 
       _editors: function() {
         return [
-          "blocks-editor", "code-editor",
-          "teacher-library-editor",
+          "teacher-library-editor", "blocks-editor", "code-editor",
           "description-editor", "attire-editor",
           "metadata-editor"
         ].map((it) => this.$[it]);

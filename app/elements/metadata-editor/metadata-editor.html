@@ -12,6 +12,25 @@
 <dom-module id="metadata-editor">
   <template>
     <style>
+      .flash {
+        padding: 20px 16px;
+        border-style: solid;
+        border-width: 1px 0;
+      }
+
+      .flash-info {
+        background-color: #dbedff;
+        border-color: #04428933
+      }
+
+      .flash-info iron-icon {
+        color: #04428999;
+      }
+
+      .flash-action {
+        margin-top: 10px;
+      }
+
       .menu-header-gobstones {
         background-color: white;
         font-weight: 800;
@@ -30,34 +49,6 @@
       .gray {
         color: gray;
       }
-
-      .flash {
-        padding: 20px 16px;
-        border-style: solid;
-        border-width: 1px 0;
-      }
-
-      .flash-warn {
-        background-color: #fefbdd;
-        border-color: #b0880033;
-      }
-
-      .flash-warn iron-icon {
-        color: #b08800;
-      }
-
-      .flash-info {
-        background-color: #dbedff;
-        border-color: #04428933
-      }
-
-      .flash-info iron-icon {
-        color: #04428999;
-      }
-
-      .flash-action {
-        margin-top: 10px;
-      }
     </style>
 
     <div class="metadata-editor-options">
@@ -68,13 +59,11 @@
       </paper-item>
 
       <template is="dom-if" if="[[advancedMode]]">
-        <div class="flash flash-warn">
-          <iron-icon icon="icons:warning"></iron-icon>
-          <strong>Estás editando en modo avanzado</strong>
-          <div>
-            Los cambios que hagas en este modo deberán ser descartados si querés volver a usar el modo básico.
-          </div>
-        </div>
+        <alert-banner
+          title="Estás editando en modo avanzado"
+          message="Los cambios que hagas en este modo deberán ser descartados si querés volver a usar el modo básico."
+          level="warning"
+        ></alert-banner>
 
         <paper-item center-justified flex class="menu-header-gobstones">
           <div>[[localize("settings-code")]]</div>
