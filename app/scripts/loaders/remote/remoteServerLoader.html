@@ -5,13 +5,15 @@
   const GITHUB_CLIENT_SECRET = "f40981be76b00e35d4437d71184f42a70d08f3a6";
 
   // eslint-disable-next-line no-unused-vars
-  class GitHubLoader extends ExpandedLoader {
-    constructor(projectType, slug, initialPath) {
+  class RemoteServerLoader extends ExpandedLoader {
+    constructor(projectType, remote, getContext, initialPath) {
       super();
+      console.log('Using remote server loader');
       this.loader = this._getProjectLoader(projectType);
-
-      this.slug = slug;
-      this.initialPath = initialPath;
+      this.remote = remote || getParameterByName('remote');
+      this.uri = this.remote.substr(0, this.remote.lastIndexOf('/')+1);
+      this.project = this.remote.substr(this.remote.lastIndexOf('/')+1, this.remote.length);
+      this.initialPath = initialPath || getParameterByName('path');
     }
 
     static reportIssue(title, body) {
@@ -34,15 +36,19 @@
 
     load(getContext, callback) {
       return this.loadDir(this.initialPath).then(files => {
-        if (this.initialPath !== undefined)
-          files.forEach(it => it.relativePath = it.relativePath.replaceAll(`${this.initialPath}/`, ""));
+        if (this.initialPath !== undefined) {
+          console.log(this.initialPath);
+          files.forEach(it => {
+            it.relativePath = it.relativePath.replaceAll(`/${this.initialPath}/`, "")
+          });
+        }
         this.loader.readRaw(getContext(), this.createZip(files), callback);
       });
     }
 
     loadDir(path = "") {
-      return this.scanDir(path).then(entries => {
-        const $files = entries.map(it =>
+      return this.scanDir(path).then(response => {
+        const $files = response.items.map(it =>
           this._loadEntry(it, path)
         );
 
@@ -53,22 +59,20 @@
     }
 
     scanDir(path = this.initialPath || "") {
-      const [ username, repoName ] = this.slug.split("/");
-
       return $.get(
-        `https://api.github.com/repos/${username}/${repoName}/contents/${path}?client_id=${GITHUB_CLIENT_ID}&client_secret=${GITHUB_CLIENT_SECRET}`
+        `${this.remote}/${path}`
       );
     }
 
     _loadEntry(entry, path) {
-      return entry.type === "dir"
+      return entry.dir
         ? this.loadDir(`${path}/${entry.name}`)
-        : this._downloadFile(entry.download_url, entry.path);
+        : this._downloadFile(entry);
     }
 
-    _downloadFile(url, relativePath) {
-      return $.getBinary(url).then(content => {
-        return { relativePath, content };
+    _downloadFile(entry) {
+      return $.getBinary(`${this.remote}/${entry.relativePath}`).then(content => {
+        return { relativePath: entry.relativePath.replaceAll(encodeURI(this.initialPath + '/'), ''), content };
       });
     }
   }

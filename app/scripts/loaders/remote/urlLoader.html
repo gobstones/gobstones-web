@@ -13,7 +13,10 @@
     load(getContext, callback) {
       return $.getBinary(this.url).then(content => {
         this.loader.readRawZip(getContext(), content, callback);
-      });
+      }).catch(
+        err =>
+        console.log(err)
+      );
     }
   }
 </script>

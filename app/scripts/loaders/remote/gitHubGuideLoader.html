@@ -35,9 +35,13 @@
       const assets = new GitHubLoader(window.GBS_PROJECT_TYPE, COURSE())
         .loadDir("assets")
         .then((assets) => {
+          console.log('LOADING ASSETS');
+          console.log(assets);
           window.GBS_COURSE_ASSETS = assets;
         })
-        .catch(() => {});
+        .catch(() => {
+          console.log('NO ASSETS');
+        });
 
       return $.when.apply($, [guides, assets]).then(() => {
         return guides;

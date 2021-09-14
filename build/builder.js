@@ -215,7 +215,8 @@ function configForMode(configs, modes) {
         for (config of configs) {
             let newConf = Object.assign({config : {
                 appId: 'org.gobstones.' + commercialName(mode),
-                productName: commercialName(mode)
+                productName: commercialName(mode),
+                mac: { identity: null}
             }}, config);
             if (mode !== 'full') {
                 newConf.config.extraMetadata = {

@@ -55,6 +55,7 @@
 
     readRawZip(context, file, callback) {
       JSZip.loadAsync(file).then(zip => {
+        console.log('Reading zip')
         this.readRaw(context, zip, callback);
       }).catch((e) => {
         console.error(e);

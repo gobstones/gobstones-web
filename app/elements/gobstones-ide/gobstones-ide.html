@@ -6,6 +6,7 @@
 <link rel="import" href="../../scripts/showdown.html">
 <link rel="import" href="../../scripts/js-emoji.html">
 <link rel="import" href="../../scripts/loaders/remote/urlLoader.html">
+<link rel="import" href="../../scripts/loaders/remote/remoteServerLoader.html">
 <link rel="import" href="../../scripts/loaders/remote/gitHubLoader.html">
 <link rel="import" href="../../scripts/loaders/remote/fsLoader.html">
 <link rel="import" href="../course-selector/course-selector.html">
@@ -214,7 +215,7 @@
         this._setUpMouseWheel();
 
         setTimeout(() => {
-          const isChrome = navigator.userAgent.toLowerCase().indexOf('chrome') > -1;
+          const isChrome = true; // navigator.userAgent.toLowerCase().indexOf('chrome') > -1;
           if (!isChrome && !window.GBS_DESKTOP) alert(this.localize("chrome-warning"));
         });
 
@@ -410,9 +411,16 @@
       _setUpLoaders: function() {
         const getContext = this._context.bind(this);
 
+        const remoteUrl = getParameterByName("remote");
+        const remotePath = getParameterByName("path");
+        if (remoteUrl) {
+          return this._setUpLoader(RemoteServerLoader, remoteUrl, getContext, remotePath);
+        }
+
         const projectUrl = getParameterByName("url");
-        if (projectUrl)
+        if (projectUrl) {
           return this._setUpLoader(UrlLoader, projectUrl, getContext);
+        }
 
         const gitHubSlug = getParameterByName("github");
         const gitHubPath = getParameterByName("path");

@@ -1,0 +1,52 @@
+<link rel="import" href="./expandedLoader.html">
+
+<script>
+  // eslint-disable-next-line no-unused-vars
+  class RemoteServerGuideLoader extends RemoteLoader {
+    constructor(course) {
+      super();
+      this.remote = getParameterByName('remote');
+      this.uri = this.remote.substr(0, this.remote.lastIndexOf('/')+1);
+      this.project = this.remote.substr(this.remote.lastIndexOf('/')+1, this.remote.length);
+
+      course.remote = this.remote;
+      this.exercises = course.exercises
+    }
+
+    static all() {
+      // if (!COURSE()) return $.Deferred().reject().promise();
+      const remote = getParameterByName('remote');
+      const uri = remote.substr(0, remote.lastIndexOf('/')+1);
+      const project = remote.substr(remote.lastIndexOf('/')+1, remote.length);
+
+      window.COURSE = () => remote;
+
+      const guides = $.getJSON(uri + 'course/' + project);
+      const results = []
+      const assets = $.getJSON(uri + 'course/' + project + '/assets');
+      console.log('Got results');
+      return $.when.apply($, [guides, results]).then((response) => {
+        console.log('Inside the apply');
+        return response[0];
+      });
+    }
+
+    static makeUrlFor(guide, exercise) {
+      const remote = guide.remote || getParameterByName('remote');
+      return encodeURI(`/${window.GBS_PROJECT_TYPE}?remote=${remote}&path=${exercise.path}`);
+    }
+
+    getExercises() {
+      return promisify(this.exercises.map((exercise) => {
+        return _.assign(exercise, {
+          imageUrl: this._makeImageUrl(exercise.path)
+        });
+      }));
+    }
+
+    _makeImageUrl(path) {
+        return `${this.remote}/${path}/cover.png`;
+    }
+  }
+</script>
+

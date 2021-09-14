@@ -1,5 +1,6 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 <link rel="import" href="../../scripts/loaders/remote/gitHubGuideLoader.html">
+<link rel="import" href="../../scripts/loaders/remote/remoteServerGuideLoader.html">
 <link rel="import" href="../../scripts/loaders/remote/desktopGuideLoader.html">
 
 <dom-module id="project-selector">
@@ -213,6 +214,7 @@
         this._guideLoader().all().then((guides) => {
           this.guides = guides;
           this.selectedGuide = window.STORAGE.getItem("selected-guide") || 0;
+          console.log(this.selectedGuide);
           this._onGuideChange();
         }).catch(() => this._stopLoading()).always(() => {
           this._stopLoadingAssets();
@@ -239,11 +241,10 @@
         this._ide().hideProjectSelectorModal();
 
         const exercise = event.model.item;
+        const newRoute = this._guideLoader().makeUrlFor(this.guide, exercise)
 
         cleanQueryString();
-        this._goTo(
-          this._guideLoader().makeUrlFor(this.guide, exercise)
-        );
+        this._goTo(newRoute);
       },
 
       loadFromFile: function() {
@@ -279,6 +280,7 @@
 
         const TheGuideLoader = this._guideLoader();
         new TheGuideLoader(this.guide).getExercises().then(exercises => {
+          console.log(exercises)
           this.exercises = exercises;
           this._resizePopup();
         }).always(() => {
@@ -340,7 +342,9 @@
       _guideLoader() {
         return this._isDesktop()
           ? DesktopGuideLoader
-          : GitHubGuideLoader;
+          : getParameterByName('remote')
+              ? RemoteServerGuideLoader
+              : GitHubGuideLoader;
       },
 
       _isDesktop() {
