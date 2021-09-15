@@ -5,6 +5,7 @@
 <link rel="import" href="../../scripts/simplemde.html">
 <link rel="import" href="./project-linter.html">
 <link rel="import" href="./alert-banner.html">
+<link rel="import" href="./activity-settings.html">
 
 <dom-module id="gobstones-teacher">
   <template>
@@ -131,6 +132,12 @@
         </div>
       </paper-dialog>
 
+      <paper-dialog id="activitySettingsModal" modal>
+        <paper-dialog-scrollable>
+          <activity-settings></activity-settings>
+        </paper-dialog-scrollable>
+      </paper-dialog>
+
       <div style="position: relative">
         <div class$="editor {{_teacherLibraryClass(selectedTab)}}">
           <template is="dom-if" if="{{!studentSolutionDirty}}">
@@ -149,6 +156,7 @@
           </template>
           <gobstones-editor id="teacher-library-editor"></gobstones-editor>
         </div>
+
         <gobstones-blockly id="blocks-editor" class$="editor {{_blocksClass(selectedTab)}}"></gobstones-blockly>
 
         <gobstones-editor id="code-editor" class$="editor {{_codeClass(selectedTab)}}"></gobstones-editor>
@@ -160,7 +168,6 @@
         <metadata-editor id="metadata-editor" class$="editor {{_metadataClass(selectedTab)}}"></metadata-editor>
       </div>
     </div>
-
   </template>
 
   <script>
@@ -214,6 +221,8 @@
           "entry": [{"name": "fade-in-animation", "timing": {"delay": 0}}],
           "exit": [{"name": "fade-out-animation", "timing": {"delay": 0}}]
         };
+
+        this._openActivitySettingsModal();
       },
 
       ready: function() {
@@ -425,6 +434,10 @@
 
       isBlocksOrCodeTabSelected: function(selectedTab) {
         return selectedTab === ID_BLOCKS || selectedTab === ID_CODE;
+      },
+
+      _openActivitySettingsModal() {
+        document.querySelector("#activitySettingsModal").open();
       },
 
       _saveProject: function() {
