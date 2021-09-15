@@ -112,7 +112,6 @@
       <paper-tabs id="editorTab" selected="{{selectedTab}}" class="bottom self-end">
         <paper-tab>[[localize("teachers-library")]]</paper-tab>
         <paper-tab>[[localize("blocks")]]</paper-tab>
-        <paper-fab id="fab-sync-button" mini icon="notification:sync-disabled" class="fab-sync sync-off" on-click="_onBlocksSyncClick"></paper-fab>
         <paper-tab>[[localize("code")]]</paper-tab>
         <paper-tab>[[localize("description")]]</paper-tab>
         <paper-tab>[[localize("attire")]]</paper-tab>
@@ -228,7 +227,6 @@
       ready: function() {
         this.BLOCKS_SYNC_ON_ICON = "notification:sync";
         this.BLOCKS_SYNC_OFF_ICON = "notification:sync-disabled";
-        this._setBlocksSyncOff();
 
         setTimeout(() => {
           this.set("availableSolutions", [{
@@ -600,13 +598,6 @@
         this.isSyncingBlocks = true;
         this._setSolutionCode(generatedCode);
         this.setCode(generatedCode);
-      },
-
-      _onBlocksSyncClick: function() {
-        if (this.blocksSyncEnabled) {
-          this._setBlocksSyncOff();
-        }
-        else this._setBlocksSyncOn();
       },
 
       _patchBlocklyPlaceholderBlocks: function() {
