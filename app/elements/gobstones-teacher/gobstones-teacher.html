@@ -111,8 +111,8 @@
       </paper-tooltip>
       <paper-tabs id="editorTab" selected="{{selectedTab}}" class="bottom self-end">
         <paper-tab>[[localize("teachers-library")]]</paper-tab>
-        <paper-tab>[[localize("blocks")]]</paper-tab>
-        <paper-tab>[[localize("code")]]</paper-tab>
+        <paper-tab hidden$="{{_isTextMode(constructionMode)}}">[[localize("students-code")]]</paper-tab>
+        <paper-tab hidden$="{{_isBlocksMode(constructionMode)}}">[[localize("students-code")]]</paper-tab>
         <paper-tab>[[localize("description")]]</paper-tab>
         <paper-tab>[[localize("attire")]]</paper-tab>
         <paper-tab>[[localize("settings")]]</paper-tab>
@@ -206,11 +206,16 @@
           type: Boolean,
           value: false
         },
-        tooltipAnimation: Object
+        tooltipAnimation: Object,
+        constructionMode: {
+          type: String,
+          value: 'blocks'
+        }
       },
       listeners: {
         "content-change": "_onContentChange",
-        "student-solution-dirty": "_onStudentSolutionDirty"
+        "student-solution-dirty": "_onStudentSolutionDirty",
+        "activity-settings-update": "_onActivitySettingsUpdate"
       },
 
       attached: function() {
@@ -440,6 +445,18 @@
         window.BUS.fire('save-project');
       },
 
+      _onActivitySettingsUpdate({ detail: { constructionMode } }) {
+        this.constructionMode = constructionMode.id;
+      },
+
+      _isBlocksMode(constructionMode) {
+        return constructionMode == 'blocks';
+      },
+
+      _isTextMode(constructionMode) {
+        return constructionMode == 'text';
+      },
+
       _runProjectLinter: function() {
         document.querySelector("#projectLinterModal").open();
         window.BUS.fire("project-linter-start");
@@ -448,9 +465,7 @@
 
       // @faloi: sería ideal que no se ejecute el código, sino que solamente se compile
       _validateCode: function() {
-        // Es necesario focalizar en una pestaña para poder ejecutar.
-        // TODO: modificar cuando se haga #419
-        this.selectedTab = ID_BLOCKS;
+        this.selectedTab = this.constructionMode == 'blocks' ? ID_BLOCKS : ID_CODE;
         const boardsPanel = document.getElementById("boards");
         const runner = boardsPanel.$.runner;
         runner.requestRun();

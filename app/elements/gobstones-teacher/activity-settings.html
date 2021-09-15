@@ -34,15 +34,15 @@
 
     <div class="container">
       <div class="choice">
-        <a dialog-confirm on-tap="goToExercise">
-          <h3>Bloques</h3>
-          <img width="250" src="../../images/activity/{{executionType.blocksImage}}" />
+        <a dialog-confirm on-tap="notifySettingsBlocks">
+          <h3>{{ allConstructionModes.blocks.name }}</h3>
+          <img width="250" src="../../images/activity/{{allConstructionModes.blocks.id}}-{{executionType.id}}.png" />
         </a>
       </div>
       <div class="choice">
-        <a dialog-confirm on-tap="goToExercise">
-          <h3>Texto</h3>
-          <img width="250" src="../../images/activity/{{executionType.textImage}}" />
+        <a dialog-confirm on-tap="notifySettingsText">
+          <h3>{{ allConstructionModes.text.name }}</h3>
+          <img width="250" src="../../images/activity/{{allConstructionModes.text.id}}-{{executionType.id}}.png" />
         </a>
       </div>
     </div>
@@ -56,9 +56,9 @@
           </paper-item-body>
           <paper-dropdown-menu>
             <paper-listbox class="dropdown-content" selected="{{ executionTypeIndex }}">
-                <template is="dom-repeat" items="{{ allExecutionTypes }}">
-                  <paper-item>{{item.name}}</paper-item>
-                </template>
+              <template is="dom-repeat" items="{{ allExecutionTypes }}">
+                <paper-item>{{item.name}}</paper-item>
+              </template>
             </paper-listbox>
           </paper-dropdown-menu>
         </paper-item>
@@ -67,17 +67,19 @@
   </template>
 
   <script>
+    const CONSTRUCTION_MODES = {
+      blocks: { id: 'blocks', name: 'Bloques' },
+      text: { id: 'text', name: 'Texto' },
+    };
 
     const EXECUTION_TYPES = [
       {
+        id: 'sequential',
         name: 'Secuencial',
-        blocksImage: 'blocks-sequential.png',
-        textImage: 'text-sequential.png',
       },
       {
+        id: 'interactive',
         name: 'Interactiva',
-        blocksImage: 'blocks-interactive.png',
-        textImage: 'text-interactive.png',
       }
     ];
 
@@ -95,11 +97,23 @@
         allExecutionTypes: {
           type: Array,
           value: EXECUTION_TYPES
+        },
+        allConstructionModes: {
+          type: Object,
+          value: CONSTRUCTION_MODES
         }
       },
 
       loadFromFile: function() {
         window.BUS.fire("load-project-from-file");
+      },
+
+      notifySettingsBlocks() {
+        this.fire('activity-settings-update', { constructionMode: CONSTRUCTION_MODES.blocks, executionType: this.executionType })
+      },
+
+      notifySettingsText() {
+        this.fire('activity-settings-update', { constructionMode: CONSTRUCTION_MODES.text, executionType: this.executionType })
       },
 
       _computeSelectedItem(items, index) {
