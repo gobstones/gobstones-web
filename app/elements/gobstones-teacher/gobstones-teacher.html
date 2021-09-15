@@ -373,6 +373,10 @@
         this._editors()[ID_METADATA].setMetadata(content, ...args);
       },
 
+      setInitialSettings(content) {
+        this._editors()[ID_METADATA].setInitialSettings(content);
+      },
+
       generateCode: function(withRegions, blockly) {
         return this._editors()[ID_BLOCKS].generateCode(withRegions, blockly);
       },
@@ -445,8 +449,12 @@
         window.BUS.fire('save-project');
       },
 
-      _onActivitySettingsUpdate({ detail: { constructionMode } }) {
+      _onActivitySettingsUpdate({ detail: { constructionMode, executionType } }) {
         this.constructionMode = constructionMode.id;
+        this.setInitialSettings({
+          constructionMode,
+          executionType
+        })
       },
 
       _isBlocksMode(constructionMode) {

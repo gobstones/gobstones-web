@@ -271,7 +271,7 @@
           <paper-item style="flex-wrap: wrap;">
             <template is="dom-repeat" items="{{ allTools }}">
               <paper-item-body style="margin-right: 10px; overflow: unset;">
-                <project-feature name="{{item}}" enabled="[[ _isToolSelected(selectedToolbox, selectedActivityType, item) ]]" />
+                <project-feature name="{{item}}" enabled="[[ _isToolSelected(selectedToolbox, selectedActivityType, executionType, item) ]]" />
               </paper-item-body>
             </template>
           </paper-item>
@@ -305,7 +305,8 @@
           type: Array,
           value: [
             ...PrimitiveTools.features,
-            ...Toolboxes.free.features
+            ...Toolboxes.free.features,
+            ...ExecutionTypes.interactive.features
           ]
         },
         selectedToolboxIndex: {
@@ -347,6 +348,10 @@
         attireSectionDisabled: {
           type: Boolean,
           value: false
+        },
+        executionType: {
+          type: Object,
+          value: {}
         }
       },
       /* @faloi:
@@ -395,9 +400,24 @@
         }
       },
 
+      setInitialSettings({ constructionMode, executionType }) {
+        this._appendMetadata({
+          activity: {
+            construction_mode: constructionMode.id,
+            execution_type: executionType.id
+          }
+        });
+
+        this.executionType = executionType;
+      },
+
       reset: function() {
         this.setMetadata(this._defaultMetadata());
         this.defaultToolbox = "";
+      },
+
+      _appendMetadata(data) {
+        this.setMetadata(_.merge({}, this.metadata, data));
       },
 
       _selectEditionMode({ activity }) {
@@ -427,8 +447,11 @@
         // this._refreshPreviewIfEnabled(this.metadata);
       },
 
-      _isToolSelected: function(selectedToolbox, selectedActivityType, tool) {
-        return selectedToolbox.features.concat(selectedActivityType.features).includes(tool);
+      _isToolSelected: function(selectedToolbox, selectedActivityType, executionType, tool) {
+        return selectedToolbox.features
+          .concat(selectedActivityType.features)
+          .concat(executionType.features)
+          .includes(tool);
       },
 
       _computeSelectedItem: function(list, index) {

@@ -1,5 +1,6 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 <link rel="import" href="../../bower_components/paper-spoiler/paper-spoiler.html">
+<link rel="import" href="../../scripts/features/project.html">
 
 <dom-module id="activity-settings">
   <style>
@@ -67,22 +68,6 @@
   </template>
 
   <script>
-    const CONSTRUCTION_MODES = {
-      blocks: { id: 'blocks', name: 'Bloques' },
-      text: { id: 'text', name: 'Texto' },
-    };
-
-    const EXECUTION_TYPES = [
-      {
-        id: 'sequential',
-        name: 'Secuencial',
-      },
-      {
-        id: 'interactive',
-        name: 'Interactiva',
-      }
-    ];
-
     Polymer({
       is: "activity-settings",
       properties: {
@@ -96,11 +81,11 @@
         },
         allExecutionTypes: {
           type: Array,
-          value: EXECUTION_TYPES
+          value: _.values(ExecutionTypes)
         },
         allConstructionModes: {
           type: Object,
-          value: CONSTRUCTION_MODES
+          value: ConstructionModes
         }
       },
 
@@ -109,11 +94,11 @@
       },
 
       notifySettingsBlocks() {
-        this.fire('activity-settings-update', { constructionMode: CONSTRUCTION_MODES.blocks, executionType: this.executionType })
+        this.fire('activity-settings-update', { constructionMode: ConstructionModes.blocks, executionType: this.executionType })
       },
 
       notifySettingsText() {
-        this.fire('activity-settings-update', { constructionMode: CONSTRUCTION_MODES.text, executionType: this.executionType })
+        this.fire('activity-settings-update', { constructionMode: ConstructionModes.text, executionType: this.executionType })
       },
 
       _computeSelectedItem(items, index) {
