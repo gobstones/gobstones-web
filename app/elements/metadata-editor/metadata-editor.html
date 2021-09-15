@@ -211,19 +211,21 @@
             </paper-dropdown-menu>
           </paper-item>
 
-          <paper-item>
-            <paper-item-body three-line>
-              <div>Herramientas disponibles</div>
-              <div secondary>Esta opción limita qué bloques pueden utilizar tus estudiantes.</div>
-            </paper-item-body>
-            <paper-dropdown-menu>
-              <paper-listbox class="dropdown-content" selected="{{ selectedToolboxIndex }}">
-                <template is="dom-repeat" items="{{ allToolboxes }}">
-                  <paper-item>{{item.name}}</paper-item>
-                </template>
-              </paper-listbox>
-            </paper-dropdown-menu>
-          </paper-item>
+          <template is="dom-if" if="[[constructionMode.canRestrictTools]]">
+            <paper-item>
+              <paper-item-body three-line>
+                <div>Herramientas disponibles</div>
+                <div secondary>Esta opción limita qué bloques pueden utilizar tus estudiantes.</div>
+              </paper-item-body>
+              <paper-dropdown-menu>
+                <paper-listbox class="dropdown-content" selected="{{ selectedToolboxIndex }}">
+                  <template is="dom-repeat" items="{{ allToolboxes }}">
+                    <paper-item>{{item.name}}</paper-item>
+                  </template>
+                </paper-listbox>
+              </paper-dropdown-menu>
+            </paper-item>
+          </template>
 
           <paper-item center-justified flex class="menu-header-gobstones">
             <div>Tablero</div>
@@ -264,17 +266,19 @@
             </paper-item-body>
           </paper-item>
 
-          <paper-item center-justified flex class="menu-header-gobstones">
-            <div>Caja de herramientas</div>
-          </paper-item>
+          <template is="dom-if" if="[[constructionMode.canRestrictTools]]">
+            <paper-item center-justified flex class="menu-header-gobstones">
+              <div>Caja de herramientas</div>
+            </paper-item>
 
-          <paper-item style="flex-wrap: wrap;">
-            <template is="dom-repeat" items="{{ allTools }}">
-              <paper-item-body style="margin-right: 10px; overflow: unset;">
-                <project-feature name="{{item}}" enabled="[[ _isToolSelected(selectedToolbox, selectedActivityType, executionType, item) ]]" />
-              </paper-item-body>
-            </template>
-          </paper-item>
+            <paper-item style="flex-wrap: wrap;">
+              <template is="dom-repeat" items="{{ allTools }}">
+                <paper-item-body style="margin-right: 10px; overflow: unset;">
+                  <project-feature name="{{item}}" enabled="[[ _isToolSelected(selectedToolbox, selectedActivityType, executionType, item) ]]" />
+                </paper-item-body>
+              </template>
+            </paper-item>
+          </template>
         </template>
       </template>
     </div>
@@ -351,7 +355,11 @@
         },
         executionType: {
           type: Object,
-          value: {}
+          value: ExecutionTypes.sequential
+        },
+        constructionMode: {
+          type: Object,
+          value: ConstructionModes.blocks
         }
       },
       /* @faloi:
@@ -409,6 +417,7 @@
         });
 
         this.executionType = executionType;
+        this.constructionMode = constructionMode;
       },
 
       reset: function() {
