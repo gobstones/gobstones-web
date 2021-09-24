@@ -375,7 +375,12 @@
 
       setInitialSettings(content) {
         this._editors()[ID_METADATA].setInitialSettings(content);
-        this._editors()[ID_BLOCKS].setCode(content.executionType.initialCode);
+        this._editors()[ID_BLOCKS].setCode(
+          content.executionType.initialCode,
+          'main',
+          true,
+          { skipDirtyCheck: true }
+        );
       },
 
       generateCode: function(withRegions, blockly) {
