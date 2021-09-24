@@ -191,10 +191,10 @@
       addRule: function() {
         this.push("attire.rules", {
           when: {
-            red: "",
-            green: "",
-            blue: "",
-            black: ""
+            red: "0",
+            green: "0",
+            blue: "0",
+            black: "0"
           },
           image: null,
           text: ""
@@ -234,7 +234,7 @@
         fileReader.onload = (event) => {
           const base64 = event.target.result;
 
-          const rules = this.attire.rules;   
+          const rules = this.attire.rules;
           this.set("attire.rules", []);
           this.async(() => {
             this.currentRule.fileName = file.name;
