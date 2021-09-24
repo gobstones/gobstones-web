@@ -375,6 +375,7 @@
 
       setInitialSettings(content) {
         this._editors()[ID_METADATA].setInitialSettings(content);
+        this._editors()[ID_BLOCKS].setCode(content.executionType.initialCode);
       },
 
       generateCode: function(withRegions, blockly) {

@@ -180,12 +180,20 @@
       name: "Secuencial",
       features: [],
       blocks: [],
+      initialCode:
+        `<xml xmlns="http://www.w3.org/1999/xhtml">
+          <block type="Program" deletable="false" x="30" y="30"></block>
+        </xml>`
     },
     interactive: {
       id: "interactive",
       name: "Interactiva",
       features: ["Eventos"],
       blocks: ["Eventos"],
+      initialCode:
+        `<xml xmlns="http://www.w3.org/1999/xhtml">
+          <block type="InteractiveProgram" deletable="false" x="30" y="30"></block>
+        </xml>`
     },
   };
 
