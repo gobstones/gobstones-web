@@ -152,7 +152,11 @@
         this.$.blockly.workspace.undo();
       },
 
-      setCode: function(code, mode = "main", withTeacherErrorsReport = true) {
+      setCode: function(code, mode = "main", withTeacherErrorsReport = true, { skipDirtyCheck = false } = {}) {
+        if (skipDirtyCheck) {
+          this.isBlocklyInitialized = false;
+        }
+
         this.workspace[mode] = code;
         this.code[mode] = mode === "teacher" ? code : this._xmlToCode(code);
         if (this.mode === mode) {
@@ -174,6 +178,7 @@
       },
 
       reset: function() {
+        this.isBlocklyInitialized = false;
         this._setMode("main");
         this.setCode(this.EMPTY_WORKSPACE, "main");
         this.setCode("", "library");

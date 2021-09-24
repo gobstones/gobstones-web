@@ -5,6 +5,7 @@
 <link rel="import" href="../../scripts/simplemde.html">
 <link rel="import" href="./project-linter.html">
 <link rel="import" href="./alert-banner.html">
+<link rel="import" href="./activity-settings.html">
 
 <dom-module id="gobstones-teacher">
   <template>
@@ -110,17 +111,14 @@
       </paper-tooltip>
       <paper-tabs id="editorTab" selected="{{selectedTab}}" class="bottom self-end">
         <paper-tab>[[localize("teachers-library")]]</paper-tab>
-        <paper-tab>[[localize("blocks")]]</paper-tab>
-        <paper-fab id="fab-sync-button" mini icon="notification:sync-disabled" class="fab-sync sync-off" on-click="_onBlocksSyncClick"></paper-fab>
-        <paper-tab>[[localize("code")]]</paper-tab>
+        <paper-tab hidden$="{{_isTextMode(constructionMode)}}">[[localize("students-code")]]</paper-tab>
+        <paper-tab hidden$="{{_isBlocksMode(constructionMode)}}">[[localize("students-code")]]</paper-tab>
         <paper-tab>[[localize("description")]]</paper-tab>
         <paper-tab>[[localize("attire")]]</paper-tab>
         <paper-tab>[[localize("settings")]]</paper-tab>
       </paper-tabs>
 
-      <paper-dialog id="projectLinterModal" backdrop>
-        <paper-button class="accept close" dialog-confirm autofocus><iron-icon icon="icons:close"></iron-icon></paper-button>
-
+      <paper-dialog id="projectLinterModal" modal>
         <paper-dialog-scrollable>
           <project-linter></project-linter>
         </paper-dialog-scrollable>
@@ -129,6 +127,12 @@
           <paper-button dialog-dismiss>[[localize("cancel")]]</paper-button>
           <paper-button dialog-confirm autofocus on-click="_saveProject">[[localize("save")]]</paper-button>
         </div>
+      </paper-dialog>
+
+      <paper-dialog id="activitySettingsModal" modal>
+        <paper-dialog-scrollable>
+          <activity-settings></activity-settings>
+        </paper-dialog-scrollable>
       </paper-dialog>
 
       <div style="position: relative">
@@ -149,6 +153,7 @@
           </template>
           <gobstones-editor id="teacher-library-editor"></gobstones-editor>
         </div>
+
         <gobstones-blockly id="blocks-editor" class$="editor {{_blocksClass(selectedTab)}}"></gobstones-blockly>
 
         <gobstones-editor id="code-editor" class$="editor {{_codeClass(selectedTab)}}"></gobstones-editor>
@@ -160,7 +165,6 @@
         <metadata-editor id="metadata-editor" class$="editor {{_metadataClass(selectedTab)}}"></metadata-editor>
       </div>
     </div>
-
   </template>
 
   <script>
@@ -202,11 +206,16 @@
           type: Boolean,
           value: false
         },
-        tooltipAnimation: Object
+        tooltipAnimation: Object,
+        constructionMode: {
+          type: String,
+          value: 'blocks'
+        }
       },
       listeners: {
         "content-change": "_onContentChange",
-        "student-solution-dirty": "_onStudentSolutionDirty"
+        "student-solution-dirty": "_onStudentSolutionDirty",
+        "activity-settings-update": "_onActivitySettingsUpdate"
       },
 
       attached: function() {
@@ -214,12 +223,13 @@
           "entry": [{"name": "fade-in-animation", "timing": {"delay": 0}}],
           "exit": [{"name": "fade-out-animation", "timing": {"delay": 0}}]
         };
+
+        this._openActivitySettingsModal();
       },
 
       ready: function() {
         this.BLOCKS_SYNC_ON_ICON = "notification:sync";
         this.BLOCKS_SYNC_OFF_ICON = "notification:sync-disabled";
-        this._setBlocksSyncOff();
 
         setTimeout(() => {
           this.set("availableSolutions", [{
@@ -361,6 +371,34 @@
 
       setMetadata: function(content, ...args) {
         this._editors()[ID_METADATA].setMetadata(content, ...args);
+
+        const constructionMode = this._parseInitialSetting({
+          content,
+          path: 'activity.construction_mode',
+          defaultId: 'blocks',
+          allValues: ConstructionModes
+        });
+
+        this.constructionMode = constructionMode.id;
+
+        const executionType = this._parseInitialSetting({
+          content,
+          path: 'activity.execution_type',
+          defaultId: 'sequential',
+          allValues: ExecutionTypes
+        });
+
+        this.setInitialSettings({ constructionMode, executionType })
+      },
+
+      setInitialSettings(content) {
+        this._editors()[ID_METADATA].setInitialSettings(content);
+        this._editors()[ID_BLOCKS].setCode(
+          content.executionType.initialCode,
+          'main',
+          true,
+          { skipDirtyCheck: true }
+        );
       },
 
       generateCode: function(withRegions, blockly) {
@@ -427,8 +465,33 @@
         return selectedTab === ID_BLOCKS || selectedTab === ID_CODE;
       },
 
+      _parseInitialSetting({ content, path, defaultId, allValues }) {
+        const id = _.get(content, path, defaultId);
+        return _.find(allValues, { id });
+      },
+
+      _openActivitySettingsModal() {
+        document.querySelector("#activitySettingsModal").open();
+      },
+
       _saveProject: function() {
         window.BUS.fire('save-project');
+      },
+
+      _onActivitySettingsUpdate({ detail: { constructionMode, executionType } }) {
+        this.constructionMode = constructionMode.id;
+        this.setInitialSettings({
+          constructionMode,
+          executionType
+        })
+      },
+
+      _isBlocksMode(constructionMode) {
+        return constructionMode == 'blocks';
+      },
+
+      _isTextMode(constructionMode) {
+        return constructionMode == 'text';
       },
 
       _runProjectLinter: function() {
@@ -439,9 +502,7 @@
 
       // @faloi: sería ideal que no se ejecute el código, sino que solamente se compile
       _validateCode: function() {
-        // Es necesario focalizar en una pestaña para poder ejecutar.
-        // TODO: modificar cuando se haga #419
-        this.selectedTab = ID_BLOCKS;
+        this.selectedTab = this.constructionMode == 'blocks' ? ID_BLOCKS : ID_CODE;
         const boardsPanel = document.getElementById("boards");
         const runner = boardsPanel.$.runner;
         runner.requestRun();
@@ -587,13 +648,6 @@
         this.isSyncingBlocks = true;
         this._setSolutionCode(generatedCode);
         this.setCode(generatedCode);
-      },
-
-      _onBlocksSyncClick: function() {
-        if (this.blocksSyncEnabled) {
-          this._setBlocksSyncOff();
-        }
-        else this._setBlocksSyncOn();
       },
 
       _patchBlocklyPlaceholderBlocks: function() {

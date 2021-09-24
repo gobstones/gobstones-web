@@ -211,19 +211,21 @@
             </paper-dropdown-menu>
           </paper-item>
 
-          <paper-item>
-            <paper-item-body three-line>
-              <div>Herramientas disponibles</div>
-              <div secondary>Esta opción limita qué bloques pueden utilizar tus estudiantes.</div>
-            </paper-item-body>
-            <paper-dropdown-menu>
-              <paper-listbox class="dropdown-content" selected="{{ selectedToolboxIndex }}">
-                <template is="dom-repeat" items="{{ allToolboxes }}">
-                  <paper-item>{{item.name}}</paper-item>
-                </template>
-              </paper-listbox>
-            </paper-dropdown-menu>
-          </paper-item>
+          <template is="dom-if" if="[[constructionMode.canRestrictTools]]">
+            <paper-item>
+              <paper-item-body three-line>
+                <div>Herramientas disponibles</div>
+                <div secondary>Esta opción limita qué bloques pueden utilizar tus estudiantes.</div>
+              </paper-item-body>
+              <paper-dropdown-menu>
+                <paper-listbox class="dropdown-content" selected="{{ selectedToolboxIndex }}">
+                  <template is="dom-repeat" items="{{ allToolboxes }}">
+                    <paper-item>{{item.name}}</paper-item>
+                  </template>
+                </paper-listbox>
+              </paper-dropdown-menu>
+            </paper-item>
+          </template>
 
           <paper-item center-justified flex class="menu-header-gobstones">
             <div>Tablero</div>
@@ -264,17 +266,19 @@
             </paper-item-body>
           </paper-item>
 
-          <paper-item center-justified flex class="menu-header-gobstones">
-            <div>Caja de herramientas</div>
-          </paper-item>
+          <template is="dom-if" if="[[constructionMode.canRestrictTools]]">
+            <paper-item center-justified flex class="menu-header-gobstones">
+              <div>Caja de herramientas</div>
+            </paper-item>
 
-          <paper-item style="flex-wrap: wrap;">
-            <template is="dom-repeat" items="{{ allTools }}">
-              <paper-item-body style="margin-right: 10px; overflow: unset;">
-                <project-feature name="{{item}}" enabled="[[ _isToolSelected(selectedToolbox, selectedActivityType, item) ]]" />
-              </paper-item-body>
-            </template>
-          </paper-item>
+            <paper-item style="flex-wrap: wrap;">
+              <template is="dom-repeat" items="{{ allTools }}">
+                <paper-item-body style="margin-right: 10px; overflow: unset;">
+                  <project-feature name="{{item}}" enabled="[[ _isToolSelected(selectedToolbox, selectedActivityType, executionType, item) ]]" />
+                </paper-item-body>
+              </template>
+            </paper-item>
+          </template>
         </template>
       </template>
     </div>
@@ -305,7 +309,8 @@
           type: Array,
           value: [
             ...PrimitiveTools.features,
-            ...Toolboxes.free.features
+            ...Toolboxes.free.features,
+            ...ExecutionTypes.interactive.features
           ]
         },
         selectedToolboxIndex: {
@@ -347,6 +352,14 @@
         attireSectionDisabled: {
           type: Boolean,
           value: false
+        },
+        executionType: {
+          type: Object,
+          value: ExecutionTypes.sequential
+        },
+        constructionMode: {
+          type: Object,
+          value: ConstructionModes.blocks
         }
       },
       /* @faloi:
@@ -365,7 +378,7 @@
       ],
       observers: [
         "_onMetadataChanged(metadata.*)",
-        "_onBasicSettingsChanged(selectedActivityType, selectedToolbox)"
+        "_onBasicSettingsChanged(selectedActivityType, selectedToolbox, executionType)"
       ],
 
       ready: function() {
@@ -395,9 +408,25 @@
         }
       },
 
+      setInitialSettings({ constructionMode, executionType }) {
+        this._appendMetadata({
+          activity: {
+            construction_mode: constructionMode.id,
+            execution_type: executionType.id
+          }
+        });
+
+        this.executionType = executionType;
+        this.constructionMode = constructionMode;
+      },
+
       reset: function() {
         this.setMetadata(this._defaultMetadata());
         this.defaultToolbox = "";
+      },
+
+      _appendMetadata(data) {
+        this.setMetadata(_.merge({}, this.metadata, data));
       },
 
       _selectEditionMode({ activity }) {
@@ -423,12 +452,14 @@
       },
 
       _resetBasicMode: function() {
-        this._onBasicSettingsChanged(this.selectedActivityType, this.selectedToolbox);
-        // this._refreshPreviewIfEnabled(this.metadata);
+        this._onBasicSettingsChanged(this.selectedActivityType, this.selectedToolbox, this.executionType);
       },
 
-      _isToolSelected: function(selectedToolbox, selectedActivityType, tool) {
-        return selectedToolbox.features.concat(selectedActivityType.features).includes(tool);
+      _isToolSelected: function(selectedToolbox, selectedActivityType, executionType, tool) {
+        return selectedToolbox.features
+          .concat(selectedActivityType.features)
+          .concat(executionType.features)
+          .includes(tool);
       },
 
       _computeSelectedItem: function(list, index) {
@@ -446,9 +477,9 @@
         this._resetBasicMode();
       },
 
-      _onBasicSettingsChanged: function (selectedActivityType, selectedToolbox) {
+      _onBasicSettingsChanged: function (selectedActivityType, selectedToolbox, executionType) {
         this._changeBlocks({
-          visible: selectedToolbox.blocks.concat(selectedActivityType.blocks)
+          visible: selectedToolbox.blocks.concat(selectedActivityType.blocks).concat(executionType.blocks)
         });
 
         this.setMetadata(

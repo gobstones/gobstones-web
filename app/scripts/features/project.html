@@ -1,20 +1,20 @@
-<link rel="import" href="../lodash.html">
+<link rel="import" href="../lodash.html" />
 
 <script>
   const PrimitiveTools = {
-    features: ['Comandos primitivos', 'Direcciones y colores'],
+    features: ["Comandos primitivos", "Direcciones y colores"],
     blocks: [
-      'ComandosPrimitivos',
-      'Color',
-      'Direccion',
-      'ExpresionesPrimitivas',
+      "ComandosPrimitivos",
+      "Color",
+      "Direccion",
+      "ExpresionesPrimitivas",
     ],
   };
 
   // eslint-disable-next-line no-unused-vars
   const ActivityTypes = {
     withoutDomain: _.merge({}, PrimitiveTools, {
-      name: 'Sin dominio',
+      name: "Sin dominio",
       settings: {
         board: {
           visible_edition: true,
@@ -36,7 +36,7 @@
       },
     }),
     withDomain: {
-      name: 'Con dominio',
+      name: "Con dominio",
       features: [],
       blocks: [],
       settings: {
@@ -60,7 +60,7 @@
       },
     },
     representation: _.merge({}, PrimitiveTools, {
-      name: 'De representación',
+      name: "De representación",
       settings: {
         board: {
           visible_edition: true,
@@ -82,7 +82,7 @@
       },
     }),
     free: _.merge({}, PrimitiveTools, {
-      name: 'Libre',
+      name: "Libre",
       settings: {
         board: {
           visible_edition: true,
@@ -102,70 +102,67 @@
           },
         },
       },
-    })
+    }),
   };
 
   const initial = {
-    name: 'Inicial',
-    features: ['Procedimientos simples'],
+    name: "Inicial",
+    features: ["Procedimientos simples"],
     blocks: [
-      'DefinicionDeProcedimientoSimple',
-      'ProcedimientosPrimitivos',
-      'MisProcedimientos',
+      "DefinicionDeProcedimientoSimple",
+      "ProcedimientosPrimitivos",
+      "MisProcedimientos",
     ],
   };
 
   const medium = {
-    name: 'Media',
+    name: "Media",
     features: [
       ...initial.features,
-      'Procedimientos con parámetros',
-      'Expresiones y literales numéricos',
-      'Expresiones booleanas',
-      'Repetición simple',
-      'Alternativa condicional',
-      'Funciones simples',
+      "Procedimientos con parámetros",
+      "Expresiones y literales numéricos",
+      "Expresiones booleanas",
+      "Repetición simple",
+      "Alternativa condicional",
+      "Funciones simples",
     ],
     blocks: [
       ...initial.blocks,
-      'DefinicionDeProcedimientoParametrizado',
-      'Numero',
-      'OperadorNumerico',
-      'OperadorLogico',
-      'OperadorDeComparacion',
-      'OperadorDeNegacion',
-      'RepeticionSimple',
-      'Alternativas',
-      'DefinicionDeFuncionSimple',
-      'MisFunciones',
-      'FuncionesPrimitivas',
+      "DefinicionDeProcedimientoParametrizado",
+      "Numero",
+      "OperadorNumerico",
+      "OperadorLogico",
+      "OperadorDeComparacion",
+      "OperadorDeNegacion",
+      "RepeticionSimple",
+      "Alternativas",
+      "DefinicionDeFuncionSimple",
+      "MisFunciones",
+      "FuncionesPrimitivas",
     ],
   };
 
   const advanced = {
-    name: 'Avanzada',
+    name: "Avanzada",
     features: [
       ...medium.features,
-      'Funciones con procesamiento',
-      'Repetición condicional'
+      "Funciones con procesamiento",
+      "Repetición condicional",
     ],
     blocks: [
       ...medium.blocks,
-      'DefinicionDeFuncionSimpleParametrizada',
-      'DefinicionDeFuncionParametrizada',
-      'RepeticionCondicional',
-      'Asignacion',
-      'Booleano',
+      "DefinicionDeFuncionSimpleParametrizada",
+      "DefinicionDeFuncionParametrizada",
+      "RepeticionCondicional",
+      "Asignacion",
+      "Booleano",
     ],
   };
 
   const free = {
-    name: 'Libre',
-    features: [
-      ...advanced.features,
-      'Listas'
-    ],
-    blocks: []
+    name: "Libre",
+    features: [...advanced.features, "Listas"],
+    blocks: [],
   };
 
   // eslint-disable-next-line no-unused-vars
@@ -173,6 +170,36 @@
     initial,
     medium,
     advanced,
-    free
+    free,
+  };
+
+  // eslint-disable-next-line no-unused-vars
+  const ExecutionTypes = {
+    sequential: {
+      id: "sequential",
+      name: "Secuencial",
+      features: [],
+      blocks: [],
+      initialCode:
+        `<xml xmlns="http://www.w3.org/1999/xhtml">
+          <block type="Program" deletable="false" x="30" y="30"></block>
+        </xml>`
+    },
+    interactive: {
+      id: "interactive",
+      name: "Interactiva",
+      features: ["Eventos"],
+      blocks: ["Eventos"],
+      initialCode:
+        `<xml xmlns="http://www.w3.org/1999/xhtml">
+          <block type="InteractiveProgram" deletable="false" x="30" y="30"></block>
+        </xml>`
+    },
+  };
+
+  // eslint-disable-next-line no-unused-vars
+  const ConstructionModes = {
+    blocks: { id: "blocks", name: "Bloques", canRestrictTools: true },
+    text: { id: "text", name: "Texto", canRestrictTools: false },
   };
 </script>
