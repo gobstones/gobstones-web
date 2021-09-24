@@ -146,12 +146,13 @@
               <paper-icon-button class="load-button" on-click="loadImage" icon="image:image" alt="open"> </paper-icon-button>
 
               <template is="dom-if" if="{{item.fileName}}">
-                [[item.fileName]]
+                <i>[[item.fileName]]</i>
               </template>
 
               <template is="dom-if" if="{{!item.fileName}}">
+                <span>/</span>
                 <iron-icon icon="editor:text-fields"></iron-icon>
-                <paper-input class="balls-input" value="{{item.text}}" on-input="_update" maxlength="4"></paper-input>
+                <paper-input class="balls-input" value="{{item.text}}" on-input="_update" maxlength="2" char-counter></paper-input>
               </template>
 
               <br>
