@@ -13,7 +13,6 @@
       border: 1px solid #c8c7c7;
       border-radius: 5px;
       padding: 0 10px;
-      /* height: 350px; */
       cursor: pointer;
       transition: 0.2s cubic-bezier(0.3, 0, 0.5, 1);
       transition-property: color, background-color, border-color, height;
@@ -34,17 +33,13 @@
     <h3>¿Qué tipo de proyecto querés crear?</h3>
 
     <div class="container">
-      <div class="choice">
-        <a dialog-confirm on-tap="notifySettingsBlocks">
-          <h3>{{ allConstructionModes.blocks.name }}</h3>
-          <img width="250" src="../../images/activity/{{allConstructionModes.blocks.id}}-{{executionType.id}}.png" />
-        </a>
+      <div class="choice" dialog-confirm on-tap="notifySettingsBlocks">
+        <h3>{{ allConstructionModes.blocks.name }}</h3>
+        <img width="250" src="../../images/activity/{{allConstructionModes.blocks.id}}-{{executionType.id}}.png" />
       </div>
-      <div class="choice">
-        <a dialog-confirm on-tap="notifySettingsText">
-          <h3>{{ allConstructionModes.text.name }}</h3>
-          <img width="250" src="../../images/activity/{{allConstructionModes.text.id}}-{{executionType.id}}.png" />
-        </a>
+      <div class="choice" dialog-confirm on-tap="notifySettingsText">
+        <h3>{{ allConstructionModes.text.name }}</h3>
+        <img width="250" src="../../images/activity/{{allConstructionModes.text.id}}-{{executionType.id}}.png" />
       </div>
     </div>
 
