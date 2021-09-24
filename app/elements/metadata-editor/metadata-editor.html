@@ -378,7 +378,7 @@
       ],
       observers: [
         "_onMetadataChanged(metadata.*)",
-        "_onBasicSettingsChanged(selectedActivityType, selectedToolbox)"
+        "_onBasicSettingsChanged(selectedActivityType, selectedToolbox, executionType)"
       ],
 
       ready: function() {
@@ -452,8 +452,7 @@
       },
 
       _resetBasicMode: function() {
-        this._onBasicSettingsChanged(this.selectedActivityType, this.selectedToolbox);
-        // this._refreshPreviewIfEnabled(this.metadata);
+        this._onBasicSettingsChanged(this.selectedActivityType, this.selectedToolbox, this.executionType);
       },
 
       _isToolSelected: function(selectedToolbox, selectedActivityType, executionType, tool) {
@@ -478,9 +477,9 @@
         this._resetBasicMode();
       },
 
-      _onBasicSettingsChanged: function (selectedActivityType, selectedToolbox) {
+      _onBasicSettingsChanged: function (selectedActivityType, selectedToolbox, executionType) {
         this._changeBlocks({
-          visible: selectedToolbox.blocks.concat(selectedActivityType.blocks)
+          visible: selectedToolbox.blocks.concat(selectedActivityType.blocks).concat(executionType.blocks)
         });
 
         this.setMetadata(
