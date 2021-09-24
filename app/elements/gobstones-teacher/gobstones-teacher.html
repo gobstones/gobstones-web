@@ -371,6 +371,24 @@
 
       setMetadata: function(content, ...args) {
         this._editors()[ID_METADATA].setMetadata(content, ...args);
+
+        const constructionMode = this._parseInitialSetting({
+          content,
+          path: 'activity.construction_mode',
+          defaultId: 'blocks',
+          allValues: ConstructionModes
+        });
+
+        this.constructionMode = constructionMode.id;
+
+        const executionType = this._parseInitialSetting({
+          content,
+          path: 'activity.execution_type',
+          defaultId: 'sequential',
+          allValues: ExecutionTypes
+        });
+
+        this.setInitialSettings({ constructionMode, executionType })
       },
 
       setInitialSettings(content) {
@@ -445,6 +463,11 @@
 
       isBlocksOrCodeTabSelected: function(selectedTab) {
         return selectedTab === ID_BLOCKS || selectedTab === ID_CODE;
+      },
+
+      _parseInitialSetting({ content, path, defaultId, allValues }) {
+        const id = _.get(content, path, defaultId);
+        return _.find(allValues, { id });
       },
 
       _openActivitySettingsModal() {

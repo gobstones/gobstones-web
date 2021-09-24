@@ -178,6 +178,7 @@
       },
 
       reset: function() {
+        this.isBlocklyInitialized = false;
         this._setMode("main");
         this.setCode(this.EMPTY_WORKSPACE, "main");
         this.setCode("", "library");
