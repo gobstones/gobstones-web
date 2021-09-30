@@ -35,11 +35,13 @@
     <div class="container">
       <div class="choice" dialog-confirm on-tap="notifySettingsBlocks">
         <h3>{{ allConstructionModes.blocks.name }}</h3>
-        <img width="250" src="../../images/activity/{{allConstructionModes.blocks.id}}-{{executionType.id}}.png" />
+        <!-- @faloi: puse URLs absolutas porque Gulp no transforma las URLs dinámicas -->
+        <img width="250" src="https://gobstones.github.io/gobstones-web-staging/images/activity/{{allConstructionModes.blocks.id}}-{{executionType.id}}.png" />
       </div>
       <div class="choice" dialog-confirm on-tap="notifySettingsText">
         <h3>{{ allConstructionModes.text.name }}</h3>
-        <img width="250" src="../../images/activity/{{allConstructionModes.text.id}}-{{executionType.id}}.png" />
+        <!-- @faloi: puse URLs absolutas porque Gulp no transforma las URLs dinámicas -->
+        <img width="250" src="https://gobstones.github.io/gobstones-web-staging/images/activity/{{allConstructionModes.text.id}}-{{executionType.id}}.png" />
       </div>
     </div>
 
