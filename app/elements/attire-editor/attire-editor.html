@@ -3,8 +3,6 @@
 <link rel="import" href="../../scripts/behaviors/permissionsBehavior.html">
 <link rel="import" href="../../scripts/behaviors/localizationBehavior.html">
 <link rel="import" href="../../scripts/behaviors/loaderBehavior.html">
-<link rel="import" href="../../bower_components/iron-icons/image-icons.js">
-<link rel="import" href="../../bower_components/iron-icons/editor-icons.js">
 
 <dom-module id="attire-editor">
   <template>
@@ -81,6 +79,29 @@
         -webkit-font-smoothing: var(--paper-font-common-base_-_-webkit-font-smoothing);
       }
     </style>
+
+    <!-- @faloi: importo los iconos que necesito a mano, porque el import del set no me anduvo  -->
+    <iron-iconset-svg name="editor" size="24">
+      <svg>
+        <defs>
+          <g id="text-fields">
+            <path d="M2.5 4v3h5v12h3V7h5V4h-13zm19 5h-9v3h3v7h3v-7h3V9z"></path>
+          </g>
+        </defs>
+      </svg>
+    </iron-iconset-svg>
+
+    <iron-iconset-svg name="image" size="24">
+      <svg>
+        <defs>
+          <g id="image">
+            <path
+              d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"
+            ></path>
+          </g>
+        </defs>
+      </svg>
+    </iron-iconset-svg>
 
     <div class="buttons">
       <paper-button id="add-attire-button" style="z-index: 99" on-click="addAttire"><iron-icon class="black-button" icon="icons:add"></iron-icon></paper-button>
