@@ -105,7 +105,7 @@
           </paper-item>
         </template>
 
-        <template is="dom-if" if="{{_isCodeOrTeacherProject(projectType)}}">
+        <template is="dom-if" if="{{_isCodeProject(projectType)}}">
           <template is="dom-if" if="{{permissions.can_use_library}}">
             <paper-item>
               <paper-item-body>
