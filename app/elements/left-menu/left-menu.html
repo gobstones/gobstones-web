@@ -183,7 +183,7 @@
         </paper-item>
       </template>
 
-      <template is="dom-if" if="{{!isEmbedded()}}">
+      <template is="dom-if" if="{{!_isEmbeddedOrTeacherProject(projectType)}}">
         <hr>
 
         <paper-item>
@@ -452,6 +452,10 @@
 
       _isTeacherProject: function(projectType) {
         return projectType === "teacher";
+      },
+
+      _isEmbeddedOrTeacherProject(projectType) {
+        return this.isEmbedded() || this._isTeacherProject(projectType);
       },
 
       _isCodeOrBlocksProject: function(projectType) {
