@@ -84,7 +84,7 @@
           <paper-icon-button on-click="saveCurrentProject" icon="icons:save" alt="save"> </paper-icon-button>
         </paper-item>
 
-        <template is="dom-if" if="{{_isCodeOrTeacherProject(projectType)}}">
+        <template is="dom-if" if="{{_isTextEnabled(projectType, teacherConstructionMode)}}">
           <paper-item>
             <paper-item-body>
               <div>[[localize("code")]]</div>
@@ -94,7 +94,7 @@
           </paper-item>
         </template>
 
-        <template is="dom-if" if="{{_isBlocksOrTeacherProject(projectType)}}">
+        <template is="dom-if" if="{{_isBlocksEnabled(projectType, teacherConstructionMode)}}">
           <paper-item>
             <paper-item-body>
               <div>[[localize("blocks")]]</div>
@@ -261,6 +261,9 @@
         permissions: {
           type: Object,
           value: { can_use_library: true }
+        },
+        teacherConstructionMode: {
+          type: Object
         }
       },
       observers: [
@@ -274,6 +277,8 @@
           this.loadCodeOrBlocks();
         }).subscribeTo("save-code", () => {
           this.saveCodeOrBlocks();
+        }).subscribeTo('activity-settings-update', ({ constructionMode }) => {
+          this.teacherConstructionMode = constructionMode;
         });
 
         const language = window.STORAGE.getItem("language") || "es";
@@ -468,6 +473,16 @@
 
       _isBlocksOrTeacherProject: function(projectType) {
         return this._isBlocksProject(projectType) || this._isTeacherProject(projectType);
+      },
+
+      _isBlocksEnabled(projectType, teacherConstructionMode) {
+        return this._isBlocksProject(projectType) ||
+          this._isTeacherProject(projectType) && _.get(teacherConstructionMode, 'id') === 'blocks';
+      },
+
+      _isTextEnabled(projectType, teacherConstructionMode) {
+        return this._isCodeProject(projectType) ||
+          this._isTeacherProject(projectType) && _.get(teacherConstructionMode, 'id') === 'text';
       },
 
       // _getDownloadProgress: function(downloadProgress, downloadTotal) {
