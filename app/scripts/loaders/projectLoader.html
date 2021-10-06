@@ -109,7 +109,7 @@
     }
 
     _loadersForSaving() {
-      return this.loaders.concat(this.metadataLoader);
+      return this.loaders.concat([this.metadataLoader, this.descriptionLoader]);
     }
 
     _loadFilesWithLoaders(context, zip, loaders, callback) {
