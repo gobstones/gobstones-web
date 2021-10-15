@@ -50,9 +50,16 @@
       });
     }
 
+    hasAssets() {
+      return this.scanDir('.')
+        .then(
+          entries => entries.some(e => e.name === 'assets' && e.type === 'dir')
+        )
+        .catch(() => false);
+    }
+
     scanDir(path = this.initialPath || ".") {
       const [ username, repoName ] = this.slug.split("/");
-
       return $.get(
         `https://gobstones-activity.herokuapp.com/repo/${username}/${repoName}?path=${path}`
       );
