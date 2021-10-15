@@ -1,9 +1,6 @@
 <link rel="import" href="./expandedLoader.html">
 
 <script>
-  const GITHUB_CLIENT_ID = "086085200026d5c54c19";
-  const GITHUB_CLIENT_SECRET = "f40981be76b00e35d4437d71184f42a70d08f3a6";
-
   // eslint-disable-next-line no-unused-vars
   class GitHubLoader extends ExpandedLoader {
     constructor(projectType, slug, initialPath) {
@@ -28,7 +25,7 @@
 
     static getDesktopRelease() {
       return $.get(
-        "https://api.github.com/repos/gobstones/gobstones-web-desktop/releases/latest?client_id=${GITHUB_CLIENT_ID}&client_secret=${GITHUB_CLIENT_SECRET}"
+        "https://api.github.com/repos/gobstones/gobstones-web-desktop/releases/latest"
       )
     }
 
@@ -53,11 +50,11 @@
       });
     }
 
-    scanDir(path = this.initialPath || "") {
+    scanDir(path = this.initialPath || ".") {
       const [ username, repoName ] = this.slug.split("/");
 
       return $.get(
-        `https://api.github.com/repos/${username}/${repoName}/contents/${path}?client_id=${GITHUB_CLIENT_ID}&client_secret=${GITHUB_CLIENT_SECRET}`
+        `https://gobstones-activity.herokuapp.com/repo/${username}/${repoName}?path=${path}`
       );
     }
 
