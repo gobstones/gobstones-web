@@ -1,5 +1,6 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 <link rel="import" href="../../scripts/loaders/remote/gitHubLoader.html">
+<script src="../../scripts/vendor/platform.js"></script>
 
 <dom-module id="report-issue">
   <style>
@@ -60,20 +61,26 @@
       properties: {
         title: String,
         body: String,
-        isLoading: Boolean
+        isLoading: Boolean,
+        projectType: String
       },
 
       send() {
         this.isLoading = true;
 
-        const body = `${this.body}
-----------
-Email: ${this.email || "?"}
-URL: ${document.location.href}
-Project: ${document.querySelector("gbs-editor-toolbar").projectName}`;
-
+        // TODO: Ver por qué el $.ajax toma al 201 como un error
         GitHubLoader
-          .reportIssue(this.title, body)
+          .reportIssue({
+            title: this.title,
+            email: this.email,
+            description: this.body,
+            url: document.location.href,
+            mode: this.projectType,
+            project: this.project(),
+            browser: platform.name,
+            os: (platform.os || '').toString(),
+            course: window.COURSE()
+          })
           .then(() => {
             this.title = "";
             this.body = "";
@@ -86,8 +93,11 @@ Project: ${document.querySelector("gbs-editor-toolbar").projectName}`;
           .always(() => {
             this.isLoading = false;
           })
-      }
-    });
+      },
 
+      project() {
+        return document.querySelector("gbs-editor-toolbar").projectName;
+      },
+    });
   </script>
 </dom-module>
