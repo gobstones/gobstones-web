@@ -10,7 +10,7 @@
     }
 
     .form {
-      width: 400px;
+      width: 500px;
       margin-left: 20px;
       margin-right: 20px;
     }
@@ -32,23 +32,25 @@
   <template>
     <h1 class="title">[[localize("report-bug")]]</h1>
 
-    <div class="form">
+    <form id="formIssue" class="form">
       <div>
-        <paper-input label$="{{localize('report-bug-title')}}" value="{{title}}"></paper-input>
+        <paper-input required label$="{{localize('report-bug-title')}}" value="{{title}}"></paper-input>
       </div>
 
       <div>
-        <iron-autogrow-textarea rows="5" bind-value="{{body}}" placeholder$="{{localize('report-bug-description')}}"></iron-autogrow-textarea>
+        <iron-autogrow-textarea required style="width: 100%;" rows="5" bind-value="{{body}}" placeholder$="{{localize('report-bug-description')}}"></iron-autogrow-textarea>
       </div>
 
       <div>
         <paper-input label$="{{localize('report-bug-email')}}" value="{{email}}"></paper-input>
       </div>
 
-      <div class="report-warning">[[localize("report-bug-public")]]<a target="_blank" href="https://github.com/gobstones/gobstones-issues/issues">issue tracker</a>.</div>
+      <div class="report-warning">Los datos que ingreses en este formulario serán registrados en nuestro <strong><a target="_blank" href="https://github.com/gobstones/gobstones-issues/issues">issue tracker</a></strong> y cualquier persona podría acceder a ellos.</div>
 
-      <button class="submit" on-click="send" disabled$="{{isLoading}}">[[localize("report-bug-send")]]</button>
-    </div>
+      <div class="report-warning">Te pedimos que no incluyas información que pueda afectar a tu privacidad.</div>
+
+      <button type="button" on-click="send" class="submit" disabled$="{{isLoading}}">[[localize("report-bug-send")]]</button>
+    </form>
   </template>
 
   <script>
@@ -66,9 +68,13 @@
       },
 
       send() {
+        if(!formIssue.checkValidity()) {
+          formIssue.reportValidity();
+          return;
+        }
+
         this.isLoading = true;
 
-        // TODO: Ver por qué el $.ajax toma al 201 como un error
         GitHubLoader
           .reportIssue({
             title: this.title,
