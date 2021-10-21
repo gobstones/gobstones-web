@@ -150,13 +150,13 @@
       <paper-dialog id="codeViewModal" class="code-view-modal">
         <paper-button class="accept close" dialog-confirm autofocus><iron-icon icon="icons:close"></iron-icon></paper-button>
 
-        <code-viewer id="codeViewer" code="[[currentCode]]"></code-viwer>
+        <code-viewer id="codeViewer" code="[[currentCode]]"></code-viewer>
       </paper-dialog>
 
       <paper-dialog id="reportIssueModal" class="report-issue-modal">
         <paper-button class="accept close" dialog-confirm autofocus><iron-icon icon="icons:close"></iron-icon></paper-button>
 
-        <report-issue></code-viwer>
+        <report-issue project-type=[[projectType]]></report-issue>
       </paper-dialog>
     </div>
 
@@ -328,7 +328,11 @@
       },
 
       showReportIssueModal: function() {
-        document.querySelector("#reportIssueModal").open();
+        const modal = document.querySelector("#reportIssueModal")
+        modal.open();
+        modal.addEventListener('iron-overlay-closed', () => {
+          document.querySelector("report-issue").reset();
+        })
       },
 
       showCodeChanged: function({ detail }) {

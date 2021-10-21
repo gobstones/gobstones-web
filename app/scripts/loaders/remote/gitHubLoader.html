@@ -3,6 +3,8 @@
 <script>
   // eslint-disable-next-line no-unused-vars
   class GitHubLoader extends ExpandedLoader {
+    static get apiUrl() { return 'https://gobstones-activity.herokuapp.com' }
+
     constructor(projectType, slug, initialPath) {
       super();
       this.loader = this._getProjectLoader(projectType);
@@ -11,15 +13,13 @@
       this.initialPath = initialPath;
     }
 
-    static reportIssue(title, body) {
+    static reportIssue(params) {
       return $.ajax({
         type: "POST",
-        url: "https://api.github.com/repos/gobstones/gobstones-issues/issues",
-        data: JSON.stringify({ title, body }),
+        url: `${GitHubLoader.apiUrl}/issues`,
+        data: JSON.stringify(params),
         dataType: "json",
-        headers: {
-          "Authorization": `token ${atob("M2ZiMGJkNWM0YzVjZGJkY2FlMTIwOTgzNmRjNTI5M2EwYTdmZGU2Yw==")}`
-        }
+        contentType: 'application/json; charset=utf-8'
       });
     }
 
@@ -60,9 +60,7 @@
 
     scanDir(path = this.initialPath || ".") {
       const [ username, repoName ] = this.slug.split("/");
-      return $.get(
-        `https://gobstones-activity.herokuapp.com/repo/${username}/${repoName}?path=${path}`
-      );
+      return $.get(`${GitHubLoader.apiUrl}/repo/${username}/${repoName}?path=${path}`);
     }
 
     _loadEntry(entry, path) {
