@@ -1,3 +1,4 @@
+/* eslint-disable */
 /*!
  * Platform.js
  * Copyright 2014-2020 Benjamin Tan
