@@ -116,8 +116,10 @@ Example:
   </template>
 
   <script src="../blockly-package/blockly_compressed.js"></script>
-  <script src="../blockly-package/blocks_compressed.js"></script>
   <script src="../blockly-package/es.js"></script>
+  <script src="js/gobstones-blocks-en-msgs.js"></script>
+  <script src="js/gobstones-blocks-es-msgs.js"></script>
+  <script src="../blockly-package/blocks_compressed.js"></script>
   <script src="../proceds-blockly/proceds-blockly-original.js"></script>
   <script src="../proceds-blockly/proceds-blockly.js"></script>
   <script src="js/gobstones-blocks.js"></script>
@@ -130,14 +132,19 @@ Example:
       is: 'gs-element-blockly',
 
       properties: {
+        language: {
+          type: String,
+          value: Blockly.translations.defaultLanguage
+        },
+
         primitiveProceduresCategoryName: {
           type: String,
-          value: "Procedimientos primitivos"
+          value: "Procedimientos primitivos" // See also ready()
         },
 
         primitiveFunctionsCategoryName: {
           type: String,
-          value: "Funciones primitivas"
+          value: "Funciones primitivas" // See also ready()
         },
 
         /*
@@ -981,12 +988,16 @@ Example:
 
       // Element Lifecycle
       ready: function() {
+        this.setLanguage(this.language, true);
       },
 
       attached: function() {
         this._definePrimitiveProcedures();
         this._definePrimitiveFunctions();
+        this._injectBlockly();
+      },
 
+      _injectBlockly() {
         // create workspace
         var blocklyDiv = this.$$('#blocklyDiv');
         this.blocklyDiv = blocklyDiv;
@@ -1022,6 +1033,30 @@ Example:
         };
 
         Blockly.ErrorInforming.addToWorkspace(this.workspace);
+      },
+
+      setLanguage(lang, avoidReloading) {
+        this.language = lang;
+        this.primitiveProceduresCategoryName =
+          this.language === 'es' ? 'Procedimientos primitivos' : 'Built-in Procedures';
+        this.primitiveProceduresCategoryName =
+          this.language === 'es' ? 'Funciones primitivas' : 'Built-in Functions';
+        Blockly.translations[lang]();
+        if (!avoidReloading) {
+          this._reloadWorkspace();
+        }
+      },
+
+      _reloadWorkspace() {
+        // Save state of the workspace
+        if (this.workspace) {
+          var xml = Blockly.Xml.workspaceToDom(this.workspace);
+          // Dispose and reinject;
+          this.workspace.dispose()
+          this._injectBlockly();
+
+          Blockly.Xml.domToWorkspace(xml, this.workspace);
+        }
       },
 
       _onresize() {

@@ -14,6 +14,8 @@ var PATH = function PATH() {
   return course.path;
 };
 
+// eslint-disable-next-line no-unused-vars
+
 var DesktopGuideLoader = function () {
   function DesktopGuideLoader(_ref) {
     var exercises = _ref.exercises;
@@ -86,10 +88,10 @@ var DesktopGuideLoader = function () {
 
         try {
           rimraf.sync(contentPath);
-        } catch (e) {}
+        } catch (e) {/* Magia */}
         try {
           rimraf.sync(finalPath);
-        } catch (e) {}
+        } catch (e) {/* Magia */}
 
         var deferred = new $.Deferred();
         unzipper.on("error", function (err) {
@@ -105,7 +107,7 @@ var DesktopGuideLoader = function () {
         });
 
         return deferred.promise();
-      }).then(function (r) {
+      }).then(function () {
         fs.unlinkSync(zipPath);
         fs.renameSync(contentPath, finalPath);
         return finalPath;

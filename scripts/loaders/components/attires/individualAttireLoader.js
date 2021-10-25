@@ -8,6 +8,7 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
+// eslint-disable-next-line no-unused-vars
 var IndividualAttireLoader = function (_Loader) {
   _inherits(IndividualAttireLoader, _Loader);
 
@@ -45,8 +46,7 @@ var IndividualAttireLoader = function (_Loader) {
       var _this3 = this;
 
       var _readLocalFile = this._readLocalFile(event),
-          file = _readLocalFile.file,
-          fileName = _readLocalFile.fileName;
+          file = _readLocalFile.file;
 
       JSZip.loadAsync(file).then(function (zip) {
         _this3.reader.readFromZip(context, zip, callback);

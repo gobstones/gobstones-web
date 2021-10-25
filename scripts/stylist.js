@@ -4,6 +4,7 @@ var _createClass = function () { function defineProperties(target, props) { for 
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
+// eslint-disable-next-line no-unused-vars
 var Stylist = function () {
   _createClass(Stylist, null, [{
     key: "DEFAULT_PERCENTAGE",
@@ -61,7 +62,6 @@ var Stylist = function () {
   }, {
     key: "correctEditorHeight",
     value: function correctEditorHeight(editor) {
-      var lineHeight = editor.renderer.lineHeight;
       var availableLines = ($(document).height() - this.TOOLBAR_HEIGHT - this._getTabsHeight()) / editor.renderer.lineHeight;
 
       editor.setOption("minLines", availableLines);
@@ -95,7 +95,7 @@ var Stylist = function () {
     }
   }, {
     key: "setPanelAsResizable",
-    value: function setPanelAsResizable(boardDimensions) {
+    value: function setPanelAsResizable(_boardDimensions) {
       var _this3 = this;
 
       $(document).ready(function () {

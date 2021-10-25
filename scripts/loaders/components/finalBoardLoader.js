@@ -8,6 +8,7 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
+// eslint-disable-next-line no-unused-vars
 var FinalBoardLoader = function (_TextLoader) {
   _inherits(FinalBoardLoader, _TextLoader);
 
@@ -30,7 +31,7 @@ var FinalBoardLoader = function (_TextLoader) {
     }
   }, {
     key: "readContent",
-    value: function readContent(context, content) {
+    value: function readContent(_context, _content) {
       throw new Error("This method should not be called (write-only loader)");
     }
   }]);

@@ -58,10 +58,10 @@ Polymer({
   addRule: function addRule() {
     this.push("attire.rules", {
       when: {
-        red: "",
-        green: "",
-        blue: "",
-        black: ""
+        red: "0",
+        green: "0",
+        blue: "0",
+        black: "0"
       },
       image: null,
       text: ""

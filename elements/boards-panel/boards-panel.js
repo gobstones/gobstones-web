@@ -177,7 +177,9 @@ Polymer({
       try {
         var element = $(".ace_text-input")[0];
         if (showCode) element.focus();else element.blur();
-      } catch (e) {}
+      } catch (e) {
+        // Quién sabe para qué sirve esto
+      }
     }, 0);
   },
 
@@ -295,7 +297,7 @@ Polymer({
   removeFirstBoard: function removeFirstBoard() {
     var _this4 = this;
 
-    this._removeBoard(function (index) {
+    this._removeBoard(function () {
       _this4.shift("availableInitialStates");
     });
   },
@@ -330,8 +332,8 @@ Polymer({
   },
 
   _buildEmptyTable: function _buildEmptyTable(sizeX, sizeY) {
-    return _.range(sizeY).map(function (row) {
-      return _.range(sizeX).map(function (cell) {
+    return _.range(sizeY).map(function () {
+      return _.range(sizeX).map(function () {
         return {};
       });
     });
@@ -356,7 +358,7 @@ Polymer({
     var useRandomBoard = options.useRandomBoard,
         controller = options.controller;
 
-    if (options.useRandomBoard) {
+    if (useRandomBoard) {
       if (this._initialRandomBoard == null || this._lastRandomBoard + 1 === this._initialRandomBoard) {
         this._initialRandomBoard = _.random(0, this.availableInitialStates.length - 1);
         this._lastRandomBoard = this._initialRandomBoard;
@@ -405,7 +407,7 @@ Polymer({
     this._setSelectedTab(1);
   },
 
-  _onUnknownError: function _onUnknownError(error) {
+  _onUnknownError: function _onUnknownError(_error) {
     this.showToast(this.localize("unknown-interpreter-error"));
   },
 

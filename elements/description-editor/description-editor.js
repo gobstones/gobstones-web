@@ -1,6 +1,6 @@
 "use strict";
 
-var DEFAULT_DESCRIPTION = "# Proyecto x.y: Nombre del ejercicio\nDescripci\xF3n del ejercicio.\n\n## Tablero esperado\n\n<center>\n  <gs-board>\n    GBB/1.0\n    size 3 3\n    cell 0 0 Azul 2\n    cell 1 2 Rojo 7\n    head 1 1\n  </gs-board>\n</center>\n\n[Enunciado en PDF][PDF]\n\n[PDF]: https://link-a-un-pdf \"Enunciado de 'Simulando repartir caramelos' en PDF\"";
+var DEFAULT_DESCRIPTION = "# Proyecto x.y: Nombre del ejercicio\nDescripci\xF3n del ejercicio.\n\n## Tablero esperado\n\n<center>\n  <gs-board>\n    GBB/1.0\n    size 3 3\n    cell 0 0 Azul 2\n    cell 1 2 Rojo 7\n    head 1 1\n  </gs-board>\n</center>";
 
 Polymer({
   is: 'description-editor',
@@ -11,7 +11,7 @@ Polymer({
     this.async(function () {
       _this.simplemde = new SimpleMDE({
         element: _this.$$("#markdown-editor"),
-        autofocus: true,
+        autofocus: false,
         spellChecker: false,
         hideIcons: ["side-by-side", "fullscreen", "guide"],
         previewRender: function previewRender(plainText) {

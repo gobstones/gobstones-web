@@ -150,14 +150,14 @@
       <paper-dialog id="codeViewModal" class="code-view-modal">
         <paper-button class="accept close" dialog-confirm="" autofocus=""><iron-icon icon="icons:close"></iron-icon></paper-button>
 
-        <code-viewer id="codeViewer" code="[[currentCode]]">
-      </code-viewer></paper-dialog>
+        <code-viewer id="codeViewer" code="[[currentCode]]"></code-viewer>
+      </paper-dialog>
 
       <paper-dialog id="reportIssueModal" class="report-issue-modal">
         <paper-button class="accept close" dialog-confirm="" autofocus=""><iron-icon icon="icons:close"></iron-icon></paper-button>
 
-        <report-issue>
-      </report-issue></paper-dialog>
+        <report-issue project-type="[[projectType]]"></report-issue>
+      </paper-dialog>
     </div>
 
   </template>

@@ -384,7 +384,7 @@
         return table.length - 1 - rowIndex;
       },
       isCtrlPressed: function() {
-        return this.$.keyTracker.isPressed("Control");
+        return this.$.keyTracker.isPressed("Control" || this.$.keyTracker.isPressed("Meta"));
       },
       isShiftPressed: function() {
         return this.$.keyTracker.isPressed("Shift");

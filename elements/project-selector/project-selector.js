@@ -57,8 +57,10 @@ Polymer({
     this.selectedViewMode = parseInt(window.STORAGE.getItem("selected-view-mode")) || 0;
 
     setTimeout(function () {
-      _this.$.viewModeSelector.label = _this.localize(_this.viewModes[_this.selectedViewMode]);
-    }, 0);
+      if (_this.$.viewModeSelector) {
+        _this.$.viewModeSelector.label = _this.localize(_this.viewModes[_this.selectedViewMode]);
+      }
+    }, 10);
   },
 
   goToExercise: function goToExercise(event) {
@@ -86,9 +88,8 @@ Polymer({
     return selectedViewMode === 2 ? "separator-list" : "";
   },
 
-  getItemTitle: function getItemTitle(_ref, selectedViewMode) {
-    var id = _ref.id,
-        name = _ref.name;
+  getItemTitle: function getItemTitle(_ref) {
+    var name = _ref.name;
 
     return (/*"<strong>" + id + "</strong>" + (selectedViewMode !== 2 ? "<br>" : " ") +*/name
     );

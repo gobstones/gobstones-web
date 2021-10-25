@@ -113,6 +113,14 @@ Polymer({
     this.set("code." + this.mode, content.detail.value);
     this.setAsDirty();
     this.fire("content-change");
+
+    /* @faloi:
+    Esto es fulero, pero el modo siempre es `main`,
+    y no hay otra forma de saber qué editor es.
+    */
+    if (this.id == 'code-editor') {
+      this.fire("student-solution-dirty");
+    }
   },
 
   increaseFontSize: function increaseFontSize() {
@@ -189,6 +197,7 @@ Polymer({
         },
         onTeacherCompilationError: function onTeacherCompilationError(e) {
           _this3.runner.reportTeacherLibraryErrors(e);
+          window.BUS.fire("teacher-library-compilation-error");
         },
         onInteractiveRun: function onInteractiveRun() {
           window.BUS.fire("interactive-run");

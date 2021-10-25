@@ -26,10 +26,18 @@
       --paper-toast-background-color: rgba(11, 70, 93, 0.8);
       margin-left: 53px !important;
     }
+
+    .secondary-fab {
+      background-color: var(--dark-primary-color);
+      margin-bottom: 10px;
+    }
   </style>
 
   <template>
     <paper-toast class="toast" id="toast"></paper-toast>
+    <template is="dom-if" if="{{_isTeacherProject(projectType)}}">
+      <paper-fab class="secondary-fab" id="previewTeacherConfiguration" icon="{{ previewIcon }}" title="[[localize('settings-preview-changes')]]" on-click="_togglePreviewTeacherConfiguration"></paper-fab>
+    </template>
     <gobstones-code-runner id="playButton" style="z-index: 10;" title="{{localize('execute')}}"></gobstones-code-runner>
     <template is="dom-if" if="{{permissions.can_change_source}}">
       <paper-button class="random-toggle" on-click="toggleRandom"><iron-icon class$="{{toggleRandomCss(useRandomBoard)}}" icon="av:shuffle"></iron-icon></paper-button>

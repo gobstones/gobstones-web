@@ -17,6 +17,8 @@ function toArrayBuffer(buf) {
   return ab;
 }
 
+// eslint-disable-next-line no-unused-vars
+
 var FsLoader = function (_ExpandedLoader) {
   _inherits(FsLoader, _ExpandedLoader);
 

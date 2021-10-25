@@ -1,5 +1,7 @@
 "use strict";
 
+var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
+
 Polymer({
   is: 'gobstones-ide',
   behaviors: [Polymer.LocalizationBehavior, Polymer.LoaderBehavior],
@@ -54,13 +56,48 @@ Polymer({
     });
 
     GitHubLoader.getDesktopRelease().then(function (release) {
-      _this.DESKTOP_RELEASE = release.name;
+      _this.REMOTE_DESKTOP_RELEASE = release.name;
 
-      if (window.GBS_DESKTOP) {
+      // Only check for updates if in desktop but not packaged for OS.
+      if (window.GBS_DESKTOP && window.IS_PACKAGED) {
+        console.log('This is a packaged app. The OS manages the version of the app. Not checking for updates');
+      } else if (window.GBS_DESKTOP && !window.IS_PACKAGED) {
         var electron = window.GBS_REQUIRE("electron");
-        var version = electron.remote.app.getVersion();
+        var currentVersion = electron.remote.app.getVersion();
 
-        if (version !== _this.DESKTOP_RELEASE) {
+        var hasNewerRemote = currentVersion !== _this.REMOTE_DESKTOP_RELEASE;
+        try {
+          var _currentVersion$split = currentVersion.split('.'),
+              _currentVersion$split2 = _slicedToArray(_currentVersion$split, 3),
+              desktopMajorStr = _currentVersion$split2[0],
+              desktopMinorStr = _currentVersion$split2[1],
+              desktopPatchStr = _currentVersion$split2[2];
+
+          var _REMOTE_DESKTOP_RELEA = _this.REMOTE_DESKTOP_RELEASE.split('.'),
+              _REMOTE_DESKTOP_RELEA2 = _slicedToArray(_REMOTE_DESKTOP_RELEA, 3),
+              remoteMajorStr = _REMOTE_DESKTOP_RELEA2[0],
+              remoteMinorStr = _REMOTE_DESKTOP_RELEA2[1],
+              remotePatchStr = _REMOTE_DESKTOP_RELEA2[2];
+
+          var _ref = [parseInt(desktopMajorStr), parseInt(desktopMinorStr), parseInt(desktopPatchStr)],
+              desktopMajor = _ref[0],
+              desktopMinor = _ref[1],
+              desktopPatch = _ref[2];
+          var _ref2 = [parseInt(remoteMajorStr), parseInt(remoteMinorStr), parseInt(remotePatchStr)],
+              remoteMajor = _ref2[0],
+              remoteMinor = _ref2[1],
+              remotePatch = _ref2[2];
+
+
+          hasNewerRemote = desktopMajor < remoteMajor || desktopMajor === remoteMajor && desktopMinor < remoteMinor || desktopMajor === remoteMajor && desktopMinor === remoteMinor && desktopPatch < remotePatch;
+
+          console.log('Comparing based to semVer');
+        } catch (e) {
+          // Quién sabe para qué sirve esto
+        }
+
+        if (hasNewerRemote) {
+          console.log('Newer version found. Current version is: ' + currentVersion + ' but remote is: ' + _this.REMOTE_DESKTOP_RELEASE + ' We recommend updating.');
           setTimeout(function () {
             var lastDatePrompt = window.STORAGE.getItem("lastDatePrompt");
             var today = new Date().getDate();
@@ -72,6 +109,8 @@ Polymer({
 
             window.STORAGE.setItem("lastDatePrompt", today);
           });
+        } else {
+          console.log('No new version found. Current is: ' + currentVersion + ' but remote is: ' + _this.REMOTE_DESKTOP_RELEASE + ' No update needed.');
         }
       }
     });
@@ -135,22 +174,26 @@ Polymer({
     this.currentCode = newCode;
   },
 
-  showCodeViewModal: function showCodeViewModal(newCode) {
+  showCodeViewModal: function showCodeViewModal(_newCode) {
     document.querySelector("#codeViewModal").open();
   },
 
   showReportIssueModal: function showReportIssueModal() {
-    document.querySelector("#reportIssueModal").open();
+    var modal = document.querySelector("#reportIssueModal");
+    modal.open();
+    modal.addEventListener('iron-overlay-closed', function () {
+      document.querySelector("report-issue").reset();
+    });
   },
 
-  showCodeChanged: function showCodeChanged(_ref) {
-    var detail = _ref.detail;
+  showCodeChanged: function showCodeChanged(_ref3) {
+    var detail = _ref3.detail;
 
     this.resizeLeftPanel(detail, 0);
   },
 
-  showBoardsChanged: function showBoardsChanged(_ref2) {
-    var detail = _ref2.detail;
+  showBoardsChanged: function showBoardsChanged(_ref4) {
+    var detail = _ref4.detail;
 
     this.resizeLeftPanel(detail, $(document).width());
   },
@@ -263,11 +306,9 @@ Polymer({
   _setUpMouseWheel: function _setUpMouseWheel() {
     this.addEventListener("wheel", function (event) {
       var parent = event.target;
-      var isBlocklyChild = false;
       var isBlocklyToolboxChild = false;
 
       while (parent) {
-        if (parent.id === "blocklyDiv") isBlocklyChild = true;
         if (parent.classList.contains("blocklyToolboxDiv")) isBlocklyToolboxChild = true;
 
         parent = parent.parentElement;

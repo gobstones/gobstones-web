@@ -66,6 +66,17 @@
       }
     </style>
 
+  <!-- @faloi: importo los iconos que necesito a mano, porque el import del set no me anduvo  -->
+  <iron-iconset-svg name="image" size="24">
+    <svg>
+      <defs>
+        <g id="image">
+          <path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"></path>
+        </g>
+      </defs>
+    </svg>
+  </iron-iconset-svg>
+
     <div class="menu-container">
       <paper-item center-justified="" flex="" class="menu-header-gobstones">
         <img class="app-logo" src="../../images/logo.png">
@@ -84,7 +95,7 @@
           <paper-icon-button on-click="saveCurrentProject" icon="icons:save" alt="save"> </paper-icon-button>
         </paper-item>
 
-        <template is="dom-if" if="{{_isCodeOrTeacherProject(projectType)}}">
+        <template is="dom-if" if="{{_isTextEnabled(projectType, teacherConstructionMode)}}">
           <paper-item>
             <paper-item-body>
               <div>[[localize("code")]]</div>
@@ -94,18 +105,18 @@
           </paper-item>
         </template>
 
-        <template is="dom-if" if="{{_isBlocksOrTeacherProject(projectType)}}">
+        <template is="dom-if" if="{{_isBlocksEnabled(projectType, teacherConstructionMode)}}">
           <paper-item>
             <paper-item-body>
               <div>[[localize("blocks")]]</div>
             </paper-item-body>
             <paper-icon-button on-click="loadBlocks" icon="icons:folder-open" alt="open"> </paper-icon-button>
             <paper-icon-button on-click="saveBlocks" icon="icons:save" alt="save"> </paper-icon-button>
-            <paper-icon-button on-click="exportBlocksToSvg" icon="icons:event-seat" alt="save"> </paper-icon-button>
+            <paper-icon-button on-click="exportBlocksToSvg" icon="image:image" alt="save"> </paper-icon-button>
           </paper-item>
         </template>
 
-        <template is="dom-if" if="{{_isCodeOrTeacherProject(projectType)}}">
+        <template is="dom-if" if="{{_isCodeProject(projectType)}}">
           <template is="dom-if" if="{{permissions.can_use_library}}">
             <paper-item>
               <paper-item-body>
@@ -183,7 +194,7 @@
         </paper-item>
       </template>
 
-      <template is="dom-if" if="{{!isEmbedded()}}">
+      <template is="dom-if" if="{{!_isEmbeddedOrTeacherProject(projectType)}}">
         <hr>
 
         <paper-item>

@@ -1,16 +1,64 @@
 /* global Blockly */
 
+function isADefaultName(text, defaults) {
+  for (var test of defaults) {
+    if (text.startsWith(test)) {
+      var ending = text.substring(text.indexOf(test) + test.length);
+      if (!ending) return true;
+      try { var number = parseInt(ending); } catch(e) { var number = null; }
+      if (typeof(number) === 'number') {
+        return number;
+      }
+    }
+  }
+  return false;
+}
+function updateProcedBlocklyLanguage() {
+    if (this.getInput(0)) {
+      this.getInput(0).fieldRow[0].setText(Blockly.Msg.GBS_FUNCTION_ARG_DEFINES);
+      var ending = isADefaultName(this.getInput(0).fieldRow[1].getText(), [
+        Blockly.translations.esMsgs.GBS_FUNCTION_ARG_SOMETHING,
+        Blockly.translations.enMsgs.GBS_FUNCTION_ARG_SOMETHING
+      ])
+      if (ending) {
+        this.getInput(0).fieldRow[1].setText(
+          Blockly.Msg.GBS_FUNCTION_ARG_SOMETHING +
+          (typeof(ending)==='number' ? ending : ''));
+      }
+      ending = isADefaultName(this.getInput(0).fieldRow[1].getText(), [
+        Blockly.translations.esMsgs.GBS_PROCEDURE_ARG_SOMETHING,
+        Blockly.translations.enMsgs.GBS_PROCEDURE_ARG_SOMETHING
+      ])
+      if (ending) {
+        this.getInput(0).fieldRow[1].setText(
+          Blockly.Msg.GBS_PROCEDURE_ARG_SOMETHING +
+          (typeof(ending)==='number' ? ending : ''));
+      }
+      if (this.getInput(0).fieldRow[3]) {
+        this.getInput(0).fieldRow[3].setText(Blockly.Msg.PROCEDURES_DEFRETURN_TOOLTIP);
+      }
+      if (this.getInput(0).fieldRow[4]) {
+        this.getInput(0).fieldRow[4].setText(Blockly.Msg.PROCEDURES_DEFRETURN_HELPURL);
+      }
+    }
+    if (this.getInput('RETURN')) {
+      this.getInput('RETURN').fieldRow[0].setText(Blockly.Msg.GBS_FUNCTION_ARG_EQUAL_TO);
+    }
+}
+
+
+
 // Initialize proceds-blockly creating new custom functions
 initProcedsBlockly("Statement", (makeProcedureInit, makeUpdateParams, makeProcedureDomToMutation, makeProcedureCustomMenu) => {
   Blockly.Blocks['DefinicionDeFuncionDeclarativa'] = {
     init: makeProcedureInit(
       true, true, true,
-      "algo",
-      "Definir que",
+      Blockly.Msg.GBS_FUNCTION_ARG_SOMETHING,
+      Blockly.Msg.GBS_FUNCTION_ARG_DEFINES,
       Blockly.Msg.PROCEDURES_DEFRETURN_COMMENT,
       Blockly.Msg.PROCEDURES_DEFRETURN_TOOLTIP,
       Blockly.Msg.PROCEDURES_DEFRETURN_HELPURL,
-      "es igual a"
+      Blockly.Msg.GBS_FUNCTION_ARG_EQUALS
     ),
     setStatements_: Blockly.Blocks['procedures_defreturn'].setStatements_,
     updateParams_: makeUpdateParams(),
@@ -22,7 +70,8 @@ initProcedsBlockly("Statement", (makeProcedureInit, makeUpdateParams, makeProced
     getVars: Blockly.Blocks['procedures_defreturn'].getVars,
     renameVar: Blockly.Blocks['procedures_defreturn'].renameVar,
     customContextMenu: makeProcedureCustomMenu(true),
-    callType_: 'procedures_callreturndeclarative'
+    callType_: 'procedures_callreturndeclarative',
+    onchange: updateProcedBlocklyLanguage
   };
 
   Blockly.Blocks['procedures_callreturndeclarative'] = {
@@ -36,18 +85,18 @@ initProcedsBlockly("Statement", (makeProcedureInit, makeUpdateParams, makeProced
     renameVar: Blockly.Blocks['procedures_callreturn'].renameVar,
     onchange: Blockly.Blocks['procedures_callreturn'].onchange,
     customContextMenu: Blockly.Blocks['procedures_callreturn'].customContextMenu,
-    defType_: 'DefinicionDeFuncionDeclarativa'
+    defType_: 'DefinicionDeFuncionDeclarativa',
   };
 
   Blockly.Blocks['DefinicionDeFuncionSimpleConParametrosDeclarativa'] = {
     init: makeProcedureInit(
       true, false, true,
-      "algo",
-      "Definir que",
+      Blockly.Msg.GBS_FUNCTION_ARG_SOMETHING,
+      Blockly.Msg.GBS_FUNCTION_ARG_DEFINES,
       Blockly.Msg.PROCEDURES_DEFRETURN_COMMENT,
       Blockly.Msg.PROCEDURES_DEFRETURN_TOOLTIP,
       Blockly.Msg.PROCEDURES_DEFRETURN_HELPURL,
-      "es igual a"
+      Blockly.Msg.GBS_FUNCTION_ARG_EQUALS
     ),
     setStatements_: Blockly.Blocks['procedures_defreturn'].setStatements_,
     updateParams_: makeUpdateParams(),
@@ -59,7 +108,8 @@ initProcedsBlockly("Statement", (makeProcedureInit, makeUpdateParams, makeProced
     getVars: Blockly.Blocks['procedures_defreturn'].getVars,
     renameVar: Blockly.Blocks['procedures_defreturn'].renameVar,
     customContextMenu: makeProcedureCustomMenu(true),
-    callType_: 'procedures_callreturndeclarativesimplewithparams'
+    callType_: 'procedures_callreturndeclarativesimplewithparams',
+    onchange: updateProcedBlocklyLanguage
   };
 
   Blockly.Blocks['procedures_callreturndeclarativesimplewithparams'] = {
@@ -73,18 +123,18 @@ initProcedsBlockly("Statement", (makeProcedureInit, makeUpdateParams, makeProced
     renameVar: Blockly.Blocks['procedures_callreturn'].renameVar,
     onchange: Blockly.Blocks['procedures_callreturn'].onchange,
     customContextMenu: Blockly.Blocks['procedures_callreturn'].customContextMenu,
-    defType_: 'DefinicionDeFuncionSimpleConParametrosDeclarativa'
+    defType_: 'DefinicionDeFuncionSimpleConParametrosDeclarativa',
   };
 
   Blockly.Blocks['DefinicionDeFuncionSimpleDeclarativa'] = {
     init: makeProcedureInit(
       true, false, false,
-      "algo",
-      "Definir que",
+      Blockly.Msg.GBS_FUNCTION_ARG_SOMETHING,
+      Blockly.Msg.GBS_FUNCTION_ARG_DEFINES,
       Blockly.Msg.PROCEDURES_DEFRETURN_COMMENT,
       Blockly.Msg.PROCEDURES_DEFRETURN_TOOLTIP,
       Blockly.Msg.PROCEDURES_DEFRETURN_HELPURL,
-      "es igual a"
+      Blockly.Msg.GBS_FUNCTION_ARG_EQUALS
     ),
     setStatements_: Blockly.Blocks['procedures_defreturn'].setStatements_,
     updateParams_: makeUpdateParams(),
@@ -96,7 +146,8 @@ initProcedsBlockly("Statement", (makeProcedureInit, makeUpdateParams, makeProced
     getVars: Blockly.Blocks['procedures_defreturn'].getVars,
     renameVar: Blockly.Blocks['procedures_defreturn'].renameVar,
     customContextMenu: makeProcedureCustomMenu(false),
-    callType_: 'procedures_callreturndeclarativesimple'
+    callType_: 'procedures_callreturndeclarativesimple',
+    onchange: updateProcedBlocklyLanguage
   };
 
   Blockly.Blocks['procedures_callreturndeclarativesimple'] = {
@@ -110,7 +161,7 @@ initProcedsBlockly("Statement", (makeProcedureInit, makeUpdateParams, makeProced
     renameVar: Blockly.Blocks['procedures_callreturn'].renameVar,
     onchange: Blockly.Blocks['procedures_callreturn'].onchange,
     customContextMenu: Blockly.Blocks['procedures_callreturn'].customContextMenu,
-    defType_: 'DefinicionDeFuncionSimpleDeclarativa'
+    defType_: 'DefinicionDeFuncionSimpleDeclarativa',
   };
 });
 
@@ -178,7 +229,7 @@ Blockly.Blocks.Program = {
       "args0": [
         {
           "type": "field_label",
-          "text": "programa"
+          "text": "%{BKY_GBS_PROGRAM_MSG}"
         },
         {
           "type": "input_dummy"
@@ -222,7 +273,7 @@ Blockly.Blocks.InteractiveProgram = {
       "args0": [
         {
           "type": "field_label",
-          "text": "programa interactivo"
+          "text": "%{BKY_GBS_INTERACTIVEPROGRAM_MSG}"
         },
         {
           "type": "input_dummy"
@@ -241,15 +292,15 @@ Blockly.Blocks.InteractiveProgram = {
   },
 
   customContextMenu: function(options) {
-    options.unshift({ text: `Agregar timeout`, enabled: !this.$timeout, callback: () => {
-      let x = prompt("Ingrese un número en milisegundos");
+    options.unshift({ text: Blockly.Msg.GBS_INTERACTIVEPROGRAM_CONTEXT_ADD_TIMEOUT_MSG, enabled: !this.$timeout, callback: () => {
+      let x = prompt(Blockly.Msg.GBS_INTERACTIVEPROGRAM_CONTEXT_ADD_TIMEOUT_TOOLTIP);
       if (isNaN(parseInt(x)) || parseInt(x) <= 0) return;
       x = parseInt(x);
 
       this._addTimeout(x);
     }});
 
-    options.unshift({ text: `Agregar inicialización`, enabled: !this.$init, callback: () => {
+    options.unshift({ text: Blockly.Msg.GBS_INTERACTIVEPROGRAM_CONTEXT_ADD_INIT_MSG, enabled: !this.$init, callback: () => {
       this._addInit();
     }});
   },
@@ -295,11 +346,11 @@ Blockly.Blocks.InteractiveProgram = {
         triggerRefresh(this);
       }.bind(this)
     );
-    setTimeout(() => { removeButton.setTooltip("Eliminar"); });
+    setTimeout(() => { removeButton.setTooltip("%{BKY_GBS_TOOLTIPS_DELETE}"); });
 
-    this.appendDummyInput("initlabel").appendField('Al inicializar:').appendField(removeButton);
+    this.appendDummyInput("initlabel").appendField('%{BKY_GBS_TOOLTIPS_ONINIT}').appendField(removeButton);
     this.appendStatementInput('init').setCheck(["Statement"]);
-    this.appendDummyInput("statementsLabel").appendField('Al apretar...');
+    this.appendDummyInput("statementsLabel").appendField('%{BKY_GBS_TOOLTIPS_ONPUSH}');
     this.moveInputBefore("init", "interactiveprogram");
     this.moveInputBefore("initlabel", "init");
     this.moveInputBefore("statementsLabel", "interactiveprogram");
@@ -322,9 +373,9 @@ Blockly.Blocks.InteractiveProgram = {
         triggerRefresh(this);
       }.bind(this)
     );
-    setTimeout(() => { removeButton.setTooltip("Eliminar"); });
+    setTimeout(() => { removeButton.setTooltip("%{BKY_GBS_TOOLTIPS_DELETE}"); });
 
-    this.appendDummyInput("timeoutlabel").appendField(`Al estar inactivo ${timeout} milisegundos:`).appendField(removeButton);
+    this.appendDummyInput("timeoutlabel").appendField(Blockly.Msg.GBS_TOOLTIPS_ONTIMEOUT.replace('${timeout}', timeout)).appendField(removeButton);
     this.appendStatementInput('timeout').setCheck(["Statement"]);
     triggerRefresh(this);
   }
@@ -375,7 +426,7 @@ createInteractiveBinding = (name, keys) => {
         args0: [
           {
             "type": "field_label",
-            "text": "Al apretar " + name
+            "text": "%{BKY_GBS_TOOLTIPS_ONPUSH}" + name
           },
           { "type": "input_dummy" },
           {
@@ -409,7 +460,7 @@ createInteractiveBinding = (name, keys) => {
           self._addModifier();
         }
       );
-      setTimeout(() => { addModifier.setTooltip("Agregar modificador"); });
+      setTimeout(() => { addModifier.setTooltip("%{BKY_GBS_TOOLTIPS_ADD_MODIFIER}"); });
       input.appendField(addModifier);
 
       const cleanModifiers = new Blockly.FieldImage(
@@ -421,17 +472,17 @@ createInteractiveBinding = (name, keys) => {
           self._cleanModifiers();
         }
       );
-      setTimeout(() => { addModifier.setTooltip("Limpiar modificadores"); });
+      setTimeout(() => { addModifier.setTooltip("%{BKY_GBS_TOOLTIPS_CLEAN_MODIFIER}"); });
       input.appendField(cleanModifiers);
     },
 
     customContextMenu: function(options) {
       const modifiersCount = getModifierFields(this).length / 2;
 
-      options.unshift({ text: `Limpiar modificadores`, enabled: modifiersCount > 0, callback: () => {
+      options.unshift({ text: `%{BKY_GBS_TOOLTIPS_CLEAN_MODIFIER}`, enabled: modifiersCount > 0, callback: () => {
         this._cleanModifiers();
       }});
-      options.unshift({ text: `Agregar modificador`, enabled: modifiersCount < modifiers.length, callback: () => {
+      options.unshift({ text: `%{BKY_GBS_TOOLTIPS_ADD_MODIFIER}`, enabled: modifiersCount < modifiers.length, callback: () => {
         this._addModifier();
       }});
     },
@@ -487,27 +538,27 @@ createInteractiveBinding = (name, keys) => {
   }
 };
 
-Blockly.Blocks.InteractiveLetterBinding = createInteractiveBinding("letra", [
+Blockly.Blocks.InteractiveLetterBinding = createInteractiveBinding("%{BKY_GBS_TOOLTIPS_KEY_LETTER}", [
   'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'Ñ', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'
 ].map(it => ({ code: it, name: it })));
 
-Blockly.Blocks.InteractiveNumberBinding = createInteractiveBinding("número", [
+Blockly.Blocks.InteractiveNumberBinding = createInteractiveBinding("%{BKY_GBS_TOOLTIPS_KEY_NUMBER}", [
   '1', '2', '3', '4', '5', '6', '7', '8', '9', '0'
 ].map(it => ({ code: it, name: it })));
 
-Blockly.Blocks.InteractiveKeyBinding = createInteractiveBinding("tecla", [
+Blockly.Blocks.InteractiveKeyBinding = createInteractiveBinding("%{BKY_GBS_TOOLTIPS_KEY_SPECIAL}", [
   { code: 'LEFT', name: '←' },
   { code: 'RIGHT', name: '→' },
   { code: 'UP', name: '↑' },
   { code: 'DOWN', name: '↓' },
   { code: 'MINUS', name: '-' },
-  { code: 'SPACE', name: 'Espacio' },
-  { code: 'RETURN', name: 'Enter' },
-  { code: 'TAB', name: 'Tab' },
-  { code: 'BACKSPACE', name: 'Borrar' },
-  { code: 'DELETE', name: 'Suprimir' },
-  { code: 'ESCAPE', name: 'Escape' },
-  { code: 'INSERT', name: 'Insert' },
+  { code: 'SPACE', name: '%{BKY_GBS_TOOLTIPS_KEY_SPACE}' },
+  { code: 'RETURN', name: '%{BKY_GBS_TOOLTIPS_KEY_ENTER}' },
+  { code: 'TAB', name: '%{BKY_GBS_TOOLTIPS_KEY_TAB}' },
+  { code: 'BACKSPACE', name: '%{BKY_GBS_TOOLTIPS_KEY_BACKSPACE}' },
+  { code: 'DELETE', name: '%{BKY_GBS_TOOLTIPS_KEY_DEL}' },
+  { code: 'ESCAPE', name: '%{BKY_GBS_TOOLTIPS_KEY_ESCAPE}' },
+  { code: 'INSERT', name: '%{BKY_GBS_TOOLTIPS_KEY_INSERT}' },
   { code: 'F1', name: 'F1' },
   { code: 'F2', name: 'F2' },
   { code: 'F3', name: 'F3' },
@@ -536,9 +587,9 @@ Blockly.Blocks.RepeticionSimple = {
 
     this.setColour(Blockly.CUSTOM_COLORS.RepeticionSimple || Blockly.CUSTOM_COLORS.controlStructure);
     this.appendValueInput('count')
-      .appendField('repetir');
+      .appendField(Blockly.Msg.GBS_REPEAT_MSG_1);
     this.appendDummyInput()
-      .appendField('veces');
+      .appendField(Blockly.Msg.GBS_REPEAT_MSG_2);
     this.appendStatementInput('block').setCheck(["Statement"]);
     this.setInputsInline(true);
   }
@@ -554,7 +605,7 @@ Blockly.Blocks.RepeticionCondicional = {
 
     this.setColour(Blockly.CUSTOM_COLORS.RepeticionCondicional || Blockly.CUSTOM_COLORS.controlStructure);
     this.appendValueInput('condicion')
-      .appendField('repetir hasta que');
+      .appendField(Blockly.Msg.GBS_UNTIL_MSG);
     this.appendStatementInput('block').setCheck(["Statement"]);
     this.setInputsInline(true);
   }
@@ -570,7 +621,7 @@ Blockly.Blocks.RepeticionCondicionalReal = {
 
     this.setColour(Blockly.CUSTOM_COLORS.RepeticionCondicional || Blockly.CUSTOM_COLORS.controlStructure);
     this.appendValueInput('condicion')
-      .appendField('repetir mientras que');
+      .appendField(Blockly.Msg.GBS_UNTIL_MSG);
     this.appendStatementInput('block').setCheck(["Statement"]);
     this.setInputsInline(true);
   }
@@ -592,10 +643,6 @@ Blockly.Blocks.AlternativaSimple = {
   }
 };
 
-Blockly.Msg["CONTROLS_IF_MSG_ELSE"] = "si no";
-Blockly.Msg["CONTROLS_IF_MSG_ELSEIF"] = "si no, si";
-Blockly.Msg["CONTROLS_IF_MSG_IF"] = "si";
-Blockly.Msg["CONTROLS_IF_MSG_THEN"] = "";
 delete Blockly.Constants.Logic.CONTROLS_IF_MUTATOR_MIXIN.compose;
 delete Blockly.Constants.Logic.CONTROLS_IF_MUTATOR_MIXIN.decompose;
 Blockly.Constants.Logic.CONTROLS_IF_MUTATOR_MIXIN.updateShape_ = function() {
@@ -665,13 +712,13 @@ Blockly.Blocks.AlternativaCompleta = {
     this.updateShape_();
   },
   customContextMenu: function(options) {
-    options.unshift({ text: `Limpiar ramas 'si no, si'`, enabled: true, callback: () => {
+    options.unshift({ text: Blockly.Msg.GBS_TOOLTIPS_IFS_CLEAN_BRANCHES, enabled: true, callback: () => {
       this.elseifCount_ = 0;
 
       this.updateShape_();
     }});
 
-    options.unshift({ text: `Agregar 'si no, si'`, enabled: true, callback: () => {
+    options.unshift({ text: Blockly.Msg.GBS_TOOLTIPS_IFS_ADD_ELSEIF, enabled: true, callback: () => {
       this.elseifCount_++;
 
       const valueConnections = [null];
@@ -713,7 +760,7 @@ Blockly.Blocks.Poner = {
     const icon = "putStone.png";
 
     this.jsonInit({
-      message0: '%1 Poner %2',
+      message0: '%{BKY_GBS_DROP_MSG}',
       type: "Statement",
       previousStatement: "Statement",
       nextStatement: "Statement",
@@ -730,7 +777,7 @@ Blockly.Blocks.Poner = {
         }
       ],
       colour: Blockly.CUSTOM_COLORS.Poner || Blockly.CUSTOM_COLORS.primitiveCommand,
-      tooltip: 'Poner color en casillero.',
+      tooltip: '%{BKY_GBS_DROP_TOOLTIP}',
       inputsInline: true
     });
   }
@@ -744,7 +791,7 @@ Blockly.Blocks.Sacar = {
       type: "Statement",
       previousStatement: "Statement",
       nextStatement: "Statement",
-      message0: '%1 Sacar %2',
+      message0: '%{BKY_GBS_GRAB_MSG}',
       args0: [
         {
           "type": "field_image",
@@ -758,7 +805,7 @@ Blockly.Blocks.Sacar = {
         }
       ],
       colour: Blockly.CUSTOM_COLORS.Sacar || Blockly.CUSTOM_COLORS.primitiveCommand,
-      tooltip: 'Sacar color de casillero.',
+      tooltip: '%{BKY_GBS_GRAB_TOOLTIP}',
       inputsInline: true
     });
   }
@@ -772,7 +819,7 @@ Blockly.Blocks.Mover = {
       type: "Statement",
       previousStatement: "Statement",
       nextStatement: "Statement",
-      message0: '%1 Mover %2',
+      message0: '%{BKY_GBS_MOVE_MSG}',
       args0: [
         {
           "type": "field_image",
@@ -786,7 +833,7 @@ Blockly.Blocks.Mover = {
         }
       ],
       colour: Blockly.CUSTOM_COLORS.Mover || Blockly.CUSTOM_COLORS.primitiveCommand,
-      tooltip: 'Mover en una dirección.',
+      tooltip: '%{BKY_GBS_MOVE_TOOLTIP}',
       inputsInline: true
     });
   }
@@ -800,7 +847,7 @@ Blockly.Blocks.IrAlBorde = {
       type: "Statement",
       previousStatement: "Statement",
       nextStatement: "Statement",
-      message0: '%1 Ir al borde %2',
+      message0: '%{BKY_GBS_MOVETOEDGE_MSG}',
       args0: [
         {
           "type": "field_image",
@@ -814,7 +861,7 @@ Blockly.Blocks.IrAlBorde = {
         }
       ],
       colour: Blockly.CUSTOM_COLORS.IrAlBorde || Blockly.CUSTOM_COLORS.primitiveCommand,
-      tooltip: 'Ir al borde del tablero.',
+      tooltip: '%{BKY_GBS_MOVETOEDGE_TOOLTIP}',
       inputsInline: true
     });
   }
@@ -828,7 +875,7 @@ Blockly.Blocks.VaciarTablero = {
       type: "Statement",
       previousStatement: "Statement",
       nextStatement: "Statement",
-      message0: '%1 Vaciar tablero',
+      message0: '%{BKY_GBS_CLEANBOARD_MSG}',
       args0: [
         {
           "type": "field_image",
@@ -838,7 +885,7 @@ Blockly.Blocks.VaciarTablero = {
         },
       ],
       colour: Blockly.CUSTOM_COLORS.VaciarTablero || Blockly.CUSTOM_COLORS.primitiveCommand,
-      tooltip: 'Vaciar el tablero.',
+      tooltip: '%{BKY_GBS_CLEANBOARD_TOOLTIP}',
       inputsInline: true
     });
   }
@@ -853,7 +900,7 @@ Blockly.Blocks.BOOM = {
       "previousStatement": "Statement",
       "nextStatement": "Statement",
       "lastDummyAlign0": "RIGHT",
-      "message0": "%1 Hacer ¡BOOM! porque:  %2 %3",
+      "message0": "%{BKY_GBS_BOOM_MSG}",
       "args0": [
         {
           "type": "field_image",
@@ -867,12 +914,12 @@ Blockly.Blocks.BOOM = {
         {
           "type": "field_input",
           "name": "boomDescription",
-          "text": "Ingresar motivo..."
+          "text": "%{BKY_GBS_BOOM_INPUT_MOTIVE_MSG}"
         }
       ],
       "inputsInline": false,
       "colour": Blockly.CUSTOM_COLORS.BOOM || Blockly.CUSTOM_COLORS.primitiveCommand,
-      "tooltip": "Este comando hace que estalle todo."
+      "tooltip": "%{BKY_GBS_BOOM_TOOLTIP}"
     });
   }
 };
@@ -890,9 +937,9 @@ Blockly.Blocks.ComandoCompletar = {
       "previousStatement": "Statement",
       "nextStatement": "Statement",
       "lastDummyAlign0": "RIGHT",
-      "message0": "COMPLETAR",
+      "message0": "%{BKY_GBS_COMPLETE_MSG}",
       "colour": Blockly.CUSTOM_COLORS.ComandoCompletar || Blockly.CUSTOM_COLORS.complete,
-      "tooltip": "Tenés que reemplazar este bloque por tu solución"
+      "tooltip": "%{BKY_GBS_COMPLETE_TOOLTIP}"
     });
   },
 
@@ -906,9 +953,9 @@ Blockly.Blocks.AsociacionDeTeclaCompletar = {
       "previousStatement": "InteractiveBinding",
       "nextStatement": "InteractiveBinding",
       "lastDummyAlign0": "RIGHT",
-      "message0": "COMPLETAR",
+      "message0": "%{BKY_GBS_COMPLETE_MSG}",
       "colour": Blockly.CUSTOM_COLORS.AsociacionDeTeclaCompletar || Blockly.CUSTOM_COLORS.complete,
-      "tooltip": "Tenés que reemplazar este bloque por tu solución"
+      "tooltip": "%{BKY_GBS_COMPLETE_TOOLTIP}"
     });
   },
 
@@ -948,10 +995,10 @@ Blockly.Blocks.ExpresionCompletar = {
   init: function () {
     this.jsonInit({
       "type": "completar_expression",
-      "message0": "COMPLETAR",
+      "message0": "%{BKY_GBS_COMPLETE_MSG}",
       "output": "any",
       "colour": Blockly.CUSTOM_COLORS.ExpresionCompletar || Blockly.CUSTOM_COLORS.complete,
-      "tooltip": "Tenés que reemplazar este bloque por tu solución"
+      "tooltip": "%{BKY_GBS_COMPLETE_TOOLTIP}"
     });
   },
 
@@ -974,16 +1021,26 @@ function createLiteralSelectorBlock(type,values){
           {
             type: "field_dropdown",
             name: type + "Dropdown",
-            options: values.map(value => [value,value])
+            options: values.map(e => [Blockly.Msg[e[0]] || e[1], e[1]])
           }
         ],
         output: type,
         colour: Blockly.CUSTOM_COLORS[`${type}Selector`] || Blockly.CUSTOM_COLORS.literalExpression,
-        tooltip: "Escoger " + type,
+        tooltip: "%{BKY_GBS_LITERAL_SELECTOR_TOOLTIP}",
       });
+
+      this.initialized = false;
+    },
+
+    afterInit: function() {
+      if (!this.initialized) {
+        this.options = values.map(e => [Blockly.Msg[e[0]] || e[1], e[1]])
+        this.initialized = true;
+      }
     },
 
     onchange: function(event) {
+      this.afterInit();
       const [image, dropdown] = this.inputList[0].fieldRow;
       const value = dropdown.getValue();
 
@@ -992,9 +1049,29 @@ function createLiteralSelectorBlock(type,values){
   };
 }
 
-Blockly.Blocks.ColorSelector = createLiteralSelectorBlock('Color',['Rojo','Verde','Negro','Azul']);
-Blockly.Blocks.DireccionSelector = createLiteralSelectorBlock('Direccion',['Este','Oeste','Norte','Sur']);
-Blockly.Blocks.BoolSelector = createLiteralSelectorBlock('Bool',['True','False']);
+Blockly.Blocks.ColorSelector =
+  createLiteralSelectorBlock(
+    'Color', [
+      ['GBS_COLOR_BLUE_MSG', 'Azul'],
+      ['GBS_COLOR_BLACK_MSG', 'Negro'],
+      ['GBS_COLOR_RED_MSG', 'Rojo'],
+      ['GBS_COLOR_GREEN_MSG', 'Verde']
+    ]);
+
+Blockly.Blocks.DireccionSelector =
+  createLiteralSelectorBlock(
+    'Direccion',[
+      ['GBS_DIR_NORTH_MSG', 'Norte'],
+      ['GBS_DIR_EAST_MSG', 'Este'],
+      ['GBS_DIR_SOUTH_MSG', 'Sur'],
+      ['GBS_DIR_WEST_MSG', 'Oeste']
+    ]);
+Blockly.Blocks.BoolSelector =
+  createLiteralSelectorBlock(
+    'Bool', [
+      ['GBS_BOOL_FALSE_MSG', 'False'],
+      ['GBS_BOOL_TRUE_MSG', 'True'],
+    ]);
 
 Blockly.Blocks.List = {
   init: function () {
@@ -1058,7 +1135,7 @@ Blockly.Blocks.List = {
         this._addElement();
       }.bind(this)
     );
-    setTimeout(() => { addButton.setTooltip("Agregar elemento"); });
+    setTimeout(() => { addButton.setTooltip("%{BKY_GBS_TOOLTIPS_OPERATOR_ADD}"); });
 
     const input = this.appendDummyInput();
     input.appendField(addButton);
@@ -1085,7 +1162,7 @@ Blockly.Blocks.List = {
         this._removeElement(input);
       }.bind(this)
     );
-    setTimeout(() => { removeButton.setTooltip("Quitar elemento"); });
+    setTimeout(() => { removeButton.setTooltip("%{BKY_GBS_TOOLTIPS_OPERATOR_ADD}"); });
     input.appendField(removeButton);
   }
 };
@@ -1122,9 +1199,9 @@ Blockly.Blocks.AlternativaEnExpresiones = {
     this._removeAddButton();
 
     if (this.length > 1) this._addNewline("newline" + this.length);
-    this.appendDummyInput().appendField('elegir').name = "label1" + this.length;
+    this.appendDummyInput().appendField(Blockly.Msg.GBS_CHOOSE_MSG_1).name = "label1" + this.length;
     const input1 = this.appendValueInput('element' + this.length);
-    this.appendDummyInput().appendField('cuando').name = "label2" + this.length;
+    this.appendDummyInput().appendField(Blockly.Msg.GBS_CHOOSE_MSG_2).name = "label2" + this.length;
     const input2 = this.appendValueInput('condition' + this.length);
 
     if (this.length > 1) this._addRemoveButtonFor(this.length, input2);
@@ -1134,7 +1211,7 @@ Blockly.Blocks.AlternativaEnExpresiones = {
   },
 
   _removeElement: function(n) {
-    const elements = ["label1", "element", "label2", "condition", "newline"];
+    const elements = ["label1", Blockly.Msg.GBS_CHOOSE_MSG_1, "label2", Blockly.Msg.GBS_CHOOSE_MSG_2, "newline"];
     elements.forEach((element) => this.removeInput(element + n));
     this.length--;
 
@@ -1163,7 +1240,7 @@ Blockly.Blocks.AlternativaEnExpresiones = {
         this._addElement();
       }.bind(this)
     );
-    setTimeout(() => { addButton.setTooltip("Agregar opción"); });
+    setTimeout(() => { addButton.setTooltip("%{BKY_GBS_TOOLTIPS_OPTIONS_ADD}"); });
 
     const input = this.appendDummyInput();
     input.appendField(addButton);
@@ -1179,7 +1256,7 @@ Blockly.Blocks.AlternativaEnExpresiones = {
     this._addNewline("otherwiseNewline");
 
     const textInput = this.appendDummyInput();
-    textInput.appendField("o si no");
+    textInput.appendField(Blockly.Msg.GBS_OTHERWISE);
     textInput.name = "otherwiseText";
 
     this.appendValueInput("otherwise");
@@ -1206,7 +1283,7 @@ Blockly.Blocks.AlternativaEnExpresiones = {
         this._removeElement(parseInt(input.name.replace(/\D/g,'')));
       }.bind(this)
     );
-    setTimeout(() => { removeButton.setTooltip("Quitar opción"); });
+    setTimeout(() => { removeButton.setTooltip("%{BKY_GBS_TOOLTIPS_OPTIONS_REMOVE}"); });
     input.appendField(removeButton);
   }
 };
@@ -1217,19 +1294,19 @@ Blockly.Blocks.ForEach = {
       type: "Statement",
       previousStatement: "Statement",
       nextStatement: "Statement",
-        message0: 'Repetir para cada %1 %2 %3',
+        message0: '%{BKY_GBS_FOREACH_MSG}',
         args0: [
           {
             "type": "field_input",
             "name": "varName",
-            "text": "elemento"
+            "text": "%{BKY_GBS_FOREACH_INDEX_MSG}"
           },
           {
             type: 'input_dummy'
           },
           {
             "type": "field_label",
-            "text": "en"
+            "text": "%{BKY_GBS_FOREACH_IN_MSG}"
           },
         ]
     });
@@ -1273,7 +1350,7 @@ Blockly.Blocks.ForEach = {
         });
       }
     );
-    setTimeout(() => { createGetterButton.setTooltip("Obtener variable"); });
+    setTimeout(() => { createGetterButton.setTooltip("%{BKY_GBS_TOOLTIPS_VARS_GET}"); });
 
     this.inputList[0].appendField(createGetterButton);
   }
@@ -1298,9 +1375,9 @@ function createSingleParameterExpressionBlock(blockText,returnType, colorType = 
   };
 }
 
-Blockly.Blocks.hayBolitas = createSingleParameterExpressionBlock('hay bolitas','Bool', "primitiveExpression");
-Blockly.Blocks.puedeMover = createSingleParameterExpressionBlock('puede mover','Bool', "primitiveExpression");
-Blockly.Blocks.nroBolitas = createSingleParameterExpressionBlock('número de bolitas','Number', "primitiveExpression");
+Blockly.Blocks.hayBolitas = createSingleParameterExpressionBlock('%{BKY_GBS_HASSTONES_MSG}','Bool', "primitiveExpression");
+Blockly.Blocks.puedeMover = createSingleParameterExpressionBlock('%{BKY_GBS_CANMOVE_MSG}','Bool', "primitiveExpression");
+Blockly.Blocks.nroBolitas = createSingleParameterExpressionBlock('%{BKY_GBS_NUMSTONES_MSG}','Number', "primitiveExpression");
 
 // ------------------------------------------------------
 // Operaciones:
@@ -1376,7 +1453,7 @@ Blockly.Blocks.OperadorLogico = {
         {
           type: 'field_dropdown',
           name: 'OPERATOR',
-          options: [['y también', 'AND'], ['o bien', '||']]
+          options: [['%{BKY_GBS_AND_MSG}', 'AND'], ['%{BKY_GBS_OR_MSG}', '||']]
         },
         {
           type: 'input_dummy'
@@ -1399,7 +1476,7 @@ Blockly.Blocks.Asignacion = {
 
     this.jsonInit({
       "type": "asignacion",
-      "message0": "%1 Recordar que %2 %3 vale %4 %5",
+      "message0": "%{BKY_GBS_ASSIGNMENT_MSG}",
       "args0": [
         {
           "type": "field_image",
@@ -1410,7 +1487,7 @@ Blockly.Blocks.Asignacion = {
         {
         "type": "field_input",
         "name": "varName",
-        "text": "una variable",
+        "text": "%{BKY_GBS_VARIABLE_NAME_MSG}",
         "class": Blockly.Procedures.rename
         },
         {
@@ -1445,7 +1522,7 @@ Blockly.Blocks.Asignacion = {
         self.createVariableBlock(name);
       }
     );
-    setTimeout(() => { createGetterButton.setTooltip("Obtener variable"); });
+    setTimeout(() => { createGetterButton.setTooltip("%{BKY_GBS_TOOLTIPS_VARS_GET}"); });
 
     this.appendDummyInput().appendField(createGetterButton);
   },
@@ -1453,7 +1530,7 @@ Blockly.Blocks.Asignacion = {
   customContextMenu: function(options) {
     var name = this.getFieldValue('varName');
 
-    options.unshift({ text: `Crear ${name}`, enabled: true, callback: () => {
+    options.unshift({ text: Blockly.Msg.GBS_TOOLTIPS_VARS_CREATE.replace('${name}', name), enabled: true, callback: () => {
       this.createVariableBlock(name);
     }});
   },
@@ -1473,7 +1550,7 @@ Blockly.Blocks.variables_get = {
         {
         "type": "field_input",
         "name": "VAR",
-        "text": "nombre de variable"
+        "text": "%{BKY_GBS_VARIABLE_NAME_TOOLTIP}"
         }
       ],
       "output": null,
@@ -1516,7 +1593,7 @@ Blockly.Blocks.OperadoresDeEnumeracion = {
         {
           type: 'field_dropdown',
           name: 'OPERATOR',
-          options: [['siguiente', 'siguiente'], ['previo', 'previo'], ['opuesto', 'opuesto']]
+          options: [['%{BKY_GBS_NEXT_MSG}', 'siguiente'], ['%{BKY_GBS_PREVIOUS_MSG}', 'previo'], ['%{BKY_GBS_OPPOSITE_MSG}', 'opuesto']]
         },
         {
           type: 'input_value',
@@ -1530,10 +1607,10 @@ Blockly.Blocks.OperadoresDeEnumeracion = {
   }
 };
 
-Blockly.Blocks.not = createSingleParameterExpressionBlock('no','Bool');
-Blockly.Blocks.siguiente = createSingleParameterExpressionBlock('siguiente','*');
-Blockly.Blocks.previo = createSingleParameterExpressionBlock('previo','*');
-Blockly.Blocks.opuesto = createSingleParameterExpressionBlock('opuesto','*');
+Blockly.Blocks.not = createSingleParameterExpressionBlock('%{BKY_GBS_NOT_MSG}','Bool');
+Blockly.Blocks.siguiente = createSingleParameterExpressionBlock('%{BKY_GBS_NEXT_MSG}','*');
+Blockly.Blocks.previo = createSingleParameterExpressionBlock('%{BKY_GBS_PREVIOUS_MSG}','*');
+Blockly.Blocks.opuesto = createSingleParameterExpressionBlock('%{BKY_GBS_OPPOSITE_MSG}','*');
 
 // Removing "/" from the block id character set to avoid syntax errors
 Blockly.utils.genUid.soup_ = Blockly.utils.genUid.soup_.replace("/", "");
@@ -1567,7 +1644,7 @@ Blockly.Blocks.procedures_defnoreturn.customContextMenu = function(options) {
   const block = this;
   options.splice(1, 0, {
     enabled: true,
-    text: block.$isAtomic ? "✗ Mostrar paso a paso" : "✓ Mostrar paso a paso",
+    text: block.$isAtomic ? "${BKY_GBS_TOOLTIPS_SHOW_STEP_OFF}" : "%{BKY_GBS_TOOLTIPS_SHOW_STEP_ON}",
     callback: function() {
       block.$isAtomic = !block.$isAtomic;
       triggerRefresh(block);
@@ -1587,3 +1664,8 @@ Blockly.Blocks.procedures_defnoreturn.domToMutation = function(xmlElement) {
 
   return oldProceduresDomToMutation.call(this, xmlElement);
 }
+
+Blockly.Blocks.procedures_callreturn.onchange = updateProcedBlocklyLanguage;
+Blockly.Blocks.procedures_defnoreturn.onchange = updateProcedBlocklyLanguage;
+Blockly.Blocks.procedures_callnoreturnnoparams.onchange = updateProcedBlocklyLanguage;
+Blockly.Blocks.procedures_defnoreturnnoparams.onchange = updateProcedBlocklyLanguage;

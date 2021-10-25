@@ -1,6 +1,6 @@
 {
   "name": "gs-element-blockly",
-  "version": "0.34.0",
+  "version": "0.35.1",
   "description": "Element providing Blockly interface for Gobstones Web",
   "main": "index.js",
   "directories": {

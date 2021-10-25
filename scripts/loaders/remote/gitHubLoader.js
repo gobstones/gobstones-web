@@ -10,11 +10,16 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-var GITHUB_CLIENT_ID = "086085200026d5c54c19";
-var GITHUB_CLIENT_SECRET = "f40981be76b00e35d4437d71184f42a70d08f3a6";
-
+// eslint-disable-next-line no-unused-vars
 var GitHubLoader = function (_ExpandedLoader) {
   _inherits(GitHubLoader, _ExpandedLoader);
+
+  _createClass(GitHubLoader, null, [{
+    key: "apiUrl",
+    get: function get() {
+      return 'https://actividades.gobstones.org';
+    }
+  }]);
 
   function GitHubLoader(projectType, slug, initialPath) {
     _classCallCheck(this, GitHubLoader);
@@ -59,16 +64,27 @@ var GitHubLoader = function (_ExpandedLoader) {
       });
     }
   }, {
+    key: "hasAssets",
+    value: function hasAssets() {
+      return this.scanDir('.').then(function (entries) {
+        return entries.some(function (e) {
+          return e.name === 'assets' && e.type === 'dir';
+        });
+      }).catch(function () {
+        return false;
+      });
+    }
+  }, {
     key: "scanDir",
     value: function scanDir() {
-      var path = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : this.initialPath || "";
+      var path = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : this.initialPath || ".";
 
       var _slug$split = this.slug.split("/"),
           _slug$split2 = _slicedToArray(_slug$split, 2),
           username = _slug$split2[0],
           repoName = _slug$split2[1];
 
-      return $.get("https://api.github.com/repos/" + username + "/" + repoName + "/contents/" + path + "?client_id=" + GITHUB_CLIENT_ID + "&client_secret=" + GITHUB_CLIENT_SECRET);
+      return $.get(GitHubLoader.apiUrl + "/repo/" + username + "/" + repoName + "?path=" + path);
     }
   }, {
     key: "_loadEntry",
@@ -84,21 +100,19 @@ var GitHubLoader = function (_ExpandedLoader) {
     }
   }], [{
     key: "reportIssue",
-    value: function reportIssue(title, body) {
+    value: function reportIssue(params) {
       return $.ajax({
         type: "POST",
-        url: "https://api.github.com/repos/gobstones/gobstones-issues/issues",
-        data: JSON.stringify({ title: title, body: body }),
+        url: GitHubLoader.apiUrl + "/issues",
+        data: JSON.stringify(params),
         dataType: "json",
-        headers: {
-          "Authorization": "token " + atob("M2ZiMGJkNWM0YzVjZGJkY2FlMTIwOTgzNmRjNTI5M2EwYTdmZGU2Yw==")
-        }
+        contentType: 'application/json; charset=utf-8'
       });
     }
   }, {
     key: "getDesktopRelease",
     value: function getDesktopRelease() {
-      return $.get("https://api.github.com/repos/gobstones/gobstones-web-desktop/releases/latest?client_id=${GITHUB_CLIENT_ID}&client_secret=${GITHUB_CLIENT_SECRET}");
+      return $.get("https://api.github.com/repos/gobstones/gobstones-web-desktop/releases/latest");
     }
   }]);
 

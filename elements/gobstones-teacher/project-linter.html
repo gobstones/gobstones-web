@@ -1,0 +1,61 @@
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../scripts/behaviors/busListenerBehavior.html">
+<link rel="import" href="../../scripts/behaviors/localizationBehavior.html">
+
+</head><body><dom-module id="project-linter">
+  <style>
+    .container {
+      margin: 0 auto;
+    }
+
+    .check-title {
+      margin-block-end: 0;
+    }
+
+    .check-success {
+      color: green;
+    }
+
+    .check-error {
+      color: red;
+    }
+
+    .check-warning {
+      color: #efb200;
+    }
+  </style>
+
+  <template>
+    <h1>[[localize("validating-project")]]</h1>
+    <div class="container">
+      <template is="dom-if" if="[[ _pendingChecks() ]]">
+        <h3>[[localize("checks-pending")]]</h3>
+      </template>
+
+      <template is="dom-if" if="[[ !_pendingChecks() ]]">
+        <template is="dom-if" if="[[ _anyErrors(failedChecksCount) ]]">
+          <template is="dom-repeat" items="[[failedChecks]]">
+            <div>
+              <h3 class="check-title">
+                <iron-icon icon="icons:{{item.level}}" class$="check-{{item.level}}"></iron-icon>
+                <span>{{_errorTitle(item)}}</span>
+              </h3>
+              <span>{{_errorDescription(item)}}</span>
+            </div>
+          </template>
+        </template>
+
+        <template is="dom-if" if="[[ !_anyErrors(failedChecksCount) ]]">
+          <div>
+            <h3 class="check-title">
+              <iron-icon icon="icons:check-circle" class="check-success"></iron-icon>
+              <span>[[localize("check-no-errors")]]</span>
+            </h3>
+          </div>
+        </template>
+      </template>
+    </div>
+  </template>
+
+  </dom-module>
+<script src="project-linter.js"></script></body></html>

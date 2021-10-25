@@ -8,6 +8,7 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
+// eslint-disable-next-line no-unused-vars
 var InitialBoardLoader = function (_TextLoader) {
   _inherits(InitialBoardLoader, _TextLoader);
 
@@ -40,7 +41,6 @@ var InitialBoardLoader = function (_TextLoader) {
     value: function readContent(context, content) {
       var panel = context.boards;
       var board = new Parser().readGbb(content);
-      var initialState = panel.initialState;
 
       panel.addInitialState({
         header: { x: board.head.x, y: board.head.y },

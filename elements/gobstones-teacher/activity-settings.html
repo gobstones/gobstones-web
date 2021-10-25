@@ -1,0 +1,68 @@
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/paper-spoiler/paper-spoiler.html">
+<link rel="import" href="../../scripts/features/project.html">
+
+</head><body><dom-module id="activity-settings">
+  <style>
+    .container {
+      display: flex;
+      gap: 30px;
+    }
+
+    .choice {
+      border: 1px solid #c8c7c7;
+      border-radius: 5px;
+      padding: 0 10px;
+      cursor: pointer;
+      transition: 0.2s cubic-bezier(0.3, 0, 0.5, 1);
+      transition-property: color, background-color, border-color, height;
+    }
+
+    .choice:hover {
+      background-color: #e9f3ff;
+      transition-duration: 0.1s;
+    }
+  </style>
+
+  <template>
+    <h1>
+      ¡Te damos la bienvenida a Gobstones Teacher!
+      <paper-icon-button dialog-confirm="" suffix="" icon="folder-open" on-click="loadFromFile"></paper-icon-button>
+    </h1>
+
+    <h3>¿Qué tipo de proyecto querés crear?</h3>
+
+    <div class="container">
+      <div class="choice" dialog-confirm="" on-tap="notifySettingsBlocks">
+        <h3>{{ allConstructionModes.blocks.name }}</h3>
+        <!-- @faloi: puse URLs absolutas porque Gulp no transforma las URLs dinámicas -->
+        <img width="250" src="https://gobstones.github.io/gobstones-web-staging/images/activity/{{allConstructionModes.blocks.id}}-{{executionType.id}}.png">
+      </div>
+      <div class="choice" dialog-confirm="" on-tap="notifySettingsText">
+        <h3>{{ allConstructionModes.text.name }}</h3>
+        <!-- @faloi: puse URLs absolutas porque Gulp no transforma las URLs dinámicas -->
+        <img width="250" src="https://gobstones.github.io/gobstones-web-staging/images/activity/{{allConstructionModes.text.id}}-{{executionType.id}}.png">
+      </div>
+    </div>
+
+    <div style="margin-top: 10px;">
+      <paper-spoiler title="Otras opciones">
+        <paper-item style="padding: 0;">
+          <paper-item-body three-line="">
+            <div>Modalidad de ejecución</div>
+            <div secondary="">Para hacer un juego o simulación, elegí interactivo.</div>
+          </paper-item-body>
+          <paper-dropdown-menu>
+            <paper-listbox class="dropdown-content" selected="{{ executionTypeIndex }}">
+              <template is="dom-repeat" items="{{ allExecutionTypes }}">
+                <paper-item>{{item.name}}</paper-item>
+              </template>
+            </paper-listbox>
+          </paper-dropdown-menu>
+        </paper-item>
+      </paper-spoiler>
+    </div>
+  </template>
+
+  </dom-module>
+<script src="activity-settings.js"></script></body></html>

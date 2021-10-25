@@ -17,6 +17,9 @@ Polymer({
     permissions: {
       type: Object,
       value: { can_use_library: true }
+    },
+    teacherConstructionMode: {
+      type: Object
     }
   },
   observers: ["_onSelectedLanguageChanged(selectedLanguage)"],
@@ -30,6 +33,10 @@ Polymer({
       _this.loadCodeOrBlocks();
     }).subscribeTo("save-code", function () {
       _this.saveCodeOrBlocks();
+    }).subscribeTo('activity-settings-update', function (_ref) {
+      var constructionMode = _ref.constructionMode;
+
+      _this.teacherConstructionMode = constructionMode;
     });
 
     var language = window.STORAGE.getItem("language") || "es";
@@ -205,6 +212,11 @@ Polymer({
     return projectType === "teacher";
   },
 
+  _isEmbeddedOrTeacherProject: function _isEmbeddedOrTeacherProject(projectType) {
+    return this.isEmbedded() || this._isTeacherProject(projectType);
+  },
+
+
   _isCodeOrBlocksProject: function _isCodeOrBlocksProject(projectType) {
     return this._isCodeProject(projectType) || this._isBlocksProject(projectType);
   },
@@ -216,6 +228,14 @@ Polymer({
   _isBlocksOrTeacherProject: function _isBlocksOrTeacherProject(projectType) {
     return this._isBlocksProject(projectType) || this._isTeacherProject(projectType);
   },
+
+  _isBlocksEnabled: function _isBlocksEnabled(projectType, teacherConstructionMode) {
+    return this._isBlocksProject(projectType) || this._isTeacherProject(projectType) && _.get(teacherConstructionMode, 'id') === 'blocks';
+  },
+  _isTextEnabled: function _isTextEnabled(projectType, teacherConstructionMode) {
+    return this._isCodeProject(projectType) || this._isTeacherProject(projectType) && _.get(teacherConstructionMode, 'id') === 'text';
+  },
+
 
   // _getDownloadProgress: function(downloadProgress, downloadTotal) {
   //   if (downloadTotal <= 0) return 0;

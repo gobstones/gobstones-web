@@ -31,7 +31,6 @@ Polymer({
     if (_.isEmpty(this.slug)) return;
 
     var dialog = window.GBS_REQUIRE("electron").remote.dialog;
-    var fs = window.GBS_REQUIRE("fs");
 
     var paths = dialog.showOpenDialog({
       title: this.localize("download-course-select-path"),
@@ -82,7 +81,6 @@ Polymer({
 
     var slug = course.course;
     var dialog = window.GBS_REQUIRE("electron").remote.dialog;
-    var fs = window.GBS_REQUIRE("fs");
 
     var path = void 0;
     if (isRefreshing) {
@@ -137,7 +135,7 @@ Polymer({
       }
     }
 
-    DesktopGuideLoader.download(courseSlug, function (loaded, total) {
+    DesktopGuideLoader.download(courseSlug, function (loaded, _total) {
       _this._changeCourse(course, function (it) {
         return it.downloadProgress = bytes(loaded);
       });
@@ -148,7 +146,7 @@ Polymer({
       });
       _this._saveCourses();
       _this._updateGlobalDownloadState(true);
-    }).catch(function (e) {
+    }).catch(function () {
       _this._changeCourse(course, function (it) {
         it.isDownloading = false;
       });

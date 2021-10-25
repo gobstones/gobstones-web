@@ -75,30 +75,28 @@ Polymer({
     },
     _blocks: Array
   },
-  behaviors: [Polymer.LocalizationBehavior],
+  behaviors: [Polymer.LocalizationBehavior, Polymer.BusListenerBehavior],
   listeners: {
     "toolbox-changed": "_onBlocksUpdate"
   },
   observers: ["onBlocksChanged(blocks.*, defaultToolbox)"],
 
-  onBlocksChanged: function onBlocksChanged(_ref3, defaultToolbox) {
+  onBlocksChanged: function onBlocksChanged(_ref3) {
     var blocks = _ref3.base;
 
     if (this._isEditingBlocks) return;
-
-    var forEachBlock = function forEachBlock(array, func) {
-      array.forEach(function (it) {
-        func(it);
-        forEachBlock(it.children, func);
-      });
-    };
 
     this._blocks = this._buildBlocks(this._getTree(), blocks);
   },
 
 
   ready: function ready() {
+    var _this = this;
+
     this._blocks = this._buildBlocks(this._getTree());
+    this.subscribeTo("teacher-toolbox-changed", function (blocks) {
+      return _this.onBlocksChanged({ base: blocks });
+    });
   },
 
   _getTree: function _getTree() {
@@ -112,7 +110,7 @@ Polymer({
     return Blockly.Xml.textToDom("\n          <xml id=\"toolbox\" style=\"display: none\">\n            <category name=\"Comandos\">\n              <category name=\"Comandos primitivos\">\n                <block type=\"Poner\"></block>\n                <block type=\"Sacar\"></block>\n                <block type=\"Mover\"></block>\n                <block type=\"IrAlBorde\"></block>\n                <block type=\"VaciarTablero\"></block>\n                <block type=\"BOOM\"></block>\n              </category>\n              <category name=\"Procedimientos primitivos\">\n              </category>\n              <category name=\"Mis procedimientos\" custom=\"PROCEDURE_CALLS\">\n              </category>\n              <category name=\"Alternativas\">\n                <block type=\"AlternativaSimple\"></block>\n                <block type=\"AlternativaCompleta\"></block>\n              </category>\n              <category name=\"Repeticiones\">\n                <block type=\"RepeticionSimple\"></block>\n                <block type=\"RepeticionCondicional\"></block>\n                <block type=\"ForEach\"></block>\n              </category>\n              <category name=\"Asignaci\xF3n\">\n                <block type=\"Asignacion\"></block>\n              </category>\n            </category>\n            <category name=\"Expresiones\">\n              <category name=\"Literales\">\n                <block type=\"math_number\"></block>\n                <block type=\"ColorSelector\"></block>\n                <block type=\"DireccionSelector\"></block>\n                <block type=\"BoolSelector\"></block>\n                <block type=\"List\"></block>\n              </category>\n              <category name=\"Expresiones primitivas\">\n                <block type=\"hayBolitas\"></block>\n                <block type=\"puedeMover\"></block>\n                <block type=\"nroBolitas\"></block>\n              </category>\n              <category name=\"Funciones primitivas\">\n              </category>\n              <category name=\"Mis funciones\" custom=\"FUNCTION_CALLS\">\n              </category>\n              <category name=\"Operadores\">\n                <block type=\"OperadorNumerico\"></block>\n                <block type=\"OperadorDeComparacion\"></block>\n                <block type=\"OperadorLogico\"></block>\n                <block type=\"not\"></block>\n                <block type=\"OperadoresDeEnumeracion\"></block>\n              </category>\n            </category>\n            <category name=\"Definiciones\">\n              <category name=\"Programas\">\n                <block type=\"Program\"></block>\n                <block type=\"InteractiveProgram\"></block>\n              </category>\n              <category name=\"Eventos\">\n                <block type=\"InteractiveLetterBinding\"></block>\n                <block type=\"InteractiveNumberBinding\"></block>\n                <block type=\"InteractiveKeyBinding\"></block>\n              </category>\n              <category name=\"Procedimientos\">\n                <block type=\"procedures_defnoreturnnoparams\"></block>\n                <block type=\"procedures_defnoreturn\"></block>\n              </category>\n              <category name=\"Funciones\">\n                <block type=\"procedures_defreturnsimple\"></block>\n                <block type=\"procedures_defreturnsimplewithparams\"></block>\n                <block type=\"procedures_defreturn\"></block>\n              </category>\n            </category>\n            <category name=\"Auxiliares Docente\" gbs_visible=\"teacher\">\n              <block type=\"ComandoCompletar\"></block>\n              <block type=\"ExpresionCompletar\"></block>\n              <block type=\"AsociacionDeTeclaCompletar\"></block>\n            </category>\n          </xml>\n        ");
   },
   _buildBlocks: function _buildBlocks(rootNode, blocks) {
-    var _this = this;
+    var _this2 = this;
 
     var toArray = function toArray(arrayLike) {
       return Array.apply(null, arrayLike);
@@ -145,7 +143,7 @@ Polymer({
         alias: alias,
         visible: !hasVisibleBlocksList,
         enabled: blocks ? !_.includes(blocks.disabled, alias) : true,
-        children: _this._buildBlocks(node, blocks),
+        children: _this2._buildBlocks(node, blocks),
         isBlock: node.tagName === "block",
         setVisible: function setVisible(isVisible) {
           this.visible = isVisible;
@@ -184,32 +182,43 @@ Polymer({
     }).compact().value();
   },
   _onBlocksUpdate: function _onBlocksUpdate() {
-    var _this2 = this;
+    var _this3 = this;
 
     if (!this.__onBlocksUpdate) this.__onBlocksUpdate = _.debounce(function () {
-      _this2._isEditingBlocks = true;
-      _this2.blocks = {
-        visible: _this2._getVisibleBlocks(_this2._blocks),
-        disabled: _this2._getDisabledBlocks(_this2._blocks),
-        defaultToolbox: _.trim(_this2.defaultToolbox) !== "" ? _this2.defaultToolbox : undefined
+      _this3._isEditingBlocks = true;
+      _this3.blocks = {
+        visible: _this3._getVisibleBlocks(_this3._blocks),
+        disabled: _this3._getDisabledBlocks(_this3._blocks),
+        defaultToolbox: _.trim(_this3.defaultToolbox) !== "" ? _this3.defaultToolbox : undefined
       };
-      _this2._isEditingBlocks = false;
+      _this3._notifySelectedBlocksChanged();
+      _this3._isEditingBlocks = false;
     }, 100);
 
     this.__onBlocksUpdate();
   },
+
+
+  /* @faloi:
+  Agregué este método para que el metadata-editor se entere de que cambiaron los
+  bloques seleccionados.
+  https://polymer-library.polymer-project.org/1.0/docs/devguide/events#custom-events
+  */
+  _notifySelectedBlocksChanged: function _notifySelectedBlocksChanged() {
+    this.fire('teacher-selected-blocks-changed', this.blocks);
+  },
   _getVisibleBlocks: function _getVisibleBlocks(array) {
-    var _this3 = this;
+    var _this4 = this;
 
     return _(array).reject({ state: "off" }).flatMap(function (it) {
-      return it.state === "on" ? it.alias : _this3._getVisibleBlocks(it.children);
+      return it.state === "on" ? it.alias : _this4._getVisibleBlocks(it.children);
     }).value();
   },
   _getDisabledBlocks: function _getDisabledBlocks(array) {
-    var _this4 = this;
+    var _this5 = this;
 
     return _(array).flatMap(function (it) {
-      return it.children.length > 0 ? _this4._getDisabledBlocks(it.children) : it.enabled ? null : it.alias;
+      return it.children.length > 0 ? _this5._getDisabledBlocks(it.children) : it.enabled ? null : it.alias;
     }).compact().value();
   }
 });

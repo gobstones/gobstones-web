@@ -1,0 +1,31 @@
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../scripts/behaviors/busListenerBehavior.html">
+<link rel="import" href="../../scripts/behaviors/localizationBehavior.html">
+
+</head><body><dom-module id="project-feature">
+  <style>
+    .feature-enabled {
+      color: green;
+    }
+
+    .feature-disabled {
+      color: red;
+    }
+  </style>
+
+  <template>
+    <div secondary="">
+      <template is="dom-if" if="[[ !enabled ]]">
+        <iron-icon icon="icons:close" class="feature-disabled"></iron-icon>
+      </template>
+      <template is="dom-if" if="[[ enabled ]]">
+        <iron-icon icon="icons:check" class="feature-enabled"></iron-icon>
+      </template>
+      {{name}}
+    </div>
+  </template>
+
+  </dom-module>
+<script src="project-feature.js"></script></body></html>

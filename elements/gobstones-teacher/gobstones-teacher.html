@@ -3,6 +3,9 @@
 <link rel="import" href="../../scripts/behaviors/busListenerBehavior.html">
 <link rel="import" href="../../scripts/jquery.html">
 <link rel="import" href="../../scripts/simplemde.html">
+<link rel="import" href="./project-linter.html">
+<link rel="import" href="./alert-banner.html">
+<link rel="import" href="./activity-settings.html">
 
 </head><body><dom-module id="gobstones-teacher">
   <template>
@@ -66,6 +69,38 @@
         padding-left: 5px;
         padding-right: 5px;
       }
+
+      /* @faloi:
+      Esto no debería ser necesasrio, pero por algún motivo no importa los estilos del paper-dialog. */
+      .buttons > paper-button {
+        display: var(--layout-inline_-_display);
+        -ms-flex-align: var(--layout-center-center_-_-ms-flex-align);
+        -webkit-align-items: var(--layout-center-center_-_-webkit-align-items);
+        align-items: var(--layout-center-center_-_align-items);
+        -ms-flex-pack: var(--layout-center-center_-_-ms-flex-pack);
+        -webkit-justify-content: var(--layout-center-center_-_-webkit-justify-content);
+        justify-content: var(--layout-center-center_-_justify-content);
+        position: relative;
+        box-sizing: border-box;
+        min-width: 5.14em;
+        margin: 0 0.29em;
+        background: transparent;
+        -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+        -webkit-tap-highlight-color: transparent;
+        font: inherit;
+        text-transform: uppercase;
+        outline-width: 0;
+        border-radius: 3px;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        -webkit-user-select: none;
+        user-select: none;
+        cursor: pointer;
+        z-index: 0;
+        padding: 0.7em 0.57em;
+        font-family: var(--paper-font-common-base_-_font-family);
+        -webkit-font-smoothing: var(--paper-font-common-base_-_-webkit-font-smoothing);
+      }
     </style>
 
     <div>
@@ -75,59 +110,45 @@
         </div>
       </paper-tooltip>
       <paper-tabs id="editorTab" selected="{{selectedTab}}" class="bottom self-end">
-        <paper-tab>[[localize("blocks")]]</paper-tab>
-        <paper-fab id="fab-sync-button" mini="" icon="notification:sync-disabled" class="fab-sync sync-off" on-click="_onBlocksSyncClick"></paper-fab>
-        <paper-tab>[[localize("code")]]</paper-tab>
         <paper-tab>[[localize("teachers-library")]]</paper-tab>
-        <paper-tab>[[localize("students-library")]]</paper-tab>
+        <paper-tab hidden$="{{_isTextMode(constructionMode)}}">[[localize("students-code")]]</paper-tab>
+        <paper-tab hidden$="{{_isBlocksMode(constructionMode)}}">[[localize("students-code")]]</paper-tab>
         <paper-tab>[[localize("description")]]</paper-tab>
         <paper-tab>[[localize("attire")]]</paper-tab>
         <paper-tab>[[localize("settings")]]</paper-tab>
       </paper-tabs>
 
-      <template is="dom-if" if="{{isBlocksOrCodeTabSelected(selectedTab)}}">
-        <div class="solution-selector">
-          <paper-dropdown-menu no-animations="" no-label-float="" vertical-align="bottom" horizontal-align="right">
-            <paper-listbox class="dropdown-content" selected="{{selectedSolution}}">
-              <template is="dom-repeat" items="{{ availableSolutions }}" rendered-item-count="{{solutionsCount}}">
-                <paper-item>{{getSolutionDisplayName(item, localize)}}</paper-item>
-              </template>
-            </paper-listbox>
-          </paper-dropdown-menu>
+      <paper-dialog id="projectLinterModal" modal="">
+        <paper-dialog-scrollable>
+          <project-linter></project-linter>
+        </paper-dialog-scrollable>
 
-          <template is="dom-if" if="{{selectedSolution}}">
-            <paper-button id="rename-solution-button" style="z-index: 99" on-click="renameSolution"><iron-icon class="black-button" icon="icons:create"></iron-icon></paper-button>
-            <paper-tooltip for="rename-solution-button" position="bottom" animation-config="{{tooltipAnimation}}">
-              <div class="button-tooltip">
-                [[localize("tooltip-rename-solution")]]
-              </div>
-            </paper-tooltip>
-          </template>
-
-          <paper-button id="add-solution-button" style="z-index: 99" on-click="addSolutionByName"><iron-icon class="black-button" icon="icons:add"></iron-icon></paper-button>
-          <paper-tooltip for="add-solution-button" position="bottom" animation-config="{{tooltipAnimation}}">
-            <div class="button-tooltip">
-              [[localize("tooltip-add-solution")]]
-            </div>
-          </paper-tooltip>
-
-          <paper-button id="remove-solution-button" style="z-index: 99" on-click="removeCurrentSolution"><iron-icon class="black-button" icon="icons:remove"></iron-icon></paper-button>
-          <paper-tooltip for="remove-solution-button" position="bottom" animation-config="{{tooltipAnimation}}">
-            <div class="button-tooltip">
-              [[localize("tooltip-remove-solution")]]
-            </div>
-          </paper-tooltip>
+        <div class="buttons">
+          <paper-button dialog-dismiss="">[[localize("cancel")]]</paper-button>
+          <paper-button dialog-confirm="" autofocus="" on-click="_saveProject">[[localize("save")]]</paper-button>
         </div>
-      </template>
+      </paper-dialog>
+
+      <paper-dialog id="activitySettingsModal" modal="">
+        <paper-dialog-scrollable>
+          <activity-settings></activity-settings>
+        </paper-dialog-scrollable>
+      </paper-dialog>
 
       <div style="position: relative">
+        <div class$="editor {{_teacherLibraryClass(selectedTab)}}">
+          <template is="dom-if" if="{{!studentSolutionDirty}}">
+            <alert-banner title="Definí aquí las primitivas para tu actividad" message="Los procedimientos y funciones que definas podrán ser utilizados por tus estudiantes en sus soluciones." level="info"></alert-banner>
+          </template>
+          <template is="dom-if" if="{{studentSolutionDirty}}">
+            <alert-banner title="Realizaste cambios en la solución del estudiante" message="Si renombrás o eliminás alguna primitiva que está en uso, deberás actualizar manualmente la solución del estudiante." level="warning"></alert-banner>
+          </template>
+          <gobstones-editor id="teacher-library-editor"></gobstones-editor>
+        </div>
+
         <gobstones-blockly id="blocks-editor" class$="editor {{_blocksClass(selectedTab)}}"></gobstones-blockly>
 
         <gobstones-editor id="code-editor" class$="editor {{_codeClass(selectedTab)}}"></gobstones-editor>
-
-        <gobstones-editor id="teacher-library-editor" class$="editor {{_teacherLibraryClass(selectedTab)}}"></gobstones-editor>
-
-        <gobstones-editor id="library-editor" class$="editor {{_libraryClass(selectedTab)}}"></gobstones-editor>
 
         <description-editor id="description-editor" class$="editor {{_descriptionClass(selectedTab)}}"></description-editor>
 
@@ -136,7 +157,6 @@
         <metadata-editor id="metadata-editor" class$="editor {{_metadataClass(selectedTab)}}"></metadata-editor>
       </div>
     </div>
-
   </template>
 
   </dom-module>

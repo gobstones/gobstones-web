@@ -20,6 +20,8 @@ window.COURSE = function () {
   return window.GBS_COURSE;
 };
 
+// eslint-disable-next-line no-unused-vars
+
 var GitHubGuideLoader = function () {
   function GitHubGuideLoader(_ref) {
     var repo = _ref.repo,
@@ -53,8 +55,14 @@ var GitHubGuideLoader = function () {
       if (!COURSE()) return $.Deferred().reject().promise();
 
       var guides = $.getJSON("https://raw.githubusercontent.com/" + COURSE() + "/master/guides.json");
-      var assets = new GitHubLoader(window.GBS_PROJECT_TYPE, COURSE()).loadDir("assets").then(function (assets) {
-        window.GBS_COURSE_ASSETS = assets;
+
+      var loader = new GitHubLoader(window.GBS_PROJECT_TYPE, COURSE());
+      var assets = loader.hasAssets().then(function (result) {
+        return result ? loader.loadDir("assets") : {};
+      }).then(function (assets) {
+        if (Object.keys(assets).length) {
+          window.GBS_COURSE_ASSETS = assets;
+        }
       }).catch(function () {});
 
       return $.when.apply($, [guides, assets]).then(function () {

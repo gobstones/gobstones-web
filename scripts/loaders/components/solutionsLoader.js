@@ -8,6 +8,7 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
+// eslint-disable-next-line no-unused-vars
 var SolutionsLoader = function (_TextLoader) {
   _inherits(SolutionsLoader, _TextLoader);
 
@@ -24,12 +25,12 @@ var SolutionsLoader = function (_TextLoader) {
     key: "getFiles",
     value: function getFiles(context) {
       var editor = context.editor;
-      var files = editor.availableSolutions.slice(1).map(function (solution, i) {
+      var files = editor.availableSolutions.slice(1).map(function (solution) {
         return {
           name: "assets/solutions/" + solution.name + ".gbs",
           content: solution.code.main
         };
-      }).concat(editor.availableSolutions.slice(1).map(function (solution, i) {
+      }).concat(editor.availableSolutions.slice(1).map(function (solution) {
         return {
           name: "assets/solutions/" + solution.name + ".gbk",
           content: solution.workspace.main

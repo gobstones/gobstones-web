@@ -1,4 +1,6 @@
-TEMP_DIR="bower_components/.tmp" 
+#!/bin/sh
+
+TEMP_DIR="bower_components/.tmp"
 mkdir -p "$TEMP_DIR"
 cp gs-element-blockly.html "$TEMP_DIR/gs-element-blockly.html.original"
 cp -r js "$TEMP_DIR"

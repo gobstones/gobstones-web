@@ -66,12 +66,22 @@ var template = [].concat(_toConsumableArray(isMac ? [{
     label: 'Cerrar' }]))
 }]);
 
-function start(mode) {
+function start(mode, isPackaged) {
+  // isPackaged is optional, it indicated that the
+  // app has been packaged to a OS managed app, such as
+  // a .deb for linux. The package manager handles
+  // updates if that is the case.
+  isPackaged = isPackaged || false;
+
   // The running node.js server, the main app window
   // are all global to the function
   var server = createServer();
   var mainWindow = void 0;
 
+  // Register the fact that this is packaged globally
+  if (isPackaged) {
+    window.IS_PACKAGED = true;
+  }
   // Useful functions
   function runModeSuffix(mode) {
     return mode ? '#/' + mode : '';

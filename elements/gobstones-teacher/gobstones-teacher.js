@@ -2,13 +2,14 @@
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
-var ID_BLOCKS = 0;
-var ID_CODE = 1;
-var ID_TEACHER_LIBRARY = 2;
-var ID_LIBRARY = 3;
-var ID_DESCRIPTION = 4;
-var ID_ATTIRE = 5;
-var ID_METADATA = 6;
+/* global Blockly:readable */
+
+var ID_TEACHER_LIBRARY = 0;
+var ID_BLOCKS = 1;
+var ID_CODE = 2;
+var ID_DESCRIPTION = 3;
+var ID_ATTIRE = 4;
+var ID_METADATA = 5;
 
 Polymer({
   is: "gobstones-teacher",
@@ -32,11 +33,20 @@ Polymer({
       type: Array,
       value: []
     },
-
-    tooltipAnimation: Object
+    studentSolutionDirty: {
+      type: Boolean,
+      value: false
+    },
+    tooltipAnimation: Object,
+    constructionMode: {
+      type: String,
+      value: 'blocks'
+    }
   },
   listeners: {
-    "content-change": "_onContentChange"
+    "content-change": "_onContentChange",
+    "student-solution-dirty": "_onStudentSolutionDirty",
+    "activity-settings-update": "_onActivitySettingsUpdate"
   },
 
   attached: function attached() {
@@ -44,6 +54,8 @@ Polymer({
       "entry": [{ "name": "fade-in-animation", "timing": { "delay": 0 } }],
       "exit": [{ "name": "fade-out-animation", "timing": { "delay": 0 } }]
     };
+
+    this._openActivitySettingsModal();
   },
 
   ready: function ready() {
@@ -51,7 +63,6 @@ Polymer({
 
     this.BLOCKS_SYNC_ON_ICON = "notification:sync";
     this.BLOCKS_SYNC_OFF_ICON = "notification:sync-disabled";
-    this._setBlocksSyncOff();
 
     setTimeout(function () {
       _this.set("availableSolutions", [{
@@ -65,6 +76,8 @@ Polymer({
           library: ""
         }
       }]);
+
+      _this.subscribeTo("teacher-save-project", _this._runProjectLinter.bind(_this));
     });
 
     Object.defineProperty(this, "code", {
@@ -103,7 +116,6 @@ Polymer({
       this._editors()[ID_BLOCKS].runner = this.runner;
       this._editors()[ID_CODE].runner = this.runner;
       this._editors()[ID_TEACHER_LIBRARY].runner = this.runner;
-      this._editors()[ID_LIBRARY].runner = this.runner;
 
       this.runner.addEventListener("run", function (_ref) {
         var detail = _ref.detail;
@@ -112,7 +124,7 @@ Polymer({
           _this.runner.showToast(_this.localize("go-to-first-tabs"));
           _this.runner.stop();
           return;
-        };
+        }
 
         _this._currentEditor()._onRunRequest(detail);
         _this._editors()[ID_CODE].readonly = true;
@@ -129,15 +141,7 @@ Polymer({
       });
 
       this._editors()[ID_CODE].reportError = function (error, type) {
-        if (error.location.mode === "library") {
-          setTimeout(function () {
-            _this.selectedTab = ID_LIBRARY;
-
-            _this._editors()[ID_LIBRARY]._setAnnotation(error, type);
-          });
-        } else {
-          _this._editors()[ID_CODE]._setAnnotation(error, type);
-        }
+        _this._editors()[ID_CODE]._setAnnotation(error, type);
       };
       this._editors()[ID_CODE]._setMode = _.noop;
     }
@@ -174,7 +178,6 @@ Polymer({
     var editors = this._editors();
 
     if (mode === "library") {
-      editors[ID_LIBRARY].setCode(code);
       editors[ID_BLOCKS].setCode(code, mode);
       editors[ID_CODE].setCode(code, mode);
     } else if (mode === "teacher") {
@@ -198,9 +201,37 @@ Polymer({
     return this._editors()[ID_METADATA].getMetadata();
   },
 
-  setMetadata: function setMetadata(content) {
-    this._editors()[ID_METADATA].setMetadata(content);
+  setMetadata: function setMetadata(content, options) {
+    this._editors()[ID_METADATA].setMetadata(content, options);
+
+    var constructionMode = this._parseInitialSetting({
+      content: content,
+      path: 'activity.construction_mode',
+      defaultId: 'blocks',
+      allValues: ConstructionModes
+    });
+
+    this.constructionMode = constructionMode.id;
+
+    var executionType = this._parseInitialSetting({
+      content: content,
+      path: 'activity.execution_type',
+      defaultId: 'sequential',
+      allValues: ExecutionTypes
+    });
+
+    this.setInitialSettings({ constructionMode: constructionMode, executionType: executionType, options: options });
   },
+
+  setInitialSettings: function setInitialSettings(content) {
+    this._editors()[ID_METADATA].setInitialSettings(content);
+
+    var fromLoader = _.get(content, 'options.fromLoader', false);
+    if (!fromLoader) {
+      this._editors()[ID_BLOCKS].setCode(content.executionType.initialCode, 'main', true, { skipDirtyCheck: true });
+    }
+  },
+
 
   generateCode: function generateCode(withRegions, blockly) {
     return this._editors()[ID_BLOCKS].generateCode(withRegions, blockly);
@@ -264,6 +295,57 @@ Polymer({
 
   isBlocksOrCodeTabSelected: function isBlocksOrCodeTabSelected(selectedTab) {
     return selectedTab === ID_BLOCKS || selectedTab === ID_CODE;
+  },
+
+  _parseInitialSetting: function _parseInitialSetting(_ref2) {
+    var content = _ref2.content,
+        path = _ref2.path,
+        defaultId = _ref2.defaultId,
+        allValues = _ref2.allValues;
+
+    var id = _.get(content, path, defaultId);
+    return _.find(allValues, { id: id });
+  },
+  _openActivitySettingsModal: function _openActivitySettingsModal() {
+    document.querySelector("#activitySettingsModal").open();
+  },
+
+
+  _saveProject: function _saveProject() {
+    window.BUS.fire('save-project');
+  },
+
+  _onActivitySettingsUpdate: function _onActivitySettingsUpdate(_ref3) {
+    var _ref3$detail = _ref3.detail,
+        constructionMode = _ref3$detail.constructionMode,
+        executionType = _ref3$detail.executionType;
+
+    this.constructionMode = constructionMode.id;
+    this.setInitialSettings({
+      constructionMode: constructionMode,
+      executionType: executionType
+    });
+  },
+  _isBlocksMode: function _isBlocksMode(constructionMode) {
+    return constructionMode == 'blocks';
+  },
+  _isTextMode: function _isTextMode(constructionMode) {
+    return constructionMode == 'text';
+  },
+
+
+  _runProjectLinter: function _runProjectLinter() {
+    document.querySelector("#projectLinterModal").open();
+    window.BUS.fire("project-linter-start");
+    this._validateCode();
+  },
+
+  // @faloi: sería ideal que no se ejecute el código, sino que solamente se compile
+  _validateCode: function _validateCode() {
+    this.selectedTab = this.constructionMode == 'blocks' ? ID_BLOCKS : ID_CODE;
+    var boardsPanel = document.getElementById("boards");
+    var runner = boardsPanel.$.runner;
+    runner.requestRun();
   },
 
   _getUniqueSolutionName: function _getUniqueSolutionName() {
@@ -344,6 +426,11 @@ Polymer({
     });
   },
 
+  _onStudentSolutionDirty: function _onStudentSolutionDirty() {
+    this.studentSolutionDirty = true;
+  },
+
+
   _onContentChange: function _onContentChange(event) {
     var _this5 = this;
 
@@ -418,12 +505,6 @@ Polymer({
   },
 
 
-  _onBlocksSyncClick: function _onBlocksSyncClick() {
-    if (this.blocksSyncEnabled) {
-      this._setBlocksSyncOff();
-    } else this._setBlocksSyncOn();
-  },
-
   _patchBlocklyPlaceholderBlocks: function _patchBlocklyPlaceholderBlocks() {
     var comandoCompletar = Blockly.Blocks.ComandoCompletar.init;
     Blockly.Blocks.ComandoCompletar.init = function () {
@@ -453,9 +534,6 @@ Polymer({
   _teacherLibraryClass: function _teacherLibraryClass(selectedTab) {
     return selectedTab === ID_TEACHER_LIBRARY ? "visible" : "unvisible";
   },
-  _libraryClass: function _libraryClass(selectedTab) {
-    return selectedTab === ID_LIBRARY ? "visible" : "unvisible";
-  },
   _descriptionClass: function _descriptionClass(selectedTab) {
     return selectedTab === ID_DESCRIPTION ? "visible" : "unvisible";
   },
@@ -469,7 +547,7 @@ Polymer({
   _editors: function _editors() {
     var _this6 = this;
 
-    return ["blocks-editor", "code-editor", "teacher-library-editor", "library-editor", "description-editor", "attire-editor", "metadata-editor"].map(function (it) {
+    return ["teacher-library-editor", "blocks-editor", "code-editor", "description-editor", "attire-editor", "metadata-editor"].map(function (it) {
       return _this6.$[it];
     });
   },

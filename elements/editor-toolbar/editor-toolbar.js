@@ -137,7 +137,11 @@ Polymer({
   },
 
   save: function save() {
-    if (this.projectType === "teacher") this.saveProject();else window.BUS.fire("save-code");
+    if (this.projectType === "teacher") {
+      window.BUS.fire("teacher-save-project");
+    } else {
+      window.BUS.fire("save-code");
+    }
   },
 
   openHomeLink: function openHomeLink() {

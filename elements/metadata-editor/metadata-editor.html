@@ -1,15 +1,36 @@
 <html><head><link rel="import" href="../../bower_components/polymer/polymer.html">
 <link rel="import" href="../../scripts/simplemde.html">
 <link rel="import" href="../../scripts/stylist.html">
+<link rel="import" href="../../scripts/features/project.html">
 <link rel="import" href="../../scripts/loaders/components/metadataLoader.html">
 <link rel="import" href="../../scripts/behaviors/busListenerBehavior.html">
 <link rel="import" href="../../scripts/behaviors/permissionsBehavior.html">
 <link rel="import" href="../../scripts/behaviors/localizationBehavior.html">
 <link rel="import" href="../../scripts/behaviors/loaderBehavior.html">
+<link rel="import" href="./project-feature.html">
 
 </head><body><dom-module id="metadata-editor">
   <template>
     <style>
+      .flash {
+        padding: 20px 16px;
+        border-style: solid;
+        border-width: 1px 0;
+      }
+
+      .flash-info {
+        background-color: #dbedff;
+        border-color: #04428933
+      }
+
+      .flash-info iron-icon {
+        color: #04428999;
+      }
+
+      .flash-action {
+        margin-top: 10px;
+      }
+
       .menu-header-gobstones {
         background-color: white;
         font-weight: 800;
@@ -31,137 +52,221 @@
     </style>
 
     <div class="metadata-editor-options">
-      <paper-item>
-        <paper-item-body>
-          <div>([[localize("settings-preview-changes")]])</div>
+      <paper-item center-justified="" flex="">
+        <paper-item-body style="flex-direction: row;">
+          <paper-toggle-button checked="{{advancedMode}}" on-tap="_notifyBasicChangesToToolboxSelector">Modo de edición {{editionModeName}}</paper-toggle-button>
         </paper-item-body>
-        <paper-toggle-button checked="{{previewChanges}}"></paper-toggle-button>
-      </paper-item>
-      <br>
-
-      <paper-item center-justified="" flex="" class="menu-header-gobstones">
-        <div>[[localize("settings-library")]]</div>
       </paper-item>
 
-      <paper-item>
-        <paper-item-body>
-          <div>[[localize("settings-library-visible")]]</div>
-        </paper-item-body>
-        <paper-toggle-button checked="{{metadata.library.visible}}"></paper-toggle-button>
-      </paper-item>
+      <template is="dom-if" if="[[advancedMode]]">
+        <alert-banner title="Estás editando en modo avanzado" message="Los cambios que hagas en este modo deberán ser descartados si querés volver a usar el modo básico." level="warning"></alert-banner>
 
-      <paper-item center-justified="" flex="" class="menu-header-gobstones">
-        <div>[[localize("settings-code")]]</div>
-      </paper-item>
+        <paper-item center-justified="" flex="" class="menu-header-gobstones">
+          <div>[[localize("settings-code")]]</div>
+        </paper-item>
 
-      <paper-item>
-        <paper-item-body>
-          <div>[[localize("settings-code-visible")]]</div>
-        </paper-item-body>
-        <paper-toggle-button checked="{{metadata.source.visible}}"></paper-toggle-button>
-      </paper-item>
+        <paper-item>
+          <paper-item-body>
+            <div>[[localize("settings-code-visible")]]</div>
+          </paper-item-body>
+          <paper-toggle-button checked="{{metadata.source.visible}}"></paper-toggle-button>
+        </paper-item>
 
-      <paper-item>
-        <paper-item-body>
-          <div>[[localize("settings-code-autoopen-description")]]</div>
-        </paper-item-body>
-        <paper-toggle-button checked="{{metadata.initialDescription}}"></paper-toggle-button>
-      </paper-item>
+        <paper-item>
+          <paper-item-body>
+            <div>[[localize("settings-code-autoopen-description")]]</div>
+          </paper-item-body>
+          <paper-toggle-button checked="{{metadata.initialDescription}}"></paper-toggle-button>
+        </paper-item>
 
-      <paper-item>
-        <paper-item-body>
-          <div>[[localize("settings-code-link")]]</div>
-        </paper-item-body>
-        <paper-input value="{{metadata.link}}"></paper-input>
-      </paper-item>
+        <paper-item>
+          <paper-item-body>
+            <div>[[localize("settings-code-link")]]</div>
+          </paper-item-body>
+          <paper-input value="{{metadata.link}}"></paper-input>
+        </paper-item>
 
-      <paper-item center-justified="" flex="" class="menu-header-gobstones">
-        <div>[[localize("settings-boards")]]</div>
-      </paper-item>
+        <paper-item center-justified="" flex="" class="menu-header-gobstones">
+          <div>[[localize("settings-boards")]]</div>
+        </paper-item>
 
-      <paper-item>
-        <paper-item-body>
-          <div>[[localize("settings-boards-visible-edition")]]</div>
-        </paper-item-body>
-        <paper-toggle-button checked="{{metadata.board.visible_edition}}"></paper-toggle-button>
-      </paper-item>
+        <paper-item>
+          <paper-item-body>
+            <div>[[localize("settings-boards-visible-edition")]]</div>
+          </paper-item-body>
+          <paper-toggle-button on-tap="_onBoardVisibleEditionChanged" checked="{{metadata.board.visible_edition}}"></paper-toggle-button>
+        </paper-item>
 
-      <paper-item>
-        <paper-item-body>
-          <div class$="{{grayedUnless(metadata.*, 'board.visible_edition')}}">[[localize("settings-boards-collapse-toolbox")]]</div>
-        </paper-item-body>
-        <paper-toggle-button checked="{{metadata.board.collapse_toolbox}}"></paper-toggle-button>
-      </paper-item>
+        <paper-item disabled$="{{boardEditionOptionsDisabled}}">
+          <paper-item-body>
+            <div>[[localize("settings-boards-collapse-toolbox")]]</div>
+          </paper-item-body>
+          <paper-toggle-button checked="{{metadata.board.collapse_toolbox}}"></paper-toggle-button>
+        </paper-item>
 
-      <paper-item>
-        <paper-item-body>
-          <div class$="{{grayedUnless(metadata.*, 'board.visible_edition')}}">[[localize("settings-boards-can-change-initial-board")]]</div>
-        </paper-item-body>
-        <paper-toggle-button checked="{{metadata.board.user_permissions.can_change_initial_board}}"></paper-toggle-button>
-      </paper-item>
+        <paper-item disabled$="{{boardEditionOptionsDisabled}}">
+          <paper-item-body>
+            <div>[[localize("settings-boards-can-change-initial-board")]]</div>
+          </paper-item-body>
+          <paper-toggle-button checked="{{metadata.board.user_permissions.can_change_initial_board}}"></paper-toggle-button>
+        </paper-item>
 
-      <paper-item>
-        <paper-item-body>
-          <div class$="{{grayedUnless(metadata.*, 'board.visible_edition')}}">[[localize("settings-boards-can-view-size-section")]]</div>
-        </paper-item-body>
-        <paper-toggle-button checked="{{metadata.board.user_permissions.can_view_size_section}}"></paper-toggle-button>
-      </paper-item>
+        <paper-item disabled$="{{boardEditionOptionsDisabled}}">
+          <paper-item-body>
+            <div>[[localize("settings-boards-can-view-size-section")]]</div>
+          </paper-item-body>
+          <paper-toggle-button checked="{{metadata.board.user_permissions.can_view_size_section}}"></paper-toggle-button>
+        </paper-item>
 
-      <paper-item>
-        <paper-item-body>
-          <div class$="{{grayedUnless(metadata.*, 'board.visible_edition')}}">[[localize("settings-boards-can-view-attire-section")]]</div>
-        </paper-item-body>
-        <paper-toggle-button checked="{{metadata.board.user_permissions.can_view_attire_section}}"></paper-toggle-button>
-      </paper-item>
+        <paper-item>
+          <paper-item-body>
+            <div>[[localize("settings-boards-can-edit-board")]]</div>
+          </paper-item-body>
+          <paper-toggle-button checked="{{metadata.board.user_permissions.can_edit_board}}"></paper-toggle-button>
+        </paper-item>
 
-      <paper-item>
-        <paper-item-body>
-          <div class$="{{grayedUnless(metadata.*, 'board.visible_edition')}} {{grayedUnless(metadata.*, 'board.user_permissions.can_view_attire_section')}}">[[localize("settings-attires-can-toggle-visibility")]]</div>
-        </paper-item-body>
-        <paper-toggle-button checked="{{metadata.attire.user_permissions.can_toggle_visibility}}"></paper-toggle-button>
-      </paper-item>
+        <paper-item center-justified="" flex="" class="menu-header-gobstones">
+          <div>[[localize("settings-attires")]]</div>
+        </paper-item>
 
-      <paper-item>
-        <paper-item-body>
-          <div>[[localize("settings-boards-can-edit-board")]]</div>
-        </paper-item-body>
-        <paper-toggle-button checked="{{metadata.board.user_permissions.can_edit_board}}"></paper-toggle-button>
-      </paper-item>
+        <paper-item>
+          <paper-item-body>
+            <div>[[localize("settings-attires-visible")]]</div>
+          </paper-item-body>
+          <paper-toggle-button checked="{{metadata.attire.visible}}"></paper-toggle-button>
+        </paper-item>
 
-      <paper-item center-justified="" flex="" class="menu-header-gobstones">
-        <div>[[localize("settings-execution")]]</div>
-      </paper-item>
+        <paper-item disabled$="{{boardEditionOptionsDisabled}}">
+          <paper-item-body>
+            <div>[[localize("settings-boards-can-view-attire-section")]]</div>
+          </paper-item-body>
+          <paper-toggle-button on-tap="_onAttireSectionVisibleChanged" checked="{{metadata.board.user_permissions.can_view_attire_section}}"></paper-toggle-button>
+        </paper-item>
 
-      <paper-item>
-        <paper-item-body>
-          <div>[[localize("settings-boards-can-change-initial-board-source")]]</div>
-        </paper-item-body>
-        <paper-toggle-button checked="{{metadata.board.user_permissions.can_change_initial_board_source}}"></paper-toggle-button>
-      </paper-item>
+        <paper-item disabled$="[[_either(boardEditionOptionsDisabled, attireSectionDisabled)]]">
+          <paper-item-body>
+            <div>[[localize("settings-attires-can-toggle-visibility")]]</div>
+          </paper-item-body>
+          <paper-toggle-button checked="{{metadata.attire.user_permissions.can_toggle_visibility}}"></paper-toggle-button>
+        </paper-item>
 
-      <paper-item>
-        <paper-item-body>
-          <div>[[localize("settings-execution-speed-can-change-speed")]]</div>
-        </paper-item-body>
-        <paper-toggle-button checked="{{metadata.execution_speed.user_permissions.can_change_speed}}"></paper-toggle-button>
-      </paper-item>
+        <paper-item center-justified="" flex="" class="menu-header-gobstones">
+          <div>[[localize("settings-execution")]]</div>
+        </paper-item>
 
-      <paper-item center-justified="" flex="" class="menu-header-gobstones">
-        <paper-item-body>
-          <div>[[localize("settings-cover")]]</div>
-        </paper-item-body>
-        <paper-icon-button on-click="loadImage" icon="icons:folder-open" alt="open"> </paper-icon-button>
-        <template is="dom-if" if="{{cover}}">
-          <img src="{{cover}}" width="30" height="30">
+        <paper-item>
+          <paper-item-body>
+            <div>[[localize("settings-boards-can-change-initial-board-source")]]</div>
+          </paper-item-body>
+          <paper-toggle-button checked="{{metadata.board.user_permissions.can_change_initial_board_source}}"></paper-toggle-button>
+        </paper-item>
+
+        <paper-item>
+          <paper-item-body>
+            <div>[[localize("settings-execution-speed-can-change-speed")]]</div>
+          </paper-item-body>
+          <paper-toggle-button checked="{{metadata.execution_speed.user_permissions.can_change_speed}}"></paper-toggle-button>
+        </paper-item>
+
+        <paper-item center-justified="" flex="" class="menu-header-gobstones">
+          <div>[[localize("settings-blocks")]]</div>
+        </paper-item>
+
+        <!-- Al pasarlo entre corchetes dobles, la expresión se vuelve a evaluar cuando cambia la metadata -->
+        <blocks-toolbox-selector default-toolbox="{{defaultToolbox}}" blocks="[[metadata.blocks]]"></blocks-toolbox-selector>
+      </template>
+
+      <template is="dom-if" if="[[!advancedMode]]">
+        <template is="dom-if" if="[[changesFromAdvancedMode]]">
+          <div class="flash flash-info">
+            <iron-icon icon="icons:info"></iron-icon>
+            <strong>Realizaste cambios en el modo avanzado</strong>
+            <div>
+              Para utilizar el modo básico tenés que descartar esos cambios.
+            </div>
+            <button on-tap="_discardAdvancedModeChanges" class="flash-action">
+              Descartar cambios
+            </button>
+            <button on-tap="_goToAdvancedMode" class="flash-action">
+              Volver al modo avanzado
+            </button>
+          </div>
         </template>
-      </paper-item>
-      <input id="image" type="file" accept=".png" on-change="onLoadedImage" style="visibility: hidden;">
+        <template is="dom-if" if="[[!changesFromAdvancedMode]]">
+          <paper-item>
+            <paper-item-body three-line="">
+              <div>Tipo de actividad</div>
+              <div secondary="">Define qué elementos del panel de tableros están visibles y pueden utilizarse.</div>
+            </paper-item-body>
+            <paper-dropdown-menu>
+              <paper-listbox class="dropdown-content" selected="{{ selectedActivityTypeIndex }}">
+                <template is="dom-repeat" items="{{ allActivityTypes }}">
+                  <paper-item>{{item.name}}</paper-item>
+                </template>
+              </paper-listbox>
+            </paper-dropdown-menu>
+          </paper-item>
 
-      <paper-item center-justified="" flex="" class="menu-header-gobstones">
-        <div>[[localize("settings-blocks")]]</div>
-      </paper-item>
+          <template is="dom-if" if="[[constructionMode.canRestrictTools]]">
+            <paper-item>
+              <paper-item-body three-line="">
+                <div>Herramientas disponibles</div>
+                <div secondary="">Esta opción limita qué bloques pueden utilizar tus estudiantes.</div>
+              </paper-item-body>
+              <paper-dropdown-menu>
+                <paper-listbox class="dropdown-content" selected="{{ selectedToolboxIndex }}">
+                  <template is="dom-repeat" items="{{ allToolboxes }}">
+                    <paper-item>{{item.name}}</paper-item>
+                  </template>
+                </paper-listbox>
+              </paper-dropdown-menu>
+            </paper-item>
+          </template>
 
-      <blocks-toolbox-selector default-toolbox="{{defaultToolbox}}" blocks="{{metadata.blocks}}"></blocks-toolbox-selector>
+          <paper-item center-justified="" flex="" class="menu-header-gobstones">
+            <div>Tablero</div>
+          </paper-item>
+
+          <paper-item>
+            <paper-item-body>
+              <project-feature name="Editar el contenido" enabled="[[ selectedActivityType.settings.board.user_permissions.can_edit_board ]]">
+            </project-feature></paper-item-body>
+            <paper-item-body>
+              <project-feature name="Elegir el tablero inicial" enabled="[[ selectedActivityType.settings.board.user_permissions.can_change_initial_board ]]">
+            </project-feature></paper-item-body>
+          </paper-item>
+
+          <paper-item center-justified="" flex="" class="menu-header-gobstones">
+            <div>Vestimenta</div>
+          </paper-item>
+
+          <paper-item>
+            <paper-item-body>
+              <project-feature name="Visible por defecto" enabled="[[ selectedActivityType.settings.attire.visible ]]">
+            </project-feature></paper-item-body>
+            <paper-item-body>
+              <project-feature name="Decidir si está visible" enabled="[[ selectedActivityType.settings.attire.user_permissions.can_toggle_visibility ]]">
+            </project-feature></paper-item-body>
+            <paper-item-body>
+              <project-feature name="Cambiar de vestimenta" enabled="[[ selectedActivityType.settings.board.user_permissions.can_view_attire_section ]]">
+            </project-feature></paper-item-body>
+          </paper-item>
+
+          <template is="dom-if" if="[[constructionMode.canRestrictTools]]">
+            <paper-item center-justified="" flex="" class="menu-header-gobstones">
+              <div>Caja de herramientas</div>
+            </paper-item>
+
+            <paper-item style="flex-wrap: wrap;">
+              <template is="dom-repeat" items="{{ allTools }}">
+                <paper-item-body style="margin-right: 10px; overflow: unset;">
+                  <project-feature name="{{item}}" enabled="[[ _isToolSelected(selectedToolbox, selectedActivityType, executionType, item) ]]">
+                </project-feature></paper-item-body>
+              </template>
+            </paper-item>
+          </template>
+        </template>
+      </template>
     </div>
   </template>
 

@@ -8,6 +8,7 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
+// eslint-disable-next-line no-unused-vars
 var AppendBlocksLoader = function (_TextLoader) {
   _inherits(AppendBlocksLoader, _TextLoader);
 
@@ -23,12 +24,12 @@ var AppendBlocksLoader = function (_TextLoader) {
 
   _createClass(AppendBlocksLoader, [{
     key: "buildContent",
-    value: function buildContent(context) {
+    value: function buildContent(_context) {
       throw new Error("This method should not be called (read-only loader)");
     }
   }, {
     key: "readContent",
-    value: function readContent(context, content, fileName) {
+    value: function readContent(context, content, _fileName) {
       context.editor.addCode(content);
     }
   }]);

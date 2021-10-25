@@ -45,12 +45,17 @@ Polymer({
     withRunner: {
       type: Boolean,
       value: false
+    },
+    isBlocklyInitialized: {
+      type: Boolean,
+      value: false
     }
   },
 
   ready: function ready() {
     var _this = this;
 
+    this.$.blockly.setLanguage(window.STORAGE.getItem("language"));
     if (this.withRunner) {
       var boardsPanel = document.getElementById("boards");
       if (boardsPanel) {
@@ -102,10 +107,19 @@ Polymer({
   },
 
   setCode: function setCode(code) {
+    var mode = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : "main";
+
     var _this2 = this;
 
-    var mode = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : "main";
     var withTeacherErrorsReport = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : true;
+
+    var _ref2 = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : {},
+        _ref2$skipDirtyCheck = _ref2.skipDirtyCheck,
+        skipDirtyCheck = _ref2$skipDirtyCheck === undefined ? false : _ref2$skipDirtyCheck;
+
+    if (skipDirtyCheck) {
+      this.isBlocklyInitialized = false;
+    }
 
     this.workspace[mode] = code;
     this.code[mode] = mode === "teacher" ? code : this._xmlToCode(code);
@@ -127,6 +141,7 @@ Polymer({
   },
 
   reset: function reset() {
+    this.isBlocklyInitialized = false;
     this._setMode("main");
     this.setCode(this.EMPTY_WORKSPACE, "main");
     this.setCode("", "library");
@@ -160,11 +175,11 @@ Polymer({
     window.BUS.fire("run-request", options);
   },
 
-  _runCode: function _runCode(_ref2) {
+  _runCode: function _runCode(_ref3) {
     var _this3 = this;
 
-    var initialState = _ref2.initialState,
-        controller = _ref2.controller;
+    var initialState = _ref3.initialState,
+        controller = _ref3.controller;
     var requiredCode = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : this.code;
 
     var code = _.assign(requiredCode, { main: this.code.main });
@@ -175,7 +190,7 @@ Polymer({
 
     try {
       controller.start({ initialState: initialState, code: code, initialBoardTime: 500 }, {
-        onCompilationError: function onCompilationError(error, code) {
+        onCompilationError: function onCompilationError(error, _code) {
           var region = error.on.region;
 
           if (region) _this3._showError(region, error);
@@ -183,6 +198,7 @@ Polymer({
         },
         onTeacherCompilationError: function onTeacherCompilationError(e) {
           _this3.runner.reportTeacherLibraryErrors(e);
+          window.BUS.fire("teacher-library-compilation-error");
         },
         onInteractiveRun: function onInteractiveRun() {
           window.BUS.fire("interactive-run");
@@ -234,12 +250,20 @@ Polymer({
 
     this.fire("content-change");
     this._cleanErrors();
+
+    if (!this.isBlocklyInitialized) {
+      this.isBlocklyInitialized = true;
+    } else {
+      this.fire("student-solution-dirty");
+    }
   },
 
   _cleanErrors: function _cleanErrors() {
     try {
       this.$.blockly.workspace.removeBlockErrors();
-    } catch (e) {}
+    } catch (e) {
+      // Quién sabe para qué sirve esto
+    }
   },
 
   _onTeacherLibraryChange: function _onTeacherLibraryChange(teacherCode) {

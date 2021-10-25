@@ -10,11 +10,21 @@ Polymer({
       type: Number,
       value: MAX_SPEED
     },
+    projectType: {
+      type: String
+    },
     useRandomBoard: {
       type: Boolean,
       value: false
     },
-
+    previewTeacherConfiguration: {
+      type: Boolean,
+      value: false
+    },
+    previewIcon: {
+      type: String,
+      computed: "_computePreviewIcon(previewTeacherConfiguration)"
+    },
     immediateSpeed: {
       type: Number,
       value: MAX_SPEED
@@ -66,9 +76,21 @@ Polymer({
   },
 
   reportTeacherLibraryErrors: function reportTeacherLibraryErrors(e) {
-    debugger;
     this.showToast(this.localize("teachers-library-has-errors"));
     console.error(e);
+  },
+
+  _isTeacherProject: function _isTeacherProject(projectType) {
+    return projectType === 'teacher';
+  },
+
+  _togglePreviewTeacherConfiguration: function _togglePreviewTeacherConfiguration() {
+    this.previewTeacherConfiguration = !this.previewTeacherConfiguration;
+    window.BUS.fire("teacher-preview-configuration-changed", this.previewTeacherConfiguration);
+  },
+
+  _computePreviewIcon: function _computePreviewIcon(previewTeacherConfiguration) {
+    return previewTeacherConfiguration ? 'icons:visibility-off' : 'icons:visibility';
   },
 
   _onRunRequest: function _onRunRequest(_ref) {
