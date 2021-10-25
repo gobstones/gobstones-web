@@ -23,4 +23,4 @@ git tag "${NEW_VERSION}"
 echo "[GobstonesWeb] Pushing..."
 git push origin HEAD --tags
 
-echo "[GobstonesWeb] Pushed. Travis will do the rest"
+echo "[GobstonesWeb] Pushed. GitHub will do the rest"
