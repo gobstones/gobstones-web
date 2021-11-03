@@ -40,7 +40,7 @@
         class="secondary-fab"
         id="previewTeacherConfiguration"
         icon="{{ previewIcon }}"
-        title="[[localize('settings-preview-changes')]]"
+        title="[[previewTooltip(previewTeacherConfiguration)]]"
         on-click="_togglePreviewTeacherConfiguration"
       ></paper-fab>
     </template>
@@ -145,6 +145,10 @@
 
       _computePreviewIcon: function(previewTeacherConfiguration) {
         return previewTeacherConfiguration ? 'icons:visibility-off' : 'icons:visibility';
+      },
+
+      previewTooltip(previewTeacherConfiguration) {
+        return previewTeacherConfiguration ? 'Dejar de ver como estudiante' : 'Ver como estudiante';
       },
 
       _onRunRequest: function({ detail: controller }) {
