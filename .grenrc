@@ -1,0 +1,13 @@
+{
+    "dataSource": "issues",
+    "prefix": "v",
+    "onlyMilestones": false,
+    "changelogFilename": "CHANGELOG.md",
+    "template": {
+      "issue": "- [{{text}}]({{url}}) {{name}}"
+    },
+    "groupBy": {
+      "🐞 Bug fixes:": ["bug"],
+      "✅ New features:": ["enhancement"]
+    }
+}
