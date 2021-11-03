@@ -88,15 +88,16 @@
       <div class="line-separator"></div>
 
       <div role="listbox">
-        <paper-item>
-          <paper-item-body>
-            <div>[[localize("project")]]</div>
-          </paper-item-body>
-          <paper-icon-button on-click="createNewProject" icon="icons:description" alt="new"> </paper-icon-button>
-          <paper-icon-button on-click="openProjectSelector" icon="icons:folder-open" alt="open"> </paper-icon-button>
-          <paper-icon-button on-click="saveCurrentProject" icon="icons:save" alt="save"> </paper-icon-button>
-        </paper-item>
-
+        <template is="dom-if" if="{{!_isTeacherProject(projectType)}}">
+          <paper-item>
+            <paper-item-body>
+              <div>[[localize("project")]]</div>
+            </paper-item-body>
+            <paper-icon-button on-click="createNewProject" icon="icons:description" alt="new"> </paper-icon-button>
+            <paper-icon-button on-click="openProjectSelector" icon="icons:folder-open" alt="open"> </paper-icon-button>
+            <paper-icon-button on-click="saveCurrentProject" icon="icons:save" alt="save"> </paper-icon-button>
+          </paper-item>
+        </template>
         <template is="dom-if" if="{{_isTextEnabled(projectType, teacherConstructionMode)}}">
           <paper-item>
             <paper-item-body>
