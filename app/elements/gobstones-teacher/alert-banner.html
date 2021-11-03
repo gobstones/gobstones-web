@@ -71,6 +71,14 @@
         opacity: .7;
       }
     </style>
+
+    <iron-localstorage
+      name="{{code}}"
+      value="{{closed}}"
+      on-iron-localstorage-load-empty="initialize"
+      on-iron-localstorage-load="showIfImportant">
+    </iron-localstorage>
+
     <div class$="{{cssClass(level, closed)}}">
       <button on-tap="close" aria-label="Close" class="flash-close" type="button">
         <iron-icon icon="close"></iron-icon>
@@ -103,12 +111,19 @@
       is: "alert-banner",
       behaviors: [Polymer.LocalizationBehavior, Polymer.BusListenerBehavior],
       properties: {
+        code: String,
         title: String,
         message: String,
         level: String,
-        closed: {
-          type: Boolean,
-          value: false
+        closed: Boolean,
+      },
+      initialize() {
+        this.closed = false;
+      },
+      showIfImportant() {
+        // Ignore local storage setting if message is important
+        if (this.isImportant()) {
+          this.closed = false;
         }
       },
       cssClass(level, closed) {
@@ -119,6 +134,9 @@
       },
       icon(level) {
         return LEVELS[level].icon;
+      },
+      isImportant() {
+        return this.level === 'warning' || this.level === 'error';
       }
     });
   </script>
