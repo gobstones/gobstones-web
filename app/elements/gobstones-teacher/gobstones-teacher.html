@@ -291,9 +291,7 @@
 
           this.runner.addEventListener("run", ({ detail }) => {
             if (!this.isBlocksOrCodeTabSelected(this.selectedTab)) {
-              this.runner.showToast(this.localize("go-to-first-tabs"));
-              this.runner.stop();
-              return;
+              this._goToCodeTab();
             }
 
             this._currentEditor()._onRunRequest(detail)
@@ -508,10 +506,14 @@
 
       // @faloi: sería ideal que no se ejecute el código, sino que solamente se compile
       _validateCode: function() {
-        this.selectedTab = this.constructionMode == 'blocks' ? ID_BLOCKS : ID_CODE;
+        this._goToCodeTab();
         const boardsPanel = document.getElementById("boards");
         const runner = boardsPanel.$.runner;
         runner.requestRun();
+      },
+
+      _goToCodeTab() {
+        this.selectedTab = this.constructionMode == 'blocks' ? ID_BLOCKS : ID_CODE;
       },
 
       _getUniqueSolutionName: function() {
