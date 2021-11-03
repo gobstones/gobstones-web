@@ -1,0 +1,6 @@
+user=gobstones
+project=gobstones-web
+pull-requests=false
+enhancement_prefix=**💡 Nuevas funcionalidades:**
+bug_prefix=**🐞 Defectos corregidos:**
+issue_prefix=**✅ Otras tareas:**
