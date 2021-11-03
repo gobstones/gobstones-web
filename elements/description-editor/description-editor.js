@@ -1,6 +1,6 @@
 "use strict";
 
-var DEFAULT_DESCRIPTION = "# Proyecto x.y: Nombre del ejercicio\nDescripci\xF3n del ejercicio.\n\n## Tablero esperado\n\n<center>\n  <gs-board>\n    GBB/1.0\n    size 3 3\n    cell 0 0 Azul 2\n    cell 1 2 Rojo 7\n    head 1 1\n  </gs-board>\n</center>";
+var DEFAULT_DESCRIPTION = "# Proyecto x.y: Nombre del ejercicio\nDescripci\xF3n del ejercicio.\n\n## Tablero esperado\n\n<center>\n  <gs-board>\n    GBB/1.0\n    size 4 3\n    cell 1 2 Azul 3\n    cell 3 0 Rojo 1 Verde 1\n    head 3 1\n  </gs-board>\n</center>";
 
 Polymer({
   is: 'description-editor',

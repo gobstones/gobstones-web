@@ -25,6 +25,9 @@ Polymer({
     window.BUS.fire("load-project-from-file");
   },
 
+  showTemplatesCourse: function showTemplatesCourse() {
+    window.BUS.fire("load-course", 'gobstonescursos/templates-GobstonesTeacher');
+  },
   notifySettingsBlocks: function notifySettingsBlocks() {
     this.fire('activity-settings-update', { constructionMode: ConstructionModes.blocks, executionType: this.executionType });
     window.BUS.fire('activity-settings-update', { constructionMode: ConstructionModes.blocks, executionType: this.executionType });

@@ -65,6 +65,9 @@ Polymer({
     }).assign(this._isCodeOrTeacherProject(this.projectType) ? {
       Code: new CodeLoader(),
       Library: new LibraryLoader()
+    } : {}).assign(this._isTeacherProject(this.projectType) ? {
+      TeacherLibrary: new TeacherLoader(),
+      TeacherDescription: new DescriptionTeacherLoader()
     } : {}).assign(this._isBlocksOrTeacherProject(this.projectType) ? {
       Blocks: new CodeBlocksLoader(),
       GeneratedCode: generatedCodeLoader

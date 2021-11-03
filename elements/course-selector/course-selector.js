@@ -2,17 +2,24 @@
 
 Polymer({
   is: 'course-selector',
-  behaviors: [Polymer.LocalizationBehavior],
+  behaviors: [Polymer.BusListenerBehavior, Polymer.LocalizationBehavior],
   properties: {
     slug: String,
     availableCourses: []
   },
 
   ready: function ready() {
+    var _this = this;
+
     this.COURSES_URL = "https://raw.githubusercontent.com/wiki/gobstones/gobstones-web/Courses.md";
 
     this.slug = window.COURSE();
     this._loadCourses();
+
+    this.subscribeTo("load-course", function (slug) {
+      _this.slug = slug;
+      _this.goToCourse();
+    });
   },
 
   goToCourse: function goToCourse() {
@@ -110,7 +117,7 @@ Polymer({
   },
 
   _download: function _download(course, path, isRefreshing) {
-    var _this = this;
+    var _this2 = this;
 
     var bytes = window.GBS_REQUIRE("bytes");
 
@@ -136,33 +143,33 @@ Polymer({
     }
 
     DesktopGuideLoader.download(courseSlug, function (loaded, _total) {
-      _this._changeCourse(course, function (it) {
+      _this2._changeCourse(course, function (it) {
         return it.downloadProgress = bytes(loaded);
       });
     }, path).then(function (finalPath) {
-      _this._changeCourse(course, function (it) {
+      _this2._changeCourse(course, function (it) {
         it.path = finalPath;
         it.isDownloading = false;
       });
-      _this._saveCourses();
-      _this._updateGlobalDownloadState(true);
+      _this2._saveCourses();
+      _this2._updateGlobalDownloadState(true);
     }).catch(function () {
-      _this._changeCourse(course, function (it) {
+      _this2._changeCourse(course, function (it) {
         it.isDownloading = false;
       });
-      _this._updateGlobalDownloadState();
-      alert(_this.localize("download-course-error"));
+      _this2._updateGlobalDownloadState();
+      alert(_this2.localize("download-course-error"));
     });
   },
 
   _loadCourses: function _loadCourses() {
-    var _this2 = this;
+    var _this3 = this;
 
     if (this.isDesktop()) {
       this.availableCourses = this._getSavedCourses();
     } else {
       $.getJSON(this.COURSES_URL).then(function (availableCourses) {
-        _this2.availableCourses = availableCourses;
+        _this3.availableCourses = availableCourses;
       });
     }
   },

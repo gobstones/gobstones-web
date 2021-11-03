@@ -93,6 +93,11 @@ Polymer({
     return previewTeacherConfiguration ? 'icons:visibility-off' : 'icons:visibility';
   },
 
+  previewTooltip: function previewTooltip(previewTeacherConfiguration) {
+    return previewTeacherConfiguration ? 'Dejar de ver como estudiante' : 'Ver como estudiante';
+  },
+
+
   _onRunRequest: function _onRunRequest(_ref) {
     var controller = _ref.detail;
 

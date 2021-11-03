@@ -7,6 +7,8 @@
 <link rel="import" href="../../scripts/behaviors/localizationBehavior.html">
 <link rel="import" href="../../scripts/loaders/components/codeLoader.html">
 <link rel="import" href="../../scripts/loaders/components/libraryLoader.html">
+<link rel="import" href="../../scripts/loaders/components/teacherLoader.html">
+<link rel="import" href="../../scripts/loaders/components/descriptionTeacherLoader.html">
 <link rel="import" href="../../scripts/loaders/components/codeBlocksLoader.html">
 <link rel="import" href="../../scripts/loaders/components/libraryBlocksLoader.html">
 <link rel="import" href="../../scripts/loaders/components/initialBoardLoader.html">
@@ -86,15 +88,16 @@
       <div class="line-separator"></div>
 
       <div role="listbox">
-        <paper-item>
-          <paper-item-body>
-            <div>[[localize("project")]]</div>
-          </paper-item-body>
-          <paper-icon-button on-click="createNewProject" icon="icons:description" alt="new"> </paper-icon-button>
-          <paper-icon-button on-click="openProjectSelector" icon="icons:folder-open" alt="open"> </paper-icon-button>
-          <paper-icon-button on-click="saveCurrentProject" icon="icons:save" alt="save"> </paper-icon-button>
-        </paper-item>
-
+        <template is="dom-if" if="{{!_isTeacherProject(projectType)}}">
+          <paper-item>
+            <paper-item-body>
+              <div>[[localize("project")]]</div>
+            </paper-item-body>
+            <paper-icon-button on-click="createNewProject" icon="icons:description" alt="new"> </paper-icon-button>
+            <paper-icon-button on-click="openProjectSelector" icon="icons:folder-open" alt="open"> </paper-icon-button>
+            <paper-icon-button on-click="saveCurrentProject" icon="icons:save" alt="save"> </paper-icon-button>
+          </paper-item>
+        </template>
         <template is="dom-if" if="{{_isTextEnabled(projectType, teacherConstructionMode)}}">
           <paper-item>
             <paper-item-body>
@@ -126,6 +129,23 @@
               <paper-icon-button on-click="saveLibrary" icon="icons:save" alt="save"> </paper-icon-button>
             </paper-item>
           </template>
+        </template>
+
+        <template is="dom-if" if="{{_isTeacherProject(projectType)}}">
+          <paper-item>
+            <paper-item-body>
+              <div>[[localize("teachers-library")]]</div>
+            </paper-item-body>
+            <paper-icon-button on-click="loadTeacherLibrary" icon="icons:folder-open" alt="open"> </paper-icon-button>
+            <paper-icon-button on-click="saveTeacherLibrary" icon="icons:save" alt="save"> </paper-icon-button>
+          </paper-item>
+          <paper-item>
+            <paper-item-body>
+              <div>[[localize("description")]]</div>
+            </paper-item-body>
+            <paper-icon-button on-click="loadTeacherDescription" icon="icons:folder-open" alt="open"> </paper-icon-button>
+            <paper-icon-button on-click="saveTeacherDescription" icon="icons:save" alt="save"> </paper-icon-button>
+          </paper-item>
         </template>
 
         <paper-item>
@@ -194,7 +214,7 @@
         </paper-item>
       </template>
 
-      <template is="dom-if" if="{{!_isEmbeddedOrTeacherProject(projectType)}}">
+      <template is="dom-if" if="{{!isEmbedded()}}">
         <hr>
 
         <paper-item>
@@ -240,6 +260,11 @@
           <input id="Blocks" type="file" accept=".gbk" on-change="onLoadedBlocks" style="visibility: hidden;">
 
           <input id="Library" type="file" accept=".gbk" on-change="onLoadedLibrary" style="visibility: hidden;">
+        </template>
+
+        <template is="dom-if" if="{{_isTeacherProject(projectType)}}">
+          <input id="TeacherLibrary" type="file" accept=".gbs" on-change="onLoadedTeacherLibrary" style="visibility: hidden;">
+          <input id="TeacherDescription" type="file" accept=".md" on-change="onLoadedTeacherDescription" style="visibility: hidden;">
         </template>
 
         <input id="InitialBoard" type="file" accept=".gbb" on-change="onLoadedInitialBoard" style="visibility: hidden;">

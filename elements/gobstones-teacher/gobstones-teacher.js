@@ -55,7 +55,11 @@ Polymer({
       "exit": [{ "name": "fade-out-animation", "timing": { "delay": 0 } }]
     };
 
-    this._openActivitySettingsModal();
+    if (!window.COURSE()) {
+      this._openActivitySettingsModal();
+    } else {
+      this._ide().showProjectSelectorModal();
+    }
   },
 
   ready: function ready() {
@@ -121,9 +125,7 @@ Polymer({
         var detail = _ref.detail;
 
         if (!_this.isBlocksOrCodeTabSelected(_this.selectedTab)) {
-          _this.runner.showToast(_this.localize("go-to-first-tabs"));
-          _this.runner.stop();
-          return;
+          _this._goToCodeTab();
         }
 
         _this._currentEditor()._onRunRequest(detail);
@@ -297,6 +299,9 @@ Polymer({
     return selectedTab === ID_BLOCKS || selectedTab === ID_CODE;
   },
 
+  _ide: function _ide() {
+    return document.querySelector("#gobstones-ide");
+  },
   _parseInitialSetting: function _parseInitialSetting(_ref2) {
     var content = _ref2.content,
         path = _ref2.path,
@@ -342,11 +347,16 @@ Polymer({
 
   // @faloi: sería ideal que no se ejecute el código, sino que solamente se compile
   _validateCode: function _validateCode() {
-    this.selectedTab = this.constructionMode == 'blocks' ? ID_BLOCKS : ID_CODE;
+    this._goToCodeTab();
     var boardsPanel = document.getElementById("boards");
     var runner = boardsPanel.$.runner;
     runner.requestRun();
   },
+
+  _goToCodeTab: function _goToCodeTab() {
+    this.selectedTab = this.constructionMode == 'blocks' ? ID_BLOCKS : ID_CODE;
+  },
+
 
   _getUniqueSolutionName: function _getUniqueSolutionName() {
     var _this3 = this;
