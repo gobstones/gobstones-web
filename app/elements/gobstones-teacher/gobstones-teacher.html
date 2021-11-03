@@ -139,6 +139,7 @@
         <div class$="editor {{_teacherLibraryClass(selectedTab)}}">
           <template is="dom-if" if="{{!studentSolutionDirty}}">
             <alert-banner
+              code="define-primitives-here"
               title="Definí aquí las primitivas para tu actividad"
               message="Los procedimientos y funciones que definas podrán ser utilizados por tus estudiantes en sus soluciones."
               level="info"
@@ -146,6 +147,7 @@
           </template>
           <template is="dom-if" if="{{studentSolutionDirty}}">
             <alert-banner
+              code="student-code-changed"
               title="Realizaste cambios en la solución del estudiante"
               message="Si renombrás o eliminás alguna primitiva que está en uso, deberás actualizar manualmente la solución del estudiante."
               level="warning"
