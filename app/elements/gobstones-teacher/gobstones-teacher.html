@@ -226,7 +226,11 @@
           "exit": [{"name": "fade-out-animation", "timing": {"delay": 0}}]
         };
 
-        this._openActivitySettingsModal();
+        if (!window.COURSE()) {
+          this._openActivitySettingsModal();
+        } else {
+          this._ide().showProjectSelectorModal()
+        }
       },
 
       ready: function() {
@@ -467,6 +471,10 @@
 
       isBlocksOrCodeTabSelected: function(selectedTab) {
         return selectedTab === ID_BLOCKS || selectedTab === ID_CODE;
+      },
+
+      _ide() {
+        return document.querySelector("#gobstones-ide");
       },
 
       _parseInitialSetting({ content, path, defaultId, allValues }) {

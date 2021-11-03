@@ -216,7 +216,7 @@
         </paper-item>
       </template>
 
-      <template is="dom-if" if="{{!_isEmbeddedOrTeacherProject(projectType)}}">
+      <template is="dom-if" if="{{!isEmbedded()}}">
         <hr>
 
         <paper-item>
