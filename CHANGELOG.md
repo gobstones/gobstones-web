@@ -1,8 +1,8 @@
 # Changelog
 
-## [Unreleased](https://github.com/gobstones/gobstones-web/tree/HEAD)
+## [2.22.1](https://github.com/gobstones/gobstones-web/tree/2.22.1) (2021-11-03)
 
-[Full Changelog](https://github.com/gobstones/gobstones-web/compare/2.22.0...HEAD)
+[Full Changelog](https://github.com/gobstones/gobstones-web/compare/2.22.0...2.22.1)
 
 **✅ Otras tareas:**
 
