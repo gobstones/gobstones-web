@@ -1,4 +1,6 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../scripts/behaviors/localizationBehavior.html">
+<link rel="import" href="../../scripts/behaviors/busListenerBehavior.html">
 
 <dom-module id="course-selector">
   <style>
@@ -78,6 +80,7 @@
     Polymer({
       is: 'course-selector',
       behaviors: [
+        Polymer.BusListenerBehavior,
         Polymer.LocalizationBehavior
       ],
       properties: {
@@ -90,6 +93,14 @@
 
         this.slug = window.COURSE();
         this._loadCourses();
+
+        this.subscribeTo(
+          "load-course",
+          (slug) => {
+            this.slug = slug;
+            this.goToCourse()
+          }
+        );
       },
 
       goToCourse: function() {

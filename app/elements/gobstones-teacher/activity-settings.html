@@ -33,13 +33,18 @@
     <h3>¿Qué tipo de proyecto querés crear?</h3>
 
     <div class="container">
+      <div class="choice" on-tap="showTemplatesCourse">
+        <h3>Desde plantilla</h3>
+        <!-- @faloi: puse URLs absolutas porque Gulp no transforma las URLs dinámicas -->
+        <img width="180" src="https://gobstones.github.io/gobstones-web-staging/images/activity/template.png" />
+      </div>
       <div class="choice" dialog-confirm on-tap="notifySettingsBlocks">
-        <h3>{{ allConstructionModes.blocks.name }}</h3>
+        <h3>{{ allConstructionModes.blocks.name }} (en blanco)</h3>
         <!-- @faloi: puse URLs absolutas porque Gulp no transforma las URLs dinámicas -->
         <img width="250" src="https://gobstones.github.io/gobstones-web-staging/images/activity/{{allConstructionModes.blocks.id}}-{{executionType.id}}.png" />
       </div>
       <div class="choice" dialog-confirm on-tap="notifySettingsText">
-        <h3>{{ allConstructionModes.text.name }}</h3>
+        <h3>{{ allConstructionModes.text.name }} (en blanco)</h3>
         <!-- @faloi: puse URLs absolutas porque Gulp no transforma las URLs dinámicas -->
         <img width="250" src="https://gobstones.github.io/gobstones-web-staging/images/activity/{{allConstructionModes.text.id}}-{{executionType.id}}.png" />
       </div>
@@ -88,6 +93,10 @@
 
       loadFromFile: function() {
         window.BUS.fire("load-project-from-file");
+      },
+
+      showTemplatesCourse() {
+        window.BUS.fire("load-course", 'gobstonescursos/templates-GobstonesTeacher');
       },
 
       notifySettingsBlocks() {
