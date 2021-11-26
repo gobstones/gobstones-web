@@ -260,6 +260,10 @@
       },
 
       removeRule: function(e) {
+        if (!confirm(this.localize("attire-editor-tooltip-remove-rule-confirm"))) {
+          return;
+        }
+
         const index = e.model.index;
         this.set("attire.rules", this.attire.rules.filter((it, i) => {
           return i !== index;
