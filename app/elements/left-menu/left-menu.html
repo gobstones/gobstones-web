@@ -175,7 +175,7 @@
           </paper-item>
         </template>
 
-        <template is="dom-if" if="{{_isBlocksOrTeacherProject(projectType)}}">
+        <template is="dom-if" if="{{_isBlocksEnabled(projectType, teacherConstructionMode)}}">
           <paper-item>
             <paper-item-body>
               <div>[[localize("generated-code")]]</div>
