@@ -512,12 +512,16 @@
         this._validateCode();
       },
 
-      // @faloi: sería ideal que no se ejecute el código, sino que solamente se compile
+      // @faloi: sería ideal que no se ejecute el código, sino que solamente se compile.
       _validateCode: function() {
         this._goToCodeTab();
         const boardsPanel = document.getElementById("boards");
         const runner = boardsPanel.$.runner;
+
+        // @faloi: se larga la ejecución y luego se frena para no tener que esperar que termine.
+        // Los eventos que interesan (errores) se disparan igual.
         runner.requestRun();
+        runner.stop();
       },
 
       _goToCodeTab() {
