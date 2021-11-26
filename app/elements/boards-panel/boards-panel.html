@@ -590,8 +590,14 @@
         this.showAttire = !this.showAttire;
       },
 
-      addOrSetAttire: function(attire) {
-        if (this.setAttire(attire.name)) return;
+      addOrSetAttire(attire, { fromLoader = false } = {}) {
+        if (this.setAttire(attire.name)) {
+          if (fromLoader) {
+            attire.name = this._makeDuplicatedName(attire.name);
+          } else {
+            return;
+          }
+        }
 
         this.push("availableAttires", attire);
         this.selectedAttire = -1;
@@ -714,6 +720,22 @@
       toggleToolbox: function(value) {
         this.isToolboxVisible = _.isBoolean(value) ? value : !this.isToolboxVisible;
         this._updateStylistToolboxVisible();
+      },
+
+      _makeDuplicatedName(name) {
+        let duplicatedCount = 1;
+        let newName = `${name} (${duplicatedCount})`;
+
+        while (this._attireExists(newName)) {
+          duplicatedCount++;
+          newName = `${name} (${duplicatedCount})`
+        }
+
+        return newName;
+      },
+
+      _attireExists(name) {
+        return _.some(this.availableAttires, { name });
       },
 
       _bootstrap: function(sizeX = this.sizeX, sizeY = this.sizeY) {

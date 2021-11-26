@@ -74,7 +74,7 @@
 
     _setAttire(context, attire) {
       if (attire && attire.name && attire.rules)
-        context.boards.addOrSetAttire(attire);
+        context.boards.addOrSetAttire(attire, { fromLoader: true });
     }
 
     _serialize(attire) {
