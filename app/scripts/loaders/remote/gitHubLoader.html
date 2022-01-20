@@ -1,9 +1,11 @@
-<link rel="import" href="./expandedLoader.html">
+<link rel="import" href="./expandedLoader.html" />
 
 <script>
   // eslint-disable-next-line no-unused-vars
   class GitHubLoader extends ExpandedLoader {
-    static get apiUrl() { return 'https://actividades.gobstones.org' }
+    static get apiUrl() {
+      return "https://gobstones-activity.herokuapp.com";
+    }
 
     constructor(projectType, slug, initialPath) {
       super();
@@ -19,48 +21,54 @@
         url: `${GitHubLoader.apiUrl}/issues`,
         data: JSON.stringify(params),
         dataType: "json",
-        contentType: 'application/json; charset=utf-8'
+        contentType: "application/json; charset=utf-8",
       });
     }
 
     static getDesktopRelease() {
       return $.get(
         "https://api.github.com/repos/gobstones/gobstones-web-desktop/releases/latest"
-      )
+      );
     }
 
     load(getContext, callback) {
-      return this.loadDir(this.initialPath).then(files => {
+      return this.loadDir(this.initialPath).then((files) => {
         if (this.initialPath !== undefined)
-          files.forEach(it => it.relativePath = it.relativePath.replaceAll(`${this.initialPath}/`, ""));
+          files.forEach(
+            (it) =>
+              (it.relativePath = it.relativePath.replaceAll(
+                `${this.initialPath}/`,
+                ""
+              ))
+          );
 
         this.loader.readRaw(getContext(), this.createZip(files), callback);
       });
     }
 
     loadDir(path = "") {
-      return this.scanDir(path).then(entries => {
-        const $files = entries.map(it =>
-          this._loadEntry(it, path)
-        );
+      return this.scanDir(path).then((entries) => {
+        const $files = entries.map((it) => this._loadEntry(it, path));
 
-        return $.when.apply($, $files).then(function() {
+        return $.when.apply($, $files).then(function () {
           return _(arguments).toArray().flatten().value();
         });
       });
     }
 
     hasAssets() {
-      return this.scanDir('.')
-        .then(
-          entries => entries.some(e => e.name === 'assets' && e.type === 'dir')
+      return this.scanDir(".")
+        .then((entries) =>
+          entries.some((e) => e.name === "assets" && e.type === "dir")
         )
         .catch(() => false);
     }
 
     scanDir(path = this.initialPath || ".") {
-      const [ username, repoName ] = this.slug.split("/");
-      return $.get(`${GitHubLoader.apiUrl}/repo/${username}/${repoName}?path=${path}`);
+      const [username, repoName] = this.slug.split("/");
+      return $.get(
+        `${GitHubLoader.apiUrl}/repo/${username}/${repoName}?path=${path}`
+      );
     }
 
     _loadEntry(entry, path) {
@@ -70,10 +78,9 @@
     }
 
     _downloadFile(url, relativePath) {
-      return $.getBinary(url).then(content => {
+      return $.getBinary(url).then((content) => {
         return { relativePath, content };
       });
     }
   }
 </script>
-
