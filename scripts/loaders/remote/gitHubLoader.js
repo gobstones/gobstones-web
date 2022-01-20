@@ -17,7 +17,7 @@ var GitHubLoader = function (_ExpandedLoader) {
   _createClass(GitHubLoader, null, [{
     key: "apiUrl",
     get: function get() {
-      return 'https://actividades.gobstones.org';
+      return "https://gobstones-activity.herokuapp.com";
     }
   }]);
 
@@ -66,9 +66,9 @@ var GitHubLoader = function (_ExpandedLoader) {
   }, {
     key: "hasAssets",
     value: function hasAssets() {
-      return this.scanDir('.').then(function (entries) {
+      return this.scanDir(".").then(function (entries) {
         return entries.some(function (e) {
-          return e.name === 'assets' && e.type === 'dir';
+          return e.name === "assets" && e.type === "dir";
         });
       }).catch(function () {
         return false;
@@ -106,7 +106,7 @@ var GitHubLoader = function (_ExpandedLoader) {
         url: GitHubLoader.apiUrl + "/issues",
         data: JSON.stringify(params),
         dataType: "json",
-        contentType: 'application/json; charset=utf-8'
+        contentType: "application/json; charset=utf-8"
       });
     }
   }, {

@@ -1644,7 +1644,7 @@ Blockly.Blocks.procedures_defnoreturn.customContextMenu = function(options) {
   const block = this;
   options.splice(1, 0, {
     enabled: true,
-    text: block.$isAtomic ? "${BKY_GBS_TOOLTIPS_SHOW_STEP_OFF}" : "%{BKY_GBS_TOOLTIPS_SHOW_STEP_ON}",
+    text: block.$isAtomic ? Blockly.Msg.GBS_TOOLTIPS_SHOW_STEP_OFF : Blockly.Msg.GBS_TOOLTIPS_SHOW_STEP_ON,
     callback: function() {
       block.$isAtomic = !block.$isAtomic;
       triggerRefresh(block);

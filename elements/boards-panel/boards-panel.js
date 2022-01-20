@@ -189,12 +189,23 @@ Polymer({
   },
 
   addOrSetAttire: function addOrSetAttire(attire) {
-    if (this.setAttire(attire.name)) return;
+    var _ref = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {},
+        _ref$fromLoader = _ref.fromLoader,
+        fromLoader = _ref$fromLoader === undefined ? false : _ref$fromLoader;
+
+    if (this.setAttire(attire.name)) {
+      if (fromLoader) {
+        attire.name = this._makeDuplicatedName(attire.name);
+      } else {
+        return;
+      }
+    }
 
     this.push("availableAttires", attire);
     this.selectedAttire = -1;
     this.selectedAttire = this.availableAttires.length - 1;
   },
+
 
   removeCurrentAttire: function removeCurrentAttire() {
     if (this.availableAttires.length === 1) {
@@ -306,8 +317,8 @@ Polymer({
     this.$$("#inspectResultsModal").open();
   },
 
-  getSizeOf: function getSizeOf(_ref) {
-    var table = _ref.table;
+  getSizeOf: function getSizeOf(_ref2) {
+    var table = _ref2.table;
 
     return { x: table[0].length, y: table.length };
   },
@@ -320,6 +331,22 @@ Polymer({
     this.isToolboxVisible = _.isBoolean(value) ? value : !this.isToolboxVisible;
     this._updateStylistToolboxVisible();
   },
+
+  _makeDuplicatedName: function _makeDuplicatedName(name) {
+    var duplicatedCount = 1;
+    var newName = name + " (" + duplicatedCount + ")";
+
+    while (this._attireExists(newName)) {
+      duplicatedCount++;
+      newName = name + " (" + duplicatedCount + ")";
+    }
+
+    return newName;
+  },
+  _attireExists: function _attireExists(name) {
+    return _.some(this.availableAttires, { name: name });
+  },
+
 
   _bootstrap: function _bootstrap() {
     var sizeX = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : this.sizeX;
@@ -392,8 +419,8 @@ Polymer({
     });
   },
 
-  _onReturnValue: function _onReturnValue(_ref2) {
-    var value = _ref2.value;
+  _onReturnValue: function _onReturnValue(_ref3) {
+    var value = _ref3.value;
 
     this.returnValue = value;
   },
@@ -481,8 +508,8 @@ Polymer({
   },
 
 
-  _showCodeVisible: function _showCodeVisible(_ref3) {
-    var base = _ref3.base;
+  _showCodeVisible: function _showCodeVisible(_ref4) {
+    var base = _ref4.base;
 
     return !base.running;
   },
@@ -516,8 +543,8 @@ Polymer({
     return this.availableInitialStates[selectedInitialState];
   },
 
-  _onInitialBoardOptionsChange: function _onInitialBoardOptionsChange(selectedTab, showAttire, _ref4) {
-    var base = _ref4.base;
+  _onInitialBoardOptionsChange: function _onInitialBoardOptionsChange(selectedTab, showAttire, _ref5) {
+    var base = _ref5.base;
 
     this.set("initialBoardOptions.editable", !this.isInitialBoardNotEditable(selectedTab, showAttire, base));
   },

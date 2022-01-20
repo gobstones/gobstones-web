@@ -70,6 +70,10 @@ Polymer({
   },
 
   removeRule: function removeRule(e) {
+    if (!confirm(this.localize("attire-editor-tooltip-remove-rule-confirm"))) {
+      return;
+    }
+
     var index = e.model.index;
     this.set("attire.rules", this.attire.rules.filter(function (it, i) {
       return i !== index;

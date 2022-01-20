@@ -90,7 +90,7 @@ var AttireReader = function () {
   }, {
     key: "_setAttire",
     value: function _setAttire(context, attire) {
-      if (attire && attire.name && attire.rules) context.boards.addOrSetAttire(attire);
+      if (attire && attire.name && attire.rules) context.boards.addOrSetAttire(attire, { fromLoader: true });
     }
   }, {
     key: "_serialize",

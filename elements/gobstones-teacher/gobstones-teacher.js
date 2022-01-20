@@ -345,12 +345,16 @@ Polymer({
     this._validateCode();
   },
 
-  // @faloi: sería ideal que no se ejecute el código, sino que solamente se compile
+  // @faloi: sería ideal que no se ejecute el código, sino que solamente se compile.
   _validateCode: function _validateCode() {
     this._goToCodeTab();
     var boardsPanel = document.getElementById("boards");
     var runner = boardsPanel.$.runner;
+
+    // @faloi: se larga la ejecución y luego se frena para no tener que esperar que termine.
+    // Los eventos que interesan (errores) se disparan igual.
     runner.requestRun();
+    runner.stop();
   },
 
   _goToCodeTab: function _goToCodeTab() {
