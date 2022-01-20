@@ -1,5 +1,22 @@
 # Changelog
 
+## [2.22.2](https://github.com/gobstones/gobstones-web/tree/2.22.2) (2022-01-20)
+
+[Full Changelog](https://github.com/gobstones/gobstones-web/compare/2.22.1...2.22.2)
+
+**💡 Nuevas funcionalidades:**
+
+- ¿Diálogo de confirmación al borrar una regla de vestimenta? [\#440](https://github.com/gobstones/gobstones-web/issues/440)
+
+**🐞 Defectos corregidos:**
+
+- No funciona la carga de proyectos [\#478](https://github.com/gobstones/gobstones-web/issues/478)
+- Ocultar "Código generado" en Teacher modo texto [\#469](https://github.com/gobstones/gobstones-web/issues/469)
+- No se pueden guardar proyectos interactivos [\#468](https://github.com/gobstones/gobstones-web/issues/468)
+- En los menús contextuales de los procedimientos con parámetros, aparece una opción interna [\#445](https://github.com/gobstones/gobstones-web/issues/445)
+- Al guardar un proyecto, si la ejecución del validador no terminó y se da guardar igual, no hace nada... [\#443](https://github.com/gobstones/gobstones-web/issues/443)
+- Al cargar vestimenta con nombre existente, no pasa nada [\#437](https://github.com/gobstones/gobstones-web/issues/437)
+
 ## [2.22.1](https://github.com/gobstones/gobstones-web/tree/2.22.1) (2021-11-03)
 
 [Full Changelog](https://github.com/gobstones/gobstones-web/compare/2.22.0...2.22.1)
