@@ -108,7 +108,7 @@ gulp.task('styles', function() {
 gulp.task('ensureFiles', function(cb) {
   var requiredFiles = ['.bowerrc'];
 
-  ensureFiles(requiredFiles.map(function(p) {
+  return ensureFiles(requiredFiles.map(function(p) {
     return path.join(__dirname, p);
   }), cb);
 });
@@ -187,7 +187,7 @@ gulp.task('cache-config', function(callback) {
     disabled: false
   };
 
-  glob([
+  return glob([
     'index.html',
     './',
     'bower_components/webcomponentsjs/webcomponents-lite.min.js',
@@ -213,74 +213,21 @@ gulp.task('clean', function() {
   return del(['.tmp', dist()]);
 });
 
-// Watch files for changes & reload
-gulp.task('serve', ['styles', 'js'], function() {
-  browserSync({
-    port: 5000,
-    notify: false,
-    logPrefix: 'PSK',
-    snippetOptions: {
-      rule: {
-        match: '<span id="browser-sync-binding"></span>',
-        fn: function(snippet) {
-          return snippet;
-        }
-      }
-    },
-    // Run as an https by uncommenting 'https: true'
-    // Note: this uses an unsigned certificate which on first access
-    //       will present a certificate warning in the browser.
-    // https: true,
-    server: {
-      baseDir: ['.tmp', 'app'],
-      middleware: [historyApiFallback()]
-    }
-  });
-
-  gulp.watch(['app/**/*.html', '!app/bower_components/**/*.html'], ['js', reload]);
-  gulp.watch(['app/styles/**/*.css'], ['styles', reload]);
-  gulp.watch(['app/scripts/**/*.js'], reload);
-  gulp.watch(['app/images/**/*', '!app/images/emojis/**/*'], reload);
-});
-
-// Build and serve the output from the dist build
-gulp.task('serve:dist', ['default'], function() {
-  browserSync({
-    port: 5001,
-    notify: false,
-    logPrefix: 'PSK',
-    snippetOptions: {
-      rule: {
-        match: '<span id="browser-sync-binding"></span>',
-        fn: function(snippet) {
-          return snippet;
-        }
-      }
-    },
-    // Run as an https by uncommenting 'https: true'
-    // Note: this uses an unsigned certificate which on first access
-    //       will present a certificate warning in the browser.
-    // https: true,
-    server: dist(),
-    middleware: [historyApiFallback()]
-  });
-});
-
 // Build production files, the default task
-gulp.task('default', ['clean'], function(cb) {
+gulp.task('default', gulp.series('clean', function(cb) {
   // Uncomment 'cache-config' if you are going to use service workers.
-  runSequence(
+  return runSequence(
     'bowertotmp',
     ['ensureFiles', 'copy', 'styles'],
     'js',
     ['images', 'fonts', 'html'],
     'vulcanize', // 'cache-config',
     cb);
-});
+}));
 
 // Build then deploy to GitHub pages gh-pages branch
 gulp.task('build-deploy-gh-pages', function(cb) {
-  runSequence(
+  return runSequence(
     'default',
     'deploy-gh-pages',
     cb);
@@ -300,7 +247,7 @@ gulp.task('deploy-gh-pages', function() {
 
 // Load tasks for web-component-tester
 // Adds tasks for `gulp test:local` and `gulp test:remote`
-require('web-component-tester').gulp.init(gulp);
+// require('web-component-tester').gulp.init(gulp);
 
 // Load custom tasks from the `tasks` directory
 try {
@@ -341,3 +288,72 @@ gulp.task('jasmine', function() {
     .pipe($.jasmineBrowser.specRunner())
     .pipe($.jasmineBrowser.server());
 });
+
+// Watch files for changes & reload
+gulp.task('serve', gulp.series('styles', 'js', function() {
+  browserSync({
+    port: 5000,
+    notify: false,
+    logPrefix: 'PSK',
+    snippetOptions: {
+      rule: {
+        match: '<span id="browser-sync-binding"></span>',
+        fn: function(snippet) {
+          return snippet;
+        }
+      }
+    },
+    // Run as an https by uncommenting 'https: true'
+    // Note: this uses an unsigned certificate which on first access
+    //       will present a certificate warning in the browser.
+    // https: true,
+    server: {
+      baseDir: ['.tmp', 'app'],
+      middleware: [historyApiFallback()]
+    }
+  });
+
+  gulp.watch([
+    'app/**/*.html',
+    '!app/bower_components/**/*.html',
+    'js',
+    'app/styles/**/*.css',
+    'styles',
+    'app/scripts/**/*.js',
+    'app/images/**/*',
+    '!app/images/emojis/**/*'
+  ],
+    gulp.series(
+      'styles',
+      'js',
+      reload
+    )
+  );
+
+  return;
+}));
+
+// Build and serve the output from the dist build
+gulp.task('serve:dist', gulp.series('default', function() {
+  browserSync({
+    port: 5001,
+    notify: false,
+    logPrefix: 'PSK',
+    snippetOptions: {
+      rule: {
+        match: '<span id="browser-sync-binding"></span>',
+        fn: function(snippet) {
+          return snippet;
+        }
+      }
+    },
+    // Run as an https by uncommenting 'https: true'
+    // Note: this uses an unsigned certificate which on first access
+    //       will present a certificate warning in the browser.
+    // https: true,
+    server: dist(),
+    middleware: [historyApiFallback()]
+  });
+
+  return;
+}));
