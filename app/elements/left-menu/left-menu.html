@@ -68,18 +68,18 @@
       }
     </style>
 
-  <!-- @faloi: importo los iconos que necesito a mano, porque el import del set no me anduvo  -->
-  <iron-iconset-svg name="image" size="24">
-    <svg>
-      <defs>
-        <g id="image">
-          <path
-            d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"
-          ></path>
-        </g>
-      </defs>
-    </svg>
-  </iron-iconset-svg>
+    <!-- @faloi: importo los iconos que necesito a mano, porque el import del set no me anduvo  -->
+    <iron-iconset-svg name="image" size="24">
+      <svg>
+        <defs>
+          <g id="image">
+            <path
+              d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"
+            ></path>
+          </g>
+        </defs>
+      </svg>
+    </iron-iconset-svg>
 
     <div class="menu-container">
       <paper-item center-justified flex class="menu-header-gobstones">
@@ -90,6 +90,10 @@
       <div class="line-separator"></div>
 
       <div role="listbox">
+        <paper-item center-justified flex class="menu-header-gobstones">
+          <div class="app-name">{{projectType}}</div>
+        </paper-item>
+
         <template is="dom-if" if="{{!_isTeacherProject(projectType)}}">
           <paper-item>
             <paper-item-body>
@@ -100,6 +104,7 @@
             <paper-icon-button on-click="saveCurrentProject" icon="icons:save" alt="save"> </paper-icon-button>
           </paper-item>
         </template>
+
         <template is="dom-if" if="{{_isTextEnabled(projectType, teacherConstructionMode)}}">
           <paper-item>
             <paper-item-body>
@@ -110,7 +115,7 @@
           </paper-item>
         </template>
 
-        <template is="dom-if" if="{{_isBlocksEnabled(projectType, teacherConstructionMode)}}">
+        <template is="dom-if" if="{{_isBlocksEnabled(projectType, teacherConstructionMode, 'blocks')}}">
           <paper-item>
             <paper-item-body>
               <div>[[localize("blocks")]]</div>
@@ -175,7 +180,7 @@
           </paper-item>
         </template>
 
-        <template is="dom-if" if="{{_isBlocksEnabled(projectType, teacherConstructionMode)}}">
+        <template is="dom-if" if="[[_isBlocksEnabled(projectType, teacherConstructionMode)]]">
           <paper-item>
             <paper-item-body>
               <div>[[localize("generated-code")]]</div>
@@ -279,6 +284,7 @@
         <input id="Attire" type="file" accept=".zip" on-change="onLoadedAttire" style="visibility: hidden;" />
       </div>
     </div>
+
   </template>
 
   <script>
@@ -306,7 +312,8 @@
           value: { can_use_library: true }
         },
         teacherConstructionMode: {
-          type: Object
+          type: Object,
+          value: { constructionMode: '', executionType: '' }
         }
       },
       observers: [
@@ -525,13 +532,14 @@
 
       _isBlocksEnabled(projectType, teacherConstructionMode) {
         return this._isBlocksProject(projectType) ||
-          this._isTeacherProject(projectType) && _.get(teacherConstructionMode, 'id') === 'blocks';
+          (this._isTeacherProject(projectType) && _.get(teacherConstructionMode, 'id') === 'blocks');
       },
 
       _isTextEnabled(projectType, teacherConstructionMode) {
         return this._isCodeProject(projectType) ||
           this._isTeacherProject(projectType) && _.get(teacherConstructionMode, 'id') === 'text';
       },
+
 
       // _getDownloadProgress: function(downloadProgress, downloadTotal) {
       //   if (downloadTotal <= 0) return 0;
