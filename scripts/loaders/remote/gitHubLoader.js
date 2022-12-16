@@ -17,7 +17,7 @@ var GitHubLoader = function (_ExpandedLoader) {
   _createClass(GitHubLoader, null, [{
     key: "apiUrl",
     get: function get() {
-      return "https://gobstones-activity.herokuapp.com";
+      return "https://actividades.gobstones.org/status";
     }
   }]);
 
