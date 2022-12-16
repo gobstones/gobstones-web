@@ -1,0 +1,268 @@
+<!--
+@license
+Copyright (c) 2016 Thad Humphries. All rights reserved.
+This code is under Apache License Version 2.0 (http://www.apache.org/licenses/LICENSE-2.0.txt).
+--><html><head><link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/iron-validatable-behavior/iron-validatable-behavior.html">
+<link rel="import" href="../../bower_components/iron-form-element-behavior/iron-form-element-behavior.html">
+<link rel="import" href="../../bower_components/paper-behaviors/paper-inky-focus-behavior.html">
+<link rel="import" href="../../bower_components/paper-styles/default-theme.html">
+
+<!--
+`paper-tristate-checkbox` is a Polymer web component similar to
+[`paper-checkbox`](https://elements.polymer-project.org/elements/paper-checkbox)
+except that it supports an indeterminate state.
+
+Example:
+
+    <paper-tristate-checkbox>label</paper-tristate-checkbox>
+
+    <paper-tristate-checkbox state="on">label</paper-tristate-checkbox>
+
+The web component handles the `aria-checked` attribute in accordance with the W3C's
+[WAI-ARIA 1.0 Authoring Practices](https://www.w3.org/TR/wai-aria-practices/#checkbox).
+
+### Styling
+
+The following custom properties and mixins are available for styling:
+
+Custom property | Description | Default
+----------------|-------------|----------
+`--paper-tristate-checkbox-unchecked-background-color` | Checkbox background color when the input is not checked | `transparent`
+`--paper-tristate-checkbox-unchecked-color` | Checkbox border color when the input is not checked | `--primary-text-color`
+`--paper-tristate-checkbox-unchecked-ink-color` | Selected/focus ripple color when the input is not checked | `--primary-text-color`
+`--paper-tristate-checkbox-checked-color` | Checkbox color when the input is checked | `--primary-color`
+`--paper-tristate-checkbox-checked-ink-color` | Selected/focus ripple color when the input is checked | `--primary-color`
+`--paper-tristate-checkbox-checkmark-color` | Checkmark color | `white`
+`--paper-tristate-checkbox-label-color` | Label color | `--primary-text-color`
+`--paper-tristate-checkbox-label-spacing` | Spacing between the label and the checkbox | `8px`
+`--paper-tristate-checkbox-error-color` | Checkbox color when invalid | `--error-color`
+`--paper-tristate-checkbox-size` | Size of the checkbox | `18px`
+
+
+#### From `paper-checkbox` __:__
+
+> This element applies the mixin `--paper-font-common-base` but does not import `paper-styles/typography.html`.
+> In order to apply the `Roboto` font to this element, make sure you've imported `paper-styles/typography.html`.
+
+@element paper-tristate-checkbox
+@demo demo/index.html
+-->
+
+</head><body><dom-module id="paper-tristate-checkbox">
+  <template>
+    <style>
+      :host {
+        display: inline-block;
+        white-space: nowrap;
+        cursor: pointer;
+        --calculated-paper-tristate-checkbox-size: var(--paper-tristate-checkbox-size, 18px);
+        @apply(--paper-font-common-base);
+        line-height: 0;
+      }
+
+      :host(:focus) {
+        outline: none;
+      }
+
+      .hidden {
+        display: none;
+      }
+
+      #checkboxContainer {
+        display: inline-block;
+        position: relative;
+        width: var(--calculated-paper-tristate-checkbox-size);
+        height: var(--calculated-paper-tristate-checkbox-size);
+        min-width: var(--calculated-paper-tristate-checkbox-size);
+        vertical-align: middle;
+        background-color: var(--paper-tristate-checkbox-unchecked-background-color, transparent);
+      }
+
+      #ink {
+        position: absolute;
+
+        /* Center the ripple in the checkbox by negative offsetting it by
+         * (inkWidth - rippleWidth) / 2
+         */
+        top: calc(0px - (2.66 * var(--calculated-paper-tristate-checkbox-size) - var(--calculated-paper-tristate-checkbox-size)) / 2);
+        left: calc(0px - (2.66 * var(--calculated-paper-tristate-checkbox-size) - var(--calculated-paper-tristate-checkbox-size)) / 2);
+        width: calc(2.66 * var(--calculated-paper-tristate-checkbox-size));
+        height: calc(2.66 * var(--calculated-paper-tristate-checkbox-size));
+        color: var(--paper-tristate-checkbox-unchecked-ink-color, --primary-text-color);
+        opacity: 0.6;
+        pointer-events: none;
+      }
+
+      :host-context([dir="rtl"]) #ink {
+        right: calc(0px - (2.66 * var(--calculated-paper-tristate-checkbox-size) - var(--calculated-paper-tristate-checkbox-size)) / 2);
+        left: auto;
+      }
+
+      #ink[checked] {
+        color: var(--paper-tristate-checkbox-checked-ink-color, --primary-color);
+      }
+
+      #checkbox {
+        position: relative;
+        box-sizing: border-box;
+        width: 100%;
+        height: 100%;
+        border: solid 2px;
+        border-color: var(--paper-tristate-checkbox-unchecked-color, --primary-text-color);
+        border-radius: 2px;
+        pointer-events: none;
+        -webkit-transition: background-color 140ms, border-color 140ms;
+        transition: background-color 140ms, border-color 140ms;
+      }
+
+      /* checkbox checked animations */
+      #checkbox.checked #checkmark {
+        -webkit-animation: checkmark-expand 140ms ease-out forwards;
+        animation: checkmark-expand 140ms ease-out forwards;
+      }
+
+      @-webkit-keyframes checkmark-expand {
+        0% {
+          -webkit-transform: scale(0, 0) rotate(45deg);
+        }
+        100% {
+          -webkit-transform: scale(1, 1) rotate(45deg);
+        }
+      }
+      @keyframes checkmark-expand {
+        0% {
+          transform: scale(0, 0) rotate(45deg);
+        }
+        100% {
+          transform: scale(1, 1) rotate(45deg);
+        }
+      }
+
+      /* checkbox indeterminate animations */
+      #checkbox.checked #indeterminatemark {
+        -webkit-animation: indeterminatemark-expand 140ms ease-out forwards;
+        animation: indeterminatemark-expand 140ms ease-out forwards;
+      }
+
+      @-webkit-keyframes indeterminatemark-expand {
+        0% {
+          -webkit-transform: scale(0, 0) rotate(180deg);
+        }
+        100% {
+          -webkit-transform: scale(1, 1) rotate(180deg);
+        }
+      }
+      @keyframes indeterminatemark-expand {
+        0% {
+          transform: scale(0, 0) rotate(180deg);
+        }
+        100% {
+          transform: scale(1, 1) rotate(180deg);
+        }
+      }
+
+      #checkbox.checked {
+        background-color: var(--paper-tristate-checkbox-checked-color, --primary-color);
+        border-color: var(--paper-tristate-checkbox-checked-color, --primary-color);
+      }
+
+      #checkmark {
+        position: absolute;
+        width: 36%;
+        height: 70%;
+        border-style: solid;
+        border-top: none;
+        border-left: none;
+        border-right-width: calc(2/15 * var(--calculated-paper-tristate-checkbox-size));
+        border-bottom-width: calc(2/15 * var(--calculated-paper-tristate-checkbox-size));
+        border-color: var(--paper-tristate-checkbox-checkmark-color, white);
+        -webkit-transform-origin: 97% 86%;
+        transform-origin: 97% 86%;
+        box-sizing: content-box; /* protect against page-level box-sizing */
+      }
+
+      :host-context([dir="rtl"]) #checkmark {
+        -webkit-transform-origin: 50% 14%;
+        transform-origin: 50% 14%;
+      }
+
+      #indeterminatemark {
+        position: absolute;
+        width: 60%;
+        height: 0;
+        border-style: solid;
+        border-top: none;
+        border-left: none;
+        border-right-width: calc(2/15 * var(--calculated-paper-tristate-checkbox-size));
+        border-bottom-width: calc(2/15 * var(--calculated-paper-tristate-checkbox-size));
+        border-color: var(--paper-tristate-checkbox-checkmark-color, white);
+        -webkit-transform-origin: 60% 200%;
+        transform-origin: 60% 200%;
+        box-sizing: content-box; /* protect against page-level box-sizing */
+      }
+
+      :host-context([dir="rtl"]) #indeterminatemark {
+        -webkit-transform-origin: 50% 14%;
+        transform-origin: 50% 14%;
+      }
+
+      /* label */
+      #checkboxLabel {
+        position: relative;
+        display: inline-block;
+        vertical-align: middle;
+        padding-left: var(--paper-tristate-checkbox-label-spacing, 8px);
+        white-space: normal;
+        line-height: normal;
+        color: var(--paper-tristate-checkbox-label-color, --primary-text-color);
+      }
+
+      :host-context([dir="rtl"]) #checkboxLabel {
+        padding-right: var(--paper-tristate-checkbox-label-spacing, 8px);
+        padding-left: 0;
+      }
+
+      #checkboxLabel[hidden] {
+        display: none;
+      }
+
+      /* disabled state */
+
+      :host([disabled]) #checkbox {
+        opacity: 0.5;
+        border-color: var(--paper-tristate-checkbox-unchecked-color, --primary-text-color);
+      }
+
+      :host([disabled][checked]) #checkbox {
+        background-color: var(--paper-tristate-checkbox-unchecked-color, --primary-text-color);
+        opacity: 0.5;
+      }
+
+      :host([disabled][indeterminate]) #checkbox {
+        background-color: var(--paper-tristate-checkbox-unchecked-color, --primary-text-color);
+        opacity: 0.5;
+      }
+
+      :host([disabled]) #checkboxLabel  {
+        opacity: 0.65;
+      }
+
+      /* invalid state */
+      #checkbox.invalid:not(.checked) {
+        border-color: var(--paper-tristate-checkbox-error-color, --google-red-500);
+      }
+    </style>
+
+    <div id="checkboxContainer">
+      <div id="checkbox" class$="[[_computeCheckboxClass(state)]]">
+        <div id="checkmark" class$="[[_computeCheckmarkClass(state)]]"></div>
+        <div id="indeterminatemark" class$="[[_computeIndeterminatemarkClass(state)]]"></div>
+      </div>
+    </div>
+
+    <div id="checkboxLabel"><content></content></div>
+  </template>
+
+  </dom-module>
+<script src="paper-tristate-checkbox.js"></script></body></html>

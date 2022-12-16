@@ -19,7 +19,8 @@ Polymer({
       value: { can_use_library: true }
     },
     teacherConstructionMode: {
-      type: Object
+      type: Object,
+      value: { constructionMode: '', executionType: '' }
     }
   },
   observers: ["_onSelectedLanguageChanged(selectedLanguage)"],
