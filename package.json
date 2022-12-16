@@ -1,7 +1,7 @@
 {
   "name": "gobstones-web",
   "description": "Gobstones Web",
-  "version": "2.22.2",
+  "version": "2.22.3",
   "private": true,
   "licence": "GPLv3",
   "author": "Gobstones <info@gobstones.org> (https://gobstones.github.io)",
@@ -63,6 +63,7 @@
     "gulp-minify-html": "^1.0.2",
     "gulp-rename": "^1.2.0",
     "gulp-replace": "^0.5.4",
+    "gulp4-run-sequence": "^1.0.1",
     "gulp-size": "^2.0.0",
     "gulp-sourcemaps": "^1.6.0",
     "gulp-uglify": "^1.2.0",

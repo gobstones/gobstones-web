@@ -16,7 +16,7 @@ require('es6-promise').polyfill();
 var gulp = require('gulp');
 var $ = require('gulp-load-plugins')();
 var del = require('del');
-var runSequence = require('run-sequence');
+var runSequence = require('gulp4-run-sequence');
 var browserSync = require('browser-sync');
 var reload = browserSync.reload;
 var merge = require('merge-stream');
