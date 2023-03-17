@@ -463,7 +463,7 @@ Polymer({
   _onBoardChanged: function _onBoardChanged(event) {
     var _this6 = this;
 
-    var isFromInitialState = event.path.some(function (it) {
+    var isFromInitialState = ('composedPath' in event ? event.composedPath() : event.paht).some(function (it) {
       return it === _this6.initialStateEditor;
     });
     if (!isFromInitialState) return;

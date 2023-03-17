@@ -1,7 +1,7 @@
 {
   "name": "gobstones-web",
   "description": "Gobstones Web",
-  "version": "2.22.4",
+  "version": "2.23.0",
   "private": true,
   "licence": "GPLv3",
   "author": "Gobstones <info@gobstones.org> (https://gobstones.github.io)",
