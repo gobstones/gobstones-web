@@ -851,7 +851,7 @@
       },
 
       _onBoardChanged: function(event) {
-        const isFromInitialState = event.path.some(it => it === this.initialStateEditor);
+        const isFromInitialState = ('composedPath' in event ? event.composedPath() : event.paht).some(it => it === this.initialStateEditor);
         if (!isFromInitialState) return;
 
         const initialState = this.availableInitialStates[this.selectedInitialState];
