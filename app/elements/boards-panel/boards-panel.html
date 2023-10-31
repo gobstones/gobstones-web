@@ -173,6 +173,7 @@
         position: fixed;
         bottom: 10px;
         right: 10px;
+        z-index: 100;
       }
 
       paper-tab {
@@ -359,7 +360,7 @@
                   <gs-board id="finalStateEditor" attire="{{attire}}"></gs-board>
 
                   <template is="dom-if" if="{{_hasReturnValue(returnValue)}}">
-                    <paper-button id="inspect-results-button" class="inspect-results-button" style="z-index: 99" on-click="showReturnValue"><iron-icon class="black-button" icon="icons:search"></iron-icon></paper-button>
+                    <paper-button id="inspect-results-button" class="inspect-results-button" on-click="showReturnValue"><iron-icon class="black-button" icon="icons:search"></iron-icon></paper-button>
                     <paper-tooltip for="inspect-results-button" position="left" animation-config="{{tooltipAnimation}}">
                       <div class="button-tooltip">
                         [[localize("tooltip-inspect-results")]]

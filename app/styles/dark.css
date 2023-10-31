@@ -1,6 +1,5 @@
 /* EDITOR */
-
-#main.night .ace_content{
+#main.night .ace_content, #main.night .inspect-results-modal{
 	background: #2E2E2E !important;
 }
 
@@ -21,7 +20,7 @@
 	color: #FFFFFF !important;
 }
 
-#main.night .ace-tm .ace_cursor {
+#main.night .ace-tm .ace_cursor, #main.night .return-monospace.results-inspector{
      color: white !important; 
 }
 
