@@ -8,7 +8,27 @@ Polymer({
   },
 
   adaptType: function adaptType(result) {
-    return result && result.value && result.value.type || "";
+    var tiposBasicos = {
+      "Color": "Color",
+      "Dir": "Dirección",
+      "Number": "Número",
+      "Bool": "Booleano",
+      "String": "String",
+      "List": "Lista"
+    };
+    var tipoDe_ = function tipoDe_(tipo) {
+      if (tipo.startsWith("List(")) {
+        return "Lista de " + tipoDe_(tipo.substr(5, tipo.length - 6));
+      } else if (tipo.startsWith("Tuple(")) {
+        // ?
+      } else if (tipo.startsWith("(")) {
+        return "(" + tipo.substr(1, tipo.length - 2).split(", ").map(tipoDe_).join(", ") + ")";
+      } else if (tipo in tiposBasicos) {
+        return tiposBasicos[tipo];
+      }
+      return tipo;
+    };
+    return tipoDe_(result && result.value && result.value.type || "");
   },
   adaptValue: function adaptValue(result) {
     var actualReturnValue = result && result.actualReturnValue;
