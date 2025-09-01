@@ -49,7 +49,7 @@
     "download-course-slug": "Ingresa el repositorio GitHub del curso (o deja en blanco para descargar el predeterminado: gobstones/proyectos-jr).",
     "download-desktop": "Descargar versión de escritorio",
     "enable": "Activar",
-    "error-loading-project": "No se ha podido descargar el proyecto",
+    "error-loading-project": "Estamos experimentando problemas temporarios con la descarga de ejercicios. Mientras los solucionamos, probá bajar la guía de ejercicios como se indica en https://bit.ly/TutorialDeDescarga.",
     "execute": "Ejecutar",
     "final-board": "Tablero final",
     "generated-code": "Código generado",
